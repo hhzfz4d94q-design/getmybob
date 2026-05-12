@@ -505,6 +505,24 @@ HTML_TEMPLATE = """<!doctype html>
   .b.onsite {{ background: #ead4ff; color: #4b2e9c; }}
   .b.offer {{ background: #ffd9b3; color: #a04500; }}
   .b.rejected {{ background: #e8e8e8; color: #666; }}
+  .app-tracker {{ padding: 14px 28px; background: white; border-bottom: 1px solid #e5e5ea; }}
+  .view-toggle {{ display: flex; gap: 8px; margin-bottom: 12px; align-items: center; }}
+  .view-toggle .pill {{ font-size: 13px; padding: 6px 14px; }}
+  .view-label {{ font-size: 12px; color: #666; margin-right: 4px; font-weight: 600; }}
+  .app-stats {{ display: flex; gap: 12px; flex-wrap: wrap; }}
+  .app-stat {{ font-size: 12px; padding: 8px 14px; border-radius: 8px; min-width: 80px; }}
+  .app-stat b {{ font-size: 20px; display: block; font-weight: 700; line-height: 1.15; }}
+  .app-stat.applied {{ background: #d6f5e3; color: #0a6b3a; }}
+  .app-stat.phonescreen {{ background: #fce5b8; color: #6b4500; }}
+  .app-stat.onsite {{ background: #ead4ff; color: #4b2e9c; }}
+  .app-stat.offer {{ background: #ffd9b3; color: #a04500; }}
+  .app-stat.rejected {{ background: #e8e8e8; color: #666; }}
+  .app-stat.response {{ background: #1f3a5f; color: white; }}
+  body.apps-mode .card[data-status="offer"] {{ order: 1; }}
+  body.apps-mode .card[data-status="onsite"] {{ order: 2; }}
+  body.apps-mode .card[data-status="phonescreen"] {{ order: 3; }}
+  body.apps-mode .card[data-status="applied"] {{ order: 4; }}
+  body.apps-mode .card[data-status="rejected"] {{ order: 5; }}
   .modal-overlay {{ display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center; padding: 20px; }}
   .modal-overlay.show {{ display: flex; }}
   .modal {{ background: white; border-radius: 12px; padding: 24px; max-width: 600px; width: 100%; max-height: 80vh; overflow-y: auto; }}
@@ -524,6 +542,21 @@ HTML_TEMPLATE = """<!doctype html>
   <div class="stat"><b>{senior_remote}</b>Senior + Remote (last 7d)</div>
   <div class="stat"><b>{ghost}</b>Possible ghost jobs (60d+)</div>
   <div class="stat"><b id="shown-counter">{shown}</b>Showing</div>
+</div>
+<div class="app-tracker">
+  <div class="view-toggle">
+    <span class="view-label">View:</span>
+    <button class="pill active" id="view-all" onclick="setView('all')">All Jobs</button>
+    <button class="pill" id="view-apps" onclick="setView('apps')">My Applications</button>
+  </div>
+  <div class="app-stats">
+    <div class="app-stat applied"><b id="cnt-applied">0</b>Applied</div>
+    <div class="app-stat phonescreen"><b id="cnt-phonescreen">0</b>Phone Screens</div>
+    <div class="app-stat onsite"><b id="cnt-onsite">0</b>Onsites</div>
+    <div class="app-stat offer"><b id="cnt-offer">0</b>Offers</div>
+    <div class="app-stat rejected"><b id="cnt-rejected">0</b>Rejected</div>
+    <div class="app-stat response"><b id="cnt-response">--</b>Response rate</div>
+  </div>
 </div>
 <div class="filters">
   <input type="text" id="q" placeholder="Search title or company…" oninput="filter()">
@@ -605,6 +638,7 @@ function refreshTrackerUI() {{
   document.querySelectorAll('.card').forEach(card => {{
     const fp = card.dataset.fp;
     const st = tracker[fp]?.status || '';
+    card.dataset.status = st;
     const btn = card.querySelector('.btn.track');
     if (btn) {{
       btn.className = 'btn track ' + st;
@@ -631,9 +665,35 @@ function updateTrackerStats() {{
   const t = getTracker();
   const counts = {{ applied: 0, phonescreen: 0, onsite: 0, offer: 0, rejected: 0 }};
   Object.values(t).forEach(v => {{ if (counts[v.status] !== undefined) counts[v.status]++; }});
-  const totalApps = counts.applied + counts.phonescreen + counts.onsite + counts.offer;
-  const el = document.getElementById('apps-counter');
-  if (el) el.textContent = totalApps;
+  // Update each per-status counter
+  for (const k of Object.keys(counts)) {{
+    const el = document.getElementById('cnt-' + k);
+    if (el) el.textContent = counts[k];
+  }}
+  // Response rate: any status past 'applied' counts as a response (incl. rejection)
+  const totalApplied = counts.applied + counts.phonescreen + counts.onsite + counts.offer + counts.rejected;
+  const responses = counts.phonescreen + counts.onsite + counts.offer + counts.rejected;
+  const respEl = document.getElementById('cnt-response');
+  if (respEl) {{
+    respEl.textContent = totalApplied === 0 ? '--' : Math.round(100 * responses / totalApplied) + '%';
+  }}
+  // Legacy counter (unused but kept in case anything references it)
+  const legacy = document.getElementById('apps-counter');
+  if (legacy) legacy.textContent = counts.applied + counts.phonescreen + counts.onsite + counts.offer;
+}}
+
+// --- View mode toggle ---------------------------------------------------
+let viewMode = localStorage.getItem('htj_view') || 'all';
+
+function setView(mode) {{
+  viewMode = mode;
+  localStorage.setItem('htj_view', mode);
+  document.body.classList.toggle('apps-mode', mode === 'apps');
+  const allBtn = document.getElementById('view-all');
+  const appsBtn = document.getElementById('view-apps');
+  if (allBtn) allBtn.classList.toggle('active', mode === 'all');
+  if (appsBtn) appsBtn.classList.toggle('active', mode === 'apps');
+  filter();
 }}
 
 // --- Filtering ----------------------------------------------------------
@@ -657,6 +717,7 @@ function filter() {{
     const days = parseInt(c.dataset.listedDays || '9999', 10);
     const st = tracker[c.dataset.fp]?.status || '';
     let show = text.includes(q);
+    if (viewMode === 'apps' && !st) show = false;
     if (flt === 'srOnly' && !(senior && remote)) show = false;
     if (flt === 'sOnly' && !senior) show = false;
     if (flt === 'rOnly' && !remote) show = false;
@@ -692,6 +753,7 @@ function copyCmd() {{
 
 // init
 refreshTrackerUI();
+setView(viewMode);
 </script>
 </body></html>"""
 
