@@ -28,7 +28,7 @@ GHOST_DAYS = 30
 ROOT = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(ROOT, "jobs.db")
 COMPANIES_PATH = os.path.join(ROOT, "companies.json")
-DASHBOARD_PATH = os.path.join(ROOT, "dashboard.html")
+DASHBOARD_PATH = os.path.join(ROOT, "index.html")
 
 # --- Profile-specific scoring (tuned for Geetanjali Arora) ---------------
 

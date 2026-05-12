@@ -24,11 +24,11 @@ jobs:
         run: |
           python3 fetch_jobs.py
 
-      - name: Commit updated dashboard.html and jobs.db
+      - name: Commit updated index.html and jobs.db
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add dashboard.html jobs.db
+          git add index.html jobs.db
           if ! git diff --staged --quiet; then
             git commit -m "auto: refresh dashboard $(date -u +'%Y-%m-%dT%H:%MZ')"
             git push

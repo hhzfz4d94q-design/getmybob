@@ -13,10 +13,10 @@ fi
 echo "Fetching jobs from healthcare/health-tech companies…"
 python3 fetch_jobs.py
 
-if [ -f dashboard.html ]; then
+if [ -f index.html ]; then
     echo ""
     echo "Opening dashboard…"
-    open dashboard.html
+    open index.html
 else
     echo "Something went wrong — no dashboard generated."
     exit 1
