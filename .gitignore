@@ -1,0 +1,21 @@
+# Local secrets — NEVER commit
+.env
+
+# Personal data — stays local on Amit's Mac, never goes to GitHub
+resume.json
+
+# Personal application drafts
+applications/
+
+# Local cache / OS junk
+__pycache__/
+*.pyc
+.DS_Store
+
+# Local-only SQLite journal
+jobs.db-journal
+jobs.db-wal
+jobs.db-shm
+
+# Sample preview (regenerated each run)
+sample_dashboard.html
