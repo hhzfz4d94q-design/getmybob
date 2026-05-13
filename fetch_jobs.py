@@ -1049,7 +1049,7 @@ async function refreshData() {{
 }}
 
 // --- Prep modal (calls Cloudflare Worker for AI generation) -------------
-const PREP_WORKER_URL = 'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/';
+const PREP_WORKER_URL = 'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/prep';
 
 async function prepApplication(fp, btn) {{
   const card = btn.closest('.card');
