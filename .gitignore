@@ -19,3 +19,9 @@ jobs.db-shm
 
 # Sample preview (regenerated each run)
 sample_dashboard.html
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+!.env.example
