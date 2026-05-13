@@ -689,10 +689,10 @@ HTML_TEMPLATE = """<!doctype html>
   .tab-btn.active {{ color: #1f3a5f; border-bottom-color: #1f3a5f; font-weight: 700; }}
   .tab-panel {{ display: none; }}
   .tab-panel.active {{ display: block; }}
-  .dropzone {{ border: 2px dashed #c0c8d4; border-radius: 8px; padding: 28px 16px; text-align: center; background: #fafbfc; transition: all 0.15s; cursor: pointer; }}
+  .dropzone {{ display: block; box-sizing: border-box; width: 100%; border: 2px dashed #c0c8d4; border-radius: 8px; padding: 28px 16px; text-align: center; background: #fafbfc; transition: all 0.15s; cursor: pointer; }}
   .dropzone:hover, .dropzone.drag {{ background: #eef3fa; border-color: #1f3a5f; }}
   .dropzone strong {{ display: block; font-size: 14px; color: #1f3a5f; margin-bottom: 4px; }}
-  .dropzone span {{ font-size: 12px; color: #666; }}
+  .dropzone span {{ display: block; font-size: 12px; color: #666; }}
   .version-row {{ display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid #e6e8eb; border-radius: 6px; margin-bottom: 6px; background: #fff; }}
   .version-row.active {{ border-color: #1f3a5f; background: #f3f7fc; }}
   .version-main {{ flex: 1; min-width: 0; }}
@@ -707,6 +707,7 @@ HTML_TEMPLATE = """<!doctype html>
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head><body>
 <header>
   <h1>HealthTech Jobs for Geetanjali</h1>
@@ -850,6 +851,15 @@ HTML_TEMPLATE = """<!doctype html>
         <div class="prep-label">LinkedIn Intro</div>
         <pre id="prep-linkedin" class="prep-text"></pre>
         <button class="btn primary" onclick="copyPrepField('prep-linkedin', this)">Copy LinkedIn intro</button>
+      </div>
+      <div class="prep-section" id="prep-resume-section" style="display:none;">
+        <div class="prep-label">Tailored Resume</div>
+        <div id="prep-resume-preview" style="background:#fff; border:1px solid #e2e5ea; padding:18px 22px; border-radius:6px; font-size:13px; line-height:1.5; max-height:420px; overflow-y:auto; margin:0 0 8px 0;"></div>
+        <div style="display:flex; flex-wrap:wrap; gap:6px;">
+          <button class="btn primary" onclick="copyTailoredResume(this)">Copy as text</button>
+          <button class="btn primary" onclick="downloadTailoredResume('pdf', this)">Download PDF</button>
+          <button class="btn primary" onclick="downloadTailoredResume('doc', this)">Download Word</button>
+        </div>
       </div>
     </div>
   </div>
@@ -1405,6 +1415,15 @@ async function prepApplication(fp, btn) {{
     document.getElementById('prep-summary').textContent = data.summary || '(no summary returned)';
     document.getElementById('prep-cover').textContent = data.coverLetter || '(no cover letter returned)';
     document.getElementById('prep-linkedin').textContent = data.linkedin || '(no LinkedIn intro returned)';
+    _tailoredResume = data.tailoredResume || null;
+    _tailoredJobMeta = {{ jobTitle, company }};
+    const tailoredSection = document.getElementById('prep-resume-section');
+    if (_tailoredResume && _tailoredResume.personal) {{
+      document.getElementById('prep-resume-preview').innerHTML = _renderResumeHTML(_tailoredResume);
+      tailoredSection.style.display = 'block';
+    }} else {{
+      tailoredSection.style.display = 'none';
+    }}
     statusEl.style.display = 'none';
     outputEl.style.display = 'block';
   }} catch (e) {{
@@ -1420,6 +1439,199 @@ function copyPrepField(id, btn) {{
     btn.textContent = 'Copied!';
     setTimeout(() => {{ btn.textContent = orig; }}, 1500);
   }});
+}}
+
+// --- Tailored resume rendering + downloads ----------------------------
+let _tailoredResume = null;
+let _tailoredJobMeta = {{ jobTitle: '', company: '' }};
+
+function _escHtml(s) {{ return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}}[c])); }}
+
+function _renderResumeHTML(r) {{
+  if (!r || !r.personal) return '';
+  const p = r.personal || {{}};
+  const contact = [p.location, p.phone, p.email, p.linkedin].filter(Boolean).map(x => _escHtml(x)).join(' &nbsp;·&nbsp; ');
+  let html = '';
+  html += '<div style="text-align:center; margin-bottom:14px;">';
+  html += '<div style="font-size:20px; font-weight:700; color:#1f3a5f; letter-spacing:0.3px;">' + _escHtml(p.name || '') + '</div>';
+  if (contact) html += '<div style="font-size:11.5px; color:#555; margin-top:4px;">' + contact + '</div>';
+  html += '</div>';
+  if (r.summary) {{
+    html += '<div style="margin-bottom:12px;">' + _escHtml(r.summary) + '</div>';
+  }}
+  if (r.skills && r.skills.length) {{
+    html += '<div style="margin-bottom:14px;"><div style="font-weight:700; color:#1f3a5f; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #d0d6e0; padding-bottom:3px; margin-bottom:6px;">Core Skills</div>';
+    html += '<div style="font-size:12.5px;">' + r.skills.map(s => _escHtml(s)).join(' &nbsp;·&nbsp; ') + '</div></div>';
+  }}
+  if (r.experience && r.experience.length) {{
+    html += '<div style="margin-bottom:14px;"><div style="font-weight:700; color:#1f3a5f; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #d0d6e0; padding-bottom:3px; margin-bottom:6px;">Experience</div>';
+    r.experience.forEach(exp => {{
+      html += '<div style="margin-bottom:10px;">';
+      html += '<div style="display:flex; justify-content:space-between; gap:10px;"><div><strong>' + _escHtml(exp.title || '') + '</strong> — ' + _escHtml(exp.company || '') + (exp.location ? '<span style="color:#666;"> (' + _escHtml(exp.location) + ')</span>' : '') + '</div>';
+      html += '<div style="color:#666; font-size:11.5px; white-space:nowrap;">' + _escHtml(exp.start || '') + ' – ' + _escHtml(exp.end || '') + '</div></div>';
+      if (exp.bullets && exp.bullets.length) {{
+        html += '<ul style="margin:4px 0 0 18px; padding:0;">';
+        exp.bullets.forEach(b => {{ html += '<li style="margin-bottom:2px;">' + _escHtml(b) + '</li>'; }});
+        html += '</ul>';
+      }}
+      html += '</div>';
+    }});
+    html += '</div>';
+  }}
+  if (r.education && r.education.length) {{
+    html += '<div style="margin-bottom:12px;"><div style="font-weight:700; color:#1f3a5f; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #d0d6e0; padding-bottom:3px; margin-bottom:6px;">Education</div>';
+    r.education.forEach(ed => {{
+      const line = [ed.degree, ed.field].filter(Boolean).join(' in ');
+      html += '<div style="margin-bottom:4px;">' + _escHtml(line) + (ed.school ? ' — ' + _escHtml(ed.school) : '') + (ed.year ? ' <span style="color:#666;">(' + _escHtml(ed.year) + ')</span>' : '') + '</div>';
+    }});
+    html += '</div>';
+  }}
+  if (r.certifications && r.certifications.length) {{
+    html += '<div><div style="font-weight:700; color:#1f3a5f; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #d0d6e0; padding-bottom:3px; margin-bottom:6px;">Certifications</div>';
+    html += '<div>' + r.certifications.map(c => _escHtml(c)).join(' &nbsp;·&nbsp; ') + '</div></div>';
+  }}
+  return html;
+}}
+
+function _resumeToText(r) {{
+  if (!r || !r.personal) return '';
+  const p = r.personal || {{}};
+  const lines = [];
+  lines.push((p.name || '').toUpperCase());
+  const contact = [p.location, p.phone, p.email, p.linkedin].filter(Boolean).join(' · ');
+  if (contact) lines.push(contact);
+  lines.push('');
+  if (r.summary) {{ lines.push('SUMMARY'); lines.push(r.summary); lines.push(''); }}
+  if (r.skills && r.skills.length) {{ lines.push('CORE SKILLS'); lines.push(r.skills.join(' · ')); lines.push(''); }}
+  if (r.experience && r.experience.length) {{
+    lines.push('EXPERIENCE');
+    r.experience.forEach(exp => {{
+      const dates = [exp.start, exp.end].filter(Boolean).join(' – ');
+      lines.push((exp.title || '') + ' — ' + (exp.company || '') + (exp.location ? ' (' + exp.location + ')' : '') + (dates ? '  [' + dates + ']' : ''));
+      (exp.bullets || []).forEach(b => lines.push('  • ' + b));
+      lines.push('');
+    }});
+  }}
+  if (r.education && r.education.length) {{
+    lines.push('EDUCATION');
+    r.education.forEach(ed => {{
+      const line = [ed.degree, ed.field].filter(Boolean).join(' in ');
+      lines.push(line + (ed.school ? ' — ' + ed.school : '') + (ed.year ? ' (' + ed.year + ')' : ''));
+    }});
+    lines.push('');
+  }}
+  if (r.certifications && r.certifications.length) {{
+    lines.push('CERTIFICATIONS');
+    lines.push(r.certifications.join(' · '));
+  }}
+  return lines.join('\\n');
+}}
+
+function _resumeFilename(ext) {{
+  const company = (_tailoredJobMeta.company || 'company').replace(/[^a-z0-9]+/gi,'_').replace(/^_|_$/g,'').slice(0, 30);
+  const name = (_tailoredResume && _tailoredResume.personal && _tailoredResume.personal.name) ? _tailoredResume.personal.name.replace(/[^a-z0-9]+/gi,'_').replace(/^_|_$/g,'') : 'Resume';
+  return name + '_' + company + '.' + ext;
+}}
+
+function copyTailoredResume(btn) {{
+  if (!_tailoredResume) return;
+  const text = _resumeToText(_tailoredResume);
+  navigator.clipboard.writeText(text).then(() => {{
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => {{ btn.textContent = orig; }}, 1500);
+  }});
+}}
+
+function _buildPrintableHTML(r) {{
+  // Letter-paper friendly HTML. Word opens HTML-with-.doc-extension natively.
+  return `<!doctype html><html><head><meta charset="utf-8"><title>${{_escHtml((r.personal && r.personal.name) || 'Resume')}}</title>` +
+         `<style>body{{font-family:Calibri,Arial,sans-serif;color:#222;font-size:11pt;line-height:1.4;margin:32px 40px;}}` +
+         `h1{{font-size:18pt;margin:0 0 4px 0;color:#1f3a5f;text-align:center;letter-spacing:.5px;}}` +
+         `.contact{{text-align:center;font-size:10pt;color:#555;margin-bottom:14px;}}` +
+         `h2{{font-size:11pt;color:#1f3a5f;text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid #c0c8d4;padding-bottom:2px;margin:14px 0 6px 0;}}` +
+         `.role{{display:flex;justify-content:space-between;gap:10px;font-weight:bold;margin-top:8px;}}` +
+         `.dates{{color:#666;font-weight:normal;font-size:10pt;}}` +
+         `ul{{margin:4px 0 0 20px;padding:0;}}li{{margin-bottom:2px;}}p{{margin:0 0 6px 0;}}` +
+         `</style></head><body>` +
+         _renderResumeForPrint(r) +
+         `</body></html>`;
+}}
+
+function _renderResumeForPrint(r) {{
+  const p = r.personal || {{}};
+  const contact = [p.location, p.phone, p.email, p.linkedin].filter(Boolean).map(x => _escHtml(x)).join(' &nbsp;·&nbsp; ');
+  let html = '';
+  html += '<h1>' + _escHtml(p.name || '') + '</h1>';
+  if (contact) html += '<div class="contact">' + contact + '</div>';
+  if (r.summary) {{ html += '<h2>Summary</h2><p>' + _escHtml(r.summary) + '</p>'; }}
+  if (r.skills && r.skills.length) {{ html += '<h2>Core Skills</h2><p>' + r.skills.map(s => _escHtml(s)).join(' &nbsp;·&nbsp; ') + '</p>'; }}
+  if (r.experience && r.experience.length) {{
+    html += '<h2>Experience</h2>';
+    r.experience.forEach(exp => {{
+      const dates = [exp.start, exp.end].filter(Boolean).map(x => _escHtml(x)).join(' – ');
+      html += '<div class="role"><div>' + _escHtml(exp.title || '') + ' — ' + _escHtml(exp.company || '');
+      if (exp.location) html += ' <span style="color:#666;font-weight:normal;">(' + _escHtml(exp.location) + ')</span>';
+      html += '</div><div class="dates">' + dates + '</div></div>';
+      if (exp.bullets && exp.bullets.length) {{
+        html += '<ul>';
+        exp.bullets.forEach(b => {{ html += '<li>' + _escHtml(b) + '</li>'; }});
+        html += '</ul>';
+      }}
+    }});
+  }}
+  if (r.education && r.education.length) {{
+    html += '<h2>Education</h2>';
+    r.education.forEach(ed => {{
+      const line = [ed.degree, ed.field].filter(Boolean).map(x => _escHtml(x)).join(' in ');
+      html += '<p>' + line + (ed.school ? ' — ' + _escHtml(ed.school) : '') + (ed.year ? ' <span style="color:#666;">(' + _escHtml(ed.year) + ')</span>' : '') + '</p>';
+    }});
+  }}
+  if (r.certifications && r.certifications.length) {{
+    html += '<h2>Certifications</h2><p>' + r.certifications.map(c => _escHtml(c)).join(' &nbsp;·&nbsp; ') + '</p>';
+  }}
+  return html;
+}}
+
+async function downloadTailoredResume(format, btn) {{
+  if (!_tailoredResume) return;
+  const orig = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Building…';
+  try {{
+    if (format === 'pdf') {{
+      const html = _buildPrintableHTML(_tailoredResume);
+      const container = document.createElement('div');
+      container.innerHTML = html;
+      // html2pdf needs the actual content node, not the full <html>
+      const node = container.querySelector('body') ? container : container;
+      await html2pdf().set({{
+        margin: [10, 10, 10, 10],
+        filename: _resumeFilename('pdf'),
+        image: {{ type: 'jpeg', quality: 0.98 }},
+        html2canvas: {{ scale: 2, useCORS: true }},
+        jsPDF: {{ unit: 'mm', format: 'letter', orientation: 'portrait' }},
+        pagebreak: {{ mode: ['css', 'legacy'] }},
+      }}).from(node).save();
+    }} else if (format === 'doc') {{
+      const html = _buildPrintableHTML(_tailoredResume);
+      // Use MIME type Word recognises for HTML; saved as .doc opens directly in Word.
+      const blob = new Blob(['\\ufeff' + html], {{ type: 'application/msword' }});
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = _resumeFilename('doc');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+    }}
+    btn.textContent = 'Downloaded!';
+    setTimeout(() => {{ btn.textContent = orig; btn.disabled = false; }}, 1500);
+  }} catch (e) {{
+    alert('Download failed: ' + (e.message || e));
+    btn.textContent = orig;
+    btn.disabled = false;
+  }}
 }}
 
 // init
