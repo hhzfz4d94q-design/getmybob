@@ -385,6 +385,41 @@ IRRELEVANT_TITLE_TERMS = [
     # Misc HR / talent variations
     "talent strategy", "talent program", "head of recruiting",
     "director of recruiting",
+    # Strategic accounts / partnerships sales (sales-adjacent)
+    "strategic account", "strategic accounts", "account director",
+    "key account", "named accounts", "enterprise accounts",
+    "strategic partnerships", "channel partnerships",
+    "payor partnerships", "payer partnerships",
+    "vp partnerships", "vp, partnerships",
+    "director, partnerships", "director of partnerships",
+    "bd lead", "bd director",
+    # Revenue ops / biz ops (sales-adjacent functions)
+    "revenue operations", "rev ops", "biz ops",
+    "business operations", "business operations -", "business operations,",
+    "deal desk", "deal operations",
+    # Procurement / finance / accounting / audit
+    "controller", "treasurer", "tax director",
+    "chief accounting", "head of accounting",
+    # Medical / clinical operations / informatics (specialist clinical IT)
+    "medical excellence", "medical operations",
+    "clinical ops", "clinical analytics", "clinical informatics",
+    "clinical product", "clinical solutions",
+    # Data engineering / architecture
+    "data architect", "data solutions", "data engineering",
+    "solutions architect", "enterprise architect",
+    # Application / IT operations / support
+    "application support", "application operations",
+    "service desk", "help desk", "desktop support",
+    # GRC / risk / governance
+    "grc", "governance, risk", "governance risk", "risk management",
+    "internal controls", "model risk",
+    # Internal comms / brand / pr (now also caught by bare "communications")
+    "head of brand", "brand director",
+    "public relations", "investor relations", "ir lead",
+    # Specialty insurance / product solutions (insurance product mgmt is its own world)
+    "insurance product solutions",
+    # Generic IC analyst roles
+    "data analyst", "business analyst i", "research analyst",
     # Junior / entry
     "junior", "intern", "internship", "associate ", "coordinator",
     "specialist i", "analyst i", "level i",
@@ -395,6 +430,8 @@ IRRELEVANT_TITLE_TERMS = [
 SINGLE_WORD_FILTERS = [
     "sales", "marketing", "recruiting", "recruiter", "staffing",
     "clinician", "underwriter", "underwriting", "auditor",
+    "procurement", "communications", "comms",
+    "security",  # info-sec / GRC roles — Geetanjali is product/transformation, not InfoSec
 ]
 
 
