@@ -59,6 +59,53 @@ AGENCY_TERMS = [
     "contract to hire", "c2h", "w2 only", "1099 contract"
 ]
 
+# Contract-employment signals — used to classify employment_type per job.
+# Strong phrases unlikely to false-positive on full-time roles.
+CONTRACT_STRONG_PHRASES = [
+    "fractional", "interim",
+    "1099", "c2c", "c2h", "w2 hourly",
+    "consulting engagement", "contract role", "contract position",
+    "contract-to-hire", "contract to hire",
+    "fixed-term contract", "fixed term contract",
+    "project-based engagement", "freelance",
+    "12-month contract", "6-month contract", "3-month contract",
+    "9-month contract", "18-month contract",
+    "temporary contract", "temp contract",
+]
+
+# Title-only contract markers (more specific to avoid false positives)
+CONTRACT_TITLE_MARKERS = [
+    "fractional", "interim", "1099 ",
+]
+
+# Signals that indicate a permanent / full-time role
+FULL_TIME_PHRASES = [
+    "full-time", "full time", "permanent role", "permanent position",
+    "401(k)", "401k", "stock options", "rsu", "vested over",
+    "equity grant", "fully remote, full-time",
+]
+
+
+def detect_employment_type(job):
+    """Return 'contract', 'full-time', or 'unknown' for a job."""
+    title = (job.get("title") or "").lower()
+    desc = (job.get("description") or "").lower()
+    blob = title + " " + desc
+
+    # Title-only contract markers — strong enough to classify on title alone
+    for m in CONTRACT_TITLE_MARKERS:
+        if m in title:
+            return "contract"
+    # Strong contract phrases anywhere
+    for p in CONTRACT_STRONG_PHRASES:
+        if p in blob:
+            return "contract"
+    # Otherwise, look for permanent / FTE signals
+    for p in FULL_TIME_PHRASES:
+        if p in blob:
+            return "full-time"
+    return "unknown"
+
 
 # --- HTTP helpers --------------------------------------------------------
 
@@ -710,6 +757,12 @@ def get_conn():
                 conn.commit()
             except sqlite3.OperationalError:
                 pass  # column already exists
+            # Migration: add employment_type column
+            try:
+                conn.execute("ALTER TABLE jobs ADD COLUMN employment_type TEXT")
+                conn.commit()
+            except sqlite3.OperationalError:
+                pass
             return conn
         except sqlite3.DatabaseError:
             if attempt == 0 and os.path.exists(DB_PATH):
@@ -732,22 +785,23 @@ def upsert_job(conn, job):
     score = score_job(job)
 
     salary = job.get("salary_range") or ""
+    employment_type = detect_employment_type(job)
     cur = conn.execute("SELECT fingerprint, sightings FROM jobs WHERE fingerprint=?", (fp,))
     row = cur.fetchone()
     if row:
         conn.execute(
-            "UPDATE jobs SET last_seen=?, sightings=sightings+1, score=?, remote=?, senior=?, salary_range=? WHERE fingerprint=?",
-            (now, score, remote, senior, salary, fp),
+            "UPDATE jobs SET last_seen=?, sightings=sightings+1, score=?, remote=?, senior=?, salary_range=?, employment_type=? WHERE fingerprint=?",
+            (now, score, remote, senior, salary, employment_type, fp),
         )
     else:
         conn.execute(
             """INSERT INTO jobs (fingerprint, source, company_slug, company_name, external_id,
                title, location, url, posted_at, description, first_seen, last_seen,
-               sightings, remote, senior, score, salary_range)
-               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,1,?,?,?,?)""",
+               sightings, remote, senior, score, salary_range, employment_type)
+               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,1,?,?,?,?,?)""",
             (fp, job["source"], job["company_slug"], job["company_name"], job["external_id"],
              job["title"], job["location"], job["url"], job["posted_at"], job["description"],
-             now, now, remote, senior, score, salary),
+             now, now, remote, senior, score, salary, employment_type),
         )
 
 
@@ -830,7 +884,7 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
 
     rows = conn.execute("""
         SELECT fingerprint, company_name, title, location, url, posted_at, first_seen, last_seen,
-               sightings, remote, senior, score, description, salary_range
+               sightings, remote, senior, score, description, salary_range, employment_type
         FROM jobs
         WHERE last_seen >= datetime('now', '-30 days')
         ORDER BY score DESC, last_seen DESC
@@ -863,7 +917,8 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
     cards = []
     for r in rows:
         (fp, company, title, loc, url, posted_at, first_seen, last_seen,
-         sightings, remote, senior, score, desc, salary) = r
+         sightings, remote, senior, score, desc, salary, employment_type) = r
+        emp = (employment_type or "unknown").lower()
         # "Listed" age — prefer the source's posted_at, fall back to first_seen
         listed_days = _days_old(posted_at) if posted_at else None
         if listed_days is None:
@@ -874,6 +929,7 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         badges = []
         if senior: badges.append('<span class="b senior">Senior</span>')
         if remote: badges.append('<span class="b remote">Remote</span>')
+        if emp == "contract": badges.append('<span class="b contract">Contract</span>')
         if listed_days == 0: badges.append('<span class="b fresh">New today</span>')
         elif listed_days is not None and listed_days <= 7: badges.append('<span class="b week">This week</span>')
         if ghost_flag: badges.append(f'<span class="b ghost">Ghost? {listed_days}d</span>')
@@ -882,7 +938,7 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         salary_html = f'<div class="salary-row"><span class="salary">{_esc(salary)}</span></div>' if salary else ''
 
         cards.append(f"""
-        <div class="card" data-fp="{fp}" data-score="{score}" data-senior="{senior}" data-remote="{remote}" data-listed-days="{listed_days if listed_days is not None else 9999}" data-salary-max="{salary_max}" data-last-seen="{last_seen or ''}" data-first-seen="{first_seen or ''}">
+        <div class="card" data-fp="{fp}" data-score="{score}" data-senior="{senior}" data-remote="{remote}" data-employment="{emp}" data-listed-days="{listed_days if listed_days is not None else 9999}" data-salary-max="{salary_max}" data-last-seen="{last_seen or ''}" data-first-seen="{first_seen or ''}">
           <div class="row1">
             <div class="title"><a href="{url}" target="_blank">{_esc(title)}</a></div>
             <div class="score">{score}</div>
@@ -976,6 +1032,7 @@ HTML_TEMPLATE = """<!doctype html>
   .b {{ font-size: 11px; padding: 2px 8px; border-radius: 999px; }}
   .b.senior {{ background: #e6f0ff; color: #1f3a5f; }}
   .b.remote {{ background: #e6fff0; color: #0a6b3a; }}
+  .b.contract {{ background: #f3e6ff; color: #5a1f8a; }}
   .b.ghost {{ background: #fff1e6; color: #a85c00; }}
   .b.repost {{ background: #ffe6e6; color: #a80000; }}
   .b.fresh {{ background: #fffbe6; color: #8a6d00; font-weight: 600; }}
@@ -1076,6 +1133,10 @@ HTML_TEMPLATE = """<!doctype html>
     <span class="view-label">View:</span>
     <button class="pill active" id="view-all" onclick="setView('all')">All Jobs</button>
     <button class="pill" id="view-apps" onclick="setView('apps')">My Applications</button>
+    <span class="view-label" style="margin-left:20px;">Type:</span>
+    <button class="pill active" id="type-all" onclick="setEmploymentFilter('all')">All</button>
+    <button class="pill" id="type-fulltime" onclick="setEmploymentFilter('full-time')">Full-time</button>
+    <button class="pill" id="type-contract" onclick="setEmploymentFilter('contract')">Contract</button>
   </div>
   <div class="app-stats">
     <div class="app-stat applied"><b id="cnt-applied">0</b>Applied</div>
@@ -1339,8 +1400,22 @@ function sortCards() {{
 // --- Filtering ----------------------------------------------------------
 function setWindow(btn, w) {{
   activeWindow = w;
-  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  // Only toggle time-window pills (don't touch View / Type pills)
+  document.querySelectorAll('[data-window]').forEach(p => p.classList.remove('active'));
   btn.classList.add('active');
+  filter();
+}}
+
+// --- Employment-type filter --------------------------------------------
+let employmentFilter = localStorage.getItem('htj_employment') || 'all';
+
+function setEmploymentFilter(mode) {{
+  employmentFilter = mode;
+  localStorage.setItem('htj_employment', mode);
+  ['all','full-time','contract'].forEach(k => {{
+    const el = document.getElementById('type-' + (k === 'full-time' ? 'fulltime' : k));
+    if (el) el.classList.toggle('active', k === mode);
+  }});
   filter();
 }}
 function filter() {{
@@ -1371,6 +1446,10 @@ function filter() {{
     else if (trk && trk !== 'untouched' && st !== trk) show = false;
     if (sal === 'listed' && salaryMax === 0) show = false;
     else if (sal && sal !== 'listed' && salaryMax < parseInt(sal, 10)) show = false;
+    // Employment-type filter — unknown counts as full-time
+    const emp = c.dataset.employment || 'unknown';
+    if (employmentFilter === 'contract' && emp !== 'contract') show = false;
+    else if (employmentFilter === 'full-time' && emp === 'contract') show = false;
     c.style.display = show ? '' : 'none';
     if (show) shown++;
   }});
@@ -1987,6 +2066,7 @@ async function downloadTailoredResume(format, btn) {{
 // init
 refreshTrackerUI();
 setView(viewMode);
+setEmploymentFilter(employmentFilter);
 </script>
 </body></html>"""
 
