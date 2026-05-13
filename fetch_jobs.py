@@ -418,6 +418,27 @@ IRRELEVANT_TITLE_TERMS = [
     "public relations", "investor relations", "ir lead",
     # Specialty insurance / product solutions (insurance product mgmt is its own world)
     "insurance product solutions",
+    # Client / patient engagement (sales-side or care-team)
+    "client engagement", "client services", "client success",
+    "client partner", "patient engagement", "patient experience",
+    # Talent community (recruiting funnel — not a real role)
+    "talent community", "talent pool",
+    # Coach / counsellor / specialist (clinician-flavoured)
+    "mental health coach", "online coach", "online mental",
+    "wellness coach", "health coach", "behavioral coach",
+    "career coach",
+    # Clinical-trial site / regulatory affairs niche
+    "site start up", "site start-up", "study start up", "study start-up",
+    "site activation", "clinical site",
+    # Engineering management (line-managing engineers, not Geetanjali's lane)
+    "engineering manager", "manager, engineering",
+    "engineering team lead", "head of platform engineering",
+    "adoption and value realization", "adoption manager",
+    "value realization",
+    # Manufacturing / production / lab ops
+    "production operations", "manufacturing", "lab operations",
+    "laboratory operations", "process development", "qa manager",
+    "quality assurance manager", "facilities", "facility manager",
     # Generic IC analyst roles
     "data analyst", "business analyst i", "research analyst",
     # Junior / entry
@@ -432,6 +453,11 @@ SINGLE_WORD_FILTERS = [
     "clinician", "underwriter", "underwriting", "auditor",
     "procurement", "communications", "comms",
     "security",  # info-sec / GRC roles — Geetanjali is product/transformation, not InfoSec
+    "regulatory",  # regulatory affairs — clinical-research adjacent
+    "supervisor",  # too junior
+    "coach",  # health coaches, wellness coaches — non-IT roles
+    "neuroscience",  # bench/lab research
+    "materials",  # supply-chain / procurement
 ]
 
 
