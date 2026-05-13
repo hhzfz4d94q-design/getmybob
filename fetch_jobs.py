@@ -268,7 +268,11 @@ SOURCES = {"greenhouse": fetch_greenhouse, "lever": fetch_lever, "ashby": fetch_
 # --- Utilities -----------------------------------------------------------
 
 def _strip_html(s):
-    s = re.sub(r"<[^>]+>", " ", s or "")
+    import html as _html_mod
+    s = s or ""
+    # Some sources pre-encode entities (&lt;p&gt;…). Decode first so the regex catches tags.
+    s = _html_mod.unescape(_html_mod.unescape(s))
+    s = re.sub(r"<[^>]+>", " ", s)
     s = re.sub(r"\s+", " ", s).strip()
     return s[:4000]
 
@@ -338,22 +342,69 @@ def is_senior(job):
     return any(term in t for term in SENIOR_TITLE_TERMS)
 
 
+# --- Skills profile (loaded once at run start, used for scoring) ---------
+WORKER_BASE_URL = "https://cool-darkness-dce5.tr6jz6v7wg.workers.dev"
+SKILLS_PROFILE = None  # populated by load_skills_profile() at run start
+
+
+def load_skills_profile():
+    """Fetch the AI-generated skills profile from the Cloudflare Worker.
+    Returns None on failure — scoring falls back to legacy hardcoded keywords."""
+    try:
+        req = Request(WORKER_BASE_URL + "/skills-profile", headers={"User-Agent": "fetch_jobs.py"})
+        with urlopen(req, timeout=15) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+        profile = data.get("profile")
+        if not profile or not isinstance(profile, dict):
+            return None
+        # Normalise: ensure keyword lists are lowercase
+        for k in ("keywords", "seniorityTitles", "industries", "negativeKeywords"):
+            if isinstance(profile.get(k), list):
+                profile[k] = [str(x).lower().strip() for x in profile[k] if x]
+            else:
+                profile[k] = []
+        return profile
+    except Exception as e:
+        print(f"[skills-profile] could not load: {e}", flush=True)
+        return None
+
+
 def score_job(job):
-    """0-100 score. Higher = more relevant + more likely 'real'."""
+    """0-100 score. Higher = more relevant + more likely 'real'.
+    Uses the AI-extracted skills profile when available; falls back to hardcoded keywords."""
     s = 50
     blob = f"{job['title']} {job['description']}".lower()
+    title = (job["title"] or "").lower()
 
     # Profile mismatch — bring to very low score so it won't appear
     if _is_irrelevant_title(job["title"]):
         return 0
 
-    # Seniority bonus
-    if is_senior(job):
-        s += 15
+    profile = SKILLS_PROFILE
+    if profile:
+        # AI-driven negative keywords — disqualify on title match
+        neg = profile.get("negativeKeywords", [])
+        if any(n and n in title for n in neg):
+            return 0
 
-    # Healthcare/digital relevance
-    hits = sum(1 for t in RELEVANCE_TERMS if t in blob)
-    s += min(hits * 2, 20)
+        # Seniority match from profile
+        sen_titles = profile.get("seniorityTitles", []) or SENIOR_TITLE_TERMS
+        if any(t in title for t in sen_titles):
+            s += 15
+
+        # Profile-driven keyword relevance — weighted hits
+        kw_hits = sum(1 for k in profile.get("keywords", []) if k and k in blob)
+        s += min(kw_hits * 3, 25)
+
+        # Industry match — title or company hint
+        ind_hits = sum(1 for i in profile.get("industries", []) if i and i in blob)
+        s += min(ind_hits * 2, 8)
+    else:
+        # Legacy path — used when Worker is unreachable
+        if is_senior(job):
+            s += 15
+        hits = sum(1 for t in RELEVANCE_TERMS if t in blob)
+        s += min(hits * 2, 20)
 
     # Remote bonus
     if is_remote(job):
@@ -455,8 +506,18 @@ def upsert_job(conn, job):
 # --- Main pipeline -------------------------------------------------------
 
 def run():
+    global SKILLS_PROFILE
     with open(COMPANIES_PATH) as f:
         companies = json.load(f)
+
+    # Load the AI-extracted skills profile (used by score_job).
+    SKILLS_PROFILE = load_skills_profile()
+    if SKILLS_PROFILE:
+        print(f"[skills-profile] loaded: {SKILLS_PROFILE.get('primaryRole', '?')} "
+              f"({len(SKILLS_PROFILE.get('keywords', []))} keywords, "
+              f"{len(SKILLS_PROFILE.get('negativeKeywords', []))} negative)", flush=True)
+    else:
+        print("[skills-profile] not available — falling back to hardcoded RELEVANCE_TERMS", flush=True)
 
     conn = get_conn()
     totals = {"greenhouse": 0, "lever": 0, "ashby": 0}
