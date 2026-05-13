@@ -273,9 +273,19 @@ def _strip_html(s):
     return s[:4000]
 
 
+STOP_WORDS = {"of", "the", "and", "for", "a", "an", "to", "with", "in", "on", "at", "by", "or"}
+
+
+def _normalize_title(title):
+    """Lowercase, strip stop words, then concatenate alphanumerics so minor wording
+    differences ('Director of Product' vs 'Director, Product') collapse to the same hash."""
+    words = re.split(r"[^a-z0-9]+", (title or "").lower())
+    return "".join(w for w in words if w and w not in STOP_WORDS)
+
+
 def fingerprint(job):
     """Stable hash so the same role across reposts/sources dedupes."""
-    base = f"{job['company_slug']}|{re.sub(r'[^a-z0-9]+', '', (job['title'] or '').lower())}|{re.sub(r'[^a-z0-9]+', '', (job['location'] or '').lower())}"
+    base = f"{job['company_slug']}|{_normalize_title(job['title'])}|{re.sub(r'[^a-z0-9]+', '', (job['location'] or '').lower())}"
     return sha256(base.encode()).hexdigest()[:16]
 
 
@@ -503,7 +513,7 @@ def generate_dashboard(conn):
         salary_html = f'<div class="salary-row"><span class="salary">{_esc(salary)}</span></div>' if salary else ''
 
         cards.append(f"""
-        <div class="card" data-fp="{fp}" data-score="{score}" data-senior="{senior}" data-remote="{remote}" data-listed-days="{listed_days if listed_days is not None else 9999}" data-salary-max="{salary_max}">
+        <div class="card" data-fp="{fp}" data-score="{score}" data-senior="{senior}" data-remote="{remote}" data-listed-days="{listed_days if listed_days is not None else 9999}" data-salary-max="{salary_max}" data-last-seen="{last_seen or ''}" data-first-seen="{first_seen or ''}">
           <div class="row1">
             <div class="title"><a href="{url}" target="_blank">{_esc(title)}</a></div>
             <div class="score">{score}</div>
@@ -553,9 +563,12 @@ HTML_TEMPLATE = """<!doctype html>
 <html><head><meta charset="utf-8"><title>HealthTech Jobs — Geetanjali</title>
 <style>
   body {{ font: 14px -apple-system, system-ui, sans-serif; margin: 0; background: #f7f7f8; color: #222; }}
-  header {{ background: #1f3a5f; color: white; padding: 18px 28px; }}
+  header {{ background: #1f3a5f; color: white; padding: 18px 28px; position: relative; }}
   header h1 {{ margin: 0; font-size: 20px; }}
   header .sub {{ opacity: .85; font-size: 13px; margin-top: 4px; }}
+  .header-btn {{ position: absolute; right: 28px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; }}
+  .header-btn:hover {{ background: rgba(255,255,255,0.25); }}
+  .header-btn:disabled {{ opacity: 0.5; cursor: not-allowed; }}
   .stats {{ display: flex; gap: 24px; padding: 14px 28px; background: white; border-bottom: 1px solid #e5e5ea; }}
   .stat {{ font-size: 13px; }}
   .stat b {{ font-size: 22px; display: block; color: #1f3a5f; }}
@@ -633,6 +646,7 @@ HTML_TEMPLATE = """<!doctype html>
 <header>
   <h1>HealthTech Jobs for Geetanjali</h1>
   <div class="sub">Senior leadership · Healthcare IT · Remote · Generated {generated}</div>
+  <button id="refresh-btn" class="header-btn" onclick="refreshData()">Refresh data</button>
 </header>
 <div class="stats">
   <div class="stat"><b>{total}</b>Total jobs tracked</div>
@@ -679,6 +693,12 @@ HTML_TEMPLATE = """<!doctype html>
     <option value="150000">$150k+</option>
     <option value="200000">$200k+</option>
     <option value="250000">$250k+</option>
+  </select>
+  <select id="sortBy" onchange="sortCards()">
+    <option value="score">Sort: Best match</option>
+    <option value="salary">Sort: Salary (high to low)</option>
+    <option value="recent">Sort: Most recent</option>
+    <option value="ghost">Sort: Newest postings first</option>
   </select>
   <span style="display:flex; gap:6px; align-items:center;">
     <button class="pill active" data-window="all" onclick="setWindow(this,'all')">All</button>
@@ -815,6 +835,30 @@ function setView(mode) {{
   filter();
 }}
 
+// --- Sorting ------------------------------------------------------------
+function sortCards() {{
+  const sel = document.getElementById('sortBy');
+  if (!sel) return;
+  const by = sel.value || 'score';
+  const grid = document.getElementById('grid');
+  const cards = Array.from(grid.querySelectorAll('.card'));
+  cards.sort((a, b) => {{
+    if (by === 'salary') {{
+      return (parseInt(b.dataset.salaryMax || '0', 10)) - (parseInt(a.dataset.salaryMax || '0', 10));
+    }}
+    if (by === 'recent') {{
+      return (b.dataset.lastSeen || '').localeCompare(a.dataset.lastSeen || '');
+    }}
+    if (by === 'ghost') {{
+      // First-seen most recent first (i.e., newest job listings)
+      return (b.dataset.firstSeen || '').localeCompare(a.dataset.firstSeen || '');
+    }}
+    // score (default)
+    return (parseInt(b.dataset.score || '0', 10)) - (parseInt(a.dataset.score || '0', 10));
+  }});
+  cards.forEach(c => grid.appendChild(c));
+}}
+
 // --- Filtering ----------------------------------------------------------
 function setWindow(btn, w) {{
   activeWindow = w;
@@ -855,6 +899,44 @@ function filter() {{
   }});
   const counter = document.getElementById('shown-counter');
   if (counter) counter.textContent = shown;
+}}
+
+// --- Refresh data (triggers GitHub Action via Cloudflare Worker) --------
+const REFRESH_WORKER_URL = 'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/refresh';
+
+async function refreshData() {{
+  const btn = document.getElementById('refresh-btn');
+  if (!btn) return;
+  const original = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Triggering refresh…';
+  try {{
+    const r = await fetch(REFRESH_WORKER_URL, {{ method: 'POST' }});
+    const data = await r.json().catch(() => ({{}}));
+    if (!r.ok || data.error) {{
+      btn.textContent = 'Refresh failed';
+      alert('Refresh failed: ' + (data.error || ('HTTP ' + r.status)) + (data.details ? '\\n' + data.details : ''));
+      setTimeout(() => {{ btn.textContent = original; btn.disabled = false; }}, 3000);
+      return;
+    }}
+  }} catch (e) {{
+    btn.textContent = 'Refresh failed';
+    alert('Refresh failed: ' + (e.message || e));
+    setTimeout(() => {{ btn.textContent = original; btn.disabled = false; }}, 3000);
+    return;
+  }}
+  // Countdown then reload
+  let secs = 150;
+  const tick = () => {{
+    btn.textContent = `Fetching jobs… ${{secs}}s, page will reload`;
+    secs--;
+    if (secs <= 0) {{
+      window.location.reload();
+    }} else {{
+      setTimeout(tick, 1000);
+    }}
+  }};
+  tick();
 }}
 
 // --- Prep modal (calls Cloudflare Worker for AI generation) -------------
