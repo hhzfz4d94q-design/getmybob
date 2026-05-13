@@ -684,7 +684,29 @@ HTML_TEMPLATE = """<!doctype html>
   .desc {{ font-size: 12.5px; color: #444; margin-top: 6px; line-height: 1.4; }}
   .salary-row {{ margin: 6px 0 2px 0; }}
   .salary {{ display: inline-block; background: #e6fff0; color: #0a6b3a; padding: 2px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; }}
+  .tabs {{ display: flex; gap: 4px; border-bottom: 1px solid #e0e0e0; margin: 10px 0 16px 0; }}
+  .tab-btn {{ background: none; border: none; padding: 8px 14px; cursor: pointer; font-size: 13px; color: #666; border-bottom: 2px solid transparent; font-weight: 500; }}
+  .tab-btn.active {{ color: #1f3a5f; border-bottom-color: #1f3a5f; font-weight: 700; }}
+  .tab-panel {{ display: none; }}
+  .tab-panel.active {{ display: block; }}
+  .dropzone {{ border: 2px dashed #c0c8d4; border-radius: 8px; padding: 28px 16px; text-align: center; background: #fafbfc; transition: all 0.15s; cursor: pointer; }}
+  .dropzone:hover, .dropzone.drag {{ background: #eef3fa; border-color: #1f3a5f; }}
+  .dropzone strong {{ display: block; font-size: 14px; color: #1f3a5f; margin-bottom: 4px; }}
+  .dropzone span {{ font-size: 12px; color: #666; }}
+  .version-row {{ display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid #e6e8eb; border-radius: 6px; margin-bottom: 6px; background: #fff; }}
+  .version-row.active {{ border-color: #1f3a5f; background: #f3f7fc; }}
+  .version-main {{ flex: 1; min-width: 0; }}
+  .version-label {{ font-weight: 600; font-size: 13px; color: #1f3a5f; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+  .version-meta {{ font-size: 11px; color: #777; margin-top: 2px; }}
+  .version-badge {{ background: #1f3a5f; color: white; font-size: 10px; padding: 2px 7px; border-radius: 10px; font-weight: 700; letter-spacing: 0.3px; }}
+  .version-actions {{ display: flex; gap: 4px; }}
+  .v-btn {{ background: #f3f4f6; border: 1px solid #ddd; color: #333; padding: 5px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; font-weight: 500; }}
+  .v-btn:hover {{ background: #e6e8eb; }}
+  .v-btn.danger {{ color: #b00; }}
+  .v-btn.primary {{ background: #1f3a5f; color: white; border-color: #1f3a5f; }}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 </head><body>
 <header>
   <h1>HealthTech Jobs for Geetanjali</h1>
@@ -761,13 +783,48 @@ HTML_TEMPLATE = """<!doctype html>
   <div class="modal prep-result-modal">
     <span class="modal-close" onclick="closeResumeModal()">&times;</span>
     <h3>Geetanjali's Resume</h3>
-    <p class="prep-status" id="resume-status">Loading current resume…</p>
+    <p class="prep-status" id="resume-status">Loading…</p>
     <div id="resume-editor" style="display:none;">
-      <p style="font-size:13px;color:#555;margin-bottom:8px;">Paste the JSON resume below, then click Save. The AI uses this to tailor every application.</p>
-      <textarea id="resume-text" spellcheck="false" style="width:100%; height:340px; font-family: ui-monospace, Menlo, monospace; font-size: 12px; padding: 10px; border: 1px solid #ddd; border-radius: 6px; resize: vertical;"></textarea>
-      <div style="margin-top: 12px; display: flex; gap: 8px; align-items: center;">
-        <button class="btn primary" onclick="saveResume(this)">Save resume</button>
-        <span id="resume-save-status" style="font-size: 12px; color: #555;"></span>
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="upload" onclick="setResumeTab('upload')">Upload File</button>
+        <button class="tab-btn" data-tab="versions" onclick="setResumeTab('versions')">Versions</button>
+        <button class="tab-btn" data-tab="json" onclick="setResumeTab('json')">Edit JSON</button>
+      </div>
+
+      <div class="tab-panel active" id="tab-upload">
+        <p style="font-size:13px;color:#555;margin-bottom:10px;">Upload Geetanjali's resume as PDF or Word. The AI converts it to structured form and saves a new version.</p>
+        <label for="resume-file-input" class="dropzone" id="resume-dropzone">
+          <strong id="dropzone-label">Click to choose a file</strong>
+          <span>or drop a .pdf / .docx here</span>
+        </label>
+        <input type="file" id="resume-file-input" accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" style="display:none;">
+        <div style="margin-top: 12px; display: flex; gap: 8px; align-items: center;">
+          <button class="btn primary" id="parse-resume-btn" onclick="parseUploadedResume(this)" disabled>Parse &amp; Save</button>
+          <span id="upload-status" style="font-size: 12px; color: #555;"></span>
+        </div>
+        <details style="margin-top:14px;font-size:12px;color:#666;">
+          <summary style="cursor:pointer;">What happens?</summary>
+          <ol style="margin:6px 0 0 18px;padding:0;line-height:1.6;">
+            <li>Your browser reads the file locally (it never leaves your computer raw).</li>
+            <li>The extracted text is sent to the Cloudflare Worker.</li>
+            <li>Claude converts it to structured JSON, saved as a new version.</li>
+            <li>The new version becomes active immediately.</li>
+          </ol>
+        </details>
+      </div>
+
+      <div class="tab-panel" id="tab-versions">
+        <p style="font-size:13px;color:#555;margin-bottom:10px;">Older versions remain saved. Click <em>Activate</em> to switch which one the AI uses.</p>
+        <div id="versions-list"><p style="font-size:12px;color:#888;">Loading versions…</p></div>
+      </div>
+
+      <div class="tab-panel" id="tab-json">
+        <p style="font-size:13px;color:#555;margin-bottom:8px;">Advanced: paste structured JSON directly. Saving creates a new version.</p>
+        <textarea id="resume-text" spellcheck="false" style="width:100%; height:300px; font-family: ui-monospace, Menlo, monospace; font-size: 12px; padding: 10px; border: 1px solid #ddd; border-radius: 6px; resize: vertical;"></textarea>
+        <div style="margin-top: 12px; display: flex; gap: 8px; align-items: center;">
+          <button class="btn primary" onclick="saveResume(this)">Save resume</button>
+          <span id="resume-save-status" style="font-size: 12px; color: #555;"></span>
+        </div>
       </div>
     </div>
   </div>
@@ -964,7 +1021,33 @@ function filter() {{
 }}
 
 // --- Resume editor (Cloudflare Worker + KV) -----------------------------
-const RESUME_WORKER_URL = 'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/resume';
+const WORKER_BASE = 'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev';
+const RESUME_WORKER_URL = WORKER_BASE + '/resume';
+const VERSIONS_WORKER_URL = WORKER_BASE + '/resume-versions';
+const PARSE_RESUME_WORKER_URL = WORKER_BASE + '/parse-resume';
+
+// pdf.js worker path (must be set once before parsing PDFs)
+if (window.pdfjsLib) {{
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+}}
+
+let _pendingUploadFile = null;
+
+function getEditKey(promptMsg) {{
+  let editKey = localStorage.getItem('htj_resume_key');
+  if (!editKey) {{
+    editKey = prompt(promptMsg || 'Enter the resume edit key (set as RESUME_EDIT_KEY secret in the Cloudflare Worker):');
+    if (!editKey) return null;
+    localStorage.setItem('htj_resume_key', editKey);
+  }}
+  return editKey;
+}}
+
+function setResumeTab(name) {{
+  document.querySelectorAll('#resume-editor .tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+  document.querySelectorAll('#resume-editor .tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + name));
+  if (name === 'versions') loadVersions();
+}}
 
 async function openResumeModal() {{
   const modal = document.getElementById('resume-modal');
@@ -972,8 +1055,12 @@ async function openResumeModal() {{
   const editor = document.getElementById('resume-editor');
   const textarea = document.getElementById('resume-text');
   document.getElementById('resume-save-status').textContent = '';
+  document.getElementById('upload-status').textContent = '';
+  document.getElementById('dropzone-label').textContent = 'Click to choose a file';
+  document.getElementById('parse-resume-btn').disabled = true;
+  _pendingUploadFile = null;
   statusEl.className = 'prep-status';
-  statusEl.textContent = 'Loading current resume…';
+  statusEl.textContent = 'Loading…';
   statusEl.style.display = 'block';
   editor.style.display = 'none';
   modal.classList.add('show');
@@ -988,8 +1075,9 @@ async function openResumeModal() {{
     textarea.value = data.resume || '';
     statusEl.style.display = 'none';
     editor.style.display = 'block';
+    setResumeTab('upload');
     if (!data.resume) {{
-      document.getElementById('resume-save-status').textContent = 'No resume saved yet — paste one and click Save.';
+      document.getElementById('upload-status').textContent = 'No resume saved yet — upload one to begin.';
     }}
   }} catch (e) {{
     statusEl.className = 'prep-status error';
@@ -999,6 +1087,196 @@ async function openResumeModal() {{
 
 function closeResumeModal() {{
   document.getElementById('resume-modal').classList.remove('show');
+}}
+
+// --- File upload + browser-side text extraction -----------------------
+function _wireResumeDropzone() {{
+  const dz = document.getElementById('resume-dropzone');
+  const input = document.getElementById('resume-file-input');
+  if (!dz || !input || dz._wired) return;
+  dz._wired = true;
+  input.addEventListener('change', (e) => {{
+    if (e.target.files && e.target.files[0]) _handleFileChosen(e.target.files[0]);
+  }});
+  ['dragover','dragenter'].forEach(ev => dz.addEventListener(ev, (e) => {{ e.preventDefault(); dz.classList.add('drag'); }}));
+  ['dragleave','drop'].forEach(ev => dz.addEventListener(ev, (e) => {{ e.preventDefault(); dz.classList.remove('drag'); }}));
+  dz.addEventListener('drop', (e) => {{
+    if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) _handleFileChosen(e.dataTransfer.files[0]);
+  }});
+}}
+
+function _handleFileChosen(file) {{
+  const name = (file.name || '').toLowerCase();
+  if (!name.endsWith('.pdf') && !name.endsWith('.docx')) {{
+    document.getElementById('upload-status').textContent = 'Unsupported file. Use .pdf or .docx.';
+    return;
+  }}
+  _pendingUploadFile = file;
+  document.getElementById('dropzone-label').textContent = file.name;
+  document.getElementById('parse-resume-btn').disabled = false;
+  document.getElementById('upload-status').textContent = 'Ready. Click Parse & Save.';
+}}
+
+async function _extractText(file) {{
+  const name = (file.name || '').toLowerCase();
+  if (name.endsWith('.docx')) {{
+    const buf = await file.arrayBuffer();
+    const res = await window.mammoth.extractRawText({{ arrayBuffer: buf }});
+    return (res && res.value || '').trim();
+  }}
+  if (name.endsWith('.pdf')) {{
+    if (!window.pdfjsLib) throw new Error('PDF parser failed to load.');
+    const buf = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({{ data: buf }}).promise;
+    let out = '';
+    for (let i = 1; i <= pdf.numPages; i++) {{
+      const page = await pdf.getPage(i);
+      const tc = await page.getTextContent();
+      out += tc.items.map(it => it.str).join(' ') + '\\n\\n';
+    }}
+    return out.trim();
+  }}
+  throw new Error('Unsupported file type.');
+}}
+
+async function parseUploadedResume(btn) {{
+  if (!_pendingUploadFile) return;
+  const statusEl = document.getElementById('upload-status');
+  const editKey = getEditKey();
+  if (!editKey) return;
+  const orig = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Reading file…';
+  statusEl.textContent = '';
+  try {{
+    const text = await _extractText(_pendingUploadFile);
+    if (!text || text.length < 80) {{
+      statusEl.textContent = 'Could not extract text from this file. Try saving as .docx, or use Edit JSON tab.';
+      btn.textContent = orig;
+      btn.disabled = false;
+      return;
+    }}
+    btn.textContent = 'Parsing with Claude…';
+    const r = await fetch(PARSE_RESUME_WORKER_URL, {{
+      method: 'POST',
+      headers: {{ 'Content-Type': 'application/json', 'X-Edit-Key': editKey }},
+      body: JSON.stringify({{ text, filename: _pendingUploadFile.name }}),
+    }});
+    const data = await r.json().catch(() => ({{}}));
+    if (!r.ok || data.error) {{
+      if (r.status === 401) localStorage.removeItem('htj_resume_key');
+      statusEl.textContent = 'Failed: ' + (data.error || ('HTTP ' + r.status));
+      btn.textContent = orig;
+      btn.disabled = false;
+      return;
+    }}
+    statusEl.textContent = 'Saved as new version (' + (data.version && data.version.label || 'new') + ') and activated.';
+    if (data.parsed) {{
+      const ta = document.getElementById('resume-text');
+      if (ta) ta.value = JSON.stringify(data.parsed, null, 2);
+    }}
+    btn.textContent = orig;
+    btn.disabled = false;
+    _pendingUploadFile = null;
+    document.getElementById('resume-file-input').value = '';
+    document.getElementById('dropzone-label').textContent = 'Upload another to replace';
+  }} catch (e) {{
+    statusEl.textContent = 'Failed: ' + (e.message || e);
+    btn.textContent = orig;
+    btn.disabled = false;
+  }}
+}}
+
+// --- Versions list ------------------------------------------------------
+async function loadVersions() {{
+  const list = document.getElementById('versions-list');
+  list.innerHTML = '<p style="font-size:12px;color:#888;">Loading versions…</p>';
+  try {{
+    const r = await fetch(VERSIONS_WORKER_URL);
+    const data = await r.json();
+    if (data.error) {{
+      list.innerHTML = '<p style="font-size:12px;color:#b00;">Error: ' + data.error + '</p>';
+      return;
+    }}
+    const versions = data.versions || [];
+    const activeId = data.activeId;
+    if (!versions.length) {{
+      list.innerHTML = '<p style="font-size:12px;color:#888;">No versions yet. Upload a file or paste JSON to create one.</p>';
+      return;
+    }}
+    list.innerHTML = versions.map(v => {{
+      const isActive = v.id === activeId;
+      const dt = new Date(v.savedAt);
+      const when = isNaN(dt) ? v.savedAt : dt.toLocaleString();
+      const src = v.sourceType === 'upload' ? 'uploaded' : 'JSON paste';
+      return '<div class="version-row' + (isActive ? ' active' : '') + '">' +
+             '<div class="version-main">' +
+             '<div class="version-label">' + _esc(v.label) + (isActive ? ' <span class="version-badge">Active</span>' : '') + '</div>' +
+             '<div class="version-meta">' + src + ' · ' + when + '</div>' +
+             '</div>' +
+             '<div class="version-actions">' +
+             (isActive ? '' : '<button class="v-btn primary" onclick="activateVersion(\\''+ v.id +'\\')">Activate</button>') +
+             '<button class="v-btn" onclick="previewVersion(\\''+ v.id +'\\')">Preview</button>' +
+             '<button class="v-btn" onclick="renameVersion(\\''+ v.id +'\\', \\''+ _esc(v.label).replace(/'/g,"\\\\'") +'\\')">Rename</button>' +
+             (isActive ? '' : '<button class="v-btn danger" onclick="deleteVersion(\\''+ v.id +'\\')">Delete</button>') +
+             '</div></div>';
+    }}).join('');
+  }} catch (e) {{
+    list.innerHTML = '<p style="font-size:12px;color:#b00;">Error: ' + (e.message || e) + '</p>';
+  }}
+}}
+
+function _esc(s) {{ return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}}[c])); }}
+
+async function _versionAction(action, body) {{
+  const editKey = getEditKey();
+  if (!editKey) return null;
+  const r = await fetch(VERSIONS_WORKER_URL, {{
+    method: 'POST',
+    headers: {{ 'Content-Type': 'application/json', 'X-Edit-Key': editKey }},
+    body: JSON.stringify(body),
+  }});
+  const data = await r.json().catch(() => ({{}}));
+  if (!r.ok || data.error) {{
+    if (r.status === 401) localStorage.removeItem('htj_resume_key');
+    alert('Failed: ' + (data.error || ('HTTP ' + r.status)));
+    return null;
+  }}
+  return data;
+}}
+
+async function activateVersion(id) {{
+  const data = await _versionAction('activate', {{ action: 'activate', id }});
+  if (data) loadVersions();
+}}
+
+async function deleteVersion(id) {{
+  if (!confirm('Delete this version? This cannot be undone.')) return;
+  const data = await _versionAction('delete', {{ action: 'delete', id }});
+  if (data) loadVersions();
+}}
+
+async function previewVersion(id) {{
+  const editKey = getEditKey();
+  if (!editKey) return;
+  const r = await fetch(VERSIONS_WORKER_URL, {{
+    method: 'POST',
+    headers: {{ 'Content-Type': 'application/json', 'X-Edit-Key': editKey }},
+    body: JSON.stringify({{ action: 'get', id }}),
+  }});
+  const data = await r.json().catch(() => ({{}}));
+  if (!r.ok || data.error) {{ alert('Failed: ' + (data.error || ('HTTP ' + r.status))); return; }}
+  setResumeTab('json');
+  const ta = document.getElementById('resume-text');
+  if (ta) ta.value = data.resume || '';
+  document.getElementById('resume-save-status').textContent = 'Previewing version. Save to create a new version from this content.';
+}}
+
+async function renameVersion(id, currentLabel) {{
+  const label = prompt('New label for this version:', currentLabel || '');
+  if (label == null) return;
+  const data = await _versionAction('rename', {{ action: 'rename', id, label }});
+  if (data) loadVersions();
 }}
 
 async function saveResume(btn) {{
@@ -1016,33 +1294,28 @@ async function saveResume(btn) {{
   }} catch (e) {{
     if (!confirm('This does not look like valid resume JSON (' + e.message + '). Save anyway?')) return;
   }}
-  let editKey = localStorage.getItem('htj_resume_key');
-  if (!editKey) {{
-    editKey = prompt('Enter the resume edit key (set as RESUME_EDIT_KEY secret in the Cloudflare Worker):');
-    if (!editKey) return;
-  }}
+  const editKey = getEditKey();
+  if (!editKey) return;
   btn.disabled = true;
   const orig = btn.textContent;
   btn.textContent = 'Saving…';
   statusEl.textContent = '';
   try {{
+    const label = prompt('Label this version (e.g. "Hand-edited – Apr 14"):', '') || 'JSON edit';
     const r = await fetch(RESUME_WORKER_URL, {{
       method: 'POST',
       headers: {{ 'Content-Type': 'application/json', 'X-Edit-Key': editKey }},
-      body: JSON.stringify({{ resume: value }}),
+      body: JSON.stringify({{ resume: value, label, sourceType: 'json-paste' }}),
     }});
     const data = await r.json().catch(() => ({{}}));
     if (!r.ok || data.error) {{
-      // Bad key? Wipe stored key so user is prompted again next time.
       if (r.status === 401) localStorage.removeItem('htj_resume_key');
       statusEl.textContent = 'Save failed: ' + (data.error || ('HTTP ' + r.status));
       btn.disabled = false;
       btn.textContent = orig;
       return;
     }}
-    // Save key for next time
-    localStorage.setItem('htj_resume_key', editKey);
-    statusEl.textContent = 'Saved.';
+    statusEl.textContent = 'Saved as new version.';
     btn.textContent = orig;
     btn.disabled = false;
   }} catch (e) {{
@@ -1051,6 +1324,10 @@ async function saveResume(btn) {{
     btn.textContent = orig;
   }}
 }}
+
+// Wire dropzone after DOM is ready
+if (document.readyState !== 'loading') _wireResumeDropzone();
+else document.addEventListener('DOMContentLoaded', _wireResumeDropzone);
 
 // --- Refresh data (triggers GitHub Action via Cloudflare Worker) --------
 const REFRESH_WORKER_URL = 'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/refresh';
