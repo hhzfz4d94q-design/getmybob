@@ -333,11 +333,30 @@ IRRELEVANT_TITLE_TERMS = [
     "general counsel", "compliance officer", "chief financial officer",
     "human resources",
     # Engineering IC roles (she's a program/product leader, not a hands-on engineer)
-    "software engineer", "data engineer", "data scientist",
+    "software engineer", "data engineer", "data scientist", "data science",
     "machine learning engineer", "ml engineer", "ai engineer",
     "devops engineer", "site reliability", "backend engineer",
     "frontend engineer", "full stack engineer", "qa engineer",
     "security engineer", "platform engineer",
+    # Design roles (different discipline from product management)
+    "product design", "ux design", "ui design", "design lead",
+    "head of design", "vp design", "design director", "creative director",
+    # Research / clinical research (academic / lab, not IT)
+    "clinical research", "clinical experience", "translational research",
+    "research scientist", "research director", "research fellow",
+    # GTM / Go-to-market (sales/marketing function)
+    "gtm", "go-to-market", "go to market",
+    # Government / policy / regulatory affairs (separate function)
+    "government affairs", "federal affairs", "regulatory affairs",
+    "public policy", "policy director", "policy lead",
+    # HR / Talent (bare "talent" catches "Head of Talent" etc.)
+    "head of talent", "vp talent", "director of talent", "chief people officer",
+    "people experience", "talent management",
+    # Risk / Audit / Privacy / Legal compliance (not Geetanjali's lane)
+    "risk officer", "head of risk", "internal audit", "privacy officer",
+    "security officer", "chief information security",
+    # Generic IC analyst roles
+    "data analyst", "business analyst i", "research analyst",
     # Junior / entry
     "junior", "intern", "internship", "associate ", "coordinator",
     "specialist i", "analyst i", "level i",
