@@ -95,6 +95,26 @@
   </div>
 </div>
 
+<!-- Edit user modal -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <h3>Edit user</h3>
+    <p>Slug <code id="edit-slug">—</code> (URL cannot change)</p>
+    <label>Name</label>
+    <input type="text" id="edit-name" autocomplete="off" style="margin-bottom:10px;">
+    <label>Email</label>
+    <input type="email" id="edit-email" autocomplete="off" style="margin-bottom:10px;">
+    <label style="display:flex; align-items:center; gap:6px; font-weight:500;">
+      <input type="checkbox" id="edit-reset-key" style="width:auto;"> Reset password (generates a new one)
+    </label>
+    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:14px;">
+      <button onclick="saveEdit()">Save changes</button>
+      <button class="secondary" onclick="closeEditModal()">Cancel</button>
+    </div>
+    <div class="status" id="edit-status"></div>
+  </div>
+</div>
+
 <!-- Invite preview modal -->
 <div class="modal-overlay" id="invite-modal">
   <div class="modal">
@@ -165,6 +185,7 @@ function renderUsers(users) {
       '<td><a href="' + SITE_BASE + '/' + escHtml(u.slug) + '.html" target="_blank">' + escHtml(u.slug) + '</a></td>' +
       '<td>' + statusBadge + '</td>' +
       '<td class="actions">' +
+        '<button class="secondary" onclick="openEditModal(\'' + escHtml(u.slug) + '\')">Edit</button>' +
         '<button class="secondary" onclick="resendInvite(\'' + escHtml(u.slug) + '\')">Resend invite</button>' +
         (u.slug === 'geetu' ? '' : '<button class="danger" onclick="deleteUser(\'' + escHtml(u.slug) + '\')">Delete</button>') +
       '</td>' +
@@ -228,8 +249,69 @@ async function resendInvite(slug) {
   if (!users) return;
   const u = users.find(x => x.slug === slug);
   if (!u) { alert('User not found'); return; }
-  if (!u.email) { alert('No email saved for this user — add one before resending.'); return; }
+  if (!u.email) { alert('No email saved for this user — click Edit and add one before resending.'); return; }
   showInvite(u, u.editKey);
+}
+
+let _editingSlug = null;
+
+async function openEditModal(slug) {
+  const users = await fetchUsers();
+  if (!users) return;
+  const u = users.find(x => x.slug === slug);
+  if (!u) { alert('User not found'); return; }
+  _editingSlug = slug;
+  $('edit-slug').textContent = slug;
+  $('edit-name').value = u.name || '';
+  $('edit-email').value = u.email || '';
+  $('edit-reset-key').checked = false;
+  $('edit-status').textContent = '';
+  $('edit-status').className = 'status';
+  $('edit-modal').classList.add('show');
+}
+
+function closeEditModal() {
+  $('edit-modal').classList.remove('show');
+  _editingSlug = null;
+}
+
+async function saveEdit() {
+  if (!_editingSlug) return;
+  const name = $('edit-name').value.trim();
+  const email = $('edit-email').value.trim();
+  const resetKey = $('edit-reset-key').checked;
+  if (!name) {
+    $('edit-status').className = 'status error';
+    $('edit-status').textContent = 'Name is required.';
+    return;
+  }
+  $('edit-status').className = 'status';
+  $('edit-status').textContent = 'Saving…';
+  try {
+    const r = await fetch(WORKER_BASE + '/admin/users', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Key': _adminKey },
+      body: JSON.stringify({ slug: _editingSlug, name, email, resetKey }),
+    });
+    const data = await r.json();
+    if (!r.ok || data.error) {
+      $('edit-status').className = 'status error';
+      $('edit-status').textContent = 'Failed: ' + (data.error || ('HTTP ' + r.status));
+      return;
+    }
+    $('edit-status').className = 'status success';
+    $('edit-status').textContent = resetKey ? 'Saved. New password generated — opening invite to share.' : 'Saved.';
+    const users = await fetchUsers();
+    if (users) renderUsers(users);
+    if (resetKey) {
+      // After a password reset, immediately open the invite to send the new password
+      showInvite(data.user, data.editKey);
+    }
+    setTimeout(() => closeEditModal(), 800);
+  } catch (e) {
+    $('edit-status').className = 'status error';
+    $('edit-status').textContent = 'Failed: ' + (e.message || e);
+  }
 }
 
 function showInvite(user, editKey) {
