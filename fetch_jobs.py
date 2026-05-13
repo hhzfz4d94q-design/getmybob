@@ -961,6 +961,9 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         ORDER BY score DESC, last_seen DESC
         LIMIT 2000
     """).fetchall()
+    # No profile → no jobs. User must upload resume first to see anything.
+    if not SKILLS_PROFILE:
+        rows = []
     # Hide jobs that aren't a fit (blacklist)
     rows = [r for r in rows if not _is_irrelevant_title(r[2])]
 
@@ -1592,12 +1595,31 @@ if (window.pdfjsLib) {{
 
 let _pendingUploadFile = null;
 
+// On first visit via invite link, the password is in the URL as ?key=XXX.
+// Capture it, store to localStorage, then strip from URL so it isn't visible later.
+(function captureInviteKey() {{
+  try {{
+    const params = new URLSearchParams(window.location.search);
+    const k = params.get('key');
+    if (k) {{
+      // Store per-user key so each dashboard remembers its own
+      localStorage.setItem('htj_resume_key_' + USER_SLUG, k);
+      params.delete('key');
+      const q = params.toString();
+      const newUrl = window.location.pathname + (q ? '?' + q : '') + window.location.hash;
+      window.history.replaceState({{}}, '', newUrl);
+    }}
+  }} catch (e) {{ /* non-fatal */ }}
+}})();
+
 function getEditKey(promptMsg) {{
-  let editKey = localStorage.getItem('htj_resume_key');
+  // Prefer per-user key, fall back to legacy single-user key for backward compat
+  let editKey = localStorage.getItem('htj_resume_key_' + USER_SLUG)
+             || localStorage.getItem('htj_resume_key');
   if (!editKey) {{
-    editKey = prompt(promptMsg || 'Enter the resume edit key (set as RESUME_EDIT_KEY secret in the Cloudflare Worker):');
+    editKey = prompt(promptMsg || 'Enter the password from your invite email:');
     if (!editKey) return null;
-    localStorage.setItem('htj_resume_key', editKey);
+    localStorage.setItem('htj_resume_key_' + USER_SLUG, editKey);
   }}
   return editKey;
 }}
@@ -1723,7 +1745,7 @@ async function parseUploadedResume(btn) {{
     }});
     const data = await r.json().catch(() => ({{}}));
     if (!r.ok || data.error) {{
-      if (r.status === 401) localStorage.removeItem('htj_resume_key');
+      if (r.status === 401) {{ localStorage.removeItem('htj_resume_key'); localStorage.removeItem('htj_resume_key_' + USER_SLUG); }}
       statusEl.textContent = 'Failed: ' + (data.error || ('HTTP ' + r.status));
       btn.textContent = orig;
       btn.disabled = false;
@@ -1868,7 +1890,7 @@ async function saveResume(btn) {{
     }});
     const data = await r.json().catch(() => ({{}}));
     if (!r.ok || data.error) {{
-      if (r.status === 401) localStorage.removeItem('htj_resume_key');
+      if (r.status === 401) {{ localStorage.removeItem('htj_resume_key'); localStorage.removeItem('htj_resume_key_' + USER_SLUG); }}
       statusEl.textContent = 'Save failed: ' + (data.error || ('HTTP ' + r.status));
       btn.disabled = false;
       btn.textContent = orig;

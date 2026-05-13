@@ -315,8 +315,11 @@ async function saveEdit() {
 }
 
 function showInvite(user, editKey) {
-  const url = SITE_BASE + '/' + user.slug + '.html';
-  const subject = 'Your personal HealthTech Jobs dashboard is ready';
+  // Personal URL with the password baked in — first click unlocks the dashboard
+  // automatically and strips the key from the URL bar.
+  const baseUrl = SITE_BASE + '/' + user.slug + '.html';
+  const inviteUrl = baseUrl + '?key=' + encodeURIComponent(editKey);
+  const subject = 'Your personal job-search dashboard is ready';
   const body = [
     'Hi ' + (user.name.split(' ')[0] || user.name) + ',',
     '',
@@ -325,12 +328,14 @@ function showInvite(user, editKey) {
     'against your resume, and one-clicks a tailored summary + cover letter +',
     'tailored resume per job.',
     '',
-    'Your link: ' + url,
-    'Password (for resume upload): ' + editKey,
+    'Your link (unlocks automatically — keep it private):',
+    inviteUrl,
     '',
-    'First time: click "Resume" top-right, enter the password, upload',
-    'your resume as PDF or Word. The AI parses it and starts scoring',
+    'Click the link, then on the dashboard click "Resume" (top-right) and',
+    'upload your resume as PDF or Word. The AI parses it and starts scoring',
     'jobs against your profile within minutes.',
+    '',
+    'If you ever need to re-enter the password manually it is: ' + editKey,
     '',
     'Let me know if anything is off — I tune it.',
   ].join('\n');
