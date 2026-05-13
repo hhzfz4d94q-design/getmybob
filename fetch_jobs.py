@@ -357,15 +357,56 @@ IRRELEVANT_TITLE_TERMS = [
     "security officer", "chief information security",
     # Generic IC analyst roles
     "data analyst", "business analyst i", "research analyst",
+    # Strategic initiatives / partnerships (community-y BD)
+    "head of strategic initiatives", "strategic initiatives",
+    "partnerships & community", "community lead",
+    "head of community", "vp community",
+    # Member / patient growth / engagement (marketing-flavoured)
+    "member growth", "head of member", "member engagement",
+    "patient growth", "patient marketing", "provider marketing",
+    "user growth", "user acquisition",
+    # Member / provider services (operational support)
+    "member services", "provider services", "member experience",
+    # Clinical documentation / coding (specialist, not product)
+    "clinical documentation", "documentation integrity",
+    "clinical coding", "medical coding", "icd",
+    # Customer engineering / sales engineering
+    "customer engineering", "solution engineering", "solutions engineer",
+    "implementation engineer",
+    # InfoSec / chief of staff
+    "information security", "chief information security",
+    "security architect", "security analyst", "vp of information",
+    "chief of staff", "executive assistant", "executive coordinator",
+    # Strategic ops at non-product orgs (too generic)
+    "strategic operations", "field operations", "operations associate",
+    # IT-security (her core IS healthcare-IT, but pure IT/Sec is too narrow)
+    "it & security", "it and security", "it security",
+    "it operations", "system administrator", "sysadmin",
+    # Misc HR / talent variations
+    "talent strategy", "talent program", "head of recruiting",
+    "director of recruiting",
     # Junior / entry
     "junior", "intern", "internship", "associate ", "coordinator",
     "specialist i", "analyst i", "level i",
 ]
 
 
+# Single tokens that should match on word boundary only (so "sales" doesn't catch "salesforce")
+SINGLE_WORD_FILTERS = [
+    "sales", "marketing", "recruiting", "recruiter", "staffing",
+    "clinician", "underwriter", "underwriting", "auditor",
+]
+
+
 def _is_irrelevant_title(title):
     t = (title or "").lower()
-    return any(term in t for term in IRRELEVANT_TITLE_TERMS)
+    if any(term in t for term in IRRELEVANT_TITLE_TERMS):
+        return True
+    # Word-boundary check for single-word filters
+    for w in SINGLE_WORD_FILTERS:
+        if re.search(r"\b" + re.escape(w) + r"\b", t):
+            return True
+    return False
 
 
 def _normalize_title(title):
