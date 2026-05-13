@@ -958,6 +958,14 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
           </div>
         </div>""")
 
+    # Derive a subtitle from the user's AI skills profile (industry-aware).
+    if SKILLS_PROFILE:
+        primary = (SKILLS_PROFILE.get("primaryRole") or "").strip()
+        remote_pref = "Remote" if SKILLS_PROFILE.get("remotePreferred") else "On-site or remote"
+        subtitle = (primary + " · " + remote_pref) if primary else remote_pref
+    else:
+        subtitle = "Awaiting resume upload — click Resume to get started"
+
     html = HTML_TEMPLATE.format(
         total=total,
         senior_remote=senior_remote,
@@ -967,6 +975,7 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         cards="\n".join(cards) or "<p>No jobs yet — run the fetcher.</p>",
         user_slug=user_slug,
         user_name=_esc(user_name),
+        subtitle=_esc(subtitle),
     )
     with open(output_path, "w") as f:
         f.write(html)
@@ -1006,7 +1015,7 @@ def _esc(s):
 
 
 HTML_TEMPLATE = """<!doctype html>
-<html><head><meta charset="utf-8"><title>HealthTech Jobs — {user_name}</title>
+<html><head><meta charset="utf-8"><title>Jobs for {user_name}</title>
 <style>
   body {{ font: 14px -apple-system, system-ui, sans-serif; margin: 0; background: #f7f7f8; color: #222; }}
   header {{ background: #1f3a5f; color: white; padding: 18px 28px; position: relative; }}
@@ -1115,8 +1124,8 @@ HTML_TEMPLATE = """<!doctype html>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head><body>
 <header>
-  <h1>HealthTech Jobs for {user_name}</h1>
-  <div class="sub">Senior leadership · Healthcare IT · Remote · Generated {generated}</div>
+  <h1>Jobs for {user_name}</h1>
+  <div class="sub">{subtitle} · Generated {generated}</div>
   <div class="header-actions">
     <button id="resume-btn" class="header-btn" onclick="openResumeModal()">Resume</button>
     <button id="refresh-btn" class="header-btn" onclick="refreshData()">Refresh data</button>
