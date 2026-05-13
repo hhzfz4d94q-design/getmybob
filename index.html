@@ -5,7 +5,8 @@
   header { background: #1f3a5f; color: white; padding: 18px 28px; position: relative; }
   header h1 { margin: 0; font-size: 20px; }
   header .sub { opacity: .85; font-size: 13px; margin-top: 4px; }
-  .header-btn { position: absolute; right: 28px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .header-actions { position: absolute; right: 28px; top: 50%; transform: translateY(-50%); display: flex; gap: 8px; }
+  .header-btn { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; }
   .header-btn:hover { background: rgba(255,255,255,0.25); }
   .header-btn:disabled { opacity: 0.5; cursor: not-allowed; }
   .stats { display: flex; gap: 24px; padding: 14px 28px; background: white; border-bottom: 1px solid #e5e5ea; }
@@ -84,8 +85,11 @@
 </head><body>
 <header>
   <h1>HealthTech Jobs for Geetanjali</h1>
-  <div class="sub">Senior leadership · Healthcare IT · Remote · Generated 2026-05-13 12:51</div>
-  <button id="refresh-btn" class="header-btn" onclick="refreshData()">Refresh data</button>
+  <div class="sub">Senior leadership · Healthcare IT · Remote · Generated 2026-05-13 13:54</div>
+  <div class="header-actions">
+    <button id="resume-btn" class="header-btn" onclick="openResumeModal()">Resume</button>
+    <button id="refresh-btn" class="header-btn" onclick="refreshData()">Refresh data</button>
+  </div>
 </header>
 <div class="stats">
   <div class="stat"><b>3790</b>Total jobs tracked</div>
@@ -628,7 +632,7 @@
           </div>
         </div>
 
-        <div class="card" data-fp="68f26dc8d1814c1e" data-score="91" data-senior="1" data-remote="1" data-listed-days="21" data-salary-max="0" data-last-seen="2026-05-13T01:26:52.294650+00:00" data-first-seen="2026-05-12T20:26:30.970895+00:00">
+        <div class="card" data-fp="68f26dc8d1814c1e" data-score="91" data-senior="1" data-remote="1" data-listed-days="22" data-salary-max="0" data-last-seen="2026-05-13T01:26:52.294650+00:00" data-first-seen="2026-05-12T20:26:30.970895+00:00">
           <div class="row1">
             <div class="title"><a href="https://job-boards.greenhouse.io/headway/jobs/5976898004" target="_blank">Business Development Lead, Care Partnerships</a></div>
             <div class="score">91</div>
@@ -636,7 +640,7 @@
           <div class="row2">
             <span class="company">Headway</span> ·
             <span class="loc">Remote</span> ·
-            <span class="age">21d old</span>
+            <span class="age">22d old</span>
           </div>
           
           <div class="badges" data-badges><span class="b senior">Senior</span> <span class="b remote">Remote</span></div>
@@ -1108,7 +1112,7 @@
           </div>
         </div>
 
-        <div class="card" data-fp="c5c8041698c8da5a" data-score="89" data-senior="1" data-remote="1" data-listed-days="4" data-salary-max="0" data-last-seen="2026-05-13T01:26:48.974279+00:00" data-first-seen="2026-05-12T20:26:29.159725+00:00">
+        <div class="card" data-fp="c5c8041698c8da5a" data-score="89" data-senior="1" data-remote="1" data-listed-days="5" data-salary-max="0" data-last-seen="2026-05-13T01:26:48.974279+00:00" data-first-seen="2026-05-12T20:26:29.159725+00:00">
           <div class="row1">
             <div class="title"><a href="https://job-boards.greenhouse.io/headlandsresearch/jobs/4193948009" target="_blank">Clinical Trials Site Director – Multiple Locations Nationwide</a></div>
             <div class="score">89</div>
@@ -1116,7 +1120,7 @@
           <div class="row2">
             <span class="company">Headlandsresearch</span> ·
             <span class="loc">Remote</span> ·
-            <span class="age">4d old</span>
+            <span class="age">5d old</span>
           </div>
           
           <div class="badges" data-badges><span class="b senior">Senior</span> <span class="b remote">Remote</span> <span class="b week">This week</span></div>
@@ -1208,7 +1212,7 @@
           </div>
         </div>
 
-        <div class="card" data-fp="994977caba46ee7f" data-score="89" data-senior="1" data-remote="1" data-listed-days="5" data-salary-max="0" data-last-seen="2026-05-13T01:26:46.830324+00:00" data-first-seen="2026-05-12T20:26:26.899528+00:00">
+        <div class="card" data-fp="994977caba46ee7f" data-score="89" data-senior="1" data-remote="1" data-listed-days="6" data-salary-max="0" data-last-seen="2026-05-13T01:26:46.830324+00:00" data-first-seen="2026-05-12T20:26:26.899528+00:00">
           <div class="row1">
             <div class="title"><a href="https://www.inovalon.com/careers/job/?gh_jid=7714943003" target="_blank">Senior Director, Informatics</a></div>
             <div class="score">89</div>
@@ -1216,7 +1220,7 @@
           <div class="row2">
             <span class="company">Inovalon</span> ·
             <span class="loc">Remote- United States</span> ·
-            <span class="age">5d old</span>
+            <span class="age">6d old</span>
           </div>
           
           <div class="badges" data-badges><span class="b senior">Senior</span> <span class="b remote">Remote</span> <span class="b week">This week</span></div>
@@ -1308,7 +1312,7 @@
           </div>
         </div>
 
-        <div class="card" data-fp="41ffd80408aefd8e" data-score="89" data-senior="1" data-remote="1" data-listed-days="4" data-salary-max="0" data-last-seen="2026-05-13T01:26:44.273357+00:00" data-first-seen="2026-05-12T20:26:24.314328+00:00">
+        <div class="card" data-fp="41ffd80408aefd8e" data-score="89" data-senior="1" data-remote="1" data-listed-days="5" data-salary-max="0" data-last-seen="2026-05-13T01:26:44.273357+00:00" data-first-seen="2026-05-12T20:26:24.314328+00:00">
           <div class="row1">
             <div class="title"><a href="https://job-boards.greenhouse.io/mavenclinic/jobs/8527012002" target="_blank">Benefits Consultant Director (Labor &amp; Public Sector)</a></div>
             <div class="score">89</div>
@@ -1316,7 +1320,7 @@
           <div class="row2">
             <span class="company">Mavenclinic</span> ·
             <span class="loc">Remote</span> ·
-            <span class="age">4d old</span>
+            <span class="age">5d old</span>
           </div>
           
           <div class="badges" data-badges><span class="b senior">Senior</span> <span class="b remote">Remote</span> <span class="b week">This week</span></div>
@@ -3248,7 +3252,7 @@
           </div>
         </div>
 
-        <div class="card" data-fp="cf7bb9938bbe3d3f" data-score="85" data-senior="1" data-remote="1" data-listed-days="6" data-salary-max="0" data-last-seen="2026-05-13T01:26:46.075193+00:00" data-first-seen="2026-05-12T20:26:26.167701+00:00">
+        <div class="card" data-fp="cf7bb9938bbe3d3f" data-score="85" data-senior="1" data-remote="1" data-listed-days="7" data-salary-max="0" data-last-seen="2026-05-13T01:26:46.075193+00:00" data-first-seen="2026-05-12T20:26:26.167701+00:00">
           <div class="row1">
             <div class="title"><a href="https://job-boards.greenhouse.io/interwellhealth/jobs/5201534008" target="_blank">Director, Network Development</a></div>
             <div class="score">85</div>
@@ -3256,7 +3260,7 @@
           <div class="row2">
             <span class="company">Interwellhealth</span> ·
             <span class="loc">Remote,  United States</span> ·
-            <span class="age">6d old</span>
+            <span class="age">7d old</span>
           </div>
           
           <div class="badges" data-badges><span class="b senior">Senior</span> <span class="b remote">Remote</span> <span class="b week">This week</span></div>
@@ -4148,7 +4152,7 @@
           </div>
         </div>
 
-        <div class="card" data-fp="036e98c18b5aa172" data-score="83" data-senior="1" data-remote="1" data-listed-days="0" data-salary-max="0" data-last-seen="2026-05-13T01:26:46.496804+00:00" data-first-seen="2026-05-12T20:26:26.566166+00:00">
+        <div class="card" data-fp="036e98c18b5aa172" data-score="83" data-senior="1" data-remote="1" data-listed-days="1" data-salary-max="0" data-last-seen="2026-05-13T01:26:46.496804+00:00" data-first-seen="2026-05-12T20:26:26.566166+00:00">
           <div class="row1">
             <div class="title"><a href="https://job-boards.greenhouse.io/redcellpartners/jobs/5131545007" target="_blank">Head of Defense Growth</a></div>
             <div class="score">83</div>
@@ -4156,10 +4160,10 @@
           <div class="row2">
             <span class="company">Redcellpartners</span> ·
             <span class="loc">Washington, D.C. (Remote in Continental U.S. considered)</span> ·
-            <span class="age">0d old</span>
+            <span class="age">1d old</span>
           </div>
           
-          <div class="badges" data-badges><span class="b senior">Senior</span> <span class="b remote">Remote</span> <span class="b fresh">New today</span></div>
+          <div class="badges" data-badges><span class="b senior">Senior</span> <span class="b remote">Remote</span> <span class="b week">This week</span></div>
           <div class="desc">&amp;lt;div class=&amp;quot;content-intro&amp;quot;&amp;gt;&amp;lt;h3&amp;gt;About Us&amp;lt;/h3&amp;gt; &amp;lt;p&amp;gt;Red Cell Partners is an incubation firm building and investing in rapidly scalable technology-led companies that are bringing revolutionary advancements to market in three distinct practice areas: healthcare, cyber, an…</div>
           <div class="actions">
             <button class="btn primary" onclick="prepApplication('036e98c18b5aa172', this)">Prep Application</button>
@@ -4928,7 +4932,7 @@
           </div>
         </div>
 
-        <div class="card" data-fp="48106e825dbfce54" data-score="81" data-senior="1" data-remote="0" data-listed-days="51" data-salary-max="0" data-last-seen="2026-05-13T01:26:52.297413+00:00" data-first-seen="2026-05-12T20:26:30.973483+00:00">
+        <div class="card" data-fp="48106e825dbfce54" data-score="81" data-senior="1" data-remote="0" data-listed-days="52" data-salary-max="0" data-last-seen="2026-05-13T01:26:52.297413+00:00" data-first-seen="2026-05-12T20:26:30.973483+00:00">
           <div class="row1">
             <div class="title"><a href="https://job-boards.greenhouse.io/headway/jobs/5816933004" target="_blank">Executive Assistant &amp; Head of EA Program</a></div>
             <div class="score">81</div>
@@ -4936,10 +4940,10 @@
           <div class="row2">
             <span class="company">Headway</span> ·
             <span class="loc">New York, New York, United States</span> ·
-            <span class="age">51d old</span>
+            <span class="age">52d old</span>
           </div>
           
-          <div class="badges" data-badges><span class="b senior">Senior</span> <span class="b ghost">Ghost? 51d</span></div>
+          <div class="badges" data-badges><span class="b senior">Senior</span> <span class="b ghost">Ghost? 52d</span></div>
           <div class="desc">&amp;lt;div class=&amp;quot;content-intro&amp;quot;&amp;gt;&amp;lt;p&amp;gt;1 in 4 people in the US have a treatable mental health condition, but most providers don&amp;#39;t accept insurance, making therapy too expensive for most people. &amp;lt;strong&amp;gt;Headway’s mission is to fix this by building a new mental healthcare system…</div>
           <div class="actions">
             <button class="btn primary" onclick="prepApplication('48106e825dbfce54', this)">Prep Application</button>
@@ -6248,7 +6252,7 @@
           </div>
         </div>
 
-        <div class="card" data-fp="2dcae291ced712b0" data-score="79" data-senior="1" data-remote="0" data-listed-days="1" data-salary-max="0" data-last-seen="2026-05-13T01:26:45.231933+00:00" data-first-seen="2026-05-12T20:26:25.289507+00:00">
+        <div class="card" data-fp="2dcae291ced712b0" data-score="79" data-senior="1" data-remote="0" data-listed-days="2" data-salary-max="0" data-last-seen="2026-05-13T01:26:45.231933+00:00" data-first-seen="2026-05-12T20:26:25.289507+00:00">
           <div class="row1">
             <div class="title"><a href="https://job-boards.greenhouse.io/habitathealth/jobs/5215674008" target="_blank">Director, Strategic Operations </a></div>
             <div class="score">79</div>
@@ -6256,7 +6260,7 @@
           <div class="row2">
             <span class="company">Habitathealth</span> ·
             <span class="loc">San Francisco, California</span> ·
-            <span class="age">1d old</span>
+            <span class="age">2d old</span>
           </div>
           
           <div class="badges" data-badges><span class="b senior">Senior</span> <span class="b week">This week</span></div>
@@ -6288,7 +6292,7 @@
           </div>
         </div>
 
-        <div class="card" data-fp="b40a3f6fd0305479" data-score="79" data-senior="1" data-remote="0" data-listed-days="1" data-salary-max="0" data-last-seen="2026-05-13T01:26:43.712580+00:00" data-first-seen="2026-05-12T20:26:23.751308+00:00">
+        <div class="card" data-fp="b40a3f6fd0305479" data-score="79" data-senior="1" data-remote="0" data-listed-days="2" data-salary-max="0" data-last-seen="2026-05-13T01:26:43.712580+00:00" data-first-seen="2026-05-12T20:26:23.751308+00:00">
           <div class="row1">
             <div class="title"><a href="https://job-boards.greenhouse.io/pomelocare/jobs/5766696004" target="_blank">Strategic Partnerships Director, Labor &amp; Trust</a></div>
             <div class="score">79</div>
@@ -6296,7 +6300,7 @@
           <div class="row2">
             <span class="company">Pomelocare</span> ·
             <span class="loc">United States</span> ·
-            <span class="age">1d old</span>
+            <span class="age">2d old</span>
           </div>
           
           <div class="badges" data-badges><span class="b senior">Senior</span> <span class="b week">This week</span></div>
@@ -6648,7 +6652,7 @@
           </div>
         </div>
 
-        <div class="card" data-fp="8d728e17407246de" data-score="79" data-senior="1" data-remote="0" data-listed-days="41" data-salary-max="0" data-last-seen="2026-05-13T01:26:35.092329+00:00" data-first-seen="2026-05-12T20:26:15.306478+00:00">
+        <div class="card" data-fp="8d728e17407246de" data-score="79" data-senior="1" data-remote="0" data-listed-days="42" data-salary-max="0" data-last-seen="2026-05-13T01:26:35.092329+00:00" data-first-seen="2026-05-12T20:26:15.306478+00:00">
           <div class="row1">
             <div class="title"><a href="http://www.hioscar.com/careers/7772282?gh_jid=7772282" target="_blank">VP, Market Management (Central Market)</a></div>
             <div class="score">79</div>
@@ -6656,10 +6660,10 @@
           <div class="row2">
             <span class="company">Oscar</span> ·
             <span class="loc">Wisconsin, United States</span> ·
-            <span class="age">41d old</span>
+            <span class="age">42d old</span>
           </div>
           
-          <div class="badges" data-badges><span class="b senior">Senior</span> <span class="b ghost">Ghost? 41d</span></div>
+          <div class="badges" data-badges><span class="b senior">Senior</span> <span class="b ghost">Ghost? 42d</span></div>
           <div class="desc">&amp;lt;p&amp;gt;Hi, we&amp;#39;re Oscar. We&amp;#39;re hiring a VP, Market Management to join our Market Management.&amp;lt;/p&amp;gt; &amp;lt;p&amp;gt;Oscar is the first health insurance company built around a full stack technology platform and a relentless focus on serving our members. We started Oscar in 2012 to create the kin…</div>
           <div class="actions">
             <button class="btn primary" onclick="prepApplication('8d728e17407246de', this)">Prep Application</button>
@@ -6668,7 +6672,7 @@
           </div>
         </div>
 
-        <div class="card" data-fp="a94a71fb5966993c" data-score="79" data-senior="1" data-remote="0" data-listed-days="41" data-salary-max="0" data-last-seen="2026-05-13T01:26:35.092239+00:00" data-first-seen="2026-05-12T20:26:15.306645+00:00">
+        <div class="card" data-fp="a94a71fb5966993c" data-score="79" data-senior="1" data-remote="0" data-listed-days="42" data-salary-max="0" data-last-seen="2026-05-13T01:26:35.092239+00:00" data-first-seen="2026-05-12T20:26:15.306645+00:00">
           <div class="row1">
             <div class="title"><a href="http://www.hioscar.com/careers/7772289?gh_jid=7772289" target="_blank">VP, Market Management (Central Market)</a></div>
             <div class="score">79</div>
@@ -6676,10 +6680,10 @@
           <div class="row2">
             <span class="company">Oscar</span> ·
             <span class="loc">Iowa, United States</span> ·
-            <span class="age">41d old</span>
+            <span class="age">42d old</span>
           </div>
           
-          <div class="badges" data-badges><span class="b senior">Senior</span> <span class="b ghost">Ghost? 41d</span></div>
+          <div class="badges" data-badges><span class="b senior">Senior</span> <span class="b ghost">Ghost? 42d</span></div>
           <div class="desc">&amp;lt;p&amp;gt;Hi, we&amp;#39;re Oscar. We&amp;#39;re hiring a VP, Market Management to join our Market Management.&amp;lt;/p&amp;gt; &amp;lt;p&amp;gt;Oscar is the first health insurance company built around a full stack technology platform and a relentless focus on serving our members. We started Oscar in 2012 to create the kin…</div>
           <div class="actions">
             <button class="btn primary" onclick="prepApplication('a94a71fb5966993c', this)">Prep Application</button>
@@ -7408,7 +7412,7 @@
           </div>
         </div>
 
-        <div class="card" data-fp="f7e8311e32ccd5f5" data-score="78" data-senior="0" data-remote="1" data-listed-days="11" data-salary-max="0" data-last-seen="2026-05-13T01:26:52.298478+00:00" data-first-seen="2026-05-12T20:26:30.974450+00:00">
+        <div class="card" data-fp="f7e8311e32ccd5f5" data-score="78" data-senior="0" data-remote="1" data-listed-days="12" data-salary-max="0" data-last-seen="2026-05-13T01:26:52.298478+00:00" data-first-seen="2026-05-12T20:26:30.974450+00:00">
           <div class="row1">
             <div class="title"><a href="https://job-boards.greenhouse.io/headway/jobs/5973955004" target="_blank">Prescriber Clinical Quality Manager</a></div>
             <div class="score">78</div>
@@ -7416,7 +7420,7 @@
           <div class="row2">
             <span class="company">Headway</span> ·
             <span class="loc">Remote</span> ·
-            <span class="age">11d old</span>
+            <span class="age">12d old</span>
           </div>
           
           <div class="badges" data-badges><span class="b remote">Remote</span></div>
@@ -7428,7 +7432,7 @@
           </div>
         </div>
 
-        <div class="card" data-fp="05ce961470c6d1b8" data-score="78" data-senior="0" data-remote="1" data-listed-days="5" data-salary-max="0" data-last-seen="2026-05-13T01:26:46.833593+00:00" data-first-seen="2026-05-12T20:26:26.902745+00:00">
+        <div class="card" data-fp="05ce961470c6d1b8" data-score="78" data-senior="0" data-remote="1" data-listed-days="6" data-salary-max="0" data-last-seen="2026-05-13T01:26:46.833593+00:00" data-first-seen="2026-05-12T20:26:26.902745+00:00">
           <div class="row1">
             <div class="title"><a href="https://www.inovalon.com/careers/job/?gh_jid=7725325003" target="_blank">Senior Talent Acquisition Partner </a></div>
             <div class="score">78</div>
@@ -7436,7 +7440,7 @@
           <div class="row2">
             <span class="company">Inovalon</span> ·
             <span class="loc">Remote- United States</span> ·
-            <span class="age">5d old</span>
+            <span class="age">6d old</span>
           </div>
           
           <div class="badges" data-badges><span class="b remote">Remote</span> <span class="b week">This week</span></div>
@@ -8228,7 +8232,7 @@
           </div>
         </div>
 
-        <div class="card" data-fp="010583703b4b38dc" data-score="77" data-senior="1" data-remote="0" data-listed-days="39" data-salary-max="0" data-last-seen="2026-05-13T01:26:49.687938+00:00" data-first-seen="2026-05-12T20:26:29.841570+00:00">
+        <div class="card" data-fp="010583703b4b38dc" data-score="77" data-senior="1" data-remote="0" data-listed-days="40" data-salary-max="0" data-last-seen="2026-05-13T01:26:49.687938+00:00" data-first-seen="2026-05-12T20:26:29.841570+00:00">
           <div class="row1">
             <div class="title"><a href="https://job-boards.greenhouse.io/immunomeinc/jobs/5171817008" target="_blank">Senior Director, Global Market Access</a></div>
             <div class="score">77</div>
@@ -8236,10 +8240,10 @@
           <div class="row2">
             <span class="company">Immunomeinc</span> ·
             <span class="loc">Bothell, Washington, United States</span> ·
-            <span class="age">39d old</span>
+            <span class="age">40d old</span>
           </div>
           
-          <div class="badges" data-badges><span class="b senior">Senior</span> <span class="b ghost">Ghost? 39d</span></div>
+          <div class="badges" data-badges><span class="b senior">Senior</span> <span class="b ghost">Ghost? 40d</span></div>
           <div class="desc">&amp;lt;div class=&amp;quot;content-intro&amp;quot;&amp;gt;&amp;lt;p&amp;gt;&amp;lt;strong&amp;gt;&amp;lt;u&amp;gt;Company Overview&amp;lt;/u&amp;gt;&amp;lt;/strong&amp;gt;&amp;lt;/p&amp;gt; &amp;lt;p&amp;gt;&amp;lt;span data-olk-copy-source=&amp;quot;MessageBody&amp;quot;&amp;gt;Immunome is a clinical-stage targeted oncology company committed to developing first-in-class and best-in-c…</div>
           <div class="actions">
             <button class="btn primary" onclick="prepApplication('010583703b4b38dc', this)">Prep Application</button>
@@ -8488,7 +8492,7 @@
           </div>
         </div>
 
-        <div class="card" data-fp="4498d525c310abf7" data-score="77" data-senior="1" data-remote="0" data-listed-days="1" data-salary-max="0" data-last-seen="2026-05-13T01:26:43.712434+00:00" data-first-seen="2026-05-12T20:26:23.751186+00:00">
+        <div class="card" data-fp="4498d525c310abf7" data-score="77" data-senior="1" data-remote="0" data-listed-days="2" data-salary-max="0" data-last-seen="2026-05-13T01:26:43.712434+00:00" data-first-seen="2026-05-12T20:26:23.751186+00:00">
           <div class="row1">
             <div class="title"><a href="https://job-boards.greenhouse.io/pomelocare/jobs/5631574004" target="_blank">Strategic Partnerships Director, Employer</a></div>
             <div class="score">77</div>
@@ -8496,7 +8500,7 @@
           <div class="row2">
             <span class="company">Pomelocare</span> ·
             <span class="loc">United States</span> ·
-            <span class="age">1d old</span>
+            <span class="age">2d old</span>
           </div>
           
           <div class="badges" data-badges><span class="b senior">Senior</span> <span class="b week">This week</span></div>
@@ -8548,7 +8552,7 @@
           </div>
         </div>
 
-        <div class="card" data-fp="e3d62fc22c33b89f" data-score="77" data-senior="1" data-remote="0" data-listed-days="5" data-salary-max="0" data-last-seen="2026-05-13T01:26:42.554725+00:00" data-first-seen="2026-05-12T20:26:22.603243+00:00">
+        <div class="card" data-fp="e3d62fc22c33b89f" data-score="77" data-senior="1" data-remote="0" data-listed-days="6" data-salary-max="0" data-last-seen="2026-05-13T01:26:42.554725+00:00" data-first-seen="2026-05-12T20:26:22.603243+00:00">
           <div class="row1">
             <div class="title"><a href="https://job-boards.greenhouse.io/garnerhealth/jobs/5980186004" target="_blank">Executive Assistant</a></div>
             <div class="score">77</div>
@@ -8556,7 +8560,7 @@
           <div class="row2">
             <span class="company">Garnerhealth</span> ·
             <span class="loc">New York City, New York</span> ·
-            <span class="age">5d old</span>
+            <span class="age">6d old</span>
           </div>
           
           <div class="badges" data-badges><span class="b senior">Senior</span> <span class="b week">This week</span></div>
@@ -8788,7 +8792,7 @@
           </div>
         </div>
 
-        <div class="card" data-fp="d0b485f5cc9b7c0f" data-score="77" data-senior="1" data-remote="0" data-listed-days="6" data-salary-max="0" data-last-seen="2026-05-13T01:26:37.877558+00:00" data-first-seen="2026-05-12T20:26:17.921235+00:00">
+        <div class="card" data-fp="d0b485f5cc9b7c0f" data-score="77" data-senior="1" data-remote="0" data-listed-days="7" data-salary-max="0" data-last-seen="2026-05-13T01:26:37.877558+00:00" data-first-seen="2026-05-12T20:26:17.921235+00:00">
           <div class="row1">
             <div class="title"><a href="https://job-boards.greenhouse.io/bridgebio/jobs/5128864007" target="_blank">Director, Medical Excellence and Operations</a></div>
             <div class="score">77</div>
@@ -8796,7 +8800,7 @@
           <div class="row2">
             <span class="company">Bridgebio</span> ·
             <span class="loc">Zug, Switzerland</span> ·
-            <span class="age">6d old</span>
+            <span class="age">7d old</span>
           </div>
           
           <div class="badges" data-badges><span class="b senior">Senior</span> <span class="b week">This week</span></div>
@@ -9188,7 +9192,7 @@
           </div>
         </div>
 
-        <div class="card" data-fp="61d2a3d0ed844c6f" data-score="77" data-senior="1" data-remote="0" data-listed-days="26" data-salary-max="0" data-last-seen="2026-05-12T20:26:24.585705+00:00" data-first-seen="2026-05-12T20:26:24.585705+00:00">
+        <div class="card" data-fp="61d2a3d0ed844c6f" data-score="77" data-senior="1" data-remote="0" data-listed-days="27" data-salary-max="0" data-last-seen="2026-05-12T20:26:24.585705+00:00" data-first-seen="2026-05-12T20:26:24.585705+00:00">
           <div class="row1">
             <div class="title"><a href="https://job-boards.greenhouse.io/sparkadvisors/jobs/5190098008" target="_blank">Director, Strategy &amp; Operations</a></div>
             <div class="score">77</div>
@@ -9196,7 +9200,7 @@
           <div class="row2">
             <span class="company">Sparkadvisors</span> ·
             <span class="loc">New York, NY </span> ·
-            <span class="age">26d old</span>
+            <span class="age">27d old</span>
           </div>
           
           <div class="badges" data-badges><span class="b senior">Senior</span></div>
@@ -9248,7 +9252,7 @@
           </div>
         </div>
 
-        <div class="card" data-fp="0c0949d3876b52ba" data-score="76" data-senior="0" data-remote="1" data-listed-days="15" data-salary-max="0" data-last-seen="2026-05-13T01:27:28.869476+00:00" data-first-seen="2026-05-12T20:27:19.305989+00:00">
+        <div class="card" data-fp="0c0949d3876b52ba" data-score="76" data-senior="0" data-remote="1" data-listed-days="16" data-salary-max="0" data-last-seen="2026-05-13T01:27:28.869476+00:00" data-first-seen="2026-05-12T20:27:19.305989+00:00">
           <div class="row1">
             <div class="title"><a href="https://jobs.ashbyhq.com/versemedical/449c06ec-2d5e-4456-a4f1-5f9df5fb720a" target="_blank">Customer Experience Associate (Remote)</a></div>
             <div class="score">76</div>
@@ -9256,7 +9260,7 @@
           <div class="row2">
             <span class="company">Versemedical</span> ·
             <span class="loc">Remote</span> ·
-            <span class="age">15d old</span>
+            <span class="age">16d old</span>
           </div>
           
           <div class="badges" data-badges><span class="b remote">Remote</span></div>
@@ -9408,7 +9412,7 @@
           </div>
         </div>
 
-        <div class="card" data-fp="2b0fa864c1a8ec08" data-score="76" data-senior="0" data-remote="1" data-listed-days="15" data-salary-max="193000" data-last-seen="2026-05-13T01:27:20.430377+00:00" data-first-seen="2026-05-12T20:27:10.587827+00:00">
+        <div class="card" data-fp="2b0fa864c1a8ec08" data-score="76" data-senior="0" data-remote="1" data-listed-days="16" data-salary-max="193000" data-last-seen="2026-05-13T01:27:20.430377+00:00" data-first-seen="2026-05-12T20:27:10.587827+00:00">
           <div class="row1">
             <div class="title"><a href="https://jobs.ashbyhq.com/Interrahealth/2ece3036-2b53-455f-a3df-a9b8463bfc6b" target="_blank">Production Operations Manager</a></div>
             <div class="score">76</div>
@@ -9416,7 +9420,7 @@
           <div class="row2">
             <span class="company">Interrahealth</span> ·
             <span class="loc">USA - Remote</span> ·
-            <span class="age">15d old</span>
+            <span class="age">16d old</span>
           </div>
           <div class="salary-row"><span class="salary">$145K – $193K</span></div>
           <div class="badges" data-badges><span class="b remote">Remote</span></div>
@@ -9448,7 +9452,7 @@
           </div>
         </div>
 
-        <div class="card" data-fp="db96ec80286bbd63" data-score="76" data-senior="0" data-remote="1" data-listed-days="8" data-salary-max="0" data-last-seen="2026-05-13T01:27:20.428223+00:00" data-first-seen="2026-05-12T20:27:10.586561+00:00">
+        <div class="card" data-fp="db96ec80286bbd63" data-score="76" data-senior="0" data-remote="1" data-listed-days="9" data-salary-max="0" data-last-seen="2026-05-13T01:27:20.428223+00:00" data-first-seen="2026-05-12T20:27:10.586561+00:00">
           <div class="row1">
             <div class="title"><a href="https://jobs.ashbyhq.com/Interrahealth/71f93a79-c4b1-4c70-8593-9bcfa950debb" target="_blank">Software Developer</a></div>
             <div class="score">76</div>
@@ -9456,7 +9460,7 @@
           <div class="row2">
             <span class="company">Interrahealth</span> ·
             <span class="loc">India - Remote</span> ·
-            <span class="age">8d old</span>
+            <span class="age">9d old</span>
           </div>
           
           <div class="badges" data-badges><span class="b remote">Remote</span></div>
@@ -11348,7 +11352,7 @@
           </div>
         </div>
 
-        <div class="card" data-fp="efb7c32360d04edf" data-score="75" data-senior="1" data-remote="0" data-listed-days="4" data-salary-max="0" data-last-seen="2026-05-13T01:26:48.979732+00:00" data-first-seen="2026-05-12T20:26:29.163770+00:00">
+        <div class="card" data-fp="efb7c32360d04edf" data-score="75" data-senior="1" data-remote="0" data-listed-days="5" data-salary-max="0" data-last-seen="2026-05-13T01:26:48.979732+00:00" data-first-seen="2026-05-12T20:26:29.163770+00:00">
           <div class="row1">
             <div class="title"><a href="https://job-boards.greenhouse.io/headlandsresearch/jobs/4202008009" target="_blank">Site Director - Clinical Research</a></div>
             <div class="score">75</div>
@@ -11356,7 +11360,7 @@
           <div class="row2">
             <span class="company">Headlandsresearch</span> ·
             <span class="loc">Brownsville, Texas</span> ·
-            <span class="age">4d old</span>
+            <span class="age">5d old</span>
           </div>
           
           <div class="badges" data-badges><span class="b senior">Senior</span> <span class="b week">This week</span></div>
@@ -11368,7 +11372,7 @@
           </div>
         </div>
 
-        <div class="card" data-fp="a657c05c84897d2a" data-score="75" data-senior="1" data-remote="0" data-listed-days="4" data-salary-max="0" data-last-seen="2026-05-13T01:26:48.974120+00:00" data-first-seen="2026-05-12T20:26:29.159618+00:00">
+        <div class="card" data-fp="a657c05c84897d2a" data-score="75" data-senior="1" data-remote="0" data-listed-days="5" data-salary-max="0" data-last-seen="2026-05-13T01:26:48.974120+00:00" data-first-seen="2026-05-12T20:26:29.159618+00:00">
           <div class="row1">
             <div class="title"><a href="https://job-boards.greenhouse.io/headlandsresearch/jobs/4106707009" target="_blank">Clinical Research Site Director</a></div>
             <div class="score">75</div>
@@ -11376,7 +11380,7 @@
           <div class="row2">
             <span class="company">Headlandsresearch</span> ·
             <span class="loc">Plymouth, MA</span> ·
-            <span class="age">4d old</span>
+            <span class="age">5d old</span>
           </div>
           
           <div class="badges" data-badges><span class="b senior">Senior</span> <span class="b week">This week</span></div>
@@ -11608,7 +11612,7 @@
           </div>
         </div>
 
-        <div class="card" data-fp="364c78b2bca6db80" data-score="75" data-senior="1" data-remote="0" data-listed-days="1" data-salary-max="0" data-last-seen="2026-05-13T01:26:43.712723+00:00" data-first-seen="2026-05-12T20:26:23.751428+00:00">
+        <div class="card" data-fp="364c78b2bca6db80" data-score="75" data-senior="1" data-remote="0" data-listed-days="2" data-salary-max="0" data-last-seen="2026-05-13T01:26:43.712723+00:00" data-first-seen="2026-05-12T20:26:23.751428+00:00">
           <div class="row1">
             <div class="title"><a href="https://job-boards.greenhouse.io/pomelocare/jobs/5229005004" target="_blank">Strategic Partnerships Director, Payer</a></div>
             <div class="score">75</div>
@@ -11616,7 +11620,7 @@
           <div class="row2">
             <span class="company">Pomelocare</span> ·
             <span class="loc">United States</span> ·
-            <span class="age">1d old</span>
+            <span class="age">2d old</span>
           </div>
           
           <div class="badges" data-badges><span class="b senior">Senior</span> <span class="b week">This week</span></div>
@@ -11808,7 +11812,7 @@
           </div>
         </div>
 
-        <div class="card" data-fp="76246302c74be571" data-score="75" data-senior="1" data-remote="0" data-listed-days="14" data-salary-max="0" data-last-seen="2026-05-13T01:26:35.675644+00:00" data-first-seen="2026-05-12T20:26:15.884726+00:00">
+        <div class="card" data-fp="76246302c74be571" data-score="75" data-senior="1" data-remote="0" data-listed-days="15" data-salary-max="0" data-last-seen="2026-05-13T01:26:35.675644+00:00" data-first-seen="2026-05-12T20:26:15.884726+00:00">
           <div class="row1">
             <div class="title"><a href="https://job-boards.greenhouse.io/linushealth/jobs/5921217004" target="_blank">Executive Assistant To The CEO</a></div>
             <div class="score">75</div>
@@ -11816,7 +11820,7 @@
           <div class="row2">
             <span class="company">Linushealth</span> ·
             <span class="loc">Boston, Massachusetts, United States</span> ·
-            <span class="age">14d old</span>
+            <span class="age">15d old</span>
           </div>
           
           <div class="badges" data-badges><span class="b senior">Senior</span></div>
@@ -12568,7 +12572,7 @@
           </div>
         </div>
 
-        <div class="card" data-fp="a423ec7e1b609987" data-score="74" data-senior="0" data-remote="1" data-listed-days="0" data-salary-max="0" data-last-seen="2026-05-13T01:26:48.125017+00:00" data-first-seen="2026-05-12T20:26:28.277002+00:00">
+        <div class="card" data-fp="a423ec7e1b609987" data-score="74" data-senior="0" data-remote="1" data-listed-days="1" data-salary-max="0" data-last-seen="2026-05-13T01:26:48.125017+00:00" data-first-seen="2026-05-12T20:26:28.277002+00:00">
           <div class="row1">
             <div class="title"><a href="https://job-boards.greenhouse.io/precisionmedicinegroup/jobs/5991213004" target="_blank">Software Engineer I - Data</a></div>
             <div class="score">74</div>
@@ -12576,10 +12580,10 @@
           <div class="row2">
             <span class="company">Precisionmedicinegroup</span> ·
             <span class="loc">Remote, India</span> ·
-            <span class="age">0d old</span>
+            <span class="age">1d old</span>
           </div>
           
-          <div class="badges" data-badges><span class="b remote">Remote</span> <span class="b fresh">New today</span></div>
+          <div class="badges" data-badges><span class="b remote">Remote</span> <span class="b week">This week</span></div>
           <div class="desc">&amp;lt;p&amp;gt;&amp;lt;strong&amp;gt;Position Summary:&amp;lt;/strong&amp;gt;&amp;lt;/p&amp;gt; &amp;lt;p&amp;gt;The candidate will be responsible for the configuration and delivery of client-facing applications.&amp;amp;nbsp; The candidate may assist with support for the development of process enhancements under the guidance of the Sr. Sof…</div>
           <div class="actions">
             <button class="btn primary" onclick="prepApplication('a423ec7e1b609987', this)">Prep Application</button>
@@ -12628,7 +12632,7 @@
           </div>
         </div>
 
-        <div class="card" data-fp="e75e81f1d955d439" data-score="74" data-senior="0" data-remote="1" data-listed-days="2" data-salary-max="0" data-last-seen="2026-05-13T01:26:48.122395+00:00" data-first-seen="2026-05-12T20:26:28.274536+00:00">
+        <div class="card" data-fp="e75e81f1d955d439" data-score="74" data-senior="0" data-remote="1" data-listed-days="3" data-salary-max="0" data-last-seen="2026-05-13T01:26:48.122395+00:00" data-first-seen="2026-05-12T20:26:28.274536+00:00">
           <div class="row1">
             <div class="title"><a href="https://job-boards.greenhouse.io/precisionmedicinegroup/jobs/5992998004" target="_blank">Senior Marketing Manager - CRO Experience Required</a></div>
             <div class="score">74</div>
@@ -12636,7 +12640,7 @@
           <div class="row2">
             <span class="company">Precisionmedicinegroup</span> ·
             <span class="loc">Remote, United Kingdom</span> ·
-            <span class="age">2d old</span>
+            <span class="age">3d old</span>
           </div>
           
           <div class="badges" data-badges><span class="b remote">Remote</span> <span class="b week">This week</span></div>
@@ -12988,7 +12992,7 @@
           </div>
         </div>
 
-        <div class="card" data-fp="d624cac689e9416c" data-score="74" data-senior="0" data-remote="1" data-listed-days="4" data-salary-max="0" data-last-seen="2026-05-13T01:26:44.275881+00:00" data-first-seen="2026-05-12T20:26:24.316326+00:00">
+        <div class="card" data-fp="d624cac689e9416c" data-score="74" data-senior="0" data-remote="1" data-listed-days="5" data-salary-max="0" data-last-seen="2026-05-13T01:26:44.275881+00:00" data-first-seen="2026-05-12T20:26:24.316326+00:00">
           <div class="row1">
             <div class="title"><a href="https://job-boards.greenhouse.io/mavenclinic/jobs/8523423002" target="_blank">Senior Benefits Consultant (Labor &amp; Public Sector)</a></div>
             <div class="score">74</div>
@@ -12996,7 +13000,7 @@
           <div class="row2">
             <span class="company">Mavenclinic</span> ·
             <span class="loc">Remote</span> ·
-            <span class="age">4d old</span>
+            <span class="age">5d old</span>
           </div>
           
           <div class="badges" data-badges><span class="b remote">Remote</span> <span class="b week">This week</span></div>
@@ -15868,7 +15872,7 @@
           </div>
         </div>
 
-        <div class="card" data-fp="a8d7ab31d0fd4a36" data-score="72" data-senior="0" data-remote="1" data-listed-days="5" data-salary-max="0" data-last-seen="2026-05-13T01:26:46.830899+00:00" data-first-seen="2026-05-12T20:26:26.900106+00:00">
+        <div class="card" data-fp="a8d7ab31d0fd4a36" data-score="72" data-senior="0" data-remote="1" data-listed-days="6" data-salary-max="0" data-last-seen="2026-05-13T01:26:46.830899+00:00" data-first-seen="2026-05-12T20:26:26.900106+00:00">
           <div class="row1">
             <div class="title"><a href="https://www.inovalon.com/careers/job/?gh_jid=7727099003" target="_blank">Senior Implementation Advocate</a></div>
             <div class="score">72</div>
@@ -15876,7 +15880,7 @@
           <div class="row2">
             <span class="company">Inovalon</span> ·
             <span class="loc">Remote- United States</span> ·
-            <span class="age">5d old</span>
+            <span class="age">6d old</span>
           </div>
           
           <div class="badges" data-badges><span class="b remote">Remote</span> <span class="b week">This week</span></div>
@@ -17348,7 +17352,7 @@
           </div>
         </div>
 
-        <div class="card" data-fp="9c72e94fd3cc8e33" data-score="71" data-senior="1" data-remote="0" data-listed-days="54" data-salary-max="0" data-last-seen="2026-05-13T01:27:08.309570+00:00" data-first-seen="2026-05-12T20:26:54.496013+00:00">
+        <div class="card" data-fp="9c72e94fd3cc8e33" data-score="71" data-senior="1" data-remote="0" data-listed-days="55" data-salary-max="0" data-last-seen="2026-05-13T01:27:08.309570+00:00" data-first-seen="2026-05-12T20:26:54.496013+00:00">
           <div class="row1">
             <div class="title"><a href="https://jobs.lever.co/whoop/d5e3d888-ef8b-41e2-8568-c1e923f65502" target="_blank">Revenue Operations Lead</a></div>
             <div class="score">71</div>
@@ -17356,10 +17360,10 @@
           <div class="row2">
             <span class="company">Whoop</span> ·
             <span class="loc">Boston, MA</span> ·
-            <span class="age">54d old</span>
+            <span class="age">55d old</span>
           </div>
           
-          <div class="badges" data-badges><span class="b senior">Senior</span> <span class="b ghost">Ghost? 54d</span></div>
+          <div class="badges" data-badges><span class="b senior">Senior</span> <span class="b ghost">Ghost? 55d</span></div>
           <div class="desc">At WHOOP, we're on a mission to unlock human performance and healthspan. WHOOP empowers members to perform at a higher level through a deeper understanding of their bodies and daily lives. We’re seeking a highly analytical and strategic Revenue Operations Lead to drive growth across WHOOP’s Marketpl…</div>
           <div class="actions">
             <button class="btn primary" onclick="prepApplication('9c72e94fd3cc8e33', this)">Prep Application</button>
@@ -17568,7 +17572,7 @@
           </div>
         </div>
 
-        <div class="card" data-fp="f6ad6203cc55f750" data-score="71" data-senior="1" data-remote="0" data-listed-days="25" data-salary-max="0" data-last-seen="2026-05-13T01:27:08.306948+00:00" data-first-seen="2026-05-12T20:26:54.493516+00:00">
+        <div class="card" data-fp="f6ad6203cc55f750" data-score="71" data-senior="1" data-remote="0" data-listed-days="26" data-salary-max="0" data-last-seen="2026-05-13T01:27:08.306948+00:00" data-first-seen="2026-05-12T20:26:54.493516+00:00">
           <div class="row1">
             <div class="title"><a href="https://jobs.lever.co/whoop/765ac3f7-9a08-4b7f-9761-13c7dbead557" target="_blank">Director of Health Economics &amp; Outcomes Research (HEOR)</a></div>
             <div class="score">71</div>
@@ -17576,7 +17580,7 @@
           <div class="row2">
             <span class="company">Whoop</span> ·
             <span class="loc">Boston, MA</span> ·
-            <span class="age">25d old</span>
+            <span class="age">26d old</span>
           </div>
           
           <div class="badges" data-badges><span class="b senior">Senior</span></div>
@@ -18448,7 +18452,7 @@
           </div>
         </div>
 
-        <div class="card" data-fp="10e014fd7db36db8" data-score="70" data-senior="0" data-remote="0" data-listed-days="53" data-salary-max="0" data-last-seen="2026-05-13T01:27:27.287573+00:00" data-first-seen="2026-05-12T20:27:12.777505+00:00">
+        <div class="card" data-fp="10e014fd7db36db8" data-score="70" data-senior="0" data-remote="0" data-listed-days="54" data-salary-max="0" data-last-seen="2026-05-13T01:27:27.287573+00:00" data-first-seen="2026-05-12T20:27:12.777505+00:00">
           <div class="row1">
             <div class="title"><a href="https://jobs.ashbyhq.com/tandem-health/01995ddb-b963-4cbc-8a25-a5abe1286be6" target="_blank">Project Delivery Manager - Helsinki</a></div>
             <div class="score">70</div>
@@ -18456,10 +18460,10 @@
           <div class="row2">
             <span class="company">Tandem Health</span> ·
             <span class="loc">Helsinki</span> ·
-            <span class="age">53d old</span>
+            <span class="age">54d old</span>
           </div>
           
-          <div class="badges" data-badges><span class="b ghost">Ghost? 53d</span></div>
+          <div class="badges" data-badges><span class="b ghost">Ghost? 54d</span></div>
           <div class="desc">Build something monumental for Healthcare! At Tandem Health we’re reimagining healthcare by putting clinicians first. Our platform - designed by clinicians, for clinicians - is built on deep insight into real-world pain points, with intuitive medical notes and workflows that truly support patient ca…</div>
           <div class="actions">
             <button class="btn primary" onclick="prepApplication('10e014fd7db36db8', this)">Prep Application</button>
@@ -18588,7 +18592,7 @@
           </div>
         </div>
 
-        <div class="card" data-fp="46ed76d00341579c" data-score="70" data-senior="0" data-remote="0" data-listed-days="244" data-salary-max="0" data-last-seen="2026-05-13T01:27:27.283754+00:00" data-first-seen="2026-05-12T20:27:12.774659+00:00">
+        <div class="card" data-fp="46ed76d00341579c" data-score="70" data-senior="0" data-remote="0" data-listed-days="245" data-salary-max="0" data-last-seen="2026-05-13T01:27:27.283754+00:00" data-first-seen="2026-05-12T20:27:12.774659+00:00">
           <div class="row1">
             <div class="title"><a href="https://jobs.ashbyhq.com/tandem-health/291885dd-fb44-44a9-8216-dd6c01587b8d" target="_blank">Medical Operations - Global</a></div>
             <div class="score">70</div>
@@ -18596,10 +18600,10 @@
           <div class="row2">
             <span class="company">Tandem Health</span> ·
             <span class="loc">Stockholm</span> ·
-            <span class="age">244d old</span>
+            <span class="age">245d old</span>
           </div>
           
-          <div class="badges" data-badges><span class="b ghost">Ghost? 244d</span></div>
+          <div class="badges" data-badges><span class="b ghost">Ghost? 245d</span></div>
           <div class="desc">Build something monumental for Healthcare! At Tandem Health we’re reimagining healthcare by putting clinicians first. Our platform - designed by clinicians, for clinicians - is built on deep insight into real-world pain points, with intuitive medical notes and workflows that truly support patient ca…</div>
           <div class="actions">
             <button class="btn primary" onclick="prepApplication('46ed76d00341579c', this)">Prep Application</button>
@@ -19288,7 +19292,7 @@
           </div>
         </div>
 
-        <div class="card" data-fp="0e65098cba1ab566" data-score="70" data-senior="0" data-remote="1" data-listed-days="4" data-salary-max="0" data-last-seen="2026-05-13T01:26:48.976222+00:00" data-first-seen="2026-05-12T20:26:29.161092+00:00">
+        <div class="card" data-fp="0e65098cba1ab566" data-score="70" data-senior="0" data-remote="1" data-listed-days="5" data-salary-max="0" data-last-seen="2026-05-13T01:26:48.976222+00:00" data-first-seen="2026-05-12T20:26:29.161092+00:00">
           <div class="row1">
             <div class="title"><a href="https://job-boards.greenhouse.io/headlandsresearch/jobs/4215386009" target="_blank">Patient Recruitment Specialist</a></div>
             <div class="score">70</div>
@@ -19296,7 +19300,7 @@
           <div class="row2">
             <span class="company">Headlandsresearch</span> ·
             <span class="loc">Remote</span> ·
-            <span class="age">4d old</span>
+            <span class="age">5d old</span>
           </div>
           
           <div class="badges" data-badges><span class="b remote">Remote</span> <span class="b week">This week</span></div>
@@ -19308,7 +19312,7 @@
           </div>
         </div>
 
-        <div class="card" data-fp="283eb6017771ed74" data-score="70" data-senior="0" data-remote="1" data-listed-days="4" data-salary-max="0" data-last-seen="2026-05-13T01:26:48.971098+00:00" data-first-seen="2026-05-12T20:26:29.157421+00:00">
+        <div class="card" data-fp="283eb6017771ed74" data-score="70" data-senior="0" data-remote="1" data-listed-days="5" data-salary-max="0" data-last-seen="2026-05-13T01:26:48.971098+00:00" data-first-seen="2026-05-12T20:26:29.157421+00:00">
           <div class="row1">
             <div class="title"><a href="https://job-boards.greenhouse.io/headlandsresearch/jobs/4203731009" target="_blank">Accounts Receivable and Revenue Specialist</a></div>
             <div class="score">70</div>
@@ -19316,7 +19320,7 @@
           <div class="row2">
             <span class="company">Headlandsresearch</span> ·
             <span class="loc">Remote</span> ·
-            <span class="age">4d old</span>
+            <span class="age">5d old</span>
           </div>
           
           <div class="badges" data-badges><span class="b remote">Remote</span> <span class="b week">This week</span></div>
@@ -19948,7 +19952,7 @@
           </div>
         </div>
 
-        <div class="card" data-fp="a15ff473018f81c0" data-score="70" data-senior="0" data-remote="1" data-listed-days="18" data-salary-max="0" data-last-seen="2026-05-13T01:26:46.075995+00:00" data-first-seen="2026-05-12T20:26:26.168188+00:00">
+        <div class="card" data-fp="a15ff473018f81c0" data-score="70" data-senior="0" data-remote="1" data-listed-days="19" data-salary-max="0" data-last-seen="2026-05-13T01:26:46.075995+00:00" data-first-seen="2026-05-12T20:26:26.168188+00:00">
           <div class="row1">
             <div class="title"><a href="https://job-boards.greenhouse.io/interwellhealth/jobs/5193450008" target="_blank">Epic Professional Billing Analyst</a></div>
             <div class="score">70</div>
@@ -19956,7 +19960,7 @@
           <div class="row2">
             <span class="company">Interwellhealth</span> ·
             <span class="loc">Remote,  United States</span> ·
-            <span class="age">18d old</span>
+            <span class="age">19d old</span>
           </div>
           
           <div class="badges" data-badges><span class="b remote">Remote</span></div>
@@ -20149,6 +20153,22 @@
         </div>
 </div>
 
+<div class="modal-overlay" id="resume-modal" onclick="if(event.target===this)closeResumeModal()">
+  <div class="modal prep-result-modal">
+    <span class="modal-close" onclick="closeResumeModal()">&times;</span>
+    <h3>Geetanjali's Resume</h3>
+    <p class="prep-status" id="resume-status">Loading current resume…</p>
+    <div id="resume-editor" style="display:none;">
+      <p style="font-size:13px;color:#555;margin-bottom:8px;">Paste the JSON resume below, then click Save. The AI uses this to tailor every application.</p>
+      <textarea id="resume-text" spellcheck="false" style="width:100%; height:340px; font-family: ui-monospace, Menlo, monospace; font-size: 12px; padding: 10px; border: 1px solid #ddd; border-radius: 6px; resize: vertical;"></textarea>
+      <div style="margin-top: 12px; display: flex; gap: 8px; align-items: center;">
+        <button class="btn primary" onclick="saveResume(this)">Save resume</button>
+        <span id="resume-save-status" style="font-size: 12px; color: #555;"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="prep-modal" onclick="if(event.target===this)closeModal()">
   <div class="modal prep-result-modal">
     <span class="modal-close" onclick="closeModal()">&times;</span>
@@ -20337,6 +20357,95 @@ function filter() {
   });
   const counter = document.getElementById('shown-counter');
   if (counter) counter.textContent = shown;
+}
+
+// --- Resume editor (Cloudflare Worker + KV) -----------------------------
+const RESUME_WORKER_URL = 'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/resume';
+
+async function openResumeModal() {
+  const modal = document.getElementById('resume-modal');
+  const statusEl = document.getElementById('resume-status');
+  const editor = document.getElementById('resume-editor');
+  const textarea = document.getElementById('resume-text');
+  document.getElementById('resume-save-status').textContent = '';
+  statusEl.className = 'prep-status';
+  statusEl.textContent = 'Loading current resume…';
+  statusEl.style.display = 'block';
+  editor.style.display = 'none';
+  modal.classList.add('show');
+  try {
+    const r = await fetch(RESUME_WORKER_URL);
+    const data = await r.json();
+    if (data.error) {
+      statusEl.className = 'prep-status error';
+      statusEl.textContent = 'Error loading resume: ' + data.error;
+      return;
+    }
+    textarea.value = data.resume || '';
+    statusEl.style.display = 'none';
+    editor.style.display = 'block';
+    if (!data.resume) {
+      document.getElementById('resume-save-status').textContent = 'No resume saved yet — paste one and click Save.';
+    }
+  } catch (e) {
+    statusEl.className = 'prep-status error';
+    statusEl.textContent = 'Error loading resume: ' + (e.message || e);
+  }
+}
+
+function closeResumeModal() {
+  document.getElementById('resume-modal').classList.remove('show');
+}
+
+async function saveResume(btn) {
+  const textarea = document.getElementById('resume-text');
+  const statusEl = document.getElementById('resume-save-status');
+  const value = textarea.value.trim();
+  if (!value) {
+    statusEl.textContent = 'Resume is empty — paste content first.';
+    return;
+  }
+  // Light validation: should be JSON with a personal section
+  try {
+    const parsed = JSON.parse(value);
+    if (!parsed.personal) throw new Error('Resume JSON should include a "personal" key.');
+  } catch (e) {
+    if (!confirm('This does not look like valid resume JSON (' + e.message + '). Save anyway?')) return;
+  }
+  let editKey = localStorage.getItem('htj_resume_key');
+  if (!editKey) {
+    editKey = prompt('Enter the resume edit key (set as RESUME_EDIT_KEY secret in the Cloudflare Worker):');
+    if (!editKey) return;
+  }
+  btn.disabled = true;
+  const orig = btn.textContent;
+  btn.textContent = 'Saving…';
+  statusEl.textContent = '';
+  try {
+    const r = await fetch(RESUME_WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Edit-Key': editKey },
+      body: JSON.stringify({ resume: value }),
+    });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok || data.error) {
+      // Bad key? Wipe stored key so user is prompted again next time.
+      if (r.status === 401) localStorage.removeItem('htj_resume_key');
+      statusEl.textContent = 'Save failed: ' + (data.error || ('HTTP ' + r.status));
+      btn.disabled = false;
+      btn.textContent = orig;
+      return;
+    }
+    // Save key for next time
+    localStorage.setItem('htj_resume_key', editKey);
+    statusEl.textContent = 'Saved.';
+    btn.textContent = orig;
+    btn.disabled = false;
+  } catch (e) {
+    statusEl.textContent = 'Save failed: ' + (e.message || e);
+    btn.disabled = false;
+    btn.textContent = orig;
+  }
 }
 
 // --- Refresh data (triggers GitHub Action via Cloudflare Worker) --------

@@ -566,7 +566,8 @@ HTML_TEMPLATE = """<!doctype html>
   header {{ background: #1f3a5f; color: white; padding: 18px 28px; position: relative; }}
   header h1 {{ margin: 0; font-size: 20px; }}
   header .sub {{ opacity: .85; font-size: 13px; margin-top: 4px; }}
-  .header-btn {{ position: absolute; right: 28px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; }}
+  .header-actions {{ position: absolute; right: 28px; top: 50%; transform: translateY(-50%); display: flex; gap: 8px; }}
+  .header-btn {{ background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; }}
   .header-btn:hover {{ background: rgba(255,255,255,0.25); }}
   .header-btn:disabled {{ opacity: 0.5; cursor: not-allowed; }}
   .stats {{ display: flex; gap: 24px; padding: 14px 28px; background: white; border-bottom: 1px solid #e5e5ea; }}
@@ -646,7 +647,10 @@ HTML_TEMPLATE = """<!doctype html>
 <header>
   <h1>HealthTech Jobs for Geetanjali</h1>
   <div class="sub">Senior leadership · Healthcare IT · Remote · Generated {generated}</div>
-  <button id="refresh-btn" class="header-btn" onclick="refreshData()">Refresh data</button>
+  <div class="header-actions">
+    <button id="resume-btn" class="header-btn" onclick="openResumeModal()">Resume</button>
+    <button id="refresh-btn" class="header-btn" onclick="refreshData()">Refresh data</button>
+  </div>
 </header>
 <div class="stats">
   <div class="stat"><b>{total}</b>Total jobs tracked</div>
@@ -709,6 +713,22 @@ HTML_TEMPLATE = """<!doctype html>
 </div>
 <div class="grid" id="grid">
 {cards}
+</div>
+
+<div class="modal-overlay" id="resume-modal" onclick="if(event.target===this)closeResumeModal()">
+  <div class="modal prep-result-modal">
+    <span class="modal-close" onclick="closeResumeModal()">&times;</span>
+    <h3>Geetanjali's Resume</h3>
+    <p class="prep-status" id="resume-status">Loading current resume…</p>
+    <div id="resume-editor" style="display:none;">
+      <p style="font-size:13px;color:#555;margin-bottom:8px;">Paste the JSON resume below, then click Save. The AI uses this to tailor every application.</p>
+      <textarea id="resume-text" spellcheck="false" style="width:100%; height:340px; font-family: ui-monospace, Menlo, monospace; font-size: 12px; padding: 10px; border: 1px solid #ddd; border-radius: 6px; resize: vertical;"></textarea>
+      <div style="margin-top: 12px; display: flex; gap: 8px; align-items: center;">
+        <button class="btn primary" onclick="saveResume(this)">Save resume</button>
+        <span id="resume-save-status" style="font-size: 12px; color: #555;"></span>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="modal-overlay" id="prep-modal" onclick="if(event.target===this)closeModal()">
@@ -899,6 +919,95 @@ function filter() {{
   }});
   const counter = document.getElementById('shown-counter');
   if (counter) counter.textContent = shown;
+}}
+
+// --- Resume editor (Cloudflare Worker + KV) -----------------------------
+const RESUME_WORKER_URL = 'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/resume';
+
+async function openResumeModal() {{
+  const modal = document.getElementById('resume-modal');
+  const statusEl = document.getElementById('resume-status');
+  const editor = document.getElementById('resume-editor');
+  const textarea = document.getElementById('resume-text');
+  document.getElementById('resume-save-status').textContent = '';
+  statusEl.className = 'prep-status';
+  statusEl.textContent = 'Loading current resume…';
+  statusEl.style.display = 'block';
+  editor.style.display = 'none';
+  modal.classList.add('show');
+  try {{
+    const r = await fetch(RESUME_WORKER_URL);
+    const data = await r.json();
+    if (data.error) {{
+      statusEl.className = 'prep-status error';
+      statusEl.textContent = 'Error loading resume: ' + data.error;
+      return;
+    }}
+    textarea.value = data.resume || '';
+    statusEl.style.display = 'none';
+    editor.style.display = 'block';
+    if (!data.resume) {{
+      document.getElementById('resume-save-status').textContent = 'No resume saved yet — paste one and click Save.';
+    }}
+  }} catch (e) {{
+    statusEl.className = 'prep-status error';
+    statusEl.textContent = 'Error loading resume: ' + (e.message || e);
+  }}
+}}
+
+function closeResumeModal() {{
+  document.getElementById('resume-modal').classList.remove('show');
+}}
+
+async function saveResume(btn) {{
+  const textarea = document.getElementById('resume-text');
+  const statusEl = document.getElementById('resume-save-status');
+  const value = textarea.value.trim();
+  if (!value) {{
+    statusEl.textContent = 'Resume is empty — paste content first.';
+    return;
+  }}
+  // Light validation: should be JSON with a personal section
+  try {{
+    const parsed = JSON.parse(value);
+    if (!parsed.personal) throw new Error('Resume JSON should include a "personal" key.');
+  }} catch (e) {{
+    if (!confirm('This does not look like valid resume JSON (' + e.message + '). Save anyway?')) return;
+  }}
+  let editKey = localStorage.getItem('htj_resume_key');
+  if (!editKey) {{
+    editKey = prompt('Enter the resume edit key (set as RESUME_EDIT_KEY secret in the Cloudflare Worker):');
+    if (!editKey) return;
+  }}
+  btn.disabled = true;
+  const orig = btn.textContent;
+  btn.textContent = 'Saving…';
+  statusEl.textContent = '';
+  try {{
+    const r = await fetch(RESUME_WORKER_URL, {{
+      method: 'POST',
+      headers: {{ 'Content-Type': 'application/json', 'X-Edit-Key': editKey }},
+      body: JSON.stringify({{ resume: value }}),
+    }});
+    const data = await r.json().catch(() => ({{}}));
+    if (!r.ok || data.error) {{
+      // Bad key? Wipe stored key so user is prompted again next time.
+      if (r.status === 401) localStorage.removeItem('htj_resume_key');
+      statusEl.textContent = 'Save failed: ' + (data.error || ('HTTP ' + r.status));
+      btn.disabled = false;
+      btn.textContent = orig;
+      return;
+    }}
+    // Save key for next time
+    localStorage.setItem('htj_resume_key', editKey);
+    statusEl.textContent = 'Saved.';
+    btn.textContent = orig;
+    btn.disabled = false;
+  }} catch (e) {{
+    statusEl.textContent = 'Save failed: ' + (e.message || e);
+    btn.disabled = false;
+    btn.textContent = orig;
+  }}
 }}
 
 // --- Refresh data (triggers GitHub Action via Cloudflare Worker) --------
