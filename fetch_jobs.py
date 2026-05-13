@@ -611,6 +611,36 @@ def is_senior(job):
 WORKER_BASE_URL = "https://cool-darkness-dce5.tr6jz6v7wg.workers.dev"
 USERS_JSON_PATH = os.path.join(ROOT, "users.json")
 SKILLS_PROFILE = None  # set per user during generate_dashboard
+COMPANY_INDUSTRIES = {}  # company_slug -> list of industries (populated from companies.json)
+DEFAULT_INDUSTRIES = ["healthcare", "digital-health"]
+
+
+# --- Industry matching --------------------------------------------------
+_INDUSTRY_STOPWORDS = {"and", "the", "for", "with", "of", "to", "in", "on",
+                       "management", "services", "company", "industry"}
+
+
+def _industry_tokens(industries):
+    """Return a set of lowercase normalized tokens from a list of industry strings."""
+    tokens = set()
+    for s in industries or []:
+        # Normalize: lowercase, replace separators with space
+        norm = re.sub(r"[^a-z0-9]+", " ", str(s).lower())
+        for word in norm.split():
+            if len(word) > 2 and word not in _INDUSTRY_STOPWORDS:
+                tokens.add(word)
+    return tokens
+
+
+def _industry_match(company_industries, user_industries):
+    """Returns True if the company's industries overlap with the user's profile industries."""
+    if not user_industries:
+        return True  # No profile → show all
+    if not company_industries:
+        return False  # Untagged company → hide
+    ct = _industry_tokens(company_industries)
+    ut = _industry_tokens(user_industries)
+    return bool(ct & ut)
 
 
 def load_skills_profile(slug="geetu"):
@@ -763,6 +793,12 @@ def get_conn():
                 conn.commit()
             except sqlite3.OperationalError:
                 pass
+            # Migration: add industries column (comma-separated)
+            try:
+                conn.execute("ALTER TABLE jobs ADD COLUMN industries TEXT")
+                conn.commit()
+            except sqlite3.OperationalError:
+                pass
             return conn
         except sqlite3.DatabaseError:
             if attempt == 0 and os.path.exists(DB_PATH):
@@ -786,30 +822,58 @@ def upsert_job(conn, job):
 
     salary = job.get("salary_range") or ""
     employment_type = detect_employment_type(job)
+    # Industries: looked up from COMPANY_INDUSTRIES based on company_slug
+    industries = COMPANY_INDUSTRIES.get(job.get("company_slug"), DEFAULT_INDUSTRIES)
+    industries_str = ",".join(industries) if industries else ""
     cur = conn.execute("SELECT fingerprint, sightings FROM jobs WHERE fingerprint=?", (fp,))
     row = cur.fetchone()
     if row:
         conn.execute(
-            "UPDATE jobs SET last_seen=?, sightings=sightings+1, score=?, remote=?, senior=?, salary_range=?, employment_type=? WHERE fingerprint=?",
-            (now, score, remote, senior, salary, employment_type, fp),
+            "UPDATE jobs SET last_seen=?, sightings=sightings+1, score=?, remote=?, senior=?, salary_range=?, employment_type=?, industries=? WHERE fingerprint=?",
+            (now, score, remote, senior, salary, employment_type, industries_str, fp),
         )
     else:
         conn.execute(
             """INSERT INTO jobs (fingerprint, source, company_slug, company_name, external_id,
                title, location, url, posted_at, description, first_seen, last_seen,
-               sightings, remote, senior, score, salary_range, employment_type)
-               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,1,?,?,?,?,?)""",
+               sightings, remote, senior, score, salary_range, employment_type, industries)
+               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,1,?,?,?,?,?,?)""",
             (fp, job["source"], job["company_slug"], job["company_name"], job["external_id"],
              job["title"], job["location"], job["url"], job["posted_at"], job["description"],
-             now, now, remote, senior, score, salary, employment_type),
+             now, now, remote, senior, score, salary, employment_type, industries_str),
         )
 
 
 # --- Main pipeline -------------------------------------------------------
 
+def _build_company_industries(companies):
+    """Populate COMPANY_INDUSTRIES from companies.json.
+    Each entry can be a slug string (uses _default_industries) or {slug, industries}."""
+    global COMPANY_INDUSTRIES, DEFAULT_INDUSTRIES
+    defaults = companies.get("_default_industries")
+    if defaults:
+        DEFAULT_INDUSTRIES = defaults
+    mapping = {}
+    for source in ("greenhouse", "lever", "ashby"):
+        for entry in companies.get(source, []):
+            if isinstance(entry, str):
+                mapping[entry.lower()] = DEFAULT_INDUSTRIES
+            elif isinstance(entry, dict) and entry.get("slug"):
+                mapping[entry["slug"].lower()] = entry.get("industries", DEFAULT_INDUSTRIES)
+    for entry in companies.get("workday", []):
+        if isinstance(entry, dict):
+            key = (entry.get("tenant") or entry.get("name", "")).lower()
+            if key:
+                mapping[key] = entry.get("industries", DEFAULT_INDUSTRIES)
+    COMPANY_INDUSTRIES = mapping
+    print(f"[industries] mapped {len(mapping)} companies; default={DEFAULT_INDUSTRIES}", flush=True)
+
+
 def run():
     with open(COMPANIES_PATH) as f:
         companies = json.load(f)
+
+    _build_company_industries(companies)
 
     conn = get_conn()
     totals = {"greenhouse": 0, "lever": 0, "ashby": 0}
@@ -820,9 +884,16 @@ def run():
         entries = companies.get(source, [])
         print(f"\n[{source}] {len(entries)} companies")
         for i, entry in enumerate(entries, 1):
+            # Backward compat: entry may be a slug string OR an object {slug, industries}
+            if isinstance(entry, dict) and entry.get("slug"):
+                fetch_arg = entry["slug"]
+            elif isinstance(entry, dict):
+                fetch_arg = entry  # workday-style
+            else:
+                fetch_arg = entry
             label = entry.get("name", entry.get("tenant", "?")) if isinstance(entry, dict) else entry
             try:
-                jobs = fetcher(entry)
+                jobs = fetcher(fetch_arg)
                 if not jobs:
                     failures.append(f"{source}:{label}")
                     print(f"  [{i}/{len(entries)}] {label}: 0 jobs (slug may be invalid)")
@@ -884,7 +955,7 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
 
     rows = conn.execute("""
         SELECT fingerprint, company_name, title, location, url, posted_at, first_seen, last_seen,
-               sightings, remote, senior, score, description, salary_range, employment_type
+               sightings, remote, senior, score, description, salary_range, employment_type, industries
         FROM jobs
         WHERE last_seen >= datetime('now', '-30 days')
         ORDER BY score DESC, last_seen DESC
@@ -895,6 +966,14 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
 
     # Whitelist: title must contain a positive domain theme or a skills-profile keyword
     rows = [r for r in rows if _has_positive_theme(r[2], SKILLS_PROFILE)]
+
+    # Industry filter — only show jobs from companies in the user's industries
+    user_industries = (SKILLS_PROFILE or {}).get("industries", []) if SKILLS_PROFILE else []
+    if user_industries:
+        def _ind_ok(r):
+            job_industries = (r[15] or "").split(",") if r[15] else []
+            return _industry_match(job_industries, user_industries)
+        rows = [r for r in rows if _ind_ok(r)]
 
     # Hide ghost jobs (listed > GHOST_DAYS) from default view
     def _not_ghost(r):
@@ -917,7 +996,7 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
     cards = []
     for r in rows:
         (fp, company, title, loc, url, posted_at, first_seen, last_seen,
-         sightings, remote, senior, score, desc, salary, employment_type) = r
+         sightings, remote, senior, score, desc, salary, employment_type, _industries) = r
         emp = (employment_type or "unknown").lower()
         # "Listed" age — prefer the source's posted_at, fall back to first_seen
         listed_days = _days_old(posted_at) if posted_at else None
@@ -966,13 +1045,38 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
     else:
         subtitle = "Awaiting resume upload — click Resume to get started"
 
+    # Friendlier empty-state message depending on why we have 0 cards
+    if cards:
+        cards_html = "\n".join(cards)
+    elif SKILLS_PROFILE and user_industries:
+        cards_html = (
+            f"<div style='padding:32px;max-width:640px;margin:30px auto;background:#fff;"
+            f"border:1px solid #e2e5ea;border-radius:8px;line-height:1.55;'>"
+            f"<h3 style='margin:0 0 10px 0;color:#1f3a5f;'>No matching jobs yet for {_esc(user_name)}</h3>"
+            f"<p style='color:#555;font-size:14px;'>Your profile industries: "
+            f"<strong>{_esc(', '.join(user_industries[:5]))}</strong>. "
+            f"We haven't indexed companies in these industries yet. "
+            f"Ask the admin to add relevant companies, or click <em>Resume</em> to update your profile.</p></div>"
+        )
+    elif not SKILLS_PROFILE:
+        cards_html = (
+            f"<div style='padding:32px;max-width:640px;margin:30px auto;background:#fff;"
+            f"border:1px solid #e2e5ea;border-radius:8px;line-height:1.55;'>"
+            f"<h3 style='margin:0 0 10px 0;color:#1f3a5f;'>Welcome, {_esc(user_name)}!</h3>"
+            f"<p style='color:#555;font-size:14px;'>Click the <strong>Resume</strong> button (top-right) and "
+            f"upload your resume as PDF or Word. The AI will read it and start matching jobs to your background. "
+            f"Your tailored dashboard will appear here after the next refresh.</p></div>"
+        )
+    else:
+        cards_html = "<p style='padding:24px;color:#666;'>No matches in the last 30 days. Click Refresh data to look again.</p>"
+
     html = HTML_TEMPLATE.format(
         total=total,
         senior_remote=senior_remote,
         ghost=ghost,
         generated=datetime.now().strftime("%Y-%m-%d %H:%M"),
         shown=len(rows),
-        cards="\n".join(cards) or "<p>No jobs yet — run the fetcher.</p>",
+        cards=cards_html,
         user_slug=user_slug,
         user_name=_esc(user_name),
         subtitle=_esc(subtitle),
@@ -986,6 +1090,13 @@ def generate_all_dashboards(conn):
     """Generate one dashboard per user in users.json. Also writes index.html
     as a copy of the first user (for the bare custom-domain URL)."""
     import shutil
+    # Ensure COMPANY_INDUSTRIES is built (may not have been if called standalone)
+    if not COMPANY_INDUSTRIES:
+        try:
+            with open(COMPANIES_PATH) as f:
+                _build_company_industries(json.load(f))
+        except Exception as e:
+            print(f"[industries] could not load companies.json: {e}", flush=True)
     users = load_users()
     print(f"\n[multi-user] generating dashboards for {len(users)} users")
     for user in users:

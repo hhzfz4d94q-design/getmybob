@@ -1,5 +1,10 @@
 {
-  "_comment": "Healthcare and health-tech companies organized by ATS. Slugs below verified by appearing in live boards.greenhouse.io / jobs.lever.co / jobs.ashbyhq.com URLs as of May 2026. To add more: find the company's careers page, the slug is the last URL segment. boards.greenhouse.io/SLUG -> greenhouse, jobs.lever.co/SLUG -> lever, jobs.ashbyhq.com/SLUG -> ashby.",
+  "_comment": "Companies organized by ATS. Entries can be a slug string (uses _default_industries) or {slug, industries: [...]} for per-company overrides. To add finance/legal/etc. companies, add a new top-level industry block AND tag those entries with industries matching the target user's profile.",
+  "_default_industries": [
+    "healthcare", "healthcare-it", "digital-health", "health-saas",
+    "pharma", "pharmaceuticals", "biotech", "life-sciences",
+    "diagnostics", "telehealth", "mental-health", "clinical-ai"
+  ],
   "greenhouse": [
     "oscar",
     "acuitymd",
