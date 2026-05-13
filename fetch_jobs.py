@@ -714,6 +714,14 @@ def generate_dashboard(conn):
     """).fetchall()
     # Hide jobs that aren't a fit for Geetanjali's product/IT profile
     rows = [r for r in rows if not _is_irrelevant_title(r[2])]
+
+    # Hide ghost jobs (listed > GHOST_DAYS) from default view
+    def _not_ghost(r):
+        posted_at, first_seen = r[5], r[6]
+        ld = _days_old(posted_at) if posted_at else (_days_old(first_seen) if first_seen else 0)
+        return ld is None or ld <= GHOST_DAYS
+    rows = [r for r in rows if _not_ghost(r)]
+
     rows = rows[:1000]
 
     # Stats
@@ -759,7 +767,7 @@ def generate_dashboard(conn):
           </div>
           {salary_html}
           <div class="badges" data-badges>{badge_html}</div>
-          <div class="desc">{_esc(desc[:300])}…</div>
+          <div class="desc">{_esc(_strip_html(desc)[:300])}…</div>
           <div class="actions">
             <button class="btn primary" onclick="prepApplication('{fp}', this)">Prep Application</button>
             <button class="btn track" onclick="cycleStatus('{fp}', this)" data-status-for="{fp}">Mark Applied</button>
