@@ -288,25 +288,59 @@ IRRELEVANT_TITLE_TERMS = [
     "clinical trial", "clinical research", "clinical operations",
     "clinical success", "clinical quality", "clinical educator",
     "clinical pharmacist", "clinical psychologist", "clinical specialist",
-    "clinical lead",
+    "clinical lead", "clinical excellence", "clinical education",
+    "clinical informatics nurse",
     # Healthcare practitioners
     "pharmacy", "pharmacist", "nursing", "nurse practitioner",
     "registered nurse", "physician", "psychiatrist", "psychologist",
     "social worker", "behavioral therapist", "case manager",
-    "care coordinator", "care manager",
+    "care coordinator", "care manager", "therapist",
+    "physical therapist", "occupational therapist", "dietitian",
+    "respiratory therapist",
     # Medical affairs (separate from product/IT)
     "medical affairs", "medical director", "medical writer",
-    # Pure sales (Geetanjali is product/IT, not sales)
+    "medical science liaison",
+    # Pure sales — Geetanjali is product/IT, NOT a sales/BD/GTM leader
     "director of sales", "head of sales", "vp of sales",
     "vice president of sales", "vice president, sales",
     "sales director", "regional sales manager", "enterprise sales",
-    "account executive",
+    "account executive", "account manager", "inside sales",
+    "sales lead", "sales engineer", "sales operations",
+    "sales enablement", "revenue enablement", "head of revenue",
+    "head of partnerships", "partnerships lead", "partnership lead",
+    "business development lead", "business development manager",
+    "business development representative", "bdr", "sdr",
+    "head of growth", "growth lead", "growth marketing",
+    "lead generation", "demand generation", "field sales",
+    "channel sales", "commercial lead", "commercial director",
+    "head of commercial", "vp commercial",
     # Marketing (different focus from product)
     "marketing director", "head of marketing", "vp of marketing",
-    "vp, marketing",
-    # Other non-fit functions
+    "vp, marketing", "marketing manager", "marketing lead",
+    "product marketing", "brand marketing", "content marketing",
+    "performance marketing", "marketing operations",
+    "community manager", "community lead", "social media",
+    # Customer support / care ops (not Geetanjali's profile)
+    "customer success", "customer care", "customer support",
+    "customer experience", "client success", "client services",
+    # HR / Talent / People
+    "talent acquisition", "talent partner", "talent operations",
+    "recruiter", "people operations", "people partner",
+    "head of people", "vp people", "people business partner",
+    # Finance / Pricing / Ops (non-product)
+    "pricing", "pricing strategy", "financial analyst",
+    "fp&a", "controller", "treasurer", "tax manager",
     "general counsel", "compliance officer", "chief financial officer",
     "human resources",
+    # Engineering IC roles (she's a program/product leader, not a hands-on engineer)
+    "software engineer", "data engineer", "data scientist",
+    "machine learning engineer", "ml engineer", "ai engineer",
+    "devops engineer", "site reliability", "backend engineer",
+    "frontend engineer", "full stack engineer", "qa engineer",
+    "security engineer", "platform engineer",
+    # Junior / entry
+    "junior", "intern", "internship", "associate ", "coordinator",
+    "specialist i", "analyst i", "level i",
 ]
 
 
