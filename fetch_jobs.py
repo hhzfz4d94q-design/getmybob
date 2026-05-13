@@ -560,22 +560,23 @@ def is_senior(job):
     return any(term in t for term in SENIOR_TITLE_TERMS)
 
 
-# --- Skills profile (loaded once at run start, used for scoring) ---------
+# --- Skills profile (loaded per-user, used for scoring) ------------------
 WORKER_BASE_URL = "https://cool-darkness-dce5.tr6jz6v7wg.workers.dev"
-SKILLS_PROFILE = None  # populated by load_skills_profile() at run start
+USERS_JSON_PATH = os.path.join(ROOT, "users.json")
+SKILLS_PROFILE = None  # set per user during generate_dashboard
 
 
-def load_skills_profile():
-    """Fetch the AI-generated skills profile from the Cloudflare Worker.
+def load_skills_profile(slug="geetu"):
+    """Fetch the AI-generated skills profile for a specific user from the Worker.
     Returns None on failure — scoring falls back to legacy hardcoded keywords."""
     try:
-        req = Request(WORKER_BASE_URL + "/skills-profile", headers={"User-Agent": "fetch_jobs.py"})
+        url = WORKER_BASE_URL + "/skills-profile?user=" + slug
+        req = Request(url, headers={"User-Agent": "fetch_jobs.py"})
         with urlopen(req, timeout=15) as resp:
             data = json.loads(resp.read().decode("utf-8"))
         profile = data.get("profile")
         if not profile or not isinstance(profile, dict):
             return None
-        # Normalise: ensure keyword lists are lowercase
         for k in ("keywords", "seniorityTitles", "industries", "negativeKeywords"):
             if isinstance(profile.get(k), list):
                 profile[k] = [str(x).lower().strip() for x in profile[k] if x]
@@ -583,8 +584,21 @@ def load_skills_profile():
                 profile[k] = []
         return profile
     except Exception as e:
-        print(f"[skills-profile] could not load: {e}", flush=True)
+        print(f"[skills-profile:{slug}] could not load: {e}", flush=True)
         return None
+
+
+def load_users():
+    """Read users.json. Returns list of {slug, name}. Falls back to default user."""
+    try:
+        with open(USERS_JSON_PATH) as f:
+            users = json.load(f)
+        if not isinstance(users, list) or not users:
+            raise ValueError("users.json is empty or not a list")
+        return users
+    except Exception as e:
+        print(f"[users.json] could not load ({e}); falling back to default geetu", flush=True)
+        return [{"slug": "geetu", "name": "Geetanjali Arora"}]
 
 
 def score_job(job):
@@ -724,18 +738,8 @@ def upsert_job(conn, job):
 # --- Main pipeline -------------------------------------------------------
 
 def run():
-    global SKILLS_PROFILE
     with open(COMPANIES_PATH) as f:
         companies = json.load(f)
-
-    # Load the AI-extracted skills profile (used by score_job).
-    SKILLS_PROFILE = load_skills_profile()
-    if SKILLS_PROFILE:
-        print(f"[skills-profile] loaded: {SKILLS_PROFILE.get('primaryRole', '?')} "
-              f"({len(SKILLS_PROFILE.get('keywords', []))} keywords, "
-              f"{len(SKILLS_PROFILE.get('negativeKeywords', []))} negative)", flush=True)
-    else:
-        print("[skills-profile] not available — falling back to hardcoded RELEVANCE_TERMS", flush=True)
 
     conn = get_conn()
     totals = {"greenhouse": 0, "lever": 0, "ashby": 0}
@@ -767,7 +771,10 @@ def run():
     print(f"\nTotals: {totals}")
     print(f"Failures: {len(failures)} (companies returned no data — likely bad slugs)")
 
-    generate_dashboard(conn)
+    # Note: scoring used the LAST loaded skills profile during fetch. The dashboard
+    # generation step re-loads each user's profile before filtering for that user,
+    # so per-user views are correct even if scoring is global.
+    generate_all_dashboards(conn)
     conn.close()
 
 
@@ -790,7 +797,21 @@ def _parse_salary_max(salary_text):
     return best
 
 
-def generate_dashboard(conn):
+def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", output_path=None):
+    """Generate the dashboard HTML for a specific user.
+    output_path defaults to <user_slug>.html (or index.html for backward compat if slug='geetu')."""
+    global SKILLS_PROFILE
+    # Load this user's skills profile from the Worker (sets the global used by score_job)
+    SKILLS_PROFILE = load_skills_profile(user_slug)
+    if SKILLS_PROFILE:
+        print(f"[skills-profile:{user_slug}] {SKILLS_PROFILE.get('primaryRole','?')} "
+              f"· {len(SKILLS_PROFILE.get('keywords', []))} keywords", flush=True)
+    else:
+        print(f"[skills-profile:{user_slug}] not available — using fallback themes only", flush=True)
+
+    if output_path is None:
+        output_path = os.path.join(ROOT, f"{user_slug}.html")
+
     rows = conn.execute("""
         SELECT fingerprint, company_name, title, location, url, posted_at, first_seen, last_seen,
                sightings, remote, senior, score, description, salary_range
@@ -799,7 +820,7 @@ def generate_dashboard(conn):
         ORDER BY score DESC, last_seen DESC
         LIMIT 2000
     """).fetchall()
-    # Hide jobs that aren't a fit for Geetanjali's product/IT profile (blacklist)
+    # Hide jobs that aren't a fit (blacklist)
     rows = [r for r in rows if not _is_irrelevant_title(r[2])]
 
     # Whitelist: title must contain a positive domain theme or a skills-profile keyword
@@ -872,10 +893,31 @@ def generate_dashboard(conn):
         generated=datetime.now().strftime("%Y-%m-%d %H:%M"),
         shown=len(rows),
         cards="\n".join(cards) or "<p>No jobs yet — run the fetcher.</p>",
+        user_slug=user_slug,
+        user_name=_esc(user_name),
     )
-    with open(DASHBOARD_PATH, "w") as f:
+    with open(output_path, "w") as f:
         f.write(html)
-    print(f"\nDashboard written: {DASHBOARD_PATH}")
+    print(f"\nDashboard written: {output_path}")
+
+
+def generate_all_dashboards(conn):
+    """Generate one dashboard per user in users.json. Also writes index.html
+    as a copy of the first user (for the bare custom-domain URL)."""
+    import shutil
+    users = load_users()
+    print(f"\n[multi-user] generating dashboards for {len(users)} users")
+    for user in users:
+        slug = user["slug"]
+        name = user.get("name", slug)
+        out = os.path.join(ROOT, f"{slug}.html")
+        generate_dashboard(conn, user_slug=slug, user_name=name, output_path=out)
+    # Backward-compat: bare URL serves the first user's dashboard (Geetanjali).
+    first_slug = users[0]["slug"]
+    first_path = os.path.join(ROOT, f"{first_slug}.html")
+    if os.path.exists(first_path):
+        shutil.copyfile(first_path, DASHBOARD_PATH)
+        print(f"[multi-user] index.html = copy of {first_slug}.html")
 
 
 def _days_old(iso):
@@ -892,7 +934,7 @@ def _esc(s):
 
 
 HTML_TEMPLATE = """<!doctype html>
-<html><head><meta charset="utf-8"><title>HealthTech Jobs — Geetanjali</title>
+<html><head><meta charset="utf-8"><title>HealthTech Jobs — {user_name}</title>
 <style>
   body {{ font: 14px -apple-system, system-ui, sans-serif; margin: 0; background: #f7f7f8; color: #222; }}
   header {{ background: #1f3a5f; color: white; padding: 18px 28px; position: relative; }}
@@ -1000,7 +1042,7 @@ HTML_TEMPLATE = """<!doctype html>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head><body>
 <header>
-  <h1>HealthTech Jobs for Geetanjali</h1>
+  <h1>HealthTech Jobs for {user_name}</h1>
   <div class="sub">Senior leadership · Healthcare IT · Remote · Generated {generated}</div>
   <div class="header-actions">
     <button id="resume-btn" class="header-btn" onclick="openResumeModal()">Resume</button>
@@ -1322,9 +1364,11 @@ function filter() {{
 
 // --- Resume editor (Cloudflare Worker + KV) -----------------------------
 const WORKER_BASE = 'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev';
-const RESUME_WORKER_URL = WORKER_BASE + '/resume';
-const VERSIONS_WORKER_URL = WORKER_BASE + '/resume-versions';
-const PARSE_RESUME_WORKER_URL = WORKER_BASE + '/parse-resume';
+const USER_SLUG = '{user_slug}';
+const USER_QS = '?user=' + encodeURIComponent(USER_SLUG);
+const RESUME_WORKER_URL = WORKER_BASE + '/resume' + USER_QS;
+const VERSIONS_WORKER_URL = WORKER_BASE + '/resume-versions' + USER_QS;
+const PARSE_RESUME_WORKER_URL = WORKER_BASE + '/parse-resume' + USER_QS;
 
 // pdf.js worker path (must be set once before parsing PDFs)
 if (window.pdfjsLib) {{
@@ -1630,7 +1674,7 @@ if (document.readyState !== 'loading') _wireResumeDropzone();
 else document.addEventListener('DOMContentLoaded', _wireResumeDropzone);
 
 // --- Refresh data (triggers GitHub Action via Cloudflare Worker) --------
-const REFRESH_WORKER_URL = 'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/refresh';
+const REFRESH_WORKER_URL = WORKER_BASE + '/refresh';
 
 async function refreshData() {{
   const btn = document.getElementById('refresh-btn');
@@ -1668,7 +1712,7 @@ async function refreshData() {{
 }}
 
 // --- Prep modal (calls Cloudflare Worker for AI generation) -------------
-const PREP_WORKER_URL = 'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/prep';
+const PREP_WORKER_URL = WORKER_BASE + '/prep' + USER_QS;
 
 async function prepApplication(fp, btn) {{
   const card = btn.closest('.card');
