@@ -429,7 +429,7 @@ def generate_dashboard(conn):
           <div class="badges" data-badges>{badge_html}</div>
           <div class="desc">{_esc(desc[:300])}…</div>
           <div class="actions">
-            <button class="btn primary" onclick="showPrepCmd('{fp}', this)">Prep Application</button>
+            <button class="btn primary" onclick="prepApplication('{fp}', this)">Prep Application</button>
             <button class="btn track" onclick="cycleStatus('{fp}', this)" data-status-for="{fp}">Mark Applied</button>
             <a class="btn ghost-btn" href="{url}" target="_blank">Open Listing →</a>
           </div>
@@ -530,6 +530,13 @@ HTML_TEMPLATE = """<!doctype html>
   .modal pre {{ background: #f5f5f5; padding: 12px; border-radius: 6px; font-size: 12px; overflow-x: auto; white-space: pre-wrap; word-break: break-all; }}
   .modal .copy-btn {{ margin-top: 10px; }}
   .modal-close {{ float: right; cursor: pointer; font-size: 22px; line-height: 1; color: #999; }}
+  .prep-result-modal {{ max-width: 760px; }}
+  .prep-status {{ font-size: 13px; color: #555; padding: 14px 0; }}
+  .prep-status.error {{ color: #a80000; }}
+  .prep-section {{ margin: 18px 0; padding-bottom: 18px; border-bottom: 1px solid #eee; }}
+  .prep-section:last-child {{ border-bottom: none; }}
+  .prep-label {{ font-size: 12px; font-weight: 700; color: #1f3a5f; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }}
+  .prep-text {{ background: #f7f7f8; padding: 12px; border-radius: 6px; font-size: 13px; white-space: pre-wrap; word-wrap: break-word; line-height: 1.5; font-family: inherit; max-height: 260px; overflow-y: auto; margin: 0 0 8px 0; }}
   .desc {{ font-size: 12.5px; color: #444; margin-top: 6px; line-height: 1.4; }}
 </style>
 </head><body>
@@ -587,13 +594,27 @@ HTML_TEMPLATE = """<!doctype html>
 </div>
 
 <div class="modal-overlay" id="prep-modal" onclick="if(event.target===this)closeModal()">
-  <div class="modal">
+  <div class="modal prep-result-modal">
     <span class="modal-close" onclick="closeModal()">&times;</span>
-    <h3>Prep this application</h3>
-    <p style="font-size:13px;color:#555;">Copy the command below, paste it into Terminal, and hit Enter. The AI will tailor Geetanjali's resume, draft a cover letter and LinkedIn intro, and open the apply page.</p>
-    <pre id="prep-cmd"></pre>
-    <button class="btn primary copy-btn" onclick="copyCmd()">Copy command</button>
-    <p style="font-size:12px;color:#888;margin-top:14px;">First time? See <code>SETUP_AI_KEY.md</code> to add your Anthropic API key.</p>
+    <h3 id="prep-modal-title">Prep this application</h3>
+    <p id="prep-status" class="prep-status">Generating tailored materials with Claude…</p>
+    <div id="prep-output" style="display:none;">
+      <div class="prep-section">
+        <div class="prep-label">Resume Summary</div>
+        <pre id="prep-summary" class="prep-text"></pre>
+        <button class="btn primary" onclick="copyPrepField('prep-summary', this)">Copy summary</button>
+      </div>
+      <div class="prep-section">
+        <div class="prep-label">Cover Letter</div>
+        <pre id="prep-cover" class="prep-text"></pre>
+        <button class="btn primary" onclick="copyPrepField('prep-cover', this)">Copy cover letter</button>
+      </div>
+      <div class="prep-section">
+        <div class="prep-label">LinkedIn Intro</div>
+        <pre id="prep-linkedin" class="prep-text"></pre>
+        <button class="btn primary" onclick="copyPrepField('prep-linkedin', this)">Copy LinkedIn intro</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -734,20 +755,58 @@ function filter() {{
   if (counter) counter.textContent = shown;
 }}
 
-// --- Prep modal ---------------------------------------------------------
-function showPrepCmd(fp, btn) {{
-  const cmd = `cd ~/Documents/Claude/Projects/"Ticky Sun"/healthtech-jobs && python3 prep_application.py --job ${{fp}}`;
-  document.getElementById('prep-cmd').textContent = cmd;
-  document.getElementById('prep-modal').classList.add('show');
+// --- Prep modal (calls Cloudflare Worker for AI generation) -------------
+const PREP_WORKER_URL = 'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/';
+
+async function prepApplication(fp, btn) {{
+  const card = btn.closest('.card');
+  const titleEl = card.querySelector('.title a');
+  const jobTitle = (titleEl?.textContent || '').trim();
+  const company = (card.querySelector('.company')?.textContent || '').trim();
+  const jobUrl = titleEl?.href || '';
+  const jobDescription = (card.querySelector('.desc')?.textContent || '').trim();
+
+  const modal = document.getElementById('prep-modal');
+  const statusEl = document.getElementById('prep-status');
+  const outputEl = document.getElementById('prep-output');
+  const titleH = document.getElementById('prep-modal-title');
+
+  titleH.textContent = `Materials for ${{jobTitle}} @ ${{company}}`;
+  statusEl.className = 'prep-status';
+  statusEl.textContent = 'Generating with Claude… this takes 10–30 seconds.';
+  statusEl.style.display = 'block';
+  outputEl.style.display = 'none';
+  modal.classList.add('show');
+
+  try {{
+    const r = await fetch(PREP_WORKER_URL, {{
+      method: 'POST',
+      headers: {{ 'Content-Type': 'application/json' }},
+      body: JSON.stringify({{ jobTitle, company, jobDescription, jobUrl }}),
+    }});
+    const data = await r.json();
+    if (!r.ok || data.error) {{
+      statusEl.className = 'prep-status error';
+      statusEl.textContent = `Error: ${{data.error || ('HTTP ' + r.status)}}${{data.details ? ' — ' + data.details : ''}}`;
+      return;
+    }}
+    document.getElementById('prep-summary').textContent = data.summary || '(no summary returned)';
+    document.getElementById('prep-cover').textContent = data.coverLetter || '(no cover letter returned)';
+    document.getElementById('prep-linkedin').textContent = data.linkedin || '(no LinkedIn intro returned)';
+    statusEl.style.display = 'none';
+    outputEl.style.display = 'block';
+  }} catch (e) {{
+    statusEl.className = 'prep-status error';
+    statusEl.textContent = `Error: ${{e.message || e}}`;
+  }}
 }}
 function closeModal() {{ document.getElementById('prep-modal').classList.remove('show'); }}
-function copyCmd() {{
-  const txt = document.getElementById('prep-cmd').textContent;
+function copyPrepField(id, btn) {{
+  const txt = document.getElementById(id).textContent;
   navigator.clipboard.writeText(txt).then(() => {{
-    const btn = document.querySelector('.modal .copy-btn');
     const orig = btn.textContent;
     btn.textContent = 'Copied!';
-    setTimeout(() => btn.textContent = orig, 1500);
+    setTimeout(() => {{ btn.textContent = orig; }}, 1500);
   }});
 }}
 
