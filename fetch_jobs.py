@@ -472,6 +472,67 @@ def _is_irrelevant_title(title):
     return False
 
 
+# --- Positive title whitelist (Phase 4) -------------------------------
+# Universal themes for senior healthcare-IT / digital-transformation / product
+# leaders. A title MUST contain at least one of these (or a keyword from the
+# skills profile) to be shown. This converts the dashboard from a blacklist
+# model ("hide bad") to a whitelist model ("only show relevant").
+POSITIVE_TITLE_THEMES = [
+    # Product / portfolio
+    "product", "portfolio", "platform",
+    # Transformation / innovation / digital
+    "transformation", "innovation", "digital", "modernization", "automation",
+    # AI / ML / data product
+    "ai", "artificial intelligence", "machine learning", "ml", "data product",
+    # Implementation / delivery / enterprise programs
+    "implementation", "deployment", "enterprise", "delivery",
+    # Strategy + senior titles (typically real C-suite / VP roles)
+    "strategy", "strategist", "officer", "chief", "general manager", "gm",
+    # Healthcare-IT specifics
+    "ehr", "emr", "saas", "health it", "health tech", "healthtech",
+    "interoperability", "informatics",
+    # Engineering leadership (very senior, not IC)
+    "head of engineering", "vp engineering", "vp of engineering",
+    "chief technology", "cto", "cio", "ciso", "cdo", "cpo",
+    # Operations leadership (when not blacklisted as "strategic operations" etc.)
+    "vp operations", "vp of operations", "head of operations",
+    # Programs / portfolio (her core)
+    "program management", "head of program", "vp programs", "vp of programs",
+    "head of portfolio", "vp portfolio", "head of programs",
+]
+
+
+_POSITIVE_THEME_RE = None
+
+def _build_positive_re():
+    """Build a word-boundary regex from POSITIVE_TITLE_THEMES so substring bleed-through
+    ('cto' matching 'director', 'product' matching 'production') is impossible."""
+    global _POSITIVE_THEME_RE
+    parts = []
+    for theme in POSITIVE_TITLE_THEMES:
+        # Allow flexible whitespace inside multi-word themes
+        escaped = re.escape(theme).replace(r"\ ", r"\s+")
+        parts.append(r"\b" + escaped + r"\b")
+    _POSITIVE_THEME_RE = re.compile("|".join(parts), re.I)
+
+
+def _has_positive_theme(title, profile):
+    """Title must contain at least one positive domain theme or a profile keyword."""
+    global _POSITIVE_THEME_RE
+    if _POSITIVE_THEME_RE is None:
+        _build_positive_re()
+    t = title or ""
+    if _POSITIVE_THEME_RE.search(t):
+        return True
+    # Profile-driven keywords (from the AI-extracted skills profile)
+    if profile:
+        t_lower = t.lower()
+        for kw in profile.get("keywords", []):
+            if kw and re.search(r"\b" + re.escape(kw.lower()) + r"\b", t_lower):
+                return True
+    return False
+
+
 def _normalize_title(title):
     """Lowercase, strip stop words, then concatenate alphanumerics so minor wording
     differences ('Director of Product' vs 'Director, Product') collapse to the same hash."""
@@ -738,8 +799,11 @@ def generate_dashboard(conn):
         ORDER BY score DESC, last_seen DESC
         LIMIT 2000
     """).fetchall()
-    # Hide jobs that aren't a fit for Geetanjali's product/IT profile
+    # Hide jobs that aren't a fit for Geetanjali's product/IT profile (blacklist)
     rows = [r for r in rows if not _is_irrelevant_title(r[2])]
+
+    # Whitelist: title must contain a positive domain theme or a skills-profile keyword
+    rows = [r for r in rows if _has_positive_theme(r[2], SKILLS_PROFILE)]
 
     # Hide ghost jobs (listed > GHOST_DAYS) from default view
     def _not_ghost(r):
