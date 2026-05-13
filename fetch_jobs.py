@@ -88,6 +88,28 @@ def fetch_json(url, timeout=15, data=None, method=None):
 
 # --- ATS adapters --------------------------------------------------------
 
+def _extract_greenhouse_salary(j):
+    # Look in metadata (custom fields) and pay_input_ranges
+    pir = j.get("pay_input_ranges") or []
+    if pir:
+        try:
+            r = pir[0]
+            mn, mx = r.get("min_cents"), r.get("max_cents")
+            cur = (r.get("currency_type") or "USD").upper()
+            sym = "$" if cur == "USD" else (cur + " ")
+            if mn and mx:
+                return f"{sym}{mn//100:,} - {sym}{mx//100:,}"
+        except Exception:
+            pass
+    for item in j.get("metadata") or []:
+        name = (item.get("name") or "").lower()
+        if any(k in name for k in ["salary", "pay range", "pay band", "compensation"]):
+            val = item.get("value")
+            if val:
+                return str(val)[:200]
+    return ""
+
+
 def fetch_greenhouse(slug):
     """Greenhouse public job board API."""
     url = f"https://boards-api.greenhouse.io/v1/boards/{slug}/jobs?content=true"
@@ -107,8 +129,25 @@ def fetch_greenhouse(slug):
             "url": j.get("absolute_url", ""),
             "posted_at": j.get("updated_at") or j.get("first_published"),
             "description": _strip_html((j.get("content") or "")),
+            "salary_range": _extract_greenhouse_salary(j),
         })
     return out
+
+
+def _extract_lever_salary(j):
+    sr = j.get("salaryRange") or {}
+    mn, mx = sr.get("min"), sr.get("max")
+    if mn and mx:
+        cur = (sr.get("currency") or "USD").upper()
+        sym = "$" if cur == "USD" else (cur + " ")
+        interval = sr.get("interval") or ""
+        suffix = f" / {interval}" if interval and interval.lower() != "per-year-salary" else ""
+        try:
+            return f"{sym}{int(mn):,} - {sym}{int(mx):,}{suffix}"
+        except Exception:
+            return f"{sym}{mn} - {sym}{mx}{suffix}"
+    desc = j.get("salaryDescription") or ""
+    return _strip_html(desc)[:200]
 
 
 def fetch_lever(slug):
@@ -133,8 +172,24 @@ def fetch_lever(slug):
                 if j.get("createdAt") else None
             ),
             "description": _strip_html(j.get("descriptionPlain") or j.get("description") or ""),
+            "salary_range": _extract_lever_salary(j),
         })
     return out
+
+
+def _extract_ashby_salary(j):
+    comp = j.get("compensation") or {}
+    summary = comp.get("compensationTierSummary") or j.get("compensationTierSummary") or ""
+    if summary:
+        return _strip_html(summary)[:200]
+    # Fall back to summary components if Ashby returns them
+    components = comp.get("summaryComponents") or []
+    parts = []
+    for c in components:
+        s = c.get("summary") or c.get("compensationType")
+        if s:
+            parts.append(str(s))
+    return " · ".join(parts)[:200]
 
 
 def fetch_ashby(slug):
@@ -156,6 +211,7 @@ def fetch_ashby(slug):
             "url": j.get("jobUrl", ""),
             "posted_at": j.get("publishedAt"),
             "description": _strip_html(j.get("descriptionHtml") or j.get("descriptionPlain") or ""),
+            "salary_range": _extract_ashby_salary(j),
         })
     return out
 
@@ -197,6 +253,7 @@ def fetch_workday(entry):
                 "url": url,
                 "posted_at": j.get("postedOn", ""),
                 "description": "",  # Workday requires a second API call per job for full description
+                "salary_range": "",  # Workday salary requires per-job detail call; skip for now
             })
         offset += page_size
         if offset >= (data.get("total") or 0):
@@ -285,7 +342,8 @@ CREATE TABLE IF NOT EXISTS jobs (
     sightings INTEGER DEFAULT 1,
     remote INTEGER,
     senior INTEGER,
-    score INTEGER
+    score INTEGER,
+    salary_range TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_score ON jobs(score DESC);
 CREATE INDEX IF NOT EXISTS idx_last_seen ON jobs(last_seen DESC);
@@ -298,6 +356,12 @@ def get_conn():
         try:
             conn = sqlite3.connect(DB_PATH)
             conn.executescript(SCHEMA)
+            # Migration: add salary_range to older DBs that don't have it
+            try:
+                conn.execute("ALTER TABLE jobs ADD COLUMN salary_range TEXT")
+                conn.commit()
+            except sqlite3.OperationalError:
+                pass  # column already exists
             return conn
         except sqlite3.DatabaseError:
             if attempt == 0 and os.path.exists(DB_PATH):
@@ -319,22 +383,23 @@ def upsert_job(conn, job):
     senior = 1 if is_senior(job) else 0
     score = score_job(job)
 
+    salary = job.get("salary_range") or ""
     cur = conn.execute("SELECT fingerprint, sightings FROM jobs WHERE fingerprint=?", (fp,))
     row = cur.fetchone()
     if row:
         conn.execute(
-            "UPDATE jobs SET last_seen=?, sightings=sightings+1, score=?, remote=?, senior=? WHERE fingerprint=?",
-            (now, score, remote, senior, fp),
+            "UPDATE jobs SET last_seen=?, sightings=sightings+1, score=?, remote=?, senior=?, salary_range=? WHERE fingerprint=?",
+            (now, score, remote, senior, salary, fp),
         )
     else:
         conn.execute(
             """INSERT INTO jobs (fingerprint, source, company_slug, company_name, external_id,
                title, location, url, posted_at, description, first_seen, last_seen,
-               sightings, remote, senior, score)
-               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,1,?,?,?)""",
+               sightings, remote, senior, score, salary_range)
+               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,1,?,?,?,?)""",
             (fp, job["source"], job["company_slug"], job["company_name"], job["external_id"],
              job["title"], job["location"], job["url"], job["posted_at"], job["description"],
-             now, now, remote, senior, score),
+             now, now, remote, senior, score, salary),
         )
 
 
@@ -378,10 +443,29 @@ def run():
     conn.close()
 
 
+def _parse_salary_max(salary_text):
+    """Return the highest dollar value appearing in the salary string (in whole dollars), or 0."""
+    if not salary_text:
+        return 0
+    best = 0
+    for m in re.finditer(r"\$?\s?(\d{2,3}(?:,\d{3})+|\d{2,3}\s?k|\d{4,7})", salary_text, flags=re.IGNORECASE):
+        raw = m.group(1).replace(",", "").replace(" ", "")
+        try:
+            if raw.lower().endswith("k"):
+                val = int(float(raw[:-1]) * 1000)
+            else:
+                val = int(raw)
+            if val > best:
+                best = val
+        except Exception:
+            continue
+    return best
+
+
 def generate_dashboard(conn):
     rows = conn.execute("""
         SELECT fingerprint, company_name, title, location, url, posted_at, first_seen, last_seen,
-               sightings, remote, senior, score, description
+               sightings, remote, senior, score, description, salary_range
         FROM jobs
         WHERE last_seen >= datetime('now', '-30 days')
         ORDER BY score DESC, last_seen DESC
@@ -400,12 +484,14 @@ def generate_dashboard(conn):
     cards = []
     for r in rows:
         (fp, company, title, loc, url, posted_at, first_seen, last_seen,
-         sightings, remote, senior, score, desc) = r
+         sightings, remote, senior, score, desc, salary) = r
         # "Listed" age — prefer the source's posted_at, fall back to first_seen
         listed_days = _days_old(posted_at) if posted_at else None
         if listed_days is None:
             listed_days = _days_old(first_seen) or 0
         ghost_flag = listed_days is not None and listed_days > GHOST_DAYS
+        salary = (salary or "").strip()
+        salary_max = _parse_salary_max(salary)
         badges = []
         if senior: badges.append('<span class="b senior">Senior</span>')
         if remote: badges.append('<span class="b remote">Remote</span>')
@@ -414,9 +500,10 @@ def generate_dashboard(conn):
         if ghost_flag: badges.append(f'<span class="b ghost">Ghost? {listed_days}d</span>')
         if sightings > 3: badges.append(f'<span class="b repost">Seen {sightings}×</span>')
         badge_html = " ".join(badges)
+        salary_html = f'<div class="salary-row"><span class="salary">{_esc(salary)}</span></div>' if salary else ''
 
         cards.append(f"""
-        <div class="card" data-fp="{fp}" data-score="{score}" data-senior="{senior}" data-remote="{remote}" data-listed-days="{listed_days if listed_days is not None else 9999}">
+        <div class="card" data-fp="{fp}" data-score="{score}" data-senior="{senior}" data-remote="{remote}" data-listed-days="{listed_days if listed_days is not None else 9999}" data-salary-max="{salary_max}">
           <div class="row1">
             <div class="title"><a href="{url}" target="_blank">{_esc(title)}</a></div>
             <div class="score">{score}</div>
@@ -426,6 +513,7 @@ def generate_dashboard(conn):
             <span class="loc">{_esc(loc or 'Location N/A')}</span> ·
             <span class="age">{listed_days}d old</span>
           </div>
+          {salary_html}
           <div class="badges" data-badges>{badge_html}</div>
           <div class="desc">{_esc(desc[:300])}…</div>
           <div class="actions">
@@ -538,6 +626,8 @@ HTML_TEMPLATE = """<!doctype html>
   .prep-label {{ font-size: 12px; font-weight: 700; color: #1f3a5f; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }}
   .prep-text {{ background: #f7f7f8; padding: 12px; border-radius: 6px; font-size: 13px; white-space: pre-wrap; word-wrap: break-word; line-height: 1.5; font-family: inherit; max-height: 260px; overflow-y: auto; margin: 0 0 8px 0; }}
   .desc {{ font-size: 12.5px; color: #444; margin-top: 6px; line-height: 1.4; }}
+  .salary-row {{ margin: 6px 0 2px 0; }}
+  .salary {{ display: inline-block; background: #e6fff0; color: #0a6b3a; padding: 2px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; }}
 </style>
 </head><body>
 <header>
@@ -581,6 +671,14 @@ HTML_TEMPLATE = """<!doctype html>
     <option value="onsite">Onsite</option>
     <option value="offer">Offer</option>
     <option value="rejected">Rejected</option>
+  </select>
+  <select id="salaryFilter" onchange="filter()">
+    <option value="">Salary: any</option>
+    <option value="listed">With salary listed</option>
+    <option value="100000">$100k+</option>
+    <option value="150000">$150k+</option>
+    <option value="200000">$200k+</option>
+    <option value="250000">$250k+</option>
   </select>
   <span style="display:flex; gap:6px; align-items:center;">
     <button class="pill active" data-window="all" onclick="setWindow(this,'all')">All</button>
@@ -728,6 +826,7 @@ function filter() {{
   const q = document.getElementById('q').value.toLowerCase();
   const flt = document.getElementById('srOnly').value;
   const trk = document.getElementById('trackedFilter').value;
+  const sal = document.getElementById('salaryFilter')?.value || '';
   const tracker = getTracker();
   const cards = Array.from(document.querySelectorAll('.card'));
   let shown = 0;
@@ -736,6 +835,7 @@ function filter() {{
     const senior = c.dataset.senior === '1';
     const remote = c.dataset.remote === '1';
     const days = parseInt(c.dataset.listedDays || '9999', 10);
+    const salaryMax = parseInt(c.dataset.salaryMax || '0', 10);
     const st = tracker[c.dataset.fp]?.status || '';
     let show = text.includes(q);
     if (viewMode === 'apps' && !st) show = false;
@@ -748,6 +848,8 @@ function filter() {{
     }}
     if (trk === 'untouched' && st) show = false;
     else if (trk && trk !== 'untouched' && st !== trk) show = false;
+    if (sal === 'listed' && salaryMax === 0) show = false;
+    else if (sal && sal !== 'listed' && salaryMax < parseInt(sal, 10)) show = false;
     c.style.display = show ? '' : 'none';
     if (show) shown++;
   }});
