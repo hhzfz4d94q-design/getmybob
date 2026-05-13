@@ -1,84 +1,71 @@
 # Alpha users playbook
 
-This dashboard supports multiple users now. Each user has their own resume,
-their own AI skills profile, and their own filtered job list. Per-user URLs
-look like: `https://getmyjob.officebeatllc.com/jane.html`.
+Multi-user dashboard. Each user has their own resume, skills profile, and
+filtered job list at `https://getmyjob.officebeatllc.com/{slug}.html`.
+
+The user registry lives in Cloudflare KV (`users:list`). The admin UI at
+`/admin.html` is the easiest way to manage it.
 
 ## One-time setup
 
-1. **Add an `ADMIN_KEY` secret to the Cloudflare Worker.**
-   In the Cloudflare dashboard → `cool-darkness-dce5` → Settings →
-   Variables and Secrets → Add → name `ADMIN_KEY`, value a long random
-   string (e.g. from a password manager). This protects the
-   `/admin/users` endpoint.
+1. **Add `ADMIN_KEY` to the Cloudflare Worker.**
+   Cloudflare → `cool-darkness-dce5` → Settings → Variables and Secrets
+   → Add Secret → name `ADMIN_KEY`, value a long random string. Save it
+   to a password manager — you'll enter it once per browser.
 
-2. **Make sure the latest Worker code is deployed** (Phase 5 file —
-   `worker_phase5.js`). It auto-migrates Geetanjali's existing data to
-   `user:geetu:*` on first read.
+2. **Deploy the latest Worker** (Phase 6). It auto-bootstraps
+   `users:list` from any existing `user:*:edit_key` keys on first call.
 
 ## Adding a new alpha user
 
-Replace `JANE`, `PASSWORD`, `ADMIN_KEY` below with real values.
+1. Open `https://getmyjob.officebeatllc.com/admin.html`.
+2. Enter `ADMIN_KEY` (stored in localStorage so you don't have to redo this).
+3. In **Invite a new user**, type their name and email. Click
+   **Create & invite**.
+4. The Worker generates a random password, creates KV entries, and the
+   admin page pops up a pre-filled invite email. Click **Open in email
+   client** to send it via your default mail app (Apple Mail / Gmail web /
+   Outlook), or **Copy to clipboard** if you'd rather paste somewhere
+   else.
+5. After the next dashboard refresh (every 6 hours, or click **Refresh
+   data** on the dashboard), `{slug}.html` will be live.
 
-```sh
-curl -X POST https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/admin/users \
-  -H "Content-Type: application/json" \
-  -H "X-Admin-Key: ADMIN_KEY" \
-  -d '{"slug":"jane","name":"Jane Doe","editKey":"PASSWORD"}'
-```
+## Managing existing users
 
-Then add the user to `users.json` (top-level array):
+In the same admin page:
 
-```json
-[
-  { "slug": "geetu", "name": "Geetanjali Arora" },
-  { "slug": "jane",  "name": "Jane Doe" }
-]
-```
-
-Commit, push, and let the next 6-hour refresh generate `jane.html`. Or
-click **Refresh data** to trigger immediately.
-
-## Email template to the new user
-
-> Hi Jane,
->
-> I built a personal job-search dashboard tailored to your background.
-> It pulls healthcare/tech roles from ~50 companies, ranks them against
-> your resume, and one-clicks a tailored summary + cover letter +
-> tailored resume per job.
->
-> Your link: https://getmyjob.officebeatllc.com/jane.html
-> Password (for resume upload): PASSWORD
->
-> First time: click "Resume" top-right, enter the password, upload
-> your resume as PDF or Word. The AI will parse it and start scoring
-> jobs against your profile within minutes.
->
-> Let me know if anything's off — I tune it.
-
-## Removing a user
-
-```sh
-curl -X DELETE https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/admin/users \
-  -H "Content-Type: application/json" \
-  -H "X-Admin-Key: ADMIN_KEY" \
-  -d '{"slug":"jane"}'
-```
-
-Wipes all `user:jane:*` keys. Then remove from `users.json` and push.
-
-## List all configured users
-
-```sh
-curl https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/admin/users \
-  -H "X-Admin-Key: ADMIN_KEY"
-```
+- **Resend invite** — re-opens the same pre-filled email with their
+  existing password. Use if they lost the original invite.
+- **Delete** — removes the user and all their KV data (resume versions,
+  skills profile, edit key). The default user (`geetu`) is protected.
 
 ## Cost guardrails
 
-- Set a hard monthly cap in https://console.anthropic.com/settings/billing
+- Set a hard monthly cap at https://console.anthropic.com/settings/billing
   (recommended: $50/month for 5 alpha users).
-- Each Prep Application click costs roughly $0.10–0.20.
-- Each resume upload costs ~$0.05 to parse + ~$0.05 to generate skills profile.
-- KV / Worker / GitHub Pages costs stay at $0 within free tier at this volume.
+- Per Prep Application click: ~$0.10–0.20.
+- Per resume upload: ~$0.10 (parse + skills profile generation).
+- KV / Worker / GitHub Pages: still free tier at this volume.
+
+## Manual provisioning (fallback)
+
+If the admin page doesn't work for some reason, you can always
+provision via curl. Replace `ADMIN_KEY` with the secret.
+
+```sh
+# Create a user
+curl -X POST https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/admin/users \
+  -H "Content-Type: application/json" \
+  -H "X-Admin-Key: ADMIN_KEY" \
+  -d '{"name":"Jane Doe","email":"jane@example.com"}'
+
+# List all users
+curl https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/admin/users \
+  -H "X-Admin-Key: ADMIN_KEY"
+
+# Delete a user
+curl -X DELETE https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/admin/users \
+  -H "Content-Type: application/json" \
+  -H "X-Admin-Key: ADMIN_KEY" \
+  -d '{"slug":"jane-doe"}'
+```

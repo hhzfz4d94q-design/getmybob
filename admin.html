@@ -1,0 +1,306 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Admin · HealthTech Jobs</title>
+<style>
+  body { font: 14px -apple-system, system-ui, sans-serif; margin: 0; background: #f7f7f8; color: #222; }
+  header { background: #1f3a5f; color: white; padding: 18px 28px; }
+  header h1 { margin: 0; font-size: 20px; }
+  header .sub { opacity: .85; font-size: 13px; margin-top: 4px; }
+  main { padding: 28px; max-width: 980px; margin: 0 auto; }
+  .card { background: #fff; border: 1px solid #e2e5ea; border-radius: 8px; padding: 18px 22px; margin-bottom: 22px; }
+  .card h2 { margin: 0 0 12px 0; font-size: 16px; color: #1f3a5f; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: end; }
+  label { display: block; font-size: 12px; font-weight: 600; color: #555; margin-bottom: 4px; }
+  input[type=text], input[type=email], input[type=password] {
+    border: 1px solid #ccc; border-radius: 6px; padding: 8px 10px; font-size: 14px; width: 100%; box-sizing: border-box;
+  }
+  .field { flex: 1; min-width: 180px; }
+  button {
+    background: #1f3a5f; color: #fff; border: 0; padding: 9px 16px; border-radius: 6px;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+  button:hover { background: #2a4d7f; }
+  button.secondary { background: #f3f4f6; color: #1f3a5f; border: 1px solid #ccd0d6; }
+  button.secondary:hover { background: #e6e8eb; }
+  button.danger { background: #c83333; }
+  button.danger:hover { background: #a02828; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid #eee; }
+  th { background: #f5f6f8; color: #555; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; }
+  td.actions { text-align: right; white-space: nowrap; }
+  td.actions button { font-size: 11.5px; padding: 5px 10px; margin-left: 4px; }
+  .badge { display: inline-block; font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 10px; letter-spacing: 0.3px; }
+  .badge.ok { background: #e6fff0; color: #0a6b3a; }
+  .badge.warn { background: #fff4e6; color: #b06000; }
+  .status { font-size: 12px; color: #555; margin-top: 8px; min-height: 18px; }
+  .status.error { color: #b00; }
+  .status.success { color: #0a6b3a; }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(20,30,50,0.45); display: none; align-items: center; justify-content: center; z-index: 50; }
+  .modal-overlay.show { display: flex; }
+  .modal { background: #fff; padding: 24px 28px; border-radius: 10px; max-width: 460px; width: 100%; margin: 12px; box-shadow: 0 24px 60px rgba(0,0,0,0.18); }
+  .modal h3 { margin: 0 0 10px 0; }
+  .modal p { font-size: 13px; color: #555; margin: 0 0 14px 0; }
+  code { background: #f5f6f8; padding: 1px 6px; border-radius: 4px; font-size: 12.5px; }
+</style>
+</head><body>
+
+<header>
+  <h1>Admin · HealthTech Jobs</h1>
+  <div class="sub">Manage alpha users · invite via email · view status</div>
+</header>
+
+<main id="main" style="display:none;">
+
+  <div class="card">
+    <h2>Invite a new user</h2>
+    <div class="row">
+      <div class="field">
+        <label>Name</label>
+        <input type="text" id="new-name" placeholder="Jane Doe" autocomplete="off">
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="new-email" placeholder="jane@example.com" autocomplete="off">
+      </div>
+      <div>
+        <button id="create-btn" onclick="createUser()">Create &amp; invite</button>
+      </div>
+    </div>
+    <div class="status" id="create-status"></div>
+  </div>
+
+  <div class="card">
+    <h2>Existing users</h2>
+    <table id="users-table">
+      <thead><tr>
+        <th>Name</th><th>Email</th><th>Slug</th><th>Status</th><th></th>
+      </tr></thead>
+      <tbody id="users-tbody">
+        <tr><td colspan="5" style="color:#888; padding: 16px 12px;">Loading…</td></tr>
+      </tbody>
+    </table>
+    <div class="status" id="list-status"></div>
+  </div>
+
+</main>
+
+<!-- Login modal -->
+<div class="modal-overlay show" id="login-modal">
+  <div class="modal">
+    <h3>Admin sign in</h3>
+    <p>Enter the <code>ADMIN_KEY</code> you set as a Cloudflare Worker secret. It will be stored in this browser only.</p>
+    <input type="password" id="admin-key-input" placeholder="ADMIN_KEY" autocomplete="off" style="margin-bottom:10px;">
+    <button onclick="signIn()">Sign in</button>
+    <div class="status error" id="login-status"></div>
+  </div>
+</div>
+
+<!-- Invite preview modal -->
+<div class="modal-overlay" id="invite-modal">
+  <div class="modal">
+    <h3>Invite ready</h3>
+    <p id="invite-summary"></p>
+    <div style="background:#f5f6f8; padding:10px 12px; border-radius:6px; font-family: ui-monospace, Menlo, monospace; font-size:12px; white-space:pre-wrap; max-height:240px; overflow:auto; margin-bottom:14px;" id="invite-body"></div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <button onclick="openMailto()">Open in email client</button>
+      <button class="secondary" onclick="copyInvite()">Copy to clipboard</button>
+      <button class="secondary" onclick="closeInviteModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const WORKER_BASE = 'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev';
+const SITE_BASE = window.location.origin;
+let _adminKey = null;
+let _currentInvite = null;
+
+function $(id) { return document.getElementById(id); }
+
+async function signIn() {
+  const key = $('admin-key-input').value.trim();
+  if (!key) { $('login-status').textContent = 'Please enter the admin key.'; return; }
+  $('login-status').textContent = 'Verifying…';
+  try {
+    const r = await fetch(WORKER_BASE + '/admin/users', { headers: { 'X-Admin-Key': key } });
+    if (r.status === 401) { $('login-status').textContent = 'Invalid key.'; return; }
+    if (!r.ok) { $('login-status').textContent = 'Sign-in failed: HTTP ' + r.status; return; }
+    _adminKey = key;
+    localStorage.setItem('htj_admin_key', key);
+    $('login-modal').classList.remove('show');
+    $('main').style.display = 'block';
+    const data = await r.json();
+    renderUsers(data.users || []);
+  } catch (e) {
+    $('login-status').textContent = 'Sign-in failed: ' + (e.message || e);
+  }
+}
+
+function signOut() {
+  _adminKey = null;
+  localStorage.removeItem('htj_admin_key');
+  $('main').style.display = 'none';
+  $('admin-key-input').value = '';
+  $('login-status').textContent = '';
+  $('login-modal').classList.add('show');
+}
+
+function escHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function renderUsers(users) {
+  const tbody = $('users-tbody');
+  if (!users || users.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" style="color:#888; padding: 16px 12px;">No users yet — invite one above.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = users.map(u => {
+    const statusBadge = u.hasResume
+      ? '<span class="badge ok">Active</span>'
+      : '<span class="badge warn">Awaiting upload</span>';
+    return '<tr>' +
+      '<td>' + escHtml(u.name) + '</td>' +
+      '<td>' + escHtml(u.email || '—') + '</td>' +
+      '<td><a href="' + SITE_BASE + '/' + escHtml(u.slug) + '.html" target="_blank">' + escHtml(u.slug) + '</a></td>' +
+      '<td>' + statusBadge + '</td>' +
+      '<td class="actions">' +
+        '<button class="secondary" onclick="resendInvite(\'' + escHtml(u.slug) + '\')">Resend invite</button>' +
+        (u.slug === 'geetu' ? '' : '<button class="danger" onclick="deleteUser(\'' + escHtml(u.slug) + '\')">Delete</button>') +
+      '</td>' +
+    '</tr>';
+  }).join('');
+}
+
+async function fetchUsers() {
+  try {
+    const r = await fetch(WORKER_BASE + '/admin/users', { headers: { 'X-Admin-Key': _adminKey } });
+    if (r.status === 401) { signOut(); return null; }
+    const data = await r.json();
+    return data.users || [];
+  } catch (e) {
+    $('list-status').className = 'status error';
+    $('list-status').textContent = 'Failed to load users: ' + (e.message || e);
+    return null;
+  }
+}
+
+async function createUser() {
+  const name = $('new-name').value.trim();
+  const email = $('new-email').value.trim();
+  if (!name || !email) {
+    $('create-status').className = 'status error';
+    $('create-status').textContent = 'Name and email are both required.';
+    return;
+  }
+  $('create-status').className = 'status';
+  $('create-status').textContent = 'Creating…';
+  $('create-btn').disabled = true;
+  try {
+    const r = await fetch(WORKER_BASE + '/admin/users', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Key': _adminKey },
+      body: JSON.stringify({ name, email }),
+    });
+    const data = await r.json();
+    if (!r.ok || data.error) {
+      $('create-status').className = 'status error';
+      $('create-status').textContent = 'Failed: ' + (data.error || ('HTTP ' + r.status));
+      return;
+    }
+    $('create-status').className = 'status success';
+    $('create-status').textContent = 'Created ' + data.user.slug + '. Opening invite…';
+    $('new-name').value = '';
+    $('new-email').value = '';
+    showInvite(data.user, data.editKey);
+    const users = await fetchUsers();
+    if (users) renderUsers(users);
+  } catch (e) {
+    $('create-status').className = 'status error';
+    $('create-status').textContent = 'Failed: ' + (e.message || e);
+  } finally {
+    $('create-btn').disabled = false;
+  }
+}
+
+async function resendInvite(slug) {
+  const users = await fetchUsers();
+  if (!users) return;
+  const u = users.find(x => x.slug === slug);
+  if (!u) { alert('User not found'); return; }
+  if (!u.email) { alert('No email saved for this user — add one before resending.'); return; }
+  showInvite(u, u.editKey);
+}
+
+function showInvite(user, editKey) {
+  const url = SITE_BASE + '/' + user.slug + '.html';
+  const subject = 'Your personal HealthTech Jobs dashboard is ready';
+  const body = [
+    'Hi ' + (user.name.split(' ')[0] || user.name) + ',',
+    '',
+    'I built a personal job-search dashboard tailored to your background.',
+    'It pulls open roles from ~50 healthcare/tech companies, ranks them',
+    'against your resume, and one-clicks a tailored summary + cover letter +',
+    'tailored resume per job.',
+    '',
+    'Your link: ' + url,
+    'Password (for resume upload): ' + editKey,
+    '',
+    'First time: click "Resume" top-right, enter the password, upload',
+    'your resume as PDF or Word. The AI parses it and starts scoring',
+    'jobs against your profile within minutes.',
+    '',
+    'Let me know if anything is off — I tune it.',
+  ].join('\n');
+  _currentInvite = { to: user.email, subject, body, name: user.name };
+  $('invite-summary').textContent = 'To: ' + user.email + ' · Slug: ' + user.slug;
+  $('invite-body').textContent = body;
+  $('invite-modal').classList.add('show');
+}
+
+function openMailto() {
+  if (!_currentInvite) return;
+  const m = 'mailto:' + encodeURIComponent(_currentInvite.to) +
+    '?subject=' + encodeURIComponent(_currentInvite.subject) +
+    '&body=' + encodeURIComponent(_currentInvite.body);
+  window.location.href = m;
+}
+
+function copyInvite() {
+  if (!_currentInvite) return;
+  const txt = 'To: ' + _currentInvite.to + '\nSubject: ' + _currentInvite.subject + '\n\n' + _currentInvite.body;
+  navigator.clipboard.writeText(txt);
+}
+
+function closeInviteModal() {
+  $('invite-modal').classList.remove('show');
+}
+
+async function deleteUser(slug) {
+  if (!confirm('Delete user ' + slug + '? All their resume versions and saved data will be removed. This cannot be undone.')) return;
+  try {
+    const r = await fetch(WORKER_BASE + '/admin/users', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Key': _adminKey },
+      body: JSON.stringify({ slug }),
+    });
+    const data = await r.json();
+    if (!r.ok || data.error) { alert('Failed: ' + (data.error || ('HTTP ' + r.status))); return; }
+    const users = await fetchUsers();
+    if (users) renderUsers(users);
+  } catch (e) {
+    alert('Failed: ' + (e.message || e));
+  }
+}
+
+// Auto-login if we have a saved admin key
+window.addEventListener('DOMContentLoaded', async () => {
+  const cached = localStorage.getItem('htj_admin_key');
+  if (cached) {
+    $('admin-key-input').value = cached;
+    await signIn();
+  }
+  $('admin-key-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') signIn(); });
+});
+</script>
+</body></html>

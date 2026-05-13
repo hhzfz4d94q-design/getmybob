@@ -589,16 +589,32 @@ def load_skills_profile(slug="geetu"):
 
 
 def load_users():
-    """Read users.json. Returns list of {slug, name}. Falls back to default user."""
+    """Fetch user list from Worker /users endpoint. Falls back to users.json on failure,
+    then to a hardcoded default. The Worker is the canonical registry."""
+    # Primary: Worker /users
+    try:
+        req = Request(WORKER_BASE_URL + "/users", headers={"User-Agent": "fetch_jobs.py"})
+        with urlopen(req, timeout=15) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+        users = data.get("users", [])
+        if isinstance(users, list) and users:
+            print(f"[users] loaded {len(users)} from Worker", flush=True)
+            return users
+    except Exception as e:
+        print(f"[users] Worker fetch failed ({e}), falling back to users.json", flush=True)
+
+    # Fallback: users.json (legacy)
     try:
         with open(USERS_JSON_PATH) as f:
             users = json.load(f)
-        if not isinstance(users, list) or not users:
-            raise ValueError("users.json is empty or not a list")
-        return users
-    except Exception as e:
-        print(f"[users.json] could not load ({e}); falling back to default geetu", flush=True)
-        return [{"slug": "geetu", "name": "Geetanjali Arora"}]
+        if isinstance(users, list) and users:
+            return users
+    except Exception:
+        pass
+
+    # Last resort
+    print("[users] using hardcoded default (geetu)", flush=True)
+    return [{"slug": "geetu", "name": "Geetanjali Arora"}]
 
 
 def score_job(job):
@@ -1115,7 +1131,7 @@ HTML_TEMPLATE = """<!doctype html>
 <div class="modal-overlay" id="resume-modal" onclick="if(event.target===this)closeResumeModal()">
   <div class="modal prep-result-modal">
     <span class="modal-close" onclick="closeResumeModal()">&times;</span>
-    <h3>Geetanjali's Resume</h3>
+    <h3>{user_name}'s Resume</h3>
     <p class="prep-status" id="resume-status">Loading…</p>
     <div id="resume-editor" style="display:none;">
       <div class="tabs">
@@ -1125,7 +1141,7 @@ HTML_TEMPLATE = """<!doctype html>
       </div>
 
       <div class="tab-panel active" id="tab-upload">
-        <p style="font-size:13px;color:#555;margin-bottom:10px;">Upload Geetanjali's resume as PDF or Word. The AI converts it to structured form and saves a new version.</p>
+        <p style="font-size:13px;color:#555;margin-bottom:10px;">Upload your resume as PDF or Word. The AI converts it to structured form and saves a new version.</p>
         <label for="resume-file-input" class="dropzone" id="resume-dropzone">
           <strong id="dropzone-label">Click to choose a file</strong>
           <span>or drop a .pdf / .docx here</span>
