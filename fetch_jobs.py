@@ -276,6 +276,41 @@ def _strip_html(s):
 STOP_WORDS = {"of", "the", "and", "for", "a", "an", "to", "with", "in", "on", "at", "by", "or"}
 
 
+# Titles that look healthcare-y but aren't a fit for Geetanjali's profile
+# (senior product / digital transformation / IT in healthcare — NOT a clinician,
+# pharmacist, nurse, medical affairs, or pure sales/marketing role).
+IRRELEVANT_TITLE_TERMS = [
+    # Clinical practice roles (not IT/product)
+    "clinical trial", "clinical research", "clinical operations",
+    "clinical success", "clinical quality", "clinical educator",
+    "clinical pharmacist", "clinical psychologist", "clinical specialist",
+    "clinical lead",
+    # Healthcare practitioners
+    "pharmacy", "pharmacist", "nursing", "nurse practitioner",
+    "registered nurse", "physician", "psychiatrist", "psychologist",
+    "social worker", "behavioral therapist", "case manager",
+    "care coordinator", "care manager",
+    # Medical affairs (separate from product/IT)
+    "medical affairs", "medical director", "medical writer",
+    # Pure sales (Geetanjali is product/IT, not sales)
+    "director of sales", "head of sales", "vp of sales",
+    "vice president of sales", "vice president, sales",
+    "sales director", "regional sales manager", "enterprise sales",
+    "account executive",
+    # Marketing (different focus from product)
+    "marketing director", "head of marketing", "vp of marketing",
+    "vp, marketing",
+    # Other non-fit functions
+    "general counsel", "compliance officer", "chief financial officer",
+    "human resources",
+]
+
+
+def _is_irrelevant_title(title):
+    t = (title or "").lower()
+    return any(term in t for term in IRRELEVANT_TITLE_TERMS)
+
+
 def _normalize_title(title):
     """Lowercase, strip stop words, then concatenate alphanumerics so minor wording
     differences ('Director of Product' vs 'Director, Product') collapse to the same hash."""
@@ -307,6 +342,10 @@ def score_job(job):
     """0-100 score. Higher = more relevant + more likely 'real'."""
     s = 50
     blob = f"{job['title']} {job['description']}".lower()
+
+    # Profile mismatch — bring to very low score so it won't appear
+    if _is_irrelevant_title(job["title"]):
+        return 0
 
     # Seniority bonus
     if is_senior(job):
@@ -479,8 +518,11 @@ def generate_dashboard(conn):
         FROM jobs
         WHERE last_seen >= datetime('now', '-30 days')
         ORDER BY score DESC, last_seen DESC
-        LIMIT 1000
+        LIMIT 2000
     """).fetchall()
+    # Hide jobs that aren't a fit for Geetanjali's product/IT profile
+    rows = [r for r in rows if not _is_irrelevant_title(r[2])]
+    rows = rows[:1000]
 
     # Stats
     total = conn.execute("SELECT COUNT(*) FROM jobs").fetchone()[0]
