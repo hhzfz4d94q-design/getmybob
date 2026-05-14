@@ -109,15 +109,15 @@
 </head><body>
 <header>
   <h1>Jobs for Shreyaa Arora</h1>
-  <div class="sub">Awaiting resume upload — click Resume to get started · Generated 2026-05-13 21:14</div>
+  <div class="sub">Awaiting resume upload — click Resume to get started · Generated 2026-05-14 09:21</div>
   <div class="header-actions">
     <button id="resume-btn" class="header-btn" onclick="openResumeModal()">Resume</button>
     <button id="refresh-btn" class="header-btn" onclick="refreshData()">Refresh data</button>
   </div>
 </header>
 <div class="stats">
-  <div class="stat"><b>7248</b>Total jobs tracked</div>
-  <div class="stat"><b>365</b>Senior + Remote (last 7d)</div>
+  <div class="stat"><b>7343</b>Total jobs tracked</div>
+  <div class="stat"><b>366</b>Senior + Remote (last 7d)</div>
   <div class="stat"><b>0</b>Possible ghost jobs (60d+)</div>
   <div class="stat"><b id="shown-counter">0</b>Showing</div>
 </div>
@@ -199,7 +199,7 @@
         <p style="font-size:13px;color:#555;margin-bottom:10px;">Upload your resume as PDF or Word. The AI converts it to structured form and saves a new version.</p>
         <label for="resume-file-input" class="dropzone" id="resume-dropzone">
           <strong id="dropzone-label">Click to choose a file</strong>
-          <span>or drop a .pdf / .docx here</span>
+          <span>or drop a PDF or Word file (.docx — not legacy .doc) here</span>
         </label>
         <input type="file" id="resume-file-input" accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" style="display:none;">
         <div style="margin-top: 12px; display: flex; gap: 8px; align-items: center;">
@@ -546,26 +546,36 @@ async function loadProfile() {
 }
 
 function _renderProfileHTML(p) {
-  function section(title, items, color) {
+  function section(title, items, color, fieldKey) {
     items = items || [];
-    if (!items.length) return '';
-    const chips = items.map(s => '<span style="display:inline-block;background:' + color + ';color:#1f3a5f;padding:3px 9px;border-radius:12px;font-size:11.5px;margin:2px 4px 2px 0;font-weight:500;">' + _esc(s) + '</span>').join('');
-    return '<div style="margin-bottom:12px;"><div style="font-size:11px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px;">' + title + ' <span style="color:#999;font-weight:500;">· ' + items.length + '</span></div><div>' + chips + '</div></div>';
+    const chips = items.map(s => {
+      const safe = _esc(s);
+      const jsSafe = String(s).replace(/'/g, "\\'").replace(/"/g, '&quot;');
+      return '<span style="display:inline-flex;align-items:center;background:' + color + ';color:#1f3a5f;padding:3px 4px 3px 9px;border-radius:12px;font-size:11.5px;margin:2px 4px 2px 0;font-weight:500;">' +
+             safe +
+             (fieldKey ? '<button onclick="removeChip(\''+ fieldKey +'\', \''+ jsSafe +'\')" style="background:none;border:0;color:#888;cursor:pointer;padding:0 0 0 6px;font-size:14px;line-height:1;font-weight:600;" title="Remove">&times;</button>' : '') +
+             '</span>';
+    }).join('');
+    const addBtn = fieldKey
+      ? '<button onclick="addChip(\''+ fieldKey +'\')" style="display:inline-block;background:#fafbfc;border:1px dashed #c0c8d4;color:#1f3a5f;padding:3px 11px;border-radius:12px;font-size:11.5px;cursor:pointer;font-weight:500;margin:2px 4px 2px 0;">+ Add</button>'
+      : '';
+    const count = items.length > 0 ? (' <span style="color:#999;font-weight:500;">· ' + items.length + '</span>') : '';
+    return '<div style="margin-bottom:12px;"><div style="font-size:11px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px;">' + title + count + '</div><div>' + chips + addBtn + '</div></div>';
   }
   let html = '';
   if (p.primaryRole) html += '<div style="font-size:14px;color:#1f3a5f;font-weight:600;margin-bottom:4px;">' + _esc(p.primaryRole) + '</div>';
   if (p.summary) html += '<div style="font-size:13px;color:#555;margin-bottom:14px;line-height:1.45;">' + _esc(p.summary) + '</div>';
   html += '<div style="background:#f8f9fb;padding:14px 16px;border-radius:8px;border:1px solid #e6e8eb;">';
   if (p.seniorityLevel) html += '<div style="font-size:12px;color:#777;margin-bottom:8px;">Seniority: <strong style="color:#333;">' + _esc(p.seniorityLevel) + '</strong>' + (p.salaryFloor ? ' · Salary floor ~$' + Number(p.salaryFloor).toLocaleString() : '') + (p.remotePreferred ? ' · Remote preferred' : '') + '</div>';
-  html += section('Target titles', p.targetTitles, '#e6f0ff');
-  html += section('Industries', p.industries, '#e6fff0');
-  html += section('Specialties', p.specialties, '#f3e6ff');
-  html += section('Key skills', p.keywords, '#fff8e1');
-  html += section('Technologies', p.technologies, '#e8f4ff');
-  html += section('Frameworks', p.frameworks, '#fff3d6');
-  html += section('Regulations', p.regulations, '#fff0e6');
-  html += section('Certifications', p.certifications, '#e6fff8');
-  html += section('Filtered out', p.negativeKeywords, '#ffe6e6');
+  html += section('Target titles', p.targetTitles, '#e6f0ff', 'targetTitles');
+  html += section('Industries', p.industries, '#e6fff0', 'industries');
+  html += section('Specialties', p.specialties, '#f3e6ff', 'specialties');
+  html += section('Key skills', p.keywords, '#fff8e1', 'keywords');
+  html += section('Technologies', p.technologies, '#e8f4ff', 'technologies');
+  html += section('Frameworks', p.frameworks, '#fff3d6', 'frameworks');
+  html += section('Regulations', p.regulations, '#fff0e6', 'regulations');
+  html += section('Certifications', p.certifications, '#e6fff8', 'certifications');
+  html += section('Filtered out', p.negativeKeywords, '#ffe6e6', 'negativeKeywords');
   html += '</div>';
   if (p.generatedAt) html += '<div style="font-size:11px;color:#999;margin-top:8px;">Generated ' + new Date(p.generatedAt).toLocaleString() + '</div>';
   return html;
@@ -653,6 +663,52 @@ async function saveProfileEdits() {
     statusEl.style.color = '#b00';
     statusEl.textContent = 'Failed: ' + (e.message || e);
   }
+}
+
+async function _patchProfileField(fieldKey, newArray) {
+  const editKey = getEditKey();
+  if (!editKey) return false;
+  const r = await fetch(PROFILE_WORKER_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Edit-Key': editKey },
+    body: JSON.stringify({ patchFields: { [fieldKey]: newArray } }),
+  });
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok || data.error) {
+    if (r.status === 401) { localStorage.removeItem('htj_resume_key'); localStorage.removeItem('htj_resume_key_' + USER_SLUG); }
+    alert('Failed: ' + (data.error || ('HTTP ' + r.status)));
+    return false;
+  }
+  return true;
+}
+
+async function removeChip(fieldKey, value) {
+  if (!confirm('Remove "' + value + '" from your profile?')) return;
+  // Read latest profile, drop the item, patch back
+  const r = await fetch(PROFILE_WORKER_URL);
+  const data = await r.json();
+  const profile = data.profile || {};
+  const existing = Array.isArray(profile[fieldKey]) ? profile[fieldKey] : [];
+  const filtered = existing.filter(x => String(x).toLowerCase() !== String(value).toLowerCase());
+  if (await _patchProfileField(fieldKey, filtered)) loadProfile();
+}
+
+async function addChip(fieldKey) {
+  const input = prompt('Add to ' + fieldKey + ' (comma-separated for multiple):');
+  if (!input) return;
+  const additions = input.split(/[,;\n]/).map(s => s.trim()).filter(Boolean);
+  if (!additions.length) return;
+  const r = await fetch(PROFILE_WORKER_URL);
+  const data = await r.json();
+  const profile = data.profile || {};
+  const existing = Array.isArray(profile[fieldKey]) ? profile[fieldKey] : [];
+  const merged = existing.slice();
+  const seen = new Set(merged.map(x => String(x).toLowerCase()));
+  for (const a of additions) {
+    const al = a.toLowerCase();
+    if (!seen.has(al)) { merged.push(al); seen.add(al); }
+  }
+  if (await _patchProfileField(fieldKey, merged)) loadProfile();
 }
 
 async function regenerateProfile(btn) {
@@ -752,8 +808,12 @@ function _wireResumeDropzone() {
 
 function _handleFileChosen(file) {
   const name = (file.name || '').toLowerCase();
+  if (name.endsWith('.doc') && !name.endsWith('.docx')) {
+    document.getElementById('upload-status').textContent = 'Legacy .doc files are not supported. Open in Word → File → Save As → Word Document (.docx), then upload that.';
+    return;
+  }
   if (!name.endsWith('.pdf') && !name.endsWith('.docx')) {
-    document.getElementById('upload-status').textContent = 'Unsupported file. Use .pdf or .docx.';
+    document.getElementById('upload-status').textContent = 'Unsupported file. Use PDF or Word (.docx).';
     return;
   }
   _pendingUploadFile = file;
