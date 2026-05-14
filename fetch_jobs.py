@@ -822,8 +822,8 @@ def upsert_job(conn, job):
 
     salary = job.get("salary_range") or ""
     employment_type = detect_employment_type(job)
-    # Industries: looked up from COMPANY_INDUSTRIES based on company_slug
-    industries = COMPANY_INDUSTRIES.get(job.get("company_slug"), DEFAULT_INDUSTRIES)
+    # Industries: looked up from COMPANY_INDUSTRIES based on company_slug (lowercased)
+    industries = COMPANY_INDUSTRIES.get((job.get("company_slug") or "").lower(), DEFAULT_INDUSTRIES)
     industries_str = ",".join(industries) if industries else ""
     cur = conn.execute("SELECT fingerprint, sightings FROM jobs WHERE fingerprint=?", (fp,))
     row = cur.fetchone()
