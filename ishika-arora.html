@@ -1,0 +1,1297 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Jobs for Ishika Arora</title>
+<style>
+  body { font: 14px -apple-system, system-ui, sans-serif; margin: 0; background: #f7f7f8; color: #222; }
+  header { background: #1f3a5f; color: white; padding: 18px 28px; position: relative; }
+  header h1 { margin: 0; font-size: 20px; }
+  header .sub { opacity: .85; font-size: 13px; margin-top: 4px; }
+  .header-actions { position: absolute; right: 28px; top: 50%; transform: translateY(-50%); display: flex; gap: 8px; }
+  .header-btn { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .header-btn:hover { background: rgba(255,255,255,0.25); }
+  .header-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .stats { display: flex; gap: 24px; padding: 14px 28px; background: white; border-bottom: 1px solid #e5e5ea; }
+  .stat { font-size: 13px; }
+  .stat b { font-size: 22px; display: block; color: #1f3a5f; }
+  .filters { padding: 12px 28px; background: white; border-bottom: 1px solid #e5e5ea; display: flex; gap: 12px; }
+  .filters input, .filters select { padding: 6px 10px; font-size: 13px; border: 1px solid #ddd; border-radius: 6px; }
+  .grid { padding: 18px 28px; display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 14px; }
+  .card { background: white; border-radius: 10px; padding: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .row1 { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+  .title a { color: #1f3a5f; text-decoration: none; font-weight: 600; font-size: 15px; }
+  .title a:hover { text-decoration: underline; }
+  .score { background: #1f3a5f; color: white; border-radius: 999px; padding: 2px 10px; font-size: 12px; font-weight: 600; }
+  .row2 { font-size: 12px; color: #666; margin-top: 4px; }
+  .badges { margin: 8px 0; display: flex; flex-wrap: wrap; gap: 6px; }
+  .b { font-size: 11px; padding: 2px 8px; border-radius: 999px; }
+  .b.senior { background: #e6f0ff; color: #1f3a5f; }
+  .b.remote { background: #e6fff0; color: #0a6b3a; }
+  .b.contract { background: #f3e6ff; color: #5a1f8a; }
+  .b.ghost { background: #fff1e6; color: #a85c00; }
+  .b.repost { background: #ffe6e6; color: #a80000; }
+  .b.fresh { background: #fffbe6; color: #8a6d00; font-weight: 600; }
+  .b.week { background: #f0e6ff; color: #4b2e9c; }
+  .pill { font-size: 12px; padding: 5px 12px; border-radius: 999px; border: 1px solid #ddd; background: white; cursor: pointer; }
+  .pill.active { background: #1f3a5f; color: white; border-color: #1f3a5f; }
+  .actions { margin-top: 10px; display: flex; gap: 6px; flex-wrap: wrap; }
+  .btn { font-size: 12px; padding: 6px 10px; border-radius: 6px; border: 1px solid #ddd; background: white; cursor: pointer; color: #333; text-decoration: none; display: inline-block; }
+  .btn:hover { background: #f0f0f0; }
+  .btn.primary { background: #1f3a5f; color: white; border-color: #1f3a5f; }
+  .btn.primary:hover { background: #2d4f7a; }
+  .btn.track.applied { background: #0a6b3a; color: white; border-color: #0a6b3a; }
+  .btn.track.phonescreen { background: #c97a00; color: white; border-color: #c97a00; }
+  .btn.track.onsite { background: #7a009c; color: white; border-color: #7a009c; }
+  .btn.track.offer { background: #ff7700; color: white; border-color: #ff7700; }
+  .btn.track.rejected { background: #888; color: white; border-color: #888; }
+  .b.applied { background: #d6f5e3; color: #0a6b3a; }
+  .b.phonescreen { background: #fce5b8; color: #6b4500; }
+  .b.onsite { background: #ead4ff; color: #4b2e9c; }
+  .b.offer { background: #ffd9b3; color: #a04500; }
+  .b.rejected { background: #e8e8e8; color: #666; }
+  .app-tracker { padding: 14px 28px; background: white; border-bottom: 1px solid #e5e5ea; }
+  .view-toggle { display: flex; gap: 8px; margin-bottom: 12px; align-items: center; }
+  .view-toggle .pill { font-size: 13px; padding: 6px 14px; }
+  .view-label { font-size: 12px; color: #666; margin-right: 4px; font-weight: 600; }
+  .app-stats { display: flex; gap: 12px; flex-wrap: wrap; }
+  .app-stat { font-size: 12px; padding: 8px 14px; border-radius: 8px; min-width: 80px; }
+  .app-stat b { font-size: 20px; display: block; font-weight: 700; line-height: 1.15; }
+  .app-stat.applied { background: #d6f5e3; color: #0a6b3a; }
+  .app-stat.phonescreen { background: #fce5b8; color: #6b4500; }
+  .app-stat.onsite { background: #ead4ff; color: #4b2e9c; }
+  .app-stat.offer { background: #ffd9b3; color: #a04500; }
+  .app-stat.rejected { background: #e8e8e8; color: #666; }
+  .app-stat.response { background: #1f3a5f; color: white; }
+  body.apps-mode .card[data-status="offer"] { order: 1; }
+  body.apps-mode .card[data-status="onsite"] { order: 2; }
+  body.apps-mode .card[data-status="phonescreen"] { order: 3; }
+  body.apps-mode .card[data-status="applied"] { order: 4; }
+  body.apps-mode .card[data-status="rejected"] { order: 5; }
+  .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
+  .modal-overlay.show { display: flex; }
+  .modal { background: white; border-radius: 12px; padding: 24px; max-width: 600px; width: 100%; max-height: 80vh; overflow-y: auto; }
+  .modal h3 { margin: 0 0 12px 0; color: #1f3a5f; }
+  .modal pre { background: #f5f5f5; padding: 12px; border-radius: 6px; font-size: 12px; overflow-x: auto; white-space: pre-wrap; word-break: break-all; }
+  .modal .copy-btn { margin-top: 10px; }
+  .modal-close { float: right; cursor: pointer; font-size: 22px; line-height: 1; color: #999; }
+  .prep-result-modal { max-width: 760px; }
+  .prep-status { font-size: 13px; color: #555; padding: 14px 0; }
+  .prep-status.error { color: #a80000; }
+  .prep-section { margin: 18px 0; padding-bottom: 18px; border-bottom: 1px solid #eee; }
+  .prep-section:last-child { border-bottom: none; }
+  .prep-label { font-size: 12px; font-weight: 700; color: #1f3a5f; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .prep-text { background: #f7f7f8; padding: 12px; border-radius: 6px; font-size: 13px; white-space: pre-wrap; word-wrap: break-word; line-height: 1.5; font-family: inherit; max-height: 260px; overflow-y: auto; margin: 0 0 8px 0; }
+  .desc { font-size: 12.5px; color: #444; margin-top: 6px; line-height: 1.4; }
+  .salary-row { margin: 6px 0 2px 0; }
+  .salary { display: inline-block; background: #e6fff0; color: #0a6b3a; padding: 2px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; }
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid #e0e0e0; margin: 10px 0 16px 0; }
+  .tab-btn { background: none; border: none; padding: 8px 14px; cursor: pointer; font-size: 13px; color: #666; border-bottom: 2px solid transparent; font-weight: 500; }
+  .tab-btn.active { color: #1f3a5f; border-bottom-color: #1f3a5f; font-weight: 700; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+  .dropzone { display: block; box-sizing: border-box; width: 100%; border: 2px dashed #c0c8d4; border-radius: 8px; padding: 28px 16px; text-align: center; background: #fafbfc; transition: all 0.15s; cursor: pointer; }
+  .dropzone:hover, .dropzone.drag { background: #eef3fa; border-color: #1f3a5f; }
+  .dropzone strong { display: block; font-size: 14px; color: #1f3a5f; margin-bottom: 4px; }
+  .dropzone span { display: block; font-size: 12px; color: #666; }
+  .version-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid #e6e8eb; border-radius: 6px; margin-bottom: 6px; background: #fff; }
+  .version-row.active { border-color: #1f3a5f; background: #f3f7fc; }
+  .version-main { flex: 1; min-width: 0; }
+  .version-label { font-weight: 600; font-size: 13px; color: #1f3a5f; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .version-meta { font-size: 11px; color: #777; margin-top: 2px; }
+  .version-badge { background: #1f3a5f; color: white; font-size: 10px; padding: 2px 7px; border-radius: 10px; font-weight: 700; letter-spacing: 0.3px; }
+  .version-actions { display: flex; gap: 4px; }
+  .v-btn { background: #f3f4f6; border: 1px solid #ddd; color: #333; padding: 5px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; font-weight: 500; }
+  .v-btn:hover { background: #e6e8eb; }
+  .v-btn.danger { color: #b00; }
+  .v-btn.primary { background: #1f3a5f; color: white; border-color: #1f3a5f; }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head><body>
+<header>
+  <h1>Jobs for Ishika Arora</h1>
+  <div class="sub">Awaiting resume upload — click Resume to get started · Generated 2026-05-13 21:14</div>
+  <div class="header-actions">
+    <button id="resume-btn" class="header-btn" onclick="openResumeModal()">Resume</button>
+    <button id="refresh-btn" class="header-btn" onclick="refreshData()">Refresh data</button>
+  </div>
+</header>
+<div class="stats">
+  <div class="stat"><b>7248</b>Total jobs tracked</div>
+  <div class="stat"><b>365</b>Senior + Remote (last 7d)</div>
+  <div class="stat"><b>0</b>Possible ghost jobs (60d+)</div>
+  <div class="stat"><b id="shown-counter">0</b>Showing</div>
+</div>
+<div class="app-tracker">
+  <div class="view-toggle">
+    <span class="view-label">View:</span>
+    <button class="pill active" id="view-all" onclick="setView('all')">All Jobs</button>
+    <button class="pill" id="view-apps" onclick="setView('apps')">My Applications</button>
+    <span class="view-label" style="margin-left:20px;">Type:</span>
+    <button class="pill active" id="type-all" onclick="setEmploymentFilter('all')">All</button>
+    <button class="pill" id="type-fulltime" onclick="setEmploymentFilter('full-time')">Full-time</button>
+    <button class="pill" id="type-contract" onclick="setEmploymentFilter('contract')">Contract</button>
+  </div>
+  <div class="app-stats">
+    <div class="app-stat applied"><b id="cnt-applied">0</b>Applied</div>
+    <div class="app-stat phonescreen"><b id="cnt-phonescreen">0</b>Phone Screens</div>
+    <div class="app-stat onsite"><b id="cnt-onsite">0</b>Onsites</div>
+    <div class="app-stat offer"><b id="cnt-offer">0</b>Offers</div>
+    <div class="app-stat rejected"><b id="cnt-rejected">0</b>Rejected</div>
+    <div class="app-stat response"><b id="cnt-response">--</b>Response rate</div>
+  </div>
+</div>
+<div class="filters">
+  <input type="text" id="q" placeholder="Search title or company…" oninput="filter()">
+  <select id="srOnly" onchange="filter()">
+    <option value="">All jobs</option>
+    <option value="srOnly">Senior + Remote only</option>
+    <option value="sOnly">Senior only</option>
+    <option value="rOnly">Remote only</option>
+  </select>
+  <select id="trackedFilter" onchange="filter()">
+    <option value="">Tracker: all</option>
+    <option value="untouched">Not yet applied</option>
+    <option value="applied">Applied</option>
+    <option value="phonescreen">Phone screen</option>
+    <option value="onsite">Onsite</option>
+    <option value="offer">Offer</option>
+    <option value="rejected">Rejected</option>
+  </select>
+  <select id="salaryFilter" onchange="filter()">
+    <option value="">Salary: any</option>
+    <option value="listed">With salary listed</option>
+    <option value="100000">$100k+</option>
+    <option value="150000">$150k+</option>
+    <option value="200000">$200k+</option>
+    <option value="250000">$250k+</option>
+  </select>
+  <select id="sortBy" onchange="sortCards()">
+    <option value="score">Sort: Best match</option>
+    <option value="salary">Sort: Salary (high to low)</option>
+    <option value="recent">Sort: Most recent</option>
+    <option value="ghost">Sort: Newest postings first</option>
+  </select>
+  <span style="display:flex; gap:6px; align-items:center;">
+    <button class="pill active" data-window="all" onclick="setWindow(this,'all')">All</button>
+    <button class="pill" data-window="0" onclick="setWindow(this,0)">Today</button>
+    <button class="pill" data-window="7" onclick="setWindow(this,7)">Last 7 days</button>
+    <button class="pill" data-window="30" onclick="setWindow(this,30)">Last 30 days</button>
+  </span>
+</div>
+<div class="grid" id="grid">
+<div style='padding:32px;max-width:640px;margin:30px auto;background:#fff;border:1px solid #e2e5ea;border-radius:8px;line-height:1.55;'><h3 style='margin:0 0 10px 0;color:#1f3a5f;'>Welcome, Ishika Arora!</h3><p style='color:#555;font-size:14px;'>Click the <strong>Resume</strong> button (top-right) and upload your resume as PDF or Word. The AI will read it and start matching jobs to your background. Your tailored dashboard will appear here after the next refresh.</p></div>
+</div>
+
+<div class="modal-overlay" id="resume-modal" onclick="if(event.target===this)closeResumeModal()">
+  <div class="modal prep-result-modal">
+    <span class="modal-close" onclick="closeResumeModal()">&times;</span>
+    <h3>Ishika Arora's Resume</h3>
+    <p class="prep-status" id="resume-status">Loading…</p>
+    <div id="resume-editor" style="display:none;">
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="upload" onclick="setResumeTab('upload')">Upload File</button>
+        <button class="tab-btn" data-tab="profile" onclick="setResumeTab('profile')">My Profile</button>
+        <button class="tab-btn" data-tab="versions" onclick="setResumeTab('versions')">Versions</button>
+        <button class="tab-btn" data-tab="json" onclick="setResumeTab('json')">Edit JSON</button>
+      </div>
+
+      <div class="tab-panel active" id="tab-upload">
+        <p style="font-size:13px;color:#555;margin-bottom:10px;">Upload your resume as PDF or Word. The AI converts it to structured form and saves a new version.</p>
+        <label for="resume-file-input" class="dropzone" id="resume-dropzone">
+          <strong id="dropzone-label">Click to choose a file</strong>
+          <span>or drop a .pdf / .docx here</span>
+        </label>
+        <input type="file" id="resume-file-input" accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" style="display:none;">
+        <div style="margin-top: 12px; display: flex; gap: 8px; align-items: center;">
+          <button class="btn primary" id="parse-resume-btn" onclick="parseUploadedResume(this)" disabled>Parse &amp; Save</button>
+          <span id="upload-status" style="font-size: 12px; color: #555;"></span>
+        </div>
+        <details style="margin-top:14px;font-size:12px;color:#666;">
+          <summary style="cursor:pointer;">What happens?</summary>
+          <ol style="margin:6px 0 0 18px;padding:0;line-height:1.6;">
+            <li>Your browser reads the file locally (it never leaves your computer raw).</li>
+            <li>The extracted text is sent to the Cloudflare Worker.</li>
+            <li>Claude converts it to structured JSON, saved as a new version.</li>
+            <li>The new version becomes active immediately.</li>
+          </ol>
+        </details>
+      </div>
+
+      <div class="tab-panel" id="tab-profile">
+        <p style="font-size:13px;color:#555;margin-bottom:10px;">This is what the AI extracted from your resume. We use it to match jobs. If something is missing, click <em>Edit</em> to add your own chips, or <em>Regenerate</em> to re-run extraction.</p>
+        <div id="profile-display"><p style="font-size:12px;color:#888;">Loading profile…</p></div>
+        <div style="margin-top:14px; display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn primary" id="edit-profile-btn" onclick="openEditProfileModal()">Edit profile</button>
+          <button class="btn" id="regen-profile-btn" onclick="regenerateProfile(this)" style="background:#f3f4f6;color:#1f3a5f;border:1px solid #ccd0d6;">Regenerate from resume</button>
+          <span id="regen-profile-status" style="font-size: 12px; color: #555;"></span>
+        </div>
+      </div>
+
+      <!-- Edit profile modal -->
+      <div id="edit-profile-overlay" style="display:none; position:fixed; inset:0; background:rgba(20,30,50,0.45); z-index:60; align-items:center; justify-content:center;" onclick="if(event.target===this)closeEditProfileModal()">
+        <div style="background:#fff; padding:24px 28px; border-radius:10px; max-width:640px; width:100%; margin:12px; max-height:88vh; overflow-y:auto; box-shadow:0 24px 60px rgba(0,0,0,0.2);">
+          <h3 style="margin:0 0 6px 0; color:#1f3a5f;">Edit your profile</h3>
+          <p style="font-size:13px; color:#555; margin:0 0 16px 0;">Each field is a comma-separated list. Add things the AI missed (e.g. NIST CSF, HIPAA, ISO 27001). Remove anything inaccurate. Saving updates the profile used for job matching.</p>
+          <div id="edit-profile-fields"></div>
+          <div style="margin-top:18px; display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn primary" onclick="saveProfileEdits()">Save changes</button>
+            <button class="btn" onclick="closeEditProfileModal()" style="background:#f3f4f6;color:#1f3a5f;border:1px solid #ccd0d6;">Cancel</button>
+            <span id="edit-profile-status" style="font-size:12px;color:#555;align-self:center;"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="tab-versions">
+        <p style="font-size:13px;color:#555;margin-bottom:10px;">Older versions remain saved. Click <em>Activate</em> to switch which one the AI uses.</p>
+        <div id="versions-list"><p style="font-size:12px;color:#888;">Loading versions…</p></div>
+      </div>
+
+      <div class="tab-panel" id="tab-json">
+        <p style="font-size:13px;color:#555;margin-bottom:8px;">Advanced: paste structured JSON directly. Saving creates a new version.</p>
+        <textarea id="resume-text" spellcheck="false" style="width:100%; height:300px; font-family: ui-monospace, Menlo, monospace; font-size: 12px; padding: 10px; border: 1px solid #ddd; border-radius: 6px; resize: vertical;"></textarea>
+        <div style="margin-top: 12px; display: flex; gap: 8px; align-items: center;">
+          <button class="btn primary" onclick="saveResume(this)">Save resume</button>
+          <span id="resume-save-status" style="font-size: 12px; color: #555;"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="prep-modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal prep-result-modal">
+    <span class="modal-close" onclick="closeModal()">&times;</span>
+    <h3 id="prep-modal-title">Prep this application</h3>
+    <p id="prep-status" class="prep-status">Generating tailored materials with Claude…</p>
+    <div id="prep-output" style="display:none;">
+      <div class="prep-section">
+        <div class="prep-label">Resume Summary</div>
+        <pre id="prep-summary" class="prep-text"></pre>
+        <button class="btn primary" onclick="copyPrepField('prep-summary', this)">Copy summary</button>
+      </div>
+      <div class="prep-section">
+        <div class="prep-label">Cover Letter</div>
+        <pre id="prep-cover" class="prep-text"></pre>
+        <button class="btn primary" onclick="copyPrepField('prep-cover', this)">Copy cover letter</button>
+      </div>
+      <div class="prep-section">
+        <div class="prep-label">LinkedIn Intro</div>
+        <pre id="prep-linkedin" class="prep-text"></pre>
+        <button class="btn primary" onclick="copyPrepField('prep-linkedin', this)">Copy LinkedIn intro</button>
+      </div>
+      <div class="prep-section" id="prep-resume-section" style="display:none;">
+        <div class="prep-label">Tailored Resume</div>
+        <div id="prep-resume-preview" style="background:#fff; border:1px solid #e2e5ea; padding:18px 22px; border-radius:6px; font-size:13px; line-height:1.5; max-height:420px; overflow-y:auto; margin:0 0 8px 0;"></div>
+        <div style="display:flex; flex-wrap:wrap; gap:6px;">
+          <button class="btn primary" onclick="copyTailoredResume(this)">Copy as text</button>
+          <button class="btn primary" onclick="downloadTailoredResume('pdf', this)">Download PDF</button>
+          <button class="btn primary" onclick="downloadTailoredResume('doc', this)">Download Word</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let activeWindow = 'all';
+
+// --- Tracker state (localStorage) -----------------------------------------
+const STATUS_CYCLE = ['', 'applied', 'phonescreen', 'onsite', 'offer', 'rejected'];
+const STATUS_LABEL = {
+  '': 'Mark Applied',
+  'applied': 'Applied ✓',
+  'phonescreen': 'Phone Screen',
+  'onsite': 'Onsite',
+  'offer': 'Offer',
+  'rejected': 'Rejected'
+};
+
+function getTracker() {
+  try { return JSON.parse(localStorage.getItem('htj_tracker') || '{}'); }
+  catch(e) { return {}; }
+}
+function saveTracker(t) { localStorage.setItem('htj_tracker', JSON.stringify(t)); }
+
+function getStatus(fp) { return getTracker()[fp]?.status || ''; }
+
+function cycleStatus(fp, btn) {
+  const t = getTracker();
+  const cur = t[fp]?.status || '';
+  const next = STATUS_CYCLE[(STATUS_CYCLE.indexOf(cur) + 1) % STATUS_CYCLE.length];
+  if (next === '') {
+    delete t[fp];
+  } else {
+    t[fp] = { status: next, updated: new Date().toISOString() };
+  }
+  saveTracker(t);
+  refreshTrackerUI();
+  filter();
+}
+
+function refreshTrackerUI() {
+  const tracker = getTracker();
+  document.querySelectorAll('.card').forEach(card => {
+    const fp = card.dataset.fp;
+    const st = tracker[fp]?.status || '';
+    card.dataset.status = st;
+    const btn = card.querySelector('.btn.track');
+    if (btn) {
+      btn.className = 'btn track ' + st;
+      btn.textContent = STATUS_LABEL[st];
+    }
+    // Update badges to include tracker status
+    const badges = card.querySelector('[data-badges]');
+    if (badges) {
+      // Remove old tracker badges
+      badges.querySelectorAll('.b.tracker').forEach(b => b.remove());
+      if (st) {
+        const span = document.createElement('span');
+        span.className = 'b tracker ' + st;
+        span.textContent = STATUS_LABEL[st];
+        badges.appendChild(document.createTextNode(' '));
+        badges.appendChild(span);
+      }
+    }
+  });
+  updateTrackerStats();
+}
+
+function updateTrackerStats() {
+  const t = getTracker();
+  const counts = { applied: 0, phonescreen: 0, onsite: 0, offer: 0, rejected: 0 };
+  Object.values(t).forEach(v => { if (counts[v.status] !== undefined) counts[v.status]++; });
+  // Update each per-status counter
+  for (const k of Object.keys(counts)) {
+    const el = document.getElementById('cnt-' + k);
+    if (el) el.textContent = counts[k];
+  }
+  // Response rate: any status past 'applied' counts as a response (incl. rejection)
+  const totalApplied = counts.applied + counts.phonescreen + counts.onsite + counts.offer + counts.rejected;
+  const responses = counts.phonescreen + counts.onsite + counts.offer + counts.rejected;
+  const respEl = document.getElementById('cnt-response');
+  if (respEl) {
+    respEl.textContent = totalApplied === 0 ? '--' : Math.round(100 * responses / totalApplied) + '%';
+  }
+  // Legacy counter (unused but kept in case anything references it)
+  const legacy = document.getElementById('apps-counter');
+  if (legacy) legacy.textContent = counts.applied + counts.phonescreen + counts.onsite + counts.offer;
+}
+
+// --- View mode toggle ---------------------------------------------------
+let viewMode = localStorage.getItem('htj_view') || 'all';
+
+function setView(mode) {
+  viewMode = mode;
+  localStorage.setItem('htj_view', mode);
+  document.body.classList.toggle('apps-mode', mode === 'apps');
+  const allBtn = document.getElementById('view-all');
+  const appsBtn = document.getElementById('view-apps');
+  if (allBtn) allBtn.classList.toggle('active', mode === 'all');
+  if (appsBtn) appsBtn.classList.toggle('active', mode === 'apps');
+  filter();
+}
+
+// --- Sorting ------------------------------------------------------------
+function sortCards() {
+  const sel = document.getElementById('sortBy');
+  if (!sel) return;
+  const by = sel.value || 'score';
+  const grid = document.getElementById('grid');
+  const cards = Array.from(grid.querySelectorAll('.card'));
+  cards.sort((a, b) => {
+    if (by === 'salary') {
+      return (parseInt(b.dataset.salaryMax || '0', 10)) - (parseInt(a.dataset.salaryMax || '0', 10));
+    }
+    if (by === 'recent') {
+      return (b.dataset.lastSeen || '').localeCompare(a.dataset.lastSeen || '');
+    }
+    if (by === 'ghost') {
+      // First-seen most recent first (i.e., newest job listings)
+      return (b.dataset.firstSeen || '').localeCompare(a.dataset.firstSeen || '');
+    }
+    // score (default)
+    return (parseInt(b.dataset.score || '0', 10)) - (parseInt(a.dataset.score || '0', 10));
+  });
+  cards.forEach(c => grid.appendChild(c));
+}
+
+// --- Filtering ----------------------------------------------------------
+function setWindow(btn, w) {
+  activeWindow = w;
+  // Only toggle time-window pills (don't touch View / Type pills)
+  document.querySelectorAll('[data-window]').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  filter();
+}
+
+// --- Employment-type filter --------------------------------------------
+let employmentFilter = localStorage.getItem('htj_employment') || 'all';
+
+function setEmploymentFilter(mode) {
+  employmentFilter = mode;
+  localStorage.setItem('htj_employment', mode);
+  ['all','full-time','contract'].forEach(k => {
+    const el = document.getElementById('type-' + (k === 'full-time' ? 'fulltime' : k));
+    if (el) el.classList.toggle('active', k === mode);
+  });
+  filter();
+}
+function filter() {
+  const q = document.getElementById('q').value.toLowerCase();
+  const flt = document.getElementById('srOnly').value;
+  const trk = document.getElementById('trackedFilter').value;
+  const sal = document.getElementById('salaryFilter')?.value || '';
+  const tracker = getTracker();
+  const cards = Array.from(document.querySelectorAll('.card'));
+  let shown = 0;
+  cards.forEach(c => {
+    const text = c.innerText.toLowerCase();
+    const senior = c.dataset.senior === '1';
+    const remote = c.dataset.remote === '1';
+    const days = parseInt(c.dataset.listedDays || '9999', 10);
+    const salaryMax = parseInt(c.dataset.salaryMax || '0', 10);
+    const st = tracker[c.dataset.fp]?.status || '';
+    let show = text.includes(q);
+    if (viewMode === 'apps' && !st) show = false;
+    if (flt === 'srOnly' && !(senior && remote)) show = false;
+    if (flt === 'sOnly' && !senior) show = false;
+    if (flt === 'rOnly' && !remote) show = false;
+    if (activeWindow !== 'all') {
+      const maxDays = parseInt(activeWindow, 10);
+      if (days > maxDays) show = false;
+    }
+    if (trk === 'untouched' && st) show = false;
+    else if (trk && trk !== 'untouched' && st !== trk) show = false;
+    if (sal === 'listed' && salaryMax === 0) show = false;
+    else if (sal && sal !== 'listed' && salaryMax < parseInt(sal, 10)) show = false;
+    // Employment-type filter — unknown counts as full-time
+    const emp = c.dataset.employment || 'unknown';
+    if (employmentFilter === 'contract' && emp !== 'contract') show = false;
+    else if (employmentFilter === 'full-time' && emp === 'contract') show = false;
+    c.style.display = show ? '' : 'none';
+    if (show) shown++;
+  });
+  const counter = document.getElementById('shown-counter');
+  if (counter) counter.textContent = shown;
+}
+
+// --- Resume editor (Cloudflare Worker + KV) -----------------------------
+const WORKER_BASE = 'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev';
+const USER_SLUG = 'ishika-arora';
+const USER_QS = '?user=' + encodeURIComponent(USER_SLUG);
+const RESUME_WORKER_URL = WORKER_BASE + '/resume' + USER_QS;
+const VERSIONS_WORKER_URL = WORKER_BASE + '/resume-versions' + USER_QS;
+const PARSE_RESUME_WORKER_URL = WORKER_BASE + '/parse-resume' + USER_QS;
+
+// pdf.js worker path (must be set once before parsing PDFs)
+if (window.pdfjsLib) {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+}
+
+let _pendingUploadFile = null;
+
+// On first visit via invite link, the password is in the URL as ?key=XXX.
+// Capture it, store to localStorage, then strip from URL so it isn't visible later.
+(function captureInviteKey() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const k = params.get('key');
+    if (k) {
+      // Store per-user key so each dashboard remembers its own
+      localStorage.setItem('htj_resume_key_' + USER_SLUG, k);
+      params.delete('key');
+      const q = params.toString();
+      const newUrl = window.location.pathname + (q ? '?' + q : '') + window.location.hash;
+      window.history.replaceState({}, '', newUrl);
+    }
+  } catch (e) { /* non-fatal */ }
+})();
+
+function getEditKey(promptMsg) {
+  // Prefer per-user key, fall back to legacy single-user key for backward compat
+  let editKey = localStorage.getItem('htj_resume_key_' + USER_SLUG)
+             || localStorage.getItem('htj_resume_key');
+  if (!editKey) {
+    editKey = prompt(promptMsg || 'Enter the password from your invite email:');
+    if (!editKey) return null;
+    localStorage.setItem('htj_resume_key_' + USER_SLUG, editKey);
+  }
+  return editKey;
+}
+
+function setResumeTab(name) {
+  document.querySelectorAll('#resume-editor .tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+  document.querySelectorAll('#resume-editor .tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + name));
+  if (name === 'versions') loadVersions();
+  if (name === 'profile') loadProfile();
+}
+
+const PROFILE_WORKER_URL = WORKER_BASE + '/skills-profile' + USER_QS;
+
+async function loadProfile() {
+  const el = document.getElementById('profile-display');
+  el.innerHTML = '<p style="font-size:12px;color:#888;">Loading profile…</p>';
+  try {
+    const r = await fetch(PROFILE_WORKER_URL);
+    const data = await r.json();
+    const p = data.profile;
+    if (!p) {
+      el.innerHTML = '<p style="font-size:13px;color:#a85c00;background:#fff8e1;padding:10px 12px;border-radius:6px;">No profile yet. Upload a resume first.</p>';
+      return;
+    }
+    el.innerHTML = _renderProfileHTML(p);
+  } catch (e) {
+    el.innerHTML = '<p style="font-size:13px;color:#b00;">Failed to load: ' + (e.message || e) + '</p>';
+  }
+}
+
+function _renderProfileHTML(p) {
+  function section(title, items, color) {
+    items = items || [];
+    if (!items.length) return '';
+    const chips = items.map(s => '<span style="display:inline-block;background:' + color + ';color:#1f3a5f;padding:3px 9px;border-radius:12px;font-size:11.5px;margin:2px 4px 2px 0;font-weight:500;">' + _esc(s) + '</span>').join('');
+    return '<div style="margin-bottom:12px;"><div style="font-size:11px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px;">' + title + ' <span style="color:#999;font-weight:500;">· ' + items.length + '</span></div><div>' + chips + '</div></div>';
+  }
+  let html = '';
+  if (p.primaryRole) html += '<div style="font-size:14px;color:#1f3a5f;font-weight:600;margin-bottom:4px;">' + _esc(p.primaryRole) + '</div>';
+  if (p.summary) html += '<div style="font-size:13px;color:#555;margin-bottom:14px;line-height:1.45;">' + _esc(p.summary) + '</div>';
+  html += '<div style="background:#f8f9fb;padding:14px 16px;border-radius:8px;border:1px solid #e6e8eb;">';
+  if (p.seniorityLevel) html += '<div style="font-size:12px;color:#777;margin-bottom:8px;">Seniority: <strong style="color:#333;">' + _esc(p.seniorityLevel) + '</strong>' + (p.salaryFloor ? ' · Salary floor ~$' + Number(p.salaryFloor).toLocaleString() : '') + (p.remotePreferred ? ' · Remote preferred' : '') + '</div>';
+  html += section('Target titles', p.targetTitles, '#e6f0ff');
+  html += section('Industries', p.industries, '#e6fff0');
+  html += section('Specialties', p.specialties, '#f3e6ff');
+  html += section('Key skills', p.keywords, '#fff8e1');
+  html += section('Technologies', p.technologies, '#e8f4ff');
+  html += section('Frameworks', p.frameworks, '#fff3d6');
+  html += section('Regulations', p.regulations, '#fff0e6');
+  html += section('Certifications', p.certifications, '#e6fff8');
+  html += section('Filtered out', p.negativeKeywords, '#ffe6e6');
+  html += '</div>';
+  if (p.generatedAt) html += '<div style="font-size:11px;color:#999;margin-top:8px;">Generated ' + new Date(p.generatedAt).toLocaleString() + '</div>';
+  return html;
+}
+
+const EDITABLE_FIELDS = [
+  ['industries', 'Industries'],
+  ['specialties', 'Specialties'],
+  ['keywords', 'Key skills'],
+  ['technologies', 'Technologies'],
+  ['frameworks', 'Frameworks'],
+  ['regulations', 'Regulations'],
+  ['certifications', 'Certifications'],
+  ['targetTitles', 'Target titles'],
+  ['negativeKeywords', 'Filtered-out terms'],
+];
+
+let _currentProfile = null;
+
+function openEditProfileModal() {
+  // Load current profile then render the editor
+  fetch(PROFILE_WORKER_URL).then(r => r.json()).then(data => {
+    const p = data.profile || {};
+    _currentProfile = p;
+    const container = document.getElementById('edit-profile-fields');
+    container.innerHTML = '';
+    EDITABLE_FIELDS.forEach(([key, label]) => {
+      const wrap = document.createElement('div');
+      wrap.style.cssText = 'margin-bottom:12px;';
+      const labelEl = document.createElement('label');
+      labelEl.style.cssText = 'display:block; font-size:12px; font-weight:600; color:#555; margin-bottom:4px;';
+      labelEl.textContent = label;
+      const input = document.createElement('textarea');
+      input.id = 'edit-' + key;
+      input.rows = key === 'keywords' || key === 'specialties' ? 3 : 2;
+      input.style.cssText = 'width:100%; box-sizing:border-box; padding:7px 10px; font-size:12.5px; border:1px solid #ccd0d6; border-radius:6px; font-family:inherit; resize:vertical;';
+      input.value = (Array.isArray(p[key]) ? p[key] : []).join(', ');
+      input.placeholder = 'comma-separated, e.g. nist csf, hipaa, iso 27001';
+      wrap.appendChild(labelEl);
+      wrap.appendChild(input);
+      container.appendChild(wrap);
+    });
+    document.getElementById('edit-profile-status').textContent = '';
+    document.getElementById('edit-profile-overlay').style.display = 'flex';
+  }).catch(e => {
+    alert('Could not load current profile: ' + (e.message || e));
+  });
+}
+
+function closeEditProfileModal() {
+  document.getElementById('edit-profile-overlay').style.display = 'none';
+}
+
+async function saveProfileEdits() {
+  const editKey = getEditKey();
+  if (!editKey) return;
+  const statusEl = document.getElementById('edit-profile-status');
+  statusEl.style.color = '#555';
+  statusEl.textContent = 'Saving…';
+  const patchFields = {};
+  EDITABLE_FIELDS.forEach(([key]) => {
+    const v = (document.getElementById('edit-' + key).value || '').trim();
+    patchFields[key] = v ? v.split(/[,;\n]/).map(s => s.trim()).filter(Boolean) : [];
+  });
+  try {
+    const r = await fetch(PROFILE_WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Edit-Key': editKey },
+      body: JSON.stringify({ patchFields }),
+    });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok || data.error) {
+      if (r.status === 401) { localStorage.removeItem('htj_resume_key'); localStorage.removeItem('htj_resume_key_' + USER_SLUG); }
+      statusEl.style.color = '#b00';
+      statusEl.textContent = 'Failed: ' + (data.error || ('HTTP ' + r.status));
+      return;
+    }
+    statusEl.style.color = '#0a6b3a';
+    statusEl.textContent = 'Saved. Refreshing dashboard…';
+    loadProfile();
+    // Trigger refresh so new chips affect filtering
+    try { await fetch(WORKER_BASE + '/refresh', { method: 'POST' }); } catch (e) { /* ignore */ }
+    setTimeout(() => { closeEditProfileModal(); window.location.reload(); }, 180000);
+  } catch (e) {
+    statusEl.style.color = '#b00';
+    statusEl.textContent = 'Failed: ' + (e.message || e);
+  }
+}
+
+async function regenerateProfile(btn) {
+  const status = document.getElementById('regen-profile-status');
+  const editKey = getEditKey();
+  if (!editKey) return;
+  btn.disabled = true;
+  const orig = btn.textContent;
+  btn.textContent = 'Regenerating…';
+  status.textContent = '';
+  status.style.color = '#555';
+  try {
+    const r = await fetch(PROFILE_WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Edit-Key': editKey },
+    });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok || data.error) {
+      if (r.status === 401) { localStorage.removeItem('htj_resume_key'); localStorage.removeItem('htj_resume_key_' + USER_SLUG); }
+      status.style.color = '#b00';
+      status.textContent = 'Failed: ' + (data.error || ('HTTP ' + r.status));
+      btn.textContent = orig;
+      btn.disabled = false;
+      return;
+    }
+    status.style.color = '#0a6b3a';
+    status.textContent = 'Regenerated. Refreshing dashboard…';
+    btn.textContent = orig;
+    btn.disabled = false;
+    loadProfile();
+    // Trigger dashboard refresh so the richer profile starts filtering jobs
+    try { await fetch(WORKER_BASE + '/refresh', { method: 'POST' }); } catch (e) { /* ignore */ }
+    setTimeout(() => window.location.reload(), 180000);
+  } catch (e) {
+    status.style.color = '#b00';
+    status.textContent = 'Failed: ' + (e.message || e);
+    btn.textContent = orig;
+    btn.disabled = false;
+  }
+}
+
+async function openResumeModal() {
+  const modal = document.getElementById('resume-modal');
+  const statusEl = document.getElementById('resume-status');
+  const editor = document.getElementById('resume-editor');
+  const textarea = document.getElementById('resume-text');
+  document.getElementById('resume-save-status').textContent = '';
+  document.getElementById('upload-status').textContent = '';
+  document.getElementById('dropzone-label').textContent = 'Click to choose a file';
+  document.getElementById('parse-resume-btn').disabled = true;
+  _pendingUploadFile = null;
+  statusEl.className = 'prep-status';
+  statusEl.textContent = 'Loading…';
+  statusEl.style.display = 'block';
+  editor.style.display = 'none';
+  modal.classList.add('show');
+  try {
+    const r = await fetch(RESUME_WORKER_URL);
+    const data = await r.json();
+    if (data.error) {
+      statusEl.className = 'prep-status error';
+      statusEl.textContent = 'Error loading resume: ' + data.error;
+      return;
+    }
+    textarea.value = data.resume || '';
+    statusEl.style.display = 'none';
+    editor.style.display = 'block';
+    setResumeTab('upload');
+    if (!data.resume) {
+      document.getElementById('upload-status').textContent = 'No resume saved yet — upload one to begin.';
+    }
+  } catch (e) {
+    statusEl.className = 'prep-status error';
+    statusEl.textContent = 'Error loading resume: ' + (e.message || e);
+  }
+}
+
+function closeResumeModal() {
+  document.getElementById('resume-modal').classList.remove('show');
+}
+
+// --- File upload + browser-side text extraction -----------------------
+function _wireResumeDropzone() {
+  const dz = document.getElementById('resume-dropzone');
+  const input = document.getElementById('resume-file-input');
+  if (!dz || !input || dz._wired) return;
+  dz._wired = true;
+  input.addEventListener('change', (e) => {
+    if (e.target.files && e.target.files[0]) _handleFileChosen(e.target.files[0]);
+  });
+  ['dragover','dragenter'].forEach(ev => dz.addEventListener(ev, (e) => { e.preventDefault(); dz.classList.add('drag'); }));
+  ['dragleave','drop'].forEach(ev => dz.addEventListener(ev, (e) => { e.preventDefault(); dz.classList.remove('drag'); }));
+  dz.addEventListener('drop', (e) => {
+    if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) _handleFileChosen(e.dataTransfer.files[0]);
+  });
+}
+
+function _handleFileChosen(file) {
+  const name = (file.name || '').toLowerCase();
+  if (!name.endsWith('.pdf') && !name.endsWith('.docx')) {
+    document.getElementById('upload-status').textContent = 'Unsupported file. Use .pdf or .docx.';
+    return;
+  }
+  _pendingUploadFile = file;
+  document.getElementById('dropzone-label').textContent = file.name;
+  document.getElementById('parse-resume-btn').disabled = false;
+  document.getElementById('upload-status').textContent = 'Ready. Click Parse & Save.';
+}
+
+async function _extractText(file) {
+  const name = (file.name || '').toLowerCase();
+  if (name.endsWith('.docx')) {
+    const buf = await file.arrayBuffer();
+    const res = await window.mammoth.extractRawText({ arrayBuffer: buf });
+    return (res && res.value || '').trim();
+  }
+  if (name.endsWith('.pdf')) {
+    if (!window.pdfjsLib) throw new Error('PDF parser failed to load.');
+    const buf = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+    let out = '';
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const tc = await page.getTextContent();
+      out += tc.items.map(it => it.str).join(' ') + '\n\n';
+    }
+    return out.trim();
+  }
+  throw new Error('Unsupported file type.');
+}
+
+async function parseUploadedResume(btn) {
+  if (!_pendingUploadFile) return;
+  const statusEl = document.getElementById('upload-status');
+  const editKey = getEditKey();
+  if (!editKey) return;
+  const orig = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Reading file…';
+  statusEl.textContent = '';
+  try {
+    const text = await _extractText(_pendingUploadFile);
+    if (!text || text.length < 80) {
+      statusEl.textContent = 'Could not extract text from this file. Try saving as .docx, or use Edit JSON tab.';
+      btn.textContent = orig;
+      btn.disabled = false;
+      return;
+    }
+    btn.textContent = 'Parsing with Claude…';
+    const r = await fetch(PARSE_RESUME_WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Edit-Key': editKey },
+      body: JSON.stringify({ text, filename: _pendingUploadFile.name }),
+    });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok || data.error) {
+      if (r.status === 401) { localStorage.removeItem('htj_resume_key'); localStorage.removeItem('htj_resume_key_' + USER_SLUG); }
+      statusEl.textContent = 'Failed: ' + (data.error || ('HTTP ' + r.status));
+      btn.textContent = orig;
+      btn.disabled = false;
+      return;
+    }
+    statusEl.textContent = 'Saved as new version (' + (data.version && data.version.label || 'new') + ') and activated.';
+    if (data.parsed) {
+      const ta = document.getElementById('resume-text');
+      if (ta) ta.value = JSON.stringify(data.parsed, null, 2);
+    }
+    btn.textContent = orig;
+    btn.disabled = false;
+    _pendingUploadFile = null;
+    document.getElementById('resume-file-input').value = '';
+    document.getElementById('dropzone-label').textContent = 'Upload another to replace';
+  } catch (e) {
+    statusEl.textContent = 'Failed: ' + (e.message || e);
+    btn.textContent = orig;
+    btn.disabled = false;
+  }
+}
+
+// --- Versions list ------------------------------------------------------
+async function loadVersions() {
+  const list = document.getElementById('versions-list');
+  list.innerHTML = '<p style="font-size:12px;color:#888;">Loading versions…</p>';
+  try {
+    const r = await fetch(VERSIONS_WORKER_URL);
+    const data = await r.json();
+    if (data.error) {
+      list.innerHTML = '<p style="font-size:12px;color:#b00;">Error: ' + data.error + '</p>';
+      return;
+    }
+    const versions = data.versions || [];
+    const activeId = data.activeId;
+    if (!versions.length) {
+      list.innerHTML = '<p style="font-size:12px;color:#888;">No versions yet. Upload a file or paste JSON to create one.</p>';
+      return;
+    }
+    list.innerHTML = versions.map(v => {
+      const isActive = v.id === activeId;
+      const dt = new Date(v.savedAt);
+      const when = isNaN(dt) ? v.savedAt : dt.toLocaleString();
+      const src = v.sourceType === 'upload' ? 'uploaded' : 'JSON paste';
+      return '<div class="version-row' + (isActive ? ' active' : '') + '">' +
+             '<div class="version-main">' +
+             '<div class="version-label">' + _esc(v.label) + (isActive ? ' <span class="version-badge">Active</span>' : '') + '</div>' +
+             '<div class="version-meta">' + src + ' · ' + when + '</div>' +
+             '</div>' +
+             '<div class="version-actions">' +
+             (isActive ? '' : '<button class="v-btn primary" onclick="activateVersion(\''+ v.id +'\')">Activate</button>') +
+             '<button class="v-btn" onclick="previewVersion(\''+ v.id +'\')">Preview</button>' +
+             '<button class="v-btn" onclick="renameVersion(\''+ v.id +'\', \''+ _esc(v.label).replace(/'/g,"\\'") +'\')">Rename</button>' +
+             (isActive ? '' : '<button class="v-btn danger" onclick="deleteVersion(\''+ v.id +'\')">Delete</button>') +
+             '</div></div>';
+    }).join('');
+  } catch (e) {
+    list.innerHTML = '<p style="font-size:12px;color:#b00;">Error: ' + (e.message || e) + '</p>';
+  }
+}
+
+function _esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+async function _versionAction(action, body) {
+  const editKey = getEditKey();
+  if (!editKey) return null;
+  const r = await fetch(VERSIONS_WORKER_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Edit-Key': editKey },
+    body: JSON.stringify(body),
+  });
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok || data.error) {
+    if (r.status === 401) localStorage.removeItem('htj_resume_key');
+    alert('Failed: ' + (data.error || ('HTTP ' + r.status)));
+    return null;
+  }
+  return data;
+}
+
+async function activateVersion(id) {
+  const data = await _versionAction('activate', { action: 'activate', id });
+  if (!data) return;
+  // Update UI immediately
+  loadVersions();
+  // Auto-trigger a dashboard refresh so the user actually sees the change.
+  // Without this, Activate seems to "do nothing" since the visible dashboard
+  // is a pre-generated static HTML file.
+  const list = document.getElementById('versions-list');
+  if (list) {
+    const banner = document.createElement('div');
+    banner.style.cssText = 'background:#fff8e1;border:1px solid #f6c93b;border-radius:6px;padding:10px 12px;margin:8px 0 0 0;font-size:13px;color:#5a4400;';
+    banner.innerHTML = 'Activated. Refreshing your dashboard — page will reload automatically in about 3 minutes.';
+    list.appendChild(banner);
+  }
+  try {
+    await fetch(WORKER_BASE + '/refresh', { method: 'POST' });
+  } catch (e) { /* ignore — page reload below still helps */ }
+  // Auto-reload after the GH Action should have finished (3 min is a safe estimate)
+  setTimeout(() => window.location.reload(), 180000);
+}
+
+async function deleteVersion(id) {
+  if (!confirm('Delete this version? This cannot be undone.')) return;
+  const data = await _versionAction('delete', { action: 'delete', id });
+  if (data) loadVersions();
+}
+
+async function previewVersion(id) {
+  const editKey = getEditKey();
+  if (!editKey) return;
+  const r = await fetch(VERSIONS_WORKER_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Edit-Key': editKey },
+    body: JSON.stringify({ action: 'get', id }),
+  });
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok || data.error) { alert('Failed: ' + (data.error || ('HTTP ' + r.status))); return; }
+  setResumeTab('json');
+  const ta = document.getElementById('resume-text');
+  if (ta) ta.value = data.resume || '';
+  document.getElementById('resume-save-status').textContent = 'Previewing version. Save to create a new version from this content.';
+}
+
+async function renameVersion(id, currentLabel) {
+  const label = prompt('New label for this version:', currentLabel || '');
+  if (label == null) return;
+  const data = await _versionAction('rename', { action: 'rename', id, label });
+  if (data) loadVersions();
+}
+
+async function saveResume(btn) {
+  const textarea = document.getElementById('resume-text');
+  const statusEl = document.getElementById('resume-save-status');
+  const value = textarea.value.trim();
+  if (!value) {
+    statusEl.textContent = 'Resume is empty — paste content first.';
+    return;
+  }
+  // Light validation: should be JSON with a personal section
+  try {
+    const parsed = JSON.parse(value);
+    if (!parsed.personal) throw new Error('Resume JSON should include a "personal" key.');
+  } catch (e) {
+    if (!confirm('This does not look like valid resume JSON (' + e.message + '). Save anyway?')) return;
+  }
+  const editKey = getEditKey();
+  if (!editKey) return;
+  btn.disabled = true;
+  const orig = btn.textContent;
+  btn.textContent = 'Saving…';
+  statusEl.textContent = '';
+  try {
+    // Default label is timestamp so users don't accidentally save the example text
+    const now = new Date();
+    const defaultLabel = 'Manual edit — ' + now.toLocaleDateString();
+    const label = prompt('Label for this version:', defaultLabel) || defaultLabel;
+    const r = await fetch(RESUME_WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Edit-Key': editKey },
+      body: JSON.stringify({ resume: value, label, sourceType: 'json-paste' }),
+    });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok || data.error) {
+      if (r.status === 401) { localStorage.removeItem('htj_resume_key'); localStorage.removeItem('htj_resume_key_' + USER_SLUG); }
+      statusEl.textContent = 'Save failed: ' + (data.error || ('HTTP ' + r.status));
+      btn.disabled = false;
+      btn.textContent = orig;
+      return;
+    }
+    statusEl.textContent = 'Saved as new version.';
+    btn.textContent = orig;
+    btn.disabled = false;
+  } catch (e) {
+    statusEl.textContent = 'Save failed: ' + (e.message || e);
+    btn.disabled = false;
+    btn.textContent = orig;
+  }
+}
+
+// Wire dropzone after DOM is ready
+if (document.readyState !== 'loading') _wireResumeDropzone();
+else document.addEventListener('DOMContentLoaded', _wireResumeDropzone);
+
+// --- Refresh data (triggers GitHub Action via Cloudflare Worker) --------
+const REFRESH_WORKER_URL = WORKER_BASE + '/refresh';
+
+async function refreshData() {
+  const btn = document.getElementById('refresh-btn');
+  if (!btn) return;
+  const original = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Triggering refresh…';
+  try {
+    const r = await fetch(REFRESH_WORKER_URL, { method: 'POST' });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok || data.error) {
+      btn.textContent = 'Refresh failed';
+      alert('Refresh failed: ' + (data.error || ('HTTP ' + r.status)) + (data.details ? '\n' + data.details : ''));
+      setTimeout(() => { btn.textContent = original; btn.disabled = false; }, 3000);
+      return;
+    }
+  } catch (e) {
+    btn.textContent = 'Refresh failed';
+    alert('Refresh failed: ' + (e.message || e));
+    setTimeout(() => { btn.textContent = original; btn.disabled = false; }, 3000);
+    return;
+  }
+  // Countdown then reload
+  let secs = 150;
+  const tick = () => {
+    btn.textContent = `Fetching jobs… ${secs}s, page will reload`;
+    secs--;
+    if (secs <= 0) {
+      window.location.reload();
+    } else {
+      setTimeout(tick, 1000);
+    }
+  };
+  tick();
+}
+
+// --- Prep modal (calls Cloudflare Worker for AI generation) -------------
+const PREP_WORKER_URL = WORKER_BASE + '/prep' + USER_QS;
+
+async function prepApplication(fp, btn) {
+  const card = btn.closest('.card');
+  const titleEl = card.querySelector('.title a');
+  const jobTitle = (titleEl?.textContent || '').trim();
+  const company = (card.querySelector('.company')?.textContent || '').trim();
+  const jobUrl = titleEl?.href || '';
+  const jobDescription = (card.querySelector('.desc')?.textContent || '').trim();
+
+  const modal = document.getElementById('prep-modal');
+  const statusEl = document.getElementById('prep-status');
+  const outputEl = document.getElementById('prep-output');
+  const titleH = document.getElementById('prep-modal-title');
+
+  titleH.textContent = `Materials for ${jobTitle} @ ${company}`;
+  statusEl.className = 'prep-status';
+  statusEl.textContent = 'Generating with Claude… this takes 10–30 seconds.';
+  statusEl.style.display = 'block';
+  outputEl.style.display = 'none';
+  modal.classList.add('show');
+
+  try {
+    const r = await fetch(PREP_WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ jobTitle, company, jobDescription, jobUrl }),
+    });
+    const data = await r.json();
+    if (!r.ok || data.error) {
+      statusEl.className = 'prep-status error';
+      statusEl.textContent = `Error: ${data.error || ('HTTP ' + r.status)}${data.details ? ' — ' + data.details : ''}`;
+      return;
+    }
+    document.getElementById('prep-summary').textContent = data.summary || '(no summary returned)';
+    document.getElementById('prep-cover').textContent = data.coverLetter || '(no cover letter returned)';
+    document.getElementById('prep-linkedin').textContent = data.linkedin || '(no LinkedIn intro returned)';
+    _tailoredResume = data.tailoredResume || null;
+    _tailoredJobMeta = { jobTitle, company };
+    const tailoredSection = document.getElementById('prep-resume-section');
+    if (_tailoredResume && _tailoredResume.personal) {
+      document.getElementById('prep-resume-preview').innerHTML = _renderResumeHTML(_tailoredResume);
+      tailoredSection.style.display = 'block';
+    } else {
+      tailoredSection.style.display = 'none';
+    }
+    statusEl.style.display = 'none';
+    outputEl.style.display = 'block';
+  } catch (e) {
+    statusEl.className = 'prep-status error';
+    statusEl.textContent = `Error: ${e.message || e}`;
+  }
+}
+function closeModal() { document.getElementById('prep-modal').classList.remove('show'); }
+function copyPrepField(id, btn) {
+  const txt = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(txt).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = orig; }, 1500);
+  });
+}
+
+// --- Tailored resume rendering + downloads ----------------------------
+let _tailoredResume = null;
+let _tailoredJobMeta = { jobTitle: '', company: '' };
+
+function _escHtml(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+function _renderResumeHTML(r) {
+  if (!r || !r.personal) return '';
+  const p = r.personal || {};
+  const contact = [p.location, p.phone, p.email, p.linkedin].filter(Boolean).map(x => _escHtml(x)).join(' &nbsp;·&nbsp; ');
+  let html = '';
+  html += '<div style="text-align:center; margin-bottom:14px;">';
+  html += '<div style="font-size:20px; font-weight:700; color:#1f3a5f; letter-spacing:0.3px;">' + _escHtml(p.name || '') + '</div>';
+  if (contact) html += '<div style="font-size:11.5px; color:#555; margin-top:4px;">' + contact + '</div>';
+  html += '</div>';
+  if (r.summary) {
+    html += '<div style="margin-bottom:12px;">' + _escHtml(r.summary) + '</div>';
+  }
+  if (r.skills && r.skills.length) {
+    html += '<div style="margin-bottom:14px;"><div style="font-weight:700; color:#1f3a5f; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #d0d6e0; padding-bottom:3px; margin-bottom:6px;">Core Skills</div>';
+    html += '<div style="font-size:12.5px;">' + r.skills.map(s => _escHtml(s)).join(' &nbsp;·&nbsp; ') + '</div></div>';
+  }
+  if (r.experience && r.experience.length) {
+    html += '<div style="margin-bottom:14px;"><div style="font-weight:700; color:#1f3a5f; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #d0d6e0; padding-bottom:3px; margin-bottom:6px;">Experience</div>';
+    r.experience.forEach(exp => {
+      html += '<div style="margin-bottom:10px;">';
+      html += '<div style="display:flex; justify-content:space-between; gap:10px;"><div><strong>' + _escHtml(exp.title || '') + '</strong> — ' + _escHtml(exp.company || '') + (exp.location ? '<span style="color:#666;"> (' + _escHtml(exp.location) + ')</span>' : '') + '</div>';
+      html += '<div style="color:#666; font-size:11.5px; white-space:nowrap;">' + _escHtml(exp.start || '') + ' – ' + _escHtml(exp.end || '') + '</div></div>';
+      if (exp.bullets && exp.bullets.length) {
+        html += '<ul style="margin:4px 0 0 18px; padding:0;">';
+        exp.bullets.forEach(b => { html += '<li style="margin-bottom:2px;">' + _escHtml(b) + '</li>'; });
+        html += '</ul>';
+      }
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+  if (r.education && r.education.length) {
+    html += '<div style="margin-bottom:12px;"><div style="font-weight:700; color:#1f3a5f; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #d0d6e0; padding-bottom:3px; margin-bottom:6px;">Education</div>';
+    r.education.forEach(ed => {
+      const line = [ed.degree, ed.field].filter(Boolean).join(' in ');
+      html += '<div style="margin-bottom:4px;">' + _escHtml(line) + (ed.school ? ' — ' + _escHtml(ed.school) : '') + (ed.year ? ' <span style="color:#666;">(' + _escHtml(ed.year) + ')</span>' : '') + '</div>';
+    });
+    html += '</div>';
+  }
+  if (r.certifications && r.certifications.length) {
+    html += '<div><div style="font-weight:700; color:#1f3a5f; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #d0d6e0; padding-bottom:3px; margin-bottom:6px;">Certifications</div>';
+    html += '<div>' + r.certifications.map(c => _escHtml(c)).join(' &nbsp;·&nbsp; ') + '</div></div>';
+  }
+  return html;
+}
+
+function _resumeToText(r) {
+  if (!r || !r.personal) return '';
+  const p = r.personal || {};
+  const lines = [];
+  lines.push((p.name || '').toUpperCase());
+  const contact = [p.location, p.phone, p.email, p.linkedin].filter(Boolean).join(' · ');
+  if (contact) lines.push(contact);
+  lines.push('');
+  if (r.summary) { lines.push('SUMMARY'); lines.push(r.summary); lines.push(''); }
+  if (r.skills && r.skills.length) { lines.push('CORE SKILLS'); lines.push(r.skills.join(' · ')); lines.push(''); }
+  if (r.experience && r.experience.length) {
+    lines.push('EXPERIENCE');
+    r.experience.forEach(exp => {
+      const dates = [exp.start, exp.end].filter(Boolean).join(' – ');
+      lines.push((exp.title || '') + ' — ' + (exp.company || '') + (exp.location ? ' (' + exp.location + ')' : '') + (dates ? '  [' + dates + ']' : ''));
+      (exp.bullets || []).forEach(b => lines.push('  • ' + b));
+      lines.push('');
+    });
+  }
+  if (r.education && r.education.length) {
+    lines.push('EDUCATION');
+    r.education.forEach(ed => {
+      const line = [ed.degree, ed.field].filter(Boolean).join(' in ');
+      lines.push(line + (ed.school ? ' — ' + ed.school : '') + (ed.year ? ' (' + ed.year + ')' : ''));
+    });
+    lines.push('');
+  }
+  if (r.certifications && r.certifications.length) {
+    lines.push('CERTIFICATIONS');
+    lines.push(r.certifications.join(' · '));
+  }
+  return lines.join('\n');
+}
+
+function _resumeFilename(ext) {
+  const company = (_tailoredJobMeta.company || 'company').replace(/[^a-z0-9]+/gi,'_').replace(/^_|_$/g,'').slice(0, 30);
+  const name = (_tailoredResume && _tailoredResume.personal && _tailoredResume.personal.name) ? _tailoredResume.personal.name.replace(/[^a-z0-9]+/gi,'_').replace(/^_|_$/g,'') : 'Resume';
+  return name + '_' + company + '.' + ext;
+}
+
+function copyTailoredResume(btn) {
+  if (!_tailoredResume) return;
+  const text = _resumeToText(_tailoredResume);
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = orig; }, 1500);
+  });
+}
+
+function _buildPrintableHTML(r) {
+  // Letter-paper friendly HTML. Word opens HTML-with-.doc-extension natively.
+  return `<!doctype html><html><head><meta charset="utf-8"><title>${_escHtml((r.personal && r.personal.name) || 'Resume')}</title>` +
+         `<style>body{font-family:Calibri,Arial,sans-serif;color:#222;font-size:11pt;line-height:1.4;margin:32px 40px;}` +
+         `h1{font-size:18pt;margin:0 0 4px 0;color:#1f3a5f;text-align:center;letter-spacing:.5px;}` +
+         `.contact{text-align:center;font-size:10pt;color:#555;margin-bottom:14px;}` +
+         `h2{font-size:11pt;color:#1f3a5f;text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid #c0c8d4;padding-bottom:2px;margin:14px 0 6px 0;}` +
+         `.role{display:flex;justify-content:space-between;gap:10px;font-weight:bold;margin-top:8px;}` +
+         `.dates{color:#666;font-weight:normal;font-size:10pt;}` +
+         `ul{margin:4px 0 0 20px;padding:0;}li{margin-bottom:2px;}p{margin:0 0 6px 0;}` +
+         `</style></head><body>` +
+         _renderResumeForPrint(r) +
+         `</body></html>`;
+}
+
+function _renderResumeForPrint(r) {
+  const p = r.personal || {};
+  const contact = [p.location, p.phone, p.email, p.linkedin].filter(Boolean).map(x => _escHtml(x)).join(' &nbsp;·&nbsp; ');
+  let html = '';
+  html += '<h1>' + _escHtml(p.name || '') + '</h1>';
+  if (contact) html += '<div class="contact">' + contact + '</div>';
+  if (r.summary) { html += '<h2>Summary</h2><p>' + _escHtml(r.summary) + '</p>'; }
+  if (r.skills && r.skills.length) { html += '<h2>Core Skills</h2><p>' + r.skills.map(s => _escHtml(s)).join(' &nbsp;·&nbsp; ') + '</p>'; }
+  if (r.experience && r.experience.length) {
+    html += '<h2>Experience</h2>';
+    r.experience.forEach(exp => {
+      const dates = [exp.start, exp.end].filter(Boolean).map(x => _escHtml(x)).join(' – ');
+      html += '<div class="role"><div>' + _escHtml(exp.title || '') + ' — ' + _escHtml(exp.company || '');
+      if (exp.location) html += ' <span style="color:#666;font-weight:normal;">(' + _escHtml(exp.location) + ')</span>';
+      html += '</div><div class="dates">' + dates + '</div></div>';
+      if (exp.bullets && exp.bullets.length) {
+        html += '<ul>';
+        exp.bullets.forEach(b => { html += '<li>' + _escHtml(b) + '</li>'; });
+        html += '</ul>';
+      }
+    });
+  }
+  if (r.education && r.education.length) {
+    html += '<h2>Education</h2>';
+    r.education.forEach(ed => {
+      const line = [ed.degree, ed.field].filter(Boolean).map(x => _escHtml(x)).join(' in ');
+      html += '<p>' + line + (ed.school ? ' — ' + _escHtml(ed.school) : '') + (ed.year ? ' <span style="color:#666;">(' + _escHtml(ed.year) + ')</span>' : '') + '</p>';
+    });
+  }
+  if (r.certifications && r.certifications.length) {
+    html += '<h2>Certifications</h2><p>' + r.certifications.map(c => _escHtml(c)).join(' &nbsp;·&nbsp; ') + '</p>';
+  }
+  return html;
+}
+
+async function downloadTailoredResume(format, btn) {
+  if (!_tailoredResume) return;
+  const orig = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Building…';
+  try {
+    if (format === 'pdf') {
+      const html = _buildPrintableHTML(_tailoredResume);
+      const container = document.createElement('div');
+      container.innerHTML = html;
+      // html2pdf needs the actual content node, not the full <html>
+      const node = container.querySelector('body') ? container : container;
+      await html2pdf().set({
+        margin: [10, 10, 10, 10],
+        filename: _resumeFilename('pdf'),
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'letter', orientation: 'portrait' },
+        pagebreak: { mode: ['css', 'legacy'] },
+      }).from(node).save();
+    } else if (format === 'doc') {
+      const html = _buildPrintableHTML(_tailoredResume);
+      // Use MIME type Word recognises for HTML; saved as .doc opens directly in Word.
+      const blob = new Blob(['\ufeff' + html], { type: 'application/msword' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = _resumeFilename('doc');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+    }
+    btn.textContent = 'Downloaded!';
+    setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 1500);
+  } catch (e) {
+    alert('Download failed: ' + (e.message || e));
+    btn.textContent = orig;
+    btn.disabled = false;
+  }
+}
+
+// init
+refreshTrackerUI();
+setView(viewMode);
+setEmploymentFilter(employmentFilter);
+</script>
+</body></html>
