@@ -575,7 +575,7 @@ def _has_positive_theme(title, profile):
     if profile:
         t_lower = t.lower()
         # Check across multiple richer profile fields
-        for field in ("keywords", "specialties", "targetTitles", "regulations"):
+        for field in ("keywords", "specialties", "targetTitles", "regulations", "frameworks", "technologies"):
             for term in profile.get(field, []) or []:
                 if not term:
                     continue
@@ -1361,11 +1361,26 @@ HTML_TEMPLATE = """<!doctype html>
       </div>
 
       <div class="tab-panel" id="tab-profile">
-        <p style="font-size:13px;color:#555;margin-bottom:10px;">This is what the AI extracted from your resume. We use it to match jobs. If something is missing, click <em>Regenerate</em> or upload a more complete resume.</p>
+        <p style="font-size:13px;color:#555;margin-bottom:10px;">This is what the AI extracted from your resume. We use it to match jobs. If something is missing, click <em>Edit</em> to add your own chips, or <em>Regenerate</em> to re-run extraction.</p>
         <div id="profile-display"><p style="font-size:12px;color:#888;">Loading profile…</p></div>
-        <div style="margin-top:14px; display:flex; gap:8px;">
-          <button class="btn primary" id="regen-profile-btn" onclick="regenerateProfile(this)">Regenerate profile</button>
+        <div style="margin-top:14px; display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn primary" id="edit-profile-btn" onclick="openEditProfileModal()">Edit profile</button>
+          <button class="btn" id="regen-profile-btn" onclick="regenerateProfile(this)" style="background:#f3f4f6;color:#1f3a5f;border:1px solid #ccd0d6;">Regenerate from resume</button>
           <span id="regen-profile-status" style="font-size: 12px; color: #555;"></span>
+        </div>
+      </div>
+
+      <!-- Edit profile modal -->
+      <div id="edit-profile-overlay" style="display:none; position:fixed; inset:0; background:rgba(20,30,50,0.45); z-index:60; align-items:center; justify-content:center;" onclick="if(event.target===this)closeEditProfileModal()">
+        <div style="background:#fff; padding:24px 28px; border-radius:10px; max-width:640px; width:100%; margin:12px; max-height:88vh; overflow-y:auto; box-shadow:0 24px 60px rgba(0,0,0,0.2);">
+          <h3 style="margin:0 0 6px 0; color:#1f3a5f;">Edit your profile</h3>
+          <p style="font-size:13px; color:#555; margin:0 0 16px 0;">Each field is a comma-separated list. Add things the AI missed (e.g. NIST CSF, HIPAA, ISO 27001). Remove anything inaccurate. Saving updates the profile used for job matching.</p>
+          <div id="edit-profile-fields"></div>
+          <div style="margin-top:18px; display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn primary" onclick="saveProfileEdits()">Save changes</button>
+            <button class="btn" onclick="closeEditProfileModal()" style="background:#f3f4f6;color:#1f3a5f;border:1px solid #ccd0d6;">Cancel</button>
+            <span id="edit-profile-status" style="font-size:12px;color:#555;align-self:center;"></span>
+          </div>
         </div>
       </div>
 
@@ -1690,12 +1705,97 @@ function _renderProfileHTML(p) {{
   html += section('Specialties', p.specialties, '#f3e6ff');
   html += section('Key skills', p.keywords, '#fff8e1');
   html += section('Technologies', p.technologies, '#e8f4ff');
+  html += section('Frameworks', p.frameworks, '#fff3d6');
   html += section('Regulations', p.regulations, '#fff0e6');
   html += section('Certifications', p.certifications, '#e6fff8');
   html += section('Filtered out', p.negativeKeywords, '#ffe6e6');
   html += '</div>';
   if (p.generatedAt) html += '<div style="font-size:11px;color:#999;margin-top:8px;">Generated ' + new Date(p.generatedAt).toLocaleString() + '</div>';
   return html;
+}}
+
+const EDITABLE_FIELDS = [
+  ['industries', 'Industries'],
+  ['specialties', 'Specialties'],
+  ['keywords', 'Key skills'],
+  ['technologies', 'Technologies'],
+  ['frameworks', 'Frameworks'],
+  ['regulations', 'Regulations'],
+  ['certifications', 'Certifications'],
+  ['targetTitles', 'Target titles'],
+  ['negativeKeywords', 'Filtered-out terms'],
+];
+
+let _currentProfile = null;
+
+function openEditProfileModal() {{
+  // Load current profile then render the editor
+  fetch(PROFILE_WORKER_URL).then(r => r.json()).then(data => {{
+    const p = data.profile || {{}};
+    _currentProfile = p;
+    const container = document.getElementById('edit-profile-fields');
+    container.innerHTML = '';
+    EDITABLE_FIELDS.forEach(([key, label]) => {{
+      const wrap = document.createElement('div');
+      wrap.style.cssText = 'margin-bottom:12px;';
+      const labelEl = document.createElement('label');
+      labelEl.style.cssText = 'display:block; font-size:12px; font-weight:600; color:#555; margin-bottom:4px;';
+      labelEl.textContent = label;
+      const input = document.createElement('textarea');
+      input.id = 'edit-' + key;
+      input.rows = key === 'keywords' || key === 'specialties' ? 3 : 2;
+      input.style.cssText = 'width:100%; box-sizing:border-box; padding:7px 10px; font-size:12.5px; border:1px solid #ccd0d6; border-radius:6px; font-family:inherit; resize:vertical;';
+      input.value = (Array.isArray(p[key]) ? p[key] : []).join(', ');
+      input.placeholder = 'comma-separated, e.g. nist csf, hipaa, iso 27001';
+      wrap.appendChild(labelEl);
+      wrap.appendChild(input);
+      container.appendChild(wrap);
+    }});
+    document.getElementById('edit-profile-status').textContent = '';
+    document.getElementById('edit-profile-overlay').style.display = 'flex';
+  }}).catch(e => {{
+    alert('Could not load current profile: ' + (e.message || e));
+  }});
+}}
+
+function closeEditProfileModal() {{
+  document.getElementById('edit-profile-overlay').style.display = 'none';
+}}
+
+async function saveProfileEdits() {{
+  const editKey = getEditKey();
+  if (!editKey) return;
+  const statusEl = document.getElementById('edit-profile-status');
+  statusEl.style.color = '#555';
+  statusEl.textContent = 'Saving…';
+  const patchFields = {{}};
+  EDITABLE_FIELDS.forEach(([key]) => {{
+    const v = (document.getElementById('edit-' + key).value || '').trim();
+    patchFields[key] = v ? v.split(/[,;\\n]/).map(s => s.trim()).filter(Boolean) : [];
+  }});
+  try {{
+    const r = await fetch(PROFILE_WORKER_URL, {{
+      method: 'POST',
+      headers: {{ 'Content-Type': 'application/json', 'X-Edit-Key': editKey }},
+      body: JSON.stringify({{ patchFields }}),
+    }});
+    const data = await r.json().catch(() => ({{}}));
+    if (!r.ok || data.error) {{
+      if (r.status === 401) {{ localStorage.removeItem('htj_resume_key'); localStorage.removeItem('htj_resume_key_' + USER_SLUG); }}
+      statusEl.style.color = '#b00';
+      statusEl.textContent = 'Failed: ' + (data.error || ('HTTP ' + r.status));
+      return;
+    }}
+    statusEl.style.color = '#0a6b3a';
+    statusEl.textContent = 'Saved. Refreshing dashboard…';
+    loadProfile();
+    // Trigger refresh so new chips affect filtering
+    try {{ await fetch(WORKER_BASE + '/refresh', {{ method: 'POST' }}); }} catch (e) {{ /* ignore */ }}
+    setTimeout(() => {{ closeEditProfileModal(); window.location.reload(); }}, 180000);
+  }} catch (e) {{
+    statusEl.style.color = '#b00';
+    statusEl.textContent = 'Failed: ' + (e.message || e);
+  }}
 }}
 
 async function regenerateProfile(btn) {{
