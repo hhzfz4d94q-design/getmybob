@@ -1828,7 +1828,24 @@ async function _versionAction(action, body) {{
 
 async function activateVersion(id) {{
   const data = await _versionAction('activate', {{ action: 'activate', id }});
-  if (data) loadVersions();
+  if (!data) return;
+  // Update UI immediately
+  loadVersions();
+  // Auto-trigger a dashboard refresh so the user actually sees the change.
+  // Without this, Activate seems to "do nothing" since the visible dashboard
+  // is a pre-generated static HTML file.
+  const list = document.getElementById('versions-list');
+  if (list) {{
+    const banner = document.createElement('div');
+    banner.style.cssText = 'background:#fff8e1;border:1px solid #f6c93b;border-radius:6px;padding:10px 12px;margin:8px 0 0 0;font-size:13px;color:#5a4400;';
+    banner.innerHTML = 'Activated. Refreshing your dashboard — page will reload automatically in about 3 minutes.';
+    list.appendChild(banner);
+  }}
+  try {{
+    await fetch(WORKER_BASE + '/refresh', {{ method: 'POST' }});
+  }} catch (e) {{ /* ignore — page reload below still helps */ }}
+  // Auto-reload after the GH Action should have finished (3 min is a safe estimate)
+  setTimeout(() => window.location.reload(), 180000);
 }}
 
 async function deleteVersion(id) {{
@@ -1882,7 +1899,10 @@ async function saveResume(btn) {{
   btn.textContent = 'Saving…';
   statusEl.textContent = '';
   try {{
-    const label = prompt('Label this version (e.g. "Hand-edited – Apr 14"):', '') || 'JSON edit';
+    // Default label is timestamp so users don't accidentally save the example text
+    const now = new Date();
+    const defaultLabel = 'Manual edit — ' + now.toLocaleDateString();
+    const label = prompt('Label for this version:', defaultLabel) || defaultLabel;
     const r = await fetch(RESUME_WORKER_URL, {{
       method: 'POST',
       headers: {{ 'Content-Type': 'application/json', 'X-Edit-Key': editKey }},

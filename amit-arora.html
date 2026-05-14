@@ -109,14 +109,14 @@
 </head><body>
 <header>
   <h1>Jobs for Amit Arora</h1>
-  <div class="sub">Awaiting resume upload — click Resume to get started · Generated 2026-05-13 19:11</div>
+  <div class="sub">Senior technology executive / transformation consultant specializing in banking, capital markets, and enterprise GRC · Remote · Generated 2026-05-13 20:03</div>
   <div class="header-actions">
     <button id="resume-btn" class="header-btn" onclick="openResumeModal()">Resume</button>
     <button id="refresh-btn" class="header-btn" onclick="refreshData()">Refresh data</button>
   </div>
 </header>
 <div class="stats">
-  <div class="stat"><b>4730</b>Total jobs tracked</div>
+  <div class="stat"><b>4733</b>Total jobs tracked</div>
   <div class="stat"><b>279</b>Senior + Remote (last 7d)</div>
   <div class="stat"><b>0</b>Possible ghost jobs (60d+)</div>
   <div class="stat"><b id="shown-counter">0</b>Showing</div>
@@ -179,7 +179,7 @@
   </span>
 </div>
 <div class="grid" id="grid">
-<div style='padding:32px;max-width:640px;margin:30px auto;background:#fff;border:1px solid #e2e5ea;border-radius:8px;line-height:1.55;'><h3 style='margin:0 0 10px 0;color:#1f3a5f;'>Welcome, Amit Arora!</h3><p style='color:#555;font-size:14px;'>Click the <strong>Resume</strong> button (top-right) and upload your resume as PDF or Word. The AI will read it and start matching jobs to your background. Your tailored dashboard will appear here after the next refresh.</p></div>
+<div style='padding:32px;max-width:640px;margin:30px auto;background:#fff;border:1px solid #e2e5ea;border-radius:8px;line-height:1.55;'><h3 style='margin:0 0 10px 0;color:#1f3a5f;'>No matching jobs yet for Amit Arora</h3><p style='color:#555;font-size:14px;'>Your profile industries: <strong>banking, capital markets, financial services, wealth management, commercial lending</strong>. We haven't indexed companies in these industries yet. Ask the admin to add relevant companies, or click <em>Resume</em> to update your profile.</p></div>
 </div>
 
 <div class="modal-overlay" id="resume-modal" onclick="if(event.target===this)closeResumeModal()">
@@ -698,7 +698,24 @@ async function _versionAction(action, body) {
 
 async function activateVersion(id) {
   const data = await _versionAction('activate', { action: 'activate', id });
-  if (data) loadVersions();
+  if (!data) return;
+  // Update UI immediately
+  loadVersions();
+  // Auto-trigger a dashboard refresh so the user actually sees the change.
+  // Without this, Activate seems to "do nothing" since the visible dashboard
+  // is a pre-generated static HTML file.
+  const list = document.getElementById('versions-list');
+  if (list) {
+    const banner = document.createElement('div');
+    banner.style.cssText = 'background:#fff8e1;border:1px solid #f6c93b;border-radius:6px;padding:10px 12px;margin:8px 0 0 0;font-size:13px;color:#5a4400;';
+    banner.innerHTML = 'Activated. Refreshing your dashboard — page will reload automatically in about 3 minutes.';
+    list.appendChild(banner);
+  }
+  try {
+    await fetch(WORKER_BASE + '/refresh', { method: 'POST' });
+  } catch (e) { /* ignore — page reload below still helps */ }
+  // Auto-reload after the GH Action should have finished (3 min is a safe estimate)
+  setTimeout(() => window.location.reload(), 180000);
 }
 
 async function deleteVersion(id) {
@@ -752,7 +769,10 @@ async function saveResume(btn) {
   btn.textContent = 'Saving…';
   statusEl.textContent = '';
   try {
-    const label = prompt('Label this version (e.g. "Hand-edited – Apr 14"):', '') || 'JSON edit';
+    // Default label is timestamp so users don't accidentally save the example text
+    const now = new Date();
+    const defaultLabel = 'Manual edit — ' + now.toLocaleDateString();
+    const label = prompt('Label for this version:', defaultLabel) || defaultLabel;
     const r = await fetch(RESUME_WORKER_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-Edit-Key': editKey },

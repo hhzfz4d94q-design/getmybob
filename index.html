@@ -109,7 +109,7 @@
 </head><body>
 <header>
   <h1>Jobs for Geetanjali Arora</h1>
-  <div class="sub">Senior director / principal driving digital transformation and product strategy in healthcare IT and pharma · Remote · Generated 2026-05-13 23:25</div>
+  <div class="sub">Senior director / principal driving digital transformation and product strategy in healthcare IT and pharma · Remote · Generated 2026-05-13 20:03</div>
   <div class="header-actions">
     <button id="resume-btn" class="header-btn" onclick="openResumeModal()">Resume</button>
     <button id="refresh-btn" class="header-btn" onclick="refreshData()">Refresh data</button>
@@ -180,7 +180,7 @@
 </div>
 <div class="grid" id="grid">
 
-        <div class="card" data-fp="00ad1e8b1385daf0" data-score="95" data-senior="1" data-remote="1" data-employment="unknown" data-listed-days="21" data-salary-max="0" data-last-seen="2026-05-13T23:24:08.358557+00:00" data-first-seen="2026-05-12T20:26:35.628449+00:00">
+        <div class="card" data-fp="00ad1e8b1385daf0" data-score="95" data-senior="1" data-remote="1" data-employment="unknown" data-listed-days="22" data-salary-max="0" data-last-seen="2026-05-13T23:24:08.358557+00:00" data-first-seen="2026-05-12T20:26:35.628449+00:00">
           <div class="row1">
             <div class="title"><a href="https://job-boards.greenhouse.io/biofourmis/jobs/5116816007" target="_blank">Digital Health Executive</a></div>
             <div class="score">95</div>
@@ -188,7 +188,7 @@
           <div class="row2">
             <span class="company">Biofourmis</span> ·
             <span class="loc">Remote</span> ·
-            <span class="age">21d old</span>
+            <span class="age">22d old</span>
           </div>
           
           <div class="badges" data-badges><span class="b senior">Senior</span> <span class="b remote">Remote</span> <span class="b repost">Seen 11×</span></div>
@@ -220,7 +220,7 @@
           </div>
         </div>
 
-        <div class="card" data-fp="f88fdb3f41b6fc01" data-score="93" data-senior="1" data-remote="1" data-employment="unknown" data-listed-days="0" data-salary-max="0" data-last-seen="2026-05-13T23:24:06.659949+00:00" data-first-seen="2026-05-13T01:26:54.121437+00:00">
+        <div class="card" data-fp="f88fdb3f41b6fc01" data-score="93" data-senior="1" data-remote="1" data-employment="unknown" data-listed-days="1" data-salary-max="0" data-last-seen="2026-05-13T23:24:06.659949+00:00" data-first-seen="2026-05-13T01:26:54.121437+00:00">
           <div class="row1">
             <div class="title"><a href="https://job-boards.greenhouse.io/alma/jobs/8546715002" target="_blank">Enterprise Client Executive - Health Plans</a></div>
             <div class="score">93</div>
@@ -228,10 +228,10 @@
           <div class="row2">
             <span class="company">Alma</span> ·
             <span class="loc">Remote, Contiguous US</span> ·
-            <span class="age">0d old</span>
+            <span class="age">1d old</span>
           </div>
           
-          <div class="badges" data-badges><span class="b senior">Senior</span> <span class="b remote">Remote</span> <span class="b fresh">New today</span> <span class="b repost">Seen 9×</span></div>
+          <div class="badges" data-badges><span class="b senior">Senior</span> <span class="b remote">Remote</span> <span class="b week">This week</span> <span class="b repost">Seen 9×</span></div>
           <div class="desc">Alma is on a mission to simplify access to high-quality, affordable mental health care. We do this by making it easy and financially rewarding for therapists to accept insurance and offer in-network care. When a provider joins Alma, they gain access to a suite of tools that not only help them better…</div>
           <div class="actions">
             <button class="btn primary" onclick="prepApplication('f88fdb3f41b6fc01', this)">Prep Application</button>
@@ -2640,7 +2640,7 @@
           </div>
         </div>
 
-        <div class="card" data-fp="9d2892f46d944dbc" data-score="60" data-senior="0" data-remote="0" data-employment="full-time" data-listed-days="1" data-salary-max="180000" data-last-seen="2026-05-13T23:24:55.571684+00:00" data-first-seen="2026-05-12T20:27:19.905183+00:00">
+        <div class="card" data-fp="9d2892f46d944dbc" data-score="60" data-senior="0" data-remote="0" data-employment="full-time" data-listed-days="2" data-salary-max="180000" data-last-seen="2026-05-13T23:24:55.571684+00:00" data-first-seen="2026-05-12T20:27:19.905183+00:00">
           <div class="row1">
             <div class="title"><a href="https://jobs.ashbyhq.com/decagon/e0f5118b-9af7-4d37-87a8-c79c8163116a" target="_blank">Implementation Manager</a></div>
             <div class="score">60</div>
@@ -2648,7 +2648,7 @@
           <div class="row2">
             <span class="company">Decagon</span> ·
             <span class="loc">Toronto</span> ·
-            <span class="age">1d old</span>
+            <span class="age">2d old</span>
           </div>
           <div class="salary-row"><span class="salary">CA$130K – CA$180K • Offers Equity</span></div>
           <div class="badges" data-badges><span class="b week">This week</span> <span class="b repost">Seen 11×</span></div>
@@ -4837,7 +4837,24 @@ async function _versionAction(action, body) {
 
 async function activateVersion(id) {
   const data = await _versionAction('activate', { action: 'activate', id });
-  if (data) loadVersions();
+  if (!data) return;
+  // Update UI immediately
+  loadVersions();
+  // Auto-trigger a dashboard refresh so the user actually sees the change.
+  // Without this, Activate seems to "do nothing" since the visible dashboard
+  // is a pre-generated static HTML file.
+  const list = document.getElementById('versions-list');
+  if (list) {
+    const banner = document.createElement('div');
+    banner.style.cssText = 'background:#fff8e1;border:1px solid #f6c93b;border-radius:6px;padding:10px 12px;margin:8px 0 0 0;font-size:13px;color:#5a4400;';
+    banner.innerHTML = 'Activated. Refreshing your dashboard — page will reload automatically in about 3 minutes.';
+    list.appendChild(banner);
+  }
+  try {
+    await fetch(WORKER_BASE + '/refresh', { method: 'POST' });
+  } catch (e) { /* ignore — page reload below still helps */ }
+  // Auto-reload after the GH Action should have finished (3 min is a safe estimate)
+  setTimeout(() => window.location.reload(), 180000);
 }
 
 async function deleteVersion(id) {
@@ -4891,7 +4908,10 @@ async function saveResume(btn) {
   btn.textContent = 'Saving…';
   statusEl.textContent = '';
   try {
-    const label = prompt('Label this version (e.g. "Hand-edited – Apr 14"):', '') || 'JSON edit';
+    // Default label is timestamp so users don't accidentally save the example text
+    const now = new Date();
+    const defaultLabel = 'Manual edit — ' + now.toLocaleDateString();
+    const label = prompt('Label for this version:', defaultLabel) || defaultLabel;
     const r = await fetch(RESUME_WORKER_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-Edit-Key': editKey },
