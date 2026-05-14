@@ -564,19 +564,29 @@ def _build_positive_re():
 
 
 def _has_positive_theme(title, profile):
-    """Title must contain at least one positive domain theme or a profile keyword."""
+    """Title qualifies if it contains a positive domain theme OR any of the
+    AI-extracted profile signals (keywords, specialties, targetTitles, regulations)."""
     global _POSITIVE_THEME_RE
     if _POSITIVE_THEME_RE is None:
         _build_positive_re()
     t = title or ""
     if _POSITIVE_THEME_RE.search(t):
         return True
-    # Profile-driven keywords (from the AI-extracted skills profile)
     if profile:
         t_lower = t.lower()
-        for kw in profile.get("keywords", []):
-            if kw and re.search(r"\b" + re.escape(kw.lower()) + r"\b", t_lower):
-                return True
+        # Check across multiple richer profile fields
+        for field in ("keywords", "specialties", "targetTitles", "regulations"):
+            for term in profile.get(field, []) or []:
+                if not term:
+                    continue
+                term_l = term.lower()
+                # Multi-word terms use substring match; single words use word boundaries
+                if " " in term_l or "-" in term_l:
+                    if term_l in t_lower:
+                        return True
+                else:
+                    if re.search(r"\b" + re.escape(term_l) + r"\b", t_lower):
+                        return True
     return False
 
 
@@ -970,8 +980,11 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
     # Whitelist: title must contain a positive domain theme or a skills-profile keyword
     rows = [r for r in rows if _has_positive_theme(r[2], SKILLS_PROFILE)]
 
-    # Industry filter — only show jobs from companies in the user's industries
-    user_industries = (SKILLS_PROFILE or {}).get("industries", []) if SKILLS_PROFILE else []
+    # Industry filter — combine industries + specialties for richer matching
+    if SKILLS_PROFILE:
+        user_industries = (SKILLS_PROFILE.get("industries", []) or []) + (SKILLS_PROFILE.get("specialties", []) or [])
+    else:
+        user_industries = []
     if user_industries:
         def _ind_ok(r):
             job_industries = (r[15] or "").split(",") if r[15] else []
@@ -1320,6 +1333,7 @@ HTML_TEMPLATE = """<!doctype html>
     <div id="resume-editor" style="display:none;">
       <div class="tabs">
         <button class="tab-btn active" data-tab="upload" onclick="setResumeTab('upload')">Upload File</button>
+        <button class="tab-btn" data-tab="profile" onclick="setResumeTab('profile')">My Profile</button>
         <button class="tab-btn" data-tab="versions" onclick="setResumeTab('versions')">Versions</button>
         <button class="tab-btn" data-tab="json" onclick="setResumeTab('json')">Edit JSON</button>
       </div>
@@ -1344,6 +1358,15 @@ HTML_TEMPLATE = """<!doctype html>
             <li>The new version becomes active immediately.</li>
           </ol>
         </details>
+      </div>
+
+      <div class="tab-panel" id="tab-profile">
+        <p style="font-size:13px;color:#555;margin-bottom:10px;">This is what the AI extracted from your resume. We use it to match jobs. If something is missing, click <em>Regenerate</em> or upload a more complete resume.</p>
+        <div id="profile-display"><p style="font-size:12px;color:#888;">Loading profile…</p></div>
+        <div style="margin-top:14px; display:flex; gap:8px;">
+          <button class="btn primary" id="regen-profile-btn" onclick="regenerateProfile(this)">Regenerate profile</button>
+          <span id="regen-profile-status" style="font-size: 12px; color: #555;"></span>
+        </div>
       </div>
 
       <div class="tab-panel" id="tab-versions">
@@ -1628,6 +1651,90 @@ function setResumeTab(name) {{
   document.querySelectorAll('#resume-editor .tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
   document.querySelectorAll('#resume-editor .tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + name));
   if (name === 'versions') loadVersions();
+  if (name === 'profile') loadProfile();
+}}
+
+const PROFILE_WORKER_URL = WORKER_BASE + '/skills-profile' + USER_QS;
+
+async function loadProfile() {{
+  const el = document.getElementById('profile-display');
+  el.innerHTML = '<p style="font-size:12px;color:#888;">Loading profile…</p>';
+  try {{
+    const r = await fetch(PROFILE_WORKER_URL);
+    const data = await r.json();
+    const p = data.profile;
+    if (!p) {{
+      el.innerHTML = '<p style="font-size:13px;color:#a85c00;background:#fff8e1;padding:10px 12px;border-radius:6px;">No profile yet. Upload a resume first.</p>';
+      return;
+    }}
+    el.innerHTML = _renderProfileHTML(p);
+  }} catch (e) {{
+    el.innerHTML = '<p style="font-size:13px;color:#b00;">Failed to load: ' + (e.message || e) + '</p>';
+  }}
+}}
+
+function _renderProfileHTML(p) {{
+  function section(title, items, color) {{
+    items = items || [];
+    if (!items.length) return '';
+    const chips = items.map(s => '<span style="display:inline-block;background:' + color + ';color:#1f3a5f;padding:3px 9px;border-radius:12px;font-size:11.5px;margin:2px 4px 2px 0;font-weight:500;">' + _esc(s) + '</span>').join('');
+    return '<div style="margin-bottom:12px;"><div style="font-size:11px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px;">' + title + ' <span style="color:#999;font-weight:500;">· ' + items.length + '</span></div><div>' + chips + '</div></div>';
+  }}
+  let html = '';
+  if (p.primaryRole) html += '<div style="font-size:14px;color:#1f3a5f;font-weight:600;margin-bottom:4px;">' + _esc(p.primaryRole) + '</div>';
+  if (p.summary) html += '<div style="font-size:13px;color:#555;margin-bottom:14px;line-height:1.45;">' + _esc(p.summary) + '</div>';
+  html += '<div style="background:#f8f9fb;padding:14px 16px;border-radius:8px;border:1px solid #e6e8eb;">';
+  if (p.seniorityLevel) html += '<div style="font-size:12px;color:#777;margin-bottom:8px;">Seniority: <strong style="color:#333;">' + _esc(p.seniorityLevel) + '</strong>' + (p.salaryFloor ? ' · Salary floor ~$' + Number(p.salaryFloor).toLocaleString() : '') + (p.remotePreferred ? ' · Remote preferred' : '') + '</div>';
+  html += section('Target titles', p.targetTitles, '#e6f0ff');
+  html += section('Industries', p.industries, '#e6fff0');
+  html += section('Specialties', p.specialties, '#f3e6ff');
+  html += section('Key skills', p.keywords, '#fff8e1');
+  html += section('Technologies', p.technologies, '#e8f4ff');
+  html += section('Regulations', p.regulations, '#fff0e6');
+  html += section('Certifications', p.certifications, '#e6fff8');
+  html += section('Filtered out', p.negativeKeywords, '#ffe6e6');
+  html += '</div>';
+  if (p.generatedAt) html += '<div style="font-size:11px;color:#999;margin-top:8px;">Generated ' + new Date(p.generatedAt).toLocaleString() + '</div>';
+  return html;
+}}
+
+async function regenerateProfile(btn) {{
+  const status = document.getElementById('regen-profile-status');
+  const editKey = getEditKey();
+  if (!editKey) return;
+  btn.disabled = true;
+  const orig = btn.textContent;
+  btn.textContent = 'Regenerating…';
+  status.textContent = '';
+  status.style.color = '#555';
+  try {{
+    const r = await fetch(PROFILE_WORKER_URL, {{
+      method: 'POST',
+      headers: {{ 'Content-Type': 'application/json', 'X-Edit-Key': editKey }},
+    }});
+    const data = await r.json().catch(() => ({{}}));
+    if (!r.ok || data.error) {{
+      if (r.status === 401) {{ localStorage.removeItem('htj_resume_key'); localStorage.removeItem('htj_resume_key_' + USER_SLUG); }}
+      status.style.color = '#b00';
+      status.textContent = 'Failed: ' + (data.error || ('HTTP ' + r.status));
+      btn.textContent = orig;
+      btn.disabled = false;
+      return;
+    }}
+    status.style.color = '#0a6b3a';
+    status.textContent = 'Regenerated. Refreshing dashboard…';
+    btn.textContent = orig;
+    btn.disabled = false;
+    loadProfile();
+    // Trigger dashboard refresh so the richer profile starts filtering jobs
+    try {{ await fetch(WORKER_BASE + '/refresh', {{ method: 'POST' }}); }} catch (e) {{ /* ignore */ }}
+    setTimeout(() => window.location.reload(), 180000);
+  }} catch (e) {{
+    status.style.color = '#b00';
+    status.textContent = 'Failed: ' + (e.message || e);
+    btn.textContent = orig;
+    btn.disabled = false;
+  }}
 }}
 
 async function openResumeModal() {{
