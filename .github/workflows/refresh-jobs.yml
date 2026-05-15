@@ -31,6 +31,7 @@ jobs:
           git add *.html jobs.db
           if ! git diff --staged --quiet; then
             git commit -m "auto: refresh dashboard $(date -u +'%Y-%m-%dT%H:%MZ')"
+            git pull --rebase -X ours origin main
             git push
           else
             echo "No changes to commit"
