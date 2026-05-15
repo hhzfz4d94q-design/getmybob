@@ -28,7 +28,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add index.html jobs.db
+          git add *.html jobs.db
           if ! git diff --staged --quiet; then
             git commit -m "auto: refresh dashboard $(date -u +'%Y-%m-%dT%H:%MZ')"
             git push
