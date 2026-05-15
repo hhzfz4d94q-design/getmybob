@@ -102,6 +102,21 @@
   .v-btn:hover { background: #e6e8eb; }
   .v-btn.danger { color: #b00; }
   .v-btn.primary { background: #1f3a5f; color: white; border-color: #1f3a5f; }
+  /* LinkedIn contacts feature */
+  .contact-badge { display: inline-flex; align-items: center; gap: 4px; background: #eaf2fb; color: #0a66c2; border: 1px solid #c9defb; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; cursor: pointer; margin-left: 8px; transition: all 0.12s; }
+  .contact-badge:hover { background: #d8e7f8; border-color: #0a66c2; }
+  .contact-badge .ic { font-size: 12px; line-height: 1; }
+  .contact-row { display: flex; flex-direction: column; gap: 6px; padding: 12px 14px; border: 1px solid #e6e8eb; border-radius: 8px; margin-bottom: 10px; background: #fff; }
+  .contact-row .name-line { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .contact-row .cname { font-weight: 700; color: #1f3a5f; font-size: 14px; }
+  .contact-row .ctitle { font-size: 12px; color: #555; }
+  .contact-row .cmeta { font-size: 11px; color: #888; }
+  .contact-row .crow-actions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+  .contact-row .msg-box { background: #f7f9fc; border: 1px solid #e2e7ef; border-radius: 6px; padding: 10px 12px; font-size: 12.5px; line-height: 1.55; color: #1f2a3a; white-space: pre-wrap; font-family: ui-sans-serif, system-ui, sans-serif; margin-top: 6px; }
+  .contact-empty { padding: 18px; text-align: center; color: #777; font-size: 13px; }
+  .contact-summary { background:#f3f7fc; border:1px solid #d6e1f1; border-radius:8px; padding:10px 14px; font-size:12px; color:#1f3a5f; margin-bottom:14px; display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; }
+  .contact-summary .clear-btn { background: transparent; border: 1px solid #c9defb; color: #0a66c2; padding: 3px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; }
+  .contact-summary .clear-btn:hover { background: #fff; }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
@@ -109,15 +124,16 @@
 </head><body>
 <header>
   <h1>Jobs for Shreyaa Arora</h1>
-  <div class="sub">Awaiting resume upload — click Resume to get started · Generated 2026-05-14 09:21</div>
+  <div class="sub">Awaiting resume upload — click Resume to get started · Generated 2026-05-15 22:30</div>
   <div class="header-actions">
     <button id="resume-btn" class="header-btn" onclick="openResumeModal()">Resume</button>
+    <button id="contacts-btn" class="header-btn" onclick="openContactsModal()">LinkedIn Contacts</button>
     <button id="refresh-btn" class="header-btn" onclick="refreshData()">Refresh data</button>
   </div>
 </header>
 <div class="stats">
-  <div class="stat"><b>7343</b>Total jobs tracked</div>
-  <div class="stat"><b>366</b>Senior + Remote (last 7d)</div>
+  <div class="stat"><b>8903</b>Total jobs tracked</div>
+  <div class="stat"><b>389</b>Senior + Remote (last 7d)</div>
   <div class="stat"><b>0</b>Possible ghost jobs (60d+)</div>
   <div class="stat"><b id="shown-counter">0</b>Showing</div>
 </div>
@@ -131,13 +147,11 @@
     <button class="pill" id="type-fulltime" onclick="setEmploymentFilter('full-time')">Full-time</button>
     <button class="pill" id="type-contract" onclick="setEmploymentFilter('contract')">Contract</button>
   </div>
-  <div class="app-stats">
-    <div class="app-stat applied"><b id="cnt-applied">0</b>Applied</div>
-    <div class="app-stat phonescreen"><b id="cnt-phonescreen">0</b>Phone Screens</div>
-    <div class="app-stat onsite"><b id="cnt-onsite">0</b>Onsites</div>
-    <div class="app-stat offer"><b id="cnt-offer">0</b>Offers</div>
-    <div class="app-stat rejected"><b id="cnt-rejected">0</b>Rejected</div>
-    <div class="app-stat response"><b id="cnt-response">--</b>Response rate</div>
+  <div id="funnel-row" style="display:flex; gap:6px; align-items:stretch; margin-top:4px;"></div>
+  <!-- Hidden per-status counters (used by JS) -->
+  <div style="display:none;">
+    <span id="cnt-applied">0</span><span id="cnt-phonescreen">0</span><span id="cnt-onsite">0</span>
+    <span id="cnt-offer">0</span><span id="cnt-rejected">0</span><span id="cnt-response">--</span>
   </div>
 </div>
 <div class="filters">
@@ -258,6 +272,62 @@
   </div>
 </div>
 
+<!-- LinkedIn Contacts modal -->
+<div class="modal-overlay" id="contacts-modal" onclick="if(event.target===this)closeContactsModal()">
+  <div class="modal prep-result-modal">
+    <span class="modal-close" onclick="closeContactsModal()">&times;</span>
+    <h3>LinkedIn Contacts</h3>
+    <p style="font-size:13px;color:#555;margin:0 0 14px 0;">
+      Upload your LinkedIn connections (CSV) and we'll show you which of your contacts work at the companies you're applying to. Each match comes with a draft outreach message you can copy and a one-click link to their profile.
+    </p>
+    <div id="contacts-summary-wrap"></div>
+    <div class="tabs" style="margin-bottom:10px;">
+      <button class="tab-btn active" data-ctab="upload" onclick="setContactsTab('upload')">Upload CSV</button>
+      <button class="tab-btn" data-ctab="list" onclick="setContactsTab('list')">My Contacts</button>
+      <button class="tab-btn" data-ctab="how" onclick="setContactsTab('how')">How to export</button>
+    </div>
+
+    <div class="tab-panel active" id="ctab-upload">
+      <label for="contacts-file-input" class="dropzone" id="contacts-dropzone">
+        <strong id="contacts-dropzone-label">Click to choose your Connections.csv</strong>
+        <span>or drop the file here. Only stays in your browser — never uploaded.</span>
+      </label>
+      <input type="file" id="contacts-file-input" accept=".csv,text/csv" style="display:none;">
+      <div style="margin-top:12px; display:flex; gap:8px; align-items:center;">
+        <button class="btn primary" id="parse-contacts-btn" onclick="parseUploadedContacts(this)" disabled>Save contacts</button>
+        <span id="contacts-upload-status" style="font-size:12px; color:#555;"></span>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="ctab-list">
+      <div id="contacts-list-wrap"><p class="contact-empty">No contacts saved yet. Upload your Connections.csv on the first tab.</p></div>
+    </div>
+
+    <div class="tab-panel" id="ctab-how">
+      <ol style="font-size:13px; line-height:1.7; color:#333; padding-left:20px;">
+        <li>Open LinkedIn → click your photo (top right) → <b>Settings &amp; Privacy</b>.</li>
+        <li>Go to <b>Data Privacy</b> → <b>Get a copy of your data</b>.</li>
+        <li>Choose <b>Want something in particular?</b> → check <b>Connections</b> only (faster than full archive).</li>
+        <li>Click <b>Request archive</b>. LinkedIn emails you a download link, usually within 10 minutes.</li>
+        <li>Open the email, download the ZIP, unzip it, and find <b>Connections.csv</b> inside.</li>
+        <li>Come back here and upload that file on the <b>Upload CSV</b> tab.</li>
+      </ol>
+      <p style="font-size:12px; color:#777; margin-top:14px; line-height:1.6;">
+        Re-upload anytime to refresh — newer uploads replace older ones. The file is parsed in your browser and stored only on this device.
+      </p>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="company-contacts-modal" onclick="if(event.target===this)closeCompanyContactsModal()">
+  <div class="modal prep-result-modal">
+    <span class="modal-close" onclick="closeCompanyContactsModal()">&times;</span>
+    <h3 id="company-contacts-title">Contacts at company</h3>
+    <p style="font-size:13px;color:#555;margin:0 0 14px 0;" id="company-contacts-sub">Here are people you know who work there.</p>
+    <div id="company-contacts-list"></div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="prep-modal" onclick="if(event.target===this)closeModal()">
   <div class="modal prep-result-modal">
     <span class="modal-close" onclick="closeModal()">&times;</span>
@@ -292,6 +362,48 @@
   </div>
 </div>
 
+<!-- Application detail side panel -->
+<div class="modal-overlay" id="app-detail-modal" onclick="if(event.target===this)closeAppDetail()">
+  <div class="modal prep-result-modal">
+    <span class="modal-close" onclick="closeAppDetail()">&times;</span>
+    <h3 id="app-detail-title">Application details</h3>
+    <div id="app-detail-body"><p style="color:#666; font-size:13px;">Loading…</p></div>
+  </div>
+</div>
+
+<!-- Follow-up draft modal -->
+<div class="modal-overlay" id="followup-modal" onclick="if(event.target===this)closeFollowupModal()">
+  <div class="modal prep-result-modal">
+    <span class="modal-close" onclick="closeFollowupModal()">&times;</span>
+    <h3 id="followup-title">Draft follow-up email</h3>
+    <p class="prep-status" id="followup-status">Generating with Claude…</p>
+    <div id="followup-output" style="display:none;">
+      <div class="prep-section">
+        <div class="prep-label">Subject</div>
+        <pre id="followup-subject" class="prep-text"></pre>
+      </div>
+      <div class="prep-section">
+        <div class="prep-label">Body</div>
+        <pre id="followup-body" class="prep-text"></pre>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
+          <button class="btn primary" onclick="copyFollowupBody(this)">Copy</button>
+          <button class="btn primary" onclick="openFollowupMailto()">Open in email client</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Interview prep modal -->
+<div class="modal-overlay" id="interview-modal" onclick="if(event.target===this)closeInterviewModal()">
+  <div class="modal prep-result-modal">
+    <span class="modal-close" onclick="closeInterviewModal()">&times;</span>
+    <h3 id="interview-title">Interview prep</h3>
+    <p class="prep-status" id="interview-status">Generating with Claude… this takes 20-30 seconds.</p>
+    <div id="interview-output" style="display:none;"></div>
+  </div>
+</div>
+
 <script>
 let activeWindow = 'all';
 
@@ -306,50 +418,134 @@ const STATUS_LABEL = {
   'rejected': 'Rejected'
 };
 
-function getTracker() {
-  try { return JSON.parse(localStorage.getItem('htj_tracker') || '{}'); }
-  catch(e) { return {}; }
-}
-function saveTracker(t) { localStorage.setItem('htj_tracker', JSON.stringify(t)); }
+// Tracker is server-side (Cloudflare KV). We cache it in memory for fast reads;
+// every write goes to the Worker.
+const TRACKER_WORKER_URL = WORKER_BASE + '/tracker' + USER_QS;
+const FOLLOWUP_WORKER_URL = WORKER_BASE + '/draft-followup' + USER_QS;
+const INTERVIEW_WORKER_URL = WORKER_BASE + '/interview-prep' + USER_QS;
+let _trackerCache = null;
 
+async function loadTracker(force) {
+  if (_trackerCache && !force) return _trackerCache;
+  try {
+    const r = await fetch(TRACKER_WORKER_URL);
+    const data = await r.json();
+    _trackerCache = data.tracker || {};
+  } catch (e) {
+    // Fall back to localStorage if Worker unreachable
+    try { _trackerCache = JSON.parse(localStorage.getItem('htj_tracker') || '{}'); }
+    catch (e2) { _trackerCache = {}; }
+  }
+  return _trackerCache;
+}
+
+function getTracker() { return _trackerCache || {}; }
 function getStatus(fp) { return getTracker()[fp]?.status || ''; }
 
-function cycleStatus(fp, btn) {
-  const t = getTracker();
-  const cur = t[fp]?.status || '';
+async function _trackerAction(action, payload) {
+  const editKey = getEditKey();
+  if (!editKey) return null;
+  const body = Object.assign({ action }, payload || {});
+  try {
+    const r = await fetch(TRACKER_WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Edit-Key': editKey },
+      body: JSON.stringify(body),
+    });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok || data.error) {
+      if (r.status === 401) { localStorage.removeItem('htj_resume_key'); localStorage.removeItem('htj_resume_key_' + USER_SLUG); }
+      alert('Failed: ' + (data.error || ('HTTP ' + r.status)));
+      return null;
+    }
+    return data;
+  } catch (e) { alert('Network error: ' + (e.message || e)); return null; }
+}
+
+async function cycleStatus(fp, btn) {
+  const cur = getTracker()[fp]?.status || '';
   const next = STATUS_CYCLE[(STATUS_CYCLE.indexOf(cur) + 1) % STATUS_CYCLE.length];
+  // Capture job meta from the card so the tracker knows what this job is
+  const card = btn.closest('.card');
+  const jobMeta = card ? {
+    title: (card.querySelector('.title a')?.textContent || '').trim(),
+    company: (card.querySelector('.company')?.textContent || '').trim(),
+    url: card.querySelector('.title a')?.href || '',
+  } : null;
+
   if (next === '') {
-    delete t[fp];
+    const r = await _trackerAction('clearStatus', { fp });
+    if (!r) return;
+    delete _trackerCache[fp];
   } else {
-    t[fp] = { status: next, updated: new Date().toISOString() };
+    const r = await _trackerAction('setStatus', { fp, status: next, jobMeta });
+    if (!r) return;
+    _trackerCache[fp] = r.record;
   }
-  saveTracker(t);
   refreshTrackerUI();
   filter();
+}
+
+function _daysSince(iso) {
+  if (!iso) return null;
+  const t = new Date(iso).getTime();
+  if (isNaN(t)) return null;
+  return Math.floor((Date.now() - t) / 86400000);
 }
 
 function refreshTrackerUI() {
   const tracker = getTracker();
   document.querySelectorAll('.card').forEach(card => {
     const fp = card.dataset.fp;
-    const st = tracker[fp]?.status || '';
+    const rec = tracker[fp] || null;
+    const st = rec?.status || '';
     card.dataset.status = st;
     const btn = card.querySelector('.btn.track');
     if (btn) {
       btn.className = 'btn track ' + st;
-      btn.textContent = STATUS_LABEL[st];
+      let label = STATUS_LABEL[st];
+      if (rec && rec.lastUpdated && st) {
+        const d = _daysSince(rec.lastUpdated);
+        if (d !== null) label += ' · ' + (d === 0 ? 'today' : d + 'd');
+      }
+      btn.textContent = label;
     }
-    // Update badges to include tracker status
+    // Add/refresh Details button (only visible when tracked)
+    let detailsBtn = card.querySelector('.btn.details-btn');
+    if (st) {
+      if (!detailsBtn) {
+        detailsBtn = document.createElement('button');
+        detailsBtn.className = 'btn details-btn';
+        detailsBtn.textContent = 'Details';
+        detailsBtn.style.cssText = 'background:#f3f4f6;color:#1f3a5f;border:1px solid #ccd0d6;';
+        detailsBtn.onclick = (e) => { e.stopPropagation(); openAppDetail(fp); };
+        const actions = card.querySelector('.actions');
+        if (actions) actions.insertBefore(detailsBtn, actions.querySelector('.ghost-btn'));
+      }
+    } else if (detailsBtn) {
+      detailsBtn.remove();
+    }
+    // Update badges
     const badges = card.querySelector('[data-badges]');
     if (badges) {
-      // Remove old tracker badges
-      badges.querySelectorAll('.b.tracker').forEach(b => b.remove());
+      badges.querySelectorAll('.b.tracker, .b.stale').forEach(b => b.remove());
       if (st) {
         const span = document.createElement('span');
         span.className = 'b tracker ' + st;
         span.textContent = STATUS_LABEL[st];
         badges.appendChild(document.createTextNode(' '));
         badges.appendChild(span);
+        // Stale alert if no movement in 7+ days while still in active stages
+        const days = rec && rec.lastUpdated ? _daysSince(rec.lastUpdated) : null;
+        if (days !== null && days >= 7 && ['applied','phonescreen','onsite'].includes(st)) {
+          const stale = document.createElement('span');
+          stale.className = 'b stale';
+          stale.style.cssText = 'background:#fff4cc; color:#7a5300; cursor:pointer;';
+          stale.textContent = 'Follow up? ' + days + 'd';
+          stale.onclick = (e) => { e.stopPropagation(); openFollowupDraft(fp); };
+          badges.appendChild(document.createTextNode(' '));
+          badges.appendChild(stale);
+        }
       }
     }
   });
@@ -360,21 +556,282 @@ function updateTrackerStats() {
   const t = getTracker();
   const counts = { applied: 0, phonescreen: 0, onsite: 0, offer: 0, rejected: 0 };
   Object.values(t).forEach(v => { if (counts[v.status] !== undefined) counts[v.status]++; });
-  // Update each per-status counter
   for (const k of Object.keys(counts)) {
     const el = document.getElementById('cnt-' + k);
     if (el) el.textContent = counts[k];
   }
-  // Response rate: any status past 'applied' counts as a response (incl. rejection)
   const totalApplied = counts.applied + counts.phonescreen + counts.onsite + counts.offer + counts.rejected;
   const responses = counts.phonescreen + counts.onsite + counts.offer + counts.rejected;
   const respEl = document.getElementById('cnt-response');
-  if (respEl) {
-    respEl.textContent = totalApplied === 0 ? '--' : Math.round(100 * responses / totalApplied) + '%';
+  if (respEl) respEl.textContent = totalApplied === 0 ? '--' : Math.round(100 * responses / totalApplied) + '%';
+  // Render funnel
+  renderFunnel(counts);
+}
+
+function renderFunnel(counts) {
+  const el = document.getElementById('funnel-row');
+  if (!el) return;
+  // The funnel respects status progression. "Total Applied" = anyone who ever applied
+  // (includes those who progressed beyond), so we use cumulative counts.
+  const c_applied = counts.applied + counts.phonescreen + counts.onsite + counts.offer + counts.rejected;
+  const c_phone = counts.phonescreen + counts.onsite + counts.offer; // people who reached at least phone screen
+  const c_onsite = counts.onsite + counts.offer;
+  const c_offer = counts.offer;
+  function stage(label, count, prevCount, color) {
+    const pct = prevCount > 0 ? Math.round(100 * count / prevCount) + '%' : '';
+    return '<div class="funnel-stage" style="flex:1; background:' + color + '; padding:10px 14px; border-radius:8px; color:#1f3a5f; min-width:0;">' +
+      '<div style="font-size:11px; text-transform:uppercase; letter-spacing:0.5px; color:#666; font-weight:600;">' + label + '</div>' +
+      '<div style="font-size:22px; font-weight:700; line-height:1.1; margin-top:2px;">' + count + '</div>' +
+      (pct ? '<div style="font-size:11px; color:#666; margin-top:2px;">' + pct + ' from prev</div>' : '<div style="font-size:11px; color:#999; margin-top:2px;">&nbsp;</div>') +
+    '</div>';
   }
-  // Legacy counter (unused but kept in case anything references it)
-  const legacy = document.getElementById('apps-counter');
-  if (legacy) legacy.textContent = counts.applied + counts.phonescreen + counts.onsite + counts.offer;
+  el.innerHTML =
+    stage('Applied', c_applied, 0, '#e9efff') +
+    '<div style="display:flex; align-items:center; color:#bbb; font-size:18px; padding:0 4px;">▸</div>' +
+    stage('Phone Screen', c_phone, c_applied, '#fff4e0') +
+    '<div style="display:flex; align-items:center; color:#bbb; font-size:18px; padding:0 4px;">▸</div>' +
+    stage('Onsite', c_onsite, c_phone, '#f0e6ff') +
+    '<div style="display:flex; align-items:center; color:#bbb; font-size:18px; padding:0 4px;">▸</div>' +
+    stage('Offer', c_offer, c_onsite, '#e6fff0') +
+    '<div style="display:flex; align-items:center; color:#bbb; font-size:18px; padding:0 4px;">▸</div>' +
+    stage('Rejected', counts.rejected, c_applied, '#ffe6e6');
+}
+
+// ====================================================================
+// Application detail side panel
+// ====================================================================
+let _currentDetailFp = null;
+
+async function openAppDetail(fp) {
+  _currentDetailFp = fp;
+  const rec = getTracker()[fp];
+  if (!rec) { alert('Not in tracker'); return; }
+  document.getElementById('app-detail-title').textContent = (rec.title || 'Application') + ' @ ' + (rec.company || '');
+  document.getElementById('app-detail-body').innerHTML = _renderAppDetail(rec);
+  document.getElementById('app-detail-modal').classList.add('show');
+}
+
+function closeAppDetail() {
+  document.getElementById('app-detail-modal').classList.remove('show');
+  _currentDetailFp = null;
+}
+
+function _renderAppDetail(rec) {
+  const days = _daysSince(rec.lastUpdated);
+  const daysTxt = days === null ? '' : (days === 0 ? 'today' : days + ' days ago');
+  let html = '';
+  html += '<div style="background:#f8f9fb; border:1px solid #e6e8eb; border-radius:8px; padding:12px 14px; margin-bottom:14px;">';
+  html += '<div style="font-size:13px;"><strong>Status:</strong> ' + (rec.status || 'untouched') + ' · last update ' + daysTxt + '</div>';
+  // Status history
+  if (rec.statusHistory && rec.statusHistory.length) {
+    html += '<div style="font-size:12px; color:#666; margin-top:6px;">Timeline: ';
+    html += rec.statusHistory.map(h => h.status + ' (' + new Date(h.at).toLocaleDateString() + ')').join(' → ');
+    html += '</div>';
+  }
+  html += '</div>';
+  // Recruiter
+  html += '<div class="prep-section"><div class="prep-label">Recruiter / contact</div>';
+  html += '<input type="text" id="detail-recruiter" value="' + _esc(rec.recruiter || '') + '" placeholder="name@example.com or LinkedIn URL" style="width:100%; box-sizing:border-box; padding:8px 10px; border:1px solid #ccd0d6; border-radius:6px; font-size:13px;" />';
+  html += '<button class="btn primary" style="margin-top:8px;" onclick="saveAppRecruiter()">Save</button>';
+  html += '<span id="detail-recruiter-status" style="font-size:12px; color:#555; margin-left:10px;"></span></div>';
+  // Notes
+  html += '<div class="prep-section"><div class="prep-label">Notes</div>';
+  html += '<textarea id="detail-notes" rows="6" placeholder="Hiring manager name, what they said, what to follow up on…" style="width:100%; box-sizing:border-box; padding:10px; font-size:13px; border:1px solid #ccd0d6; border-radius:6px; resize:vertical;">' + _esc(rec.notes || '') + '</textarea>';
+  html += '<button class="btn primary" style="margin-top:8px;" onclick="saveAppNotes()">Save notes</button>';
+  html += '<span id="detail-notes-status" style="font-size:12px; color:#555; margin-left:10px;"></span></div>';
+  // Salary (if offer)
+  if (rec.status === 'offer' || rec.salary) {
+    const s = rec.salary || {};
+    html += '<div class="prep-section"><div class="prep-label">Offer details</div>';
+    html += '<div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">';
+    html += '<input id="sal-base" type="text" placeholder="Base salary" value="' + _esc(s.base || '') + '" style="padding:8px 10px; border:1px solid #ccd0d6; border-radius:6px;" />';
+    html += '<input id="sal-bonus" type="text" placeholder="Bonus %" value="' + _esc(s.bonus || '') + '" style="padding:8px 10px; border:1px solid #ccd0d6; border-radius:6px;" />';
+    html += '<input id="sal-equity" type="text" placeholder="Equity (vesting)" value="' + _esc(s.equity || '') + '" style="padding:8px 10px; border:1px solid #ccd0d6; border-radius:6px;" />';
+    html += '<input id="sal-signing" type="text" placeholder="Signing bonus" value="' + _esc(s.signing || '') + '" style="padding:8px 10px; border:1px solid #ccd0d6; border-radius:6px;" />';
+    html += '</div>';
+    html += '<button class="btn primary" style="margin-top:8px;" onclick="saveAppSalary()">Save compensation</button>';
+    html += '<span id="detail-salary-status" style="font-size:12px; color:#555; margin-left:10px;"></span></div>';
+  }
+  // Saved Prep kit
+  if (rec.prepKit) {
+    html += '<div class="prep-section"><div class="prep-label">Saved Prep kit</div>';
+    if (rec.prepKit.summary) html += '<div style="font-size:13px; padding:10px; background:#fafbfc; border-radius:6px; margin-bottom:8px; white-space:pre-wrap;">' + _esc(rec.prepKit.summary) + '</div>';
+    html += '<button class="btn primary" onclick="reopenPrepFromTracker()">View full prep kit</button></div>';
+  }
+  // Actions
+  html += '<div class="prep-section">';
+  html += '<button class="btn primary" onclick="openFollowupDraft(\''+rec.fp+'\')">Draft follow-up email</button> ';
+  html += '<button class="btn primary" onclick="openInterviewPrep(\''+rec.fp+'\')">Generate interview prep</button> ';
+  if (rec.interviewPrep && rec.interviewPrep.length) {
+    html += '<button class="btn primary" onclick="showSavedInterviewPrep()">View saved Q&amp;A (' + rec.interviewPrep.length + ')</button>';
+  }
+  html += '</div>';
+  return html;
+}
+
+async function saveAppNotes() {
+  const notes = document.getElementById('detail-notes').value;
+  const status = document.getElementById('detail-notes-status');
+  status.textContent = 'Saving…';
+  const r = await _trackerAction('setNotes', { fp: _currentDetailFp, notes });
+  if (r) {
+    _trackerCache[_currentDetailFp] = r.record;
+    status.style.color = '#0a6b3a';
+    status.textContent = 'Saved.';
+  }
+}
+
+async function saveAppRecruiter() {
+  const recruiter = document.getElementById('detail-recruiter').value;
+  const status = document.getElementById('detail-recruiter-status');
+  status.textContent = 'Saving…';
+  const r = await _trackerAction('setRecruiter', { fp: _currentDetailFp, recruiter });
+  if (r) {
+    _trackerCache[_currentDetailFp] = r.record;
+    status.style.color = '#0a6b3a';
+    status.textContent = 'Saved.';
+  }
+}
+
+async function saveAppSalary() {
+  const salary = {
+    base: document.getElementById('sal-base').value,
+    bonus: document.getElementById('sal-bonus').value,
+    equity: document.getElementById('sal-equity').value,
+    signing: document.getElementById('sal-signing').value,
+  };
+  const status = document.getElementById('detail-salary-status');
+  status.textContent = 'Saving…';
+  const r = await _trackerAction('saveSalary', { fp: _currentDetailFp, salary });
+  if (r) {
+    _trackerCache[_currentDetailFp] = r.record;
+    status.style.color = '#0a6b3a';
+    status.textContent = 'Saved.';
+  }
+}
+
+function reopenPrepFromTracker() {
+  const rec = getTracker()[_currentDetailFp];
+  if (!rec || !rec.prepKit) return;
+  closeAppDetail();
+  document.getElementById('prep-modal-title').textContent = 'Materials for ' + rec.title + ' @ ' + rec.company;
+  document.getElementById('prep-status').style.display = 'none';
+  document.getElementById('prep-output').style.display = 'block';
+  document.getElementById('prep-summary').textContent = rec.prepKit.summary || '(no summary)';
+  document.getElementById('prep-cover').textContent = rec.prepKit.coverLetter || '(no cover letter)';
+  document.getElementById('prep-linkedin').textContent = rec.prepKit.linkedin || '(no LinkedIn intro)';
+  _tailoredResume = rec.prepKit.tailoredResume || null;
+  _tailoredJobMeta = { jobTitle: rec.title, company: rec.company };
+  const sec = document.getElementById('prep-resume-section');
+  if (_tailoredResume && _tailoredResume.personal) {
+    document.getElementById('prep-resume-preview').innerHTML = _renderResumeHTML(_tailoredResume);
+    sec.style.display = 'block';
+  } else {
+    sec.style.display = 'none';
+  }
+  document.getElementById('prep-modal').classList.add('show');
+}
+
+// ====================================================================
+// Follow-up email drafter
+// ====================================================================
+let _currentFollowup = null;
+async function openFollowupDraft(fp) {
+  document.getElementById('followup-modal').classList.add('show');
+  document.getElementById('followup-status').style.display = 'block';
+  document.getElementById('followup-status').textContent = 'Generating with Claude…';
+  document.getElementById('followup-output').style.display = 'none';
+  const editKey = getEditKey(); // not actually needed; followup is public — but include for consistency
+  try {
+    const r = await fetch(FOLLOWUP_WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fp }),
+    });
+    const data = await r.json();
+    if (!r.ok || data.error) {
+      document.getElementById('followup-status').textContent = 'Failed: ' + (data.error || ('HTTP ' + r.status));
+      return;
+    }
+    _currentFollowup = data;
+    const rec = getTracker()[fp];
+    _currentFollowup.to = (rec && rec.recruiter) || '';
+    document.getElementById('followup-subject').textContent = data.subject || '';
+    document.getElementById('followup-body').textContent = data.body || '';
+    document.getElementById('followup-status').style.display = 'none';
+    document.getElementById('followup-output').style.display = 'block';
+  } catch (e) {
+    document.getElementById('followup-status').textContent = 'Failed: ' + (e.message || e);
+  }
+}
+function closeFollowupModal() { document.getElementById('followup-modal').classList.remove('show'); }
+function copyFollowupBody(btn) {
+  if (!_currentFollowup) return;
+  const txt = (_currentFollowup.subject || '') + '\n\n' + (_currentFollowup.body || '');
+  navigator.clipboard.writeText(txt).then(() => { btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy', 1500); });
+}
+function openFollowupMailto() {
+  if (!_currentFollowup) return;
+  const to = _currentFollowup.to || '';
+  const m = 'mailto:' + encodeURIComponent(to) + '?subject=' + encodeURIComponent(_currentFollowup.subject || '') + '&body=' + encodeURIComponent(_currentFollowup.body || '');
+  window.location.href = m;
+}
+
+// ====================================================================
+// Interview prep
+// ====================================================================
+async function openInterviewPrep(fp) {
+  const rec = getTracker()[fp];
+  if (!rec) return;
+  document.getElementById('interview-modal').classList.add('show');
+  document.getElementById('interview-title').textContent = 'Interview prep — ' + rec.title + ' @ ' + rec.company;
+  document.getElementById('interview-status').style.display = 'block';
+  document.getElementById('interview-status').textContent = 'Generating with Claude… this takes 20-30 seconds.';
+  document.getElementById('interview-output').style.display = 'none';
+  try {
+    const r = await fetch(INTERVIEW_WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ jobTitle: rec.title, company: rec.company }),
+    });
+    const data = await r.json();
+    if (!r.ok || data.error) {
+      document.getElementById('interview-status').textContent = 'Failed: ' + (data.error || ('HTTP ' + r.status));
+      return;
+    }
+    document.getElementById('interview-status').style.display = 'none';
+    document.getElementById('interview-output').style.display = 'block';
+    document.getElementById('interview-output').innerHTML = _renderInterviewPrep(data.questions || []);
+    // Save to tracker
+    const ed = getEditKey();
+    if (ed) {
+      await _trackerAction('saveInterviewPrep', { fp, interviewPrep: data.questions || [] });
+      const got = getTracker()[fp];
+      if (got) got.interviewPrep = data.questions || [];
+    }
+  } catch (e) {
+    document.getElementById('interview-status').textContent = 'Failed: ' + (e.message || e);
+  }
+}
+function closeInterviewModal() { document.getElementById('interview-modal').classList.remove('show'); }
+function _renderInterviewPrep(qs) {
+  if (!qs || !qs.length) return '<p>No questions generated.</p>';
+  return qs.map((q, i) => {
+    const type = q.type || '';
+    return '<div class="prep-section">' +
+      '<div class="prep-label">' + (i+1) + '. ' + _esc(q.q || '') + (type ? ' <span style="background:#eef; color:#1f3a5f; padding:1px 7px; border-radius:10px; font-size:10px; margin-left:6px;">' + type + '</span>' : '') + '</div>' +
+      '<pre class="prep-text">' + _esc(q.a || '') + '</pre>' +
+      '</div>';
+  }).join('');
+}
+function showSavedInterviewPrep() {
+  const rec = getTracker()[_currentDetailFp];
+  if (!rec || !rec.interviewPrep) return;
+  document.getElementById('interview-modal').classList.add('show');
+  document.getElementById('interview-title').textContent = 'Interview prep — ' + rec.title + ' @ ' + rec.company;
+  document.getElementById('interview-status').style.display = 'none';
+  document.getElementById('interview-output').style.display = 'block';
+  document.getElementById('interview-output').innerHTML = _renderInterviewPrep(rec.interviewPrep);
 }
 
 // --- View mode toggle ---------------------------------------------------
@@ -1141,6 +1598,13 @@ async function prepApplication(fp, btn) {
     }
     statusEl.style.display = 'none';
     outputEl.style.display = 'block';
+    // Auto-save the prep kit to the tracker so user can re-open without regenerating
+    const kit = { summary: data.summary, coverLetter: data.coverLetter, linkedin: data.linkedin, tailoredResume: data.tailoredResume };
+    if (getEditKey()) {
+      _trackerAction('savePrepKit', { fp, jobMeta: { title: jobTitle, company, url: jobUrl }, prepKit: kit }).then(r => {
+        if (r && r.record) _trackerCache[fp] = r.record;
+      });
+    }
   } catch (e) {
     statusEl.className = 'prep-status error';
     statusEl.textContent = `Error: ${e.message || e}`;
@@ -1349,9 +1813,436 @@ async function downloadTailoredResume(format, btn) {
   }
 }
 
+// --- LinkedIn Contacts feature ----------------------------------------
+const LINKEDIN_CONTACTS_KEY = 'htj_linkedin_contacts_' + USER_SLUG;
+const LINKEDIN_CONTACTS_META_KEY = 'htj_linkedin_contacts_meta_' + USER_SLUG;
+let _pendingContactsFile = null;
+let _contactsByCompany = null; // { normalizedCompany: [contact, ...] }
+
+function _normalizeCompany(name) {
+  if (!name) return '';
+  let s = String(name).toLowerCase().trim();
+  // strip leading "the "
+  s = s.replace(/^the\s+/, '');
+  // strip trailing punctuation
+  s = s.replace(/[.,;:!?]+$/g, '');
+  // strip common legal suffixes (with or without comma/period)
+  s = s.replace(/[,]?\s*(inc|incorporated|llc|l\.l\.c\.|corp|corporation|co|company|ltd|limited|gmbh|plc|holdings|group|partners)\s*\.?$/g, '');
+  // collapse whitespace
+  s = s.replace(/\s+/g, ' ').trim();
+  return s;
+}
+
+function _companiesMatch(a, b) {
+  const na = _normalizeCompany(a);
+  const nb = _normalizeCompany(b);
+  if (!na || !nb) return false;
+  if (na === nb) return true;
+  // prefix/contains match — require shorter side >= 5 chars to avoid false positives
+  const shorter = na.length <= nb.length ? na : nb;
+  const longer = na.length <= nb.length ? nb : na;
+  if (shorter.length < 5) return false;
+  // word-boundary contains
+  if (longer.startsWith(shorter + ' ') || longer.endsWith(' ' + shorter) || longer.includes(' ' + shorter + ' ')) return true;
+  return false;
+}
+
+// Parse a CSV line respecting quoted fields. Returns array of strings.
+function _csvSplitLine(line) {
+  const out = [];
+  let cur = '';
+  let inQ = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (inQ) {
+      if (c === '"') {
+        if (line[i+1] === '"') { cur += '"'; i++; }
+        else inQ = false;
+      } else cur += c;
+    } else {
+      if (c === ',') { out.push(cur); cur = ''; }
+      else if (c === '"') inQ = true;
+      else cur += c;
+    }
+  }
+  out.push(cur);
+  return out;
+}
+
+// Parse a LinkedIn Connections.csv. Skips the "Notes:" preamble and any blank lines.
+function _parseConnectionsCSV(text) {
+  if (!text) return [];
+  // Normalize newlines
+  const lines = text.replace(/
+/g, '
+').replace(//g, '
+').split('
+');
+  // Find header row — must contain "First Name" and "Last Name"
+  let headerIdx = -1;
+  for (let i = 0; i < lines.length; i++) {
+    const lower = lines[i].toLowerCase();
+    if (lower.includes('first name') && lower.includes('last name')) {
+      headerIdx = i;
+      break;
+    }
+  }
+  if (headerIdx === -1) throw new Error('Could not find the connections header row. Make sure this is the Connections.csv from your LinkedIn export.');
+  const header = _csvSplitLine(lines[headerIdx]).map(h => h.trim().toLowerCase());
+  const idx = {
+    first: header.indexOf('first name'),
+    last: header.indexOf('last name'),
+    url: header.indexOf('url'),
+    email: header.indexOf('email address'),
+    company: header.indexOf('company'),
+    position: header.indexOf('position'),
+    connected: header.indexOf('connected on'),
+  };
+  const out = [];
+  for (let i = headerIdx + 1; i < lines.length; i++) {
+    const ln = lines[i];
+    if (!ln || !ln.trim()) continue;
+    const cols = _csvSplitLine(ln);
+    const first = (idx.first >= 0 ? cols[idx.first] : '') || '';
+    const last = (idx.last >= 0 ? cols[idx.last] : '') || '';
+    const company = (idx.company >= 0 ? cols[idx.company] : '') || '';
+    if (!first && !last) continue; // skip empty rows
+    out.push({
+      first: first.trim(),
+      last: last.trim(),
+      url: (idx.url >= 0 ? (cols[idx.url] || '').trim() : ''),
+      email: (idx.email >= 0 ? (cols[idx.email] || '').trim() : ''),
+      company: company.trim(),
+      position: (idx.position >= 0 ? (cols[idx.position] || '').trim() : ''),
+      connected: (idx.connected >= 0 ? (cols[idx.connected] || '').trim() : ''),
+    });
+  }
+  return out;
+}
+
+function loadLinkedInContacts() {
+  try {
+    const raw = localStorage.getItem(LINKEDIN_CONTACTS_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (e) { return []; }
+}
+
+function loadLinkedInContactsMeta() {
+  try {
+    const raw = localStorage.getItem(LINKEDIN_CONTACTS_META_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) { return null; }
+}
+
+function saveLinkedInContacts(contacts, filename) {
+  localStorage.setItem(LINKEDIN_CONTACTS_KEY, JSON.stringify(contacts));
+  localStorage.setItem(LINKEDIN_CONTACTS_META_KEY, JSON.stringify({
+    count: contacts.length,
+    uploadedAt: new Date().toISOString(),
+    filename: filename || 'Connections.csv',
+  }));
+  _contactsByCompany = null; // invalidate cache
+}
+
+function clearLinkedInContacts() {
+  localStorage.removeItem(LINKEDIN_CONTACTS_KEY);
+  localStorage.removeItem(LINKEDIN_CONTACTS_META_KEY);
+  _contactsByCompany = null;
+  injectContactBadgesOnCards(); // refresh badges
+  renderContactsSummary();
+  renderContactsList();
+}
+
+function _buildContactsByCompany() {
+  if (_contactsByCompany) return _contactsByCompany;
+  const contacts = loadLinkedInContacts();
+  const map = {};
+  contacts.forEach(c => {
+    const norm = _normalizeCompany(c.company);
+    if (!norm) return;
+    if (!map[norm]) map[norm] = [];
+    map[norm].push(c);
+  });
+  _contactsByCompany = map;
+  return map;
+}
+
+function _findContactsForCompany(displayCompany) {
+  const contacts = loadLinkedInContacts();
+  if (!contacts.length) return [];
+  const target = _normalizeCompany(displayCompany);
+  if (!target) return [];
+  const matched = [];
+  const seen = new Set();
+  for (const c of contacts) {
+    if (_companiesMatch(c.company, displayCompany)) {
+      const k = (c.first + '|' + c.last + '|' + c.url).toLowerCase();
+      if (!seen.has(k)) { seen.add(k); matched.push(c); }
+    }
+  }
+  return matched;
+}
+
+// --- Modal: upload / list ---------------------------------------------
+function setContactsTab(tab) {
+  document.querySelectorAll('#contacts-modal .tab-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.ctab === tab);
+  });
+  document.querySelectorAll('#contacts-modal .tab-panel').forEach(p => {
+    p.classList.toggle('active', p.id === 'ctab-' + tab);
+  });
+  if (tab === 'list') renderContactsList();
+}
+
+function openContactsModal() {
+  const modal = document.getElementById('contacts-modal');
+  document.getElementById('contacts-upload-status').textContent = '';
+  document.getElementById('contacts-dropzone-label').textContent = 'Click to choose your Connections.csv';
+  document.getElementById('parse-contacts-btn').disabled = true;
+  _pendingContactsFile = null;
+  renderContactsSummary();
+  setContactsTab('upload');
+  modal.classList.add('show');
+}
+
+function closeContactsModal() {
+  document.getElementById('contacts-modal').classList.remove('show');
+}
+
+function renderContactsSummary() {
+  const wrap = document.getElementById('contacts-summary-wrap');
+  if (!wrap) return;
+  const meta = loadLinkedInContactsMeta();
+  const contacts = loadLinkedInContacts();
+  if (!contacts.length) {
+    wrap.innerHTML = '';
+    return;
+  }
+  const dt = meta && meta.uploadedAt ? new Date(meta.uploadedAt) : null;
+  const dtStr = dt ? dt.toLocaleDateString(undefined, { year:'numeric', month:'short', day:'numeric' }) : 'recently';
+  wrap.innerHTML = '<div class="contact-summary"><span><b>' + contacts.length + '</b> contacts loaded · uploaded ' + dtStr + '</span><button class="clear-btn" onclick="if(confirm(\'Clear all saved contacts?\'))clearLinkedInContacts()">Clear</button></div>';
+}
+
+function renderContactsList() {
+  const wrap = document.getElementById('contacts-list-wrap');
+  if (!wrap) return;
+  const contacts = loadLinkedInContacts();
+  if (!contacts.length) {
+    wrap.innerHTML = '<p class="contact-empty">No contacts saved yet. Upload your Connections.csv on the first tab.</p>';
+    return;
+  }
+  // Group by company, sort by company then name
+  const map = _buildContactsByCompany();
+  const companies = Object.keys(map).sort();
+  let html = '<p style="font-size:12px;color:#777;margin:0 0 10px 0;">Grouped by company. ' + companies.length + ' companies, ' + contacts.length + ' contacts.</p>';
+  companies.forEach(normCo => {
+    const list = map[normCo].slice().sort((a,b) => (a.last||'').localeCompare(b.last||''));
+    const display = list[0].company || normCo;
+    html += '<div style="margin-bottom:14px;">';
+    html += '<div style="font-weight:700;color:#1f3a5f;font-size:13px;margin-bottom:6px;">' + _escHtml(display) + ' <span style="color:#888;font-weight:normal;font-size:11px;">(' + list.length + ')</span></div>';
+    list.forEach(c => {
+      const name = ((c.first || '') + ' ' + (c.last || '')).trim();
+      html += '<div style="font-size:12.5px;color:#333;padding:4px 0 4px 10px;border-left:2px solid #eaf2fb;margin-bottom:3px;">';
+      html += '<b>' + _escHtml(name) + '</b>';
+      if (c.position) html += ' <span style="color:#666;">— ' + _escHtml(c.position) + '</span>';
+      if (c.url) html += ' <a href="' + _escHtml(c.url) + '" target="_blank" style="color:#0a66c2;font-size:11px;margin-left:4px;">profile↗</a>';
+      html += '</div>';
+    });
+    html += '</div>';
+  });
+  wrap.innerHTML = html;
+}
+
+function _wireContactsDropzone() {
+  const dz = document.getElementById('contacts-dropzone');
+  const input = document.getElementById('contacts-file-input');
+  if (!dz || !input || dz._wired) return;
+  dz._wired = true;
+  input.addEventListener('change', (e) => {
+    if (e.target.files && e.target.files[0]) _handleContactsFileChosen(e.target.files[0]);
+  });
+  ['dragover','dragenter'].forEach(ev => dz.addEventListener(ev, (e) => { e.preventDefault(); dz.classList.add('drag'); }));
+  ['dragleave','drop'].forEach(ev => dz.addEventListener(ev, (e) => { e.preventDefault(); dz.classList.remove('drag'); }));
+  dz.addEventListener('drop', (e) => {
+    if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) _handleContactsFileChosen(e.dataTransfer.files[0]);
+  });
+}
+
+function _handleContactsFileChosen(file) {
+  const name = (file.name || '').toLowerCase();
+  if (!name.endsWith('.csv')) {
+    document.getElementById('contacts-upload-status').textContent = 'Need a .csv file. Make sure you unzipped the LinkedIn archive and selected Connections.csv.';
+    return;
+  }
+  _pendingContactsFile = file;
+  document.getElementById('contacts-dropzone-label').textContent = file.name;
+  document.getElementById('parse-contacts-btn').disabled = false;
+  document.getElementById('contacts-upload-status').textContent = 'Ready. Click Save contacts.';
+}
+
+async function parseUploadedContacts(btn) {
+  if (!_pendingContactsFile) return;
+  const statusEl = document.getElementById('contacts-upload-status');
+  const orig = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Reading…';
+  try {
+    const text = await _pendingContactsFile.text();
+    const contacts = _parseConnectionsCSV(text);
+    if (!contacts.length) {
+      statusEl.textContent = 'No contacts found in this file. Is this the right CSV?';
+      btn.textContent = orig;
+      btn.disabled = false;
+      return;
+    }
+    saveLinkedInContacts(contacts, _pendingContactsFile.name);
+    statusEl.textContent = 'Saved ' + contacts.length + ' contacts. Badges will appear on matching jobs.';
+    btn.textContent = orig;
+    btn.disabled = false;
+    _pendingContactsFile = null;
+    document.getElementById('contacts-file-input').value = '';
+    document.getElementById('contacts-dropzone-label').textContent = 'Upload another to replace';
+    renderContactsSummary();
+    renderContactsList();
+    injectContactBadgesOnCards();
+  } catch (e) {
+    statusEl.textContent = 'Failed: ' + (e.message || e);
+    btn.textContent = orig;
+    btn.disabled = false;
+  }
+}
+
+// --- Badge injection on job cards -------------------------------------
+function injectContactBadgesOnCards() {
+  const cards = document.querySelectorAll('.card');
+  if (!cards.length) return;
+  const contacts = loadLinkedInContacts();
+  cards.forEach(card => {
+    // Remove any existing badge first (so re-runs are clean)
+    const existing = card.querySelector('.contact-badge');
+    if (existing) existing.remove();
+    if (!contacts.length) return;
+    const companyEl = card.querySelector('.company');
+    if (!companyEl) return;
+    const company = (companyEl.textContent || '').trim();
+    const matches = _findContactsForCompany(company);
+    if (!matches.length) return;
+    const badge = document.createElement('span');
+    badge.className = 'contact-badge';
+    badge.title = matches.length + ' of your LinkedIn contacts work at ' + company;
+    badge.innerHTML = '<span class="ic">🤝</span> ' + matches.length + ' contact' + (matches.length === 1 ? '' : 's');
+    badge.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const titleEl = card.querySelector('.title a');
+      const jobTitle = titleEl ? (titleEl.textContent || '').trim() : '';
+      const jobUrl = titleEl ? titleEl.getAttribute('href') : '';
+      openCompanyContactsModal(company, jobTitle, jobUrl, matches);
+    });
+    companyEl.parentNode.insertBefore(badge, companyEl.nextSibling);
+  });
+}
+
+// --- Per-company contacts modal ---------------------------------------
+function _getSenderName() {
+  const h1 = document.querySelector('header h1');
+  if (h1) {
+    const txt = h1.textContent || '';
+    const m = txt.match(/^Jobs for\s+(.+)$/i);
+    if (m) return m[1].trim();
+  }
+  return USER_SLUG.charAt(0).toUpperCase() + USER_SLUG.slice(1);
+}
+
+function _draftOutreachMessage(contact, company, jobTitle) {
+  const first = (contact.first || '').trim() || 'there';
+  const sender = _getSenderName();
+  const titlePart = jobTitle ? ('an opening for ' + jobTitle + ' at ' + company) : ('an opportunity at ' + company);
+  return (
+    'Hi ' + first + ',\n\n' +
+    'Hope you\'re doing well! I came across ' + titlePart + ' and noticed you\'re on the team. ' +
+    'Would you be open to a quick chat about your experience there? If it seems like a fit, I\'d also really appreciate a referral or any thoughts on how to approach the application.\n\n' +
+    'Happy to share my resume — thanks for considering!\n\n' +
+    'Best,\n' + sender
+  );
+}
+
+function openCompanyContactsModal(company, jobTitle, jobUrl, contacts) {
+  const modal = document.getElementById('company-contacts-modal');
+  document.getElementById('company-contacts-title').textContent = contacts.length + ' contact' + (contacts.length === 1 ? '' : 's') + ' at ' + company;
+  document.getElementById('company-contacts-sub').textContent = jobTitle ? ('For: ' + jobTitle) : 'People you know who work there.';
+  const wrap = document.getElementById('company-contacts-list');
+  let html = '';
+  contacts.forEach((c, i) => {
+    const name = ((c.first || '') + ' ' + (c.last || '')).trim();
+    const msg = _draftOutreachMessage(c, company, jobTitle);
+    const msgId = 'msg-' + i;
+    html += '<div class="contact-row">';
+    html += '<div class="name-line"><span class="cname">' + _escHtml(name) + '</span>';
+    if (c.position) html += '<span class="ctitle">' + _escHtml(c.position) + '</span>';
+    html += '</div>';
+    if (c.connected) html += '<div class="cmeta">Connected ' + _escHtml(c.connected) + '</div>';
+    html += '<div class="msg-box" id="' + msgId + '">' + _escHtml(msg) + '</div>';
+    html += '<div class="crow-actions">';
+    html += '<button class="btn primary" onclick="copyContactMessage(\'' + msgId + '\', this)">Copy message</button>';
+    if (c.url) {
+      html += '<a class="btn primary" href="' + _escHtml(c.url) + '" target="_blank" style="text-decoration:none;background:#0a66c2;border-color:#0a66c2;">Open profile on LinkedIn ↗</a>';
+    }
+    if (c.email) {
+      const subj = encodeURIComponent('Quick question about ' + (jobTitle || company));
+      const body = encodeURIComponent(msg);
+      html += '<a class="btn" href="mailto:' + _escHtml(c.email) + '?subject=' + subj + '&body=' + body + '" style="text-decoration:none;background:#f3f4f6;color:#1f3a5f;border:1px solid #ccd0d6;">Email instead</a>';
+    }
+    html += '</div>';
+    html += '</div>';
+  });
+  wrap.innerHTML = html;
+  modal.classList.add('show');
+}
+
+function closeCompanyContactsModal() {
+  document.getElementById('company-contacts-modal').classList.remove('show');
+}
+
+function copyContactMessage(elId, btn) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  const text = el.textContent || '';
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = orig; }, 1500);
+  }).catch(() => {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(ta);
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = orig; }, 1500);
+  });
+}
+
+// Wire contacts on DOM ready, and inject badges
+if (document.readyState !== 'loading') {
+  _wireContactsDropzone();
+  injectContactBadgesOnCards();
+} else {
+  document.addEventListener('DOMContentLoaded', () => {
+    _wireContactsDropzone();
+    injectContactBadgesOnCards();
+  });
+}
+
 // init
-refreshTrackerUI();
-setView(viewMode);
-setEmploymentFilter(employmentFilter);
+loadTracker().then(() => {
+  refreshTrackerUI();
+  setView(viewMode);
+  setEmploymentFilter(employmentFilter);
+});
 </script>
 </body></html>
