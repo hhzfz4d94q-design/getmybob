@@ -1417,7 +1417,7 @@ HTML_TEMPLATE = """<!doctype html>
       <div class="tab-panel" id="tab-profile">
         <p style="font-size:13px;color:#555;margin-bottom:10px;">This is what the AI extracted from your resume. We use it to match jobs. If something is missing, click <em>Edit</em> to add your own chips, or <em>Regenerate</em> to re-run extraction.</p>
         <div id="profile-display"><p style="font-size:12px;color:#888;">Loading profile…</p></div>
-        <div style="margin-top:14px; display:flex; gap:8px; flex-wrap:wrap;">
+        <div id="profile-actions" style="margin-top:14px; display:flex; gap:8px; flex-wrap:wrap;">
           <button class="btn primary" id="edit-profile-btn" onclick="openEditProfileModal()">Edit profile</button>
           <button class="btn" id="regen-profile-btn" onclick="regenerateProfile(this)" style="background:#f3f4f6;color:#1f3a5f;border:1px solid #ccd0d6;">Regenerate from resume</button>
           <span id="regen-profile-status" style="font-size: 12px; color: #555;"></span>
@@ -2176,18 +2176,30 @@ const PROFILE_WORKER_URL = WORKER_BASE + '/skills-profile' + USER_QS;
 
 async function loadProfile() {{
   const el = document.getElementById('profile-display');
+  const actions = document.getElementById('profile-actions');
   el.innerHTML = '<p style="font-size:12px;color:#888;">Loading profile…</p>';
+  if (actions) actions.style.display = 'none';
   try {{
     const r = await fetch(PROFILE_WORKER_URL);
     const data = await r.json();
     const p = data.profile;
     if (!p) {{
-      el.innerHTML = '<p style="font-size:13px;color:#a85c00;background:#fff8e1;padding:10px 12px;border-radius:6px;">No profile yet. Upload a resume first.</p>';
+      el.innerHTML =
+        '<div style="background:#f3f7fc;border:1px solid #d6e1f1;border-radius:10px;padding:22px 24px;text-align:center;">' +
+          '<div style="font-size:36px;line-height:1;margin-bottom:8px;">📄</div>' +
+          '<div style="font-size:15px;font-weight:600;color:#1f3a5f;margin-bottom:6px;">No skills profile yet</div>' +
+          '<div style="font-size:13px;color:#555;margin-bottom:16px;line-height:1.5;">Upload your resume (PDF or Word) and our AI will extract your target roles, industries, skills, technologies, and regulations — so the dashboard only shows jobs that actually match you.</div>' +
+          '<button class="btn primary" onclick="setResumeTab(\\'upload\\')" style="padding:10px 22px;font-size:13.5px;">Upload your resume →</button>' +
+        '</div>';
+      // Hide Edit/Regenerate buttons — nothing to edit or regenerate yet.
+      if (actions) actions.style.display = 'none';
       return;
     }}
     el.innerHTML = _renderProfileHTML(p);
+    if (actions) actions.style.display = 'flex';
   }} catch (e) {{
     el.innerHTML = '<p style="font-size:13px;color:#b00;">Failed to load: ' + (e.message || e) + '</p>';
+    if (actions) actions.style.display = 'none';
   }}
 }}
 
