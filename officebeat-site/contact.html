@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Contact — OfficeBeat LLC</title>
+<meta name="description" content="Get in touch with OfficeBeat LLC — Enterprise Risk Management consulting based in New York.">
+<meta name="theme-color" content="#1F2C6F">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Contact — OfficeBeat LLC">
+<meta property="og:description" content="Start a conversation. info@officebeatllc.com · +1 (201) 446-2837 · New York, NY.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<nav class="top">
+  <div class="row">
+    <a href="index.html" class="logo"><img src="assets/officebeat-logo.png" alt="OfficeBeat LLC"></a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="services.html">Services</a>
+      <a href="about.html">About</a>
+      <a href="contact.html" class="nav-cta active">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<header class="page-header">
+  <div class="container">
+    <h1>Let&rsquo;s talk.</h1>
+    <p class="sub">Tell us what you are wrestling with. We will respond within one business day with whether we can help — and if we can&rsquo;t, who can.</p>
+  </div>
+</header>
+
+<section>
+  <div class="container">
+    <div class="contact-grid">
+
+      <form class="contact-form" onsubmit="submitContact(event)" id="contact-form">
+        <label for="name">Your name</label>
+        <input id="name" name="name" required placeholder="Jane Doe" autocomplete="name">
+
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" required placeholder="you@company.com" autocomplete="email">
+
+        <label for="company">Company</label>
+        <input id="company" name="company" placeholder="Acme Health Systems" autocomplete="organization">
+
+        <label for="role">Your role</label>
+        <input id="role" name="role" placeholder="Chief Risk Officer" autocomplete="organization-title">
+
+        <label for="topic">What would you like to discuss?</label>
+        <select id="topic" name="topic">
+          <option value="">Choose one (optional)</option>
+          <option>Enterprise risk program</option>
+          <option>Compliance &amp; controls</option>
+          <option>Cyber &amp; technology risk</option>
+          <option>Digital / AI transformation</option>
+          <option>Vendor &amp; third-party</option>
+          <option>Fractional risk leadership</option>
+          <option>Something else</option>
+        </select>
+
+        <label for="message">Your message</label>
+        <textarea id="message" name="message" placeholder="A few sentences about what you are working on, your timeline, and what success looks like." required></textarea>
+
+        <div class="submit">
+          <button type="submit" class="btn primary">Send message</button>
+        </div>
+
+        <div id="contact-status" style="margin-top:14px;font-size:14px;color:var(--muted);"></div>
+      </form>
+
+      <div class="contact-info">
+        <h3>Reach us directly</h3>
+
+        <div class="row">
+          <div class="ic">✉</div>
+          <div class="body">
+            <span class="label">Email</span>
+            <a href="mailto:info@officebeatllc.com">info@officebeatllc.com</a>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="ic">☎</div>
+          <div class="body">
+            <span class="label">Phone</span>
+            +1 (201) 446-2837
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="ic">⌖</div>
+          <div class="body">
+            <span class="label">Office</span>
+            New York, NY<br>
+            <span style="font-size:13px;color:var(--muted);">Engagements run remote-first across the US.</span>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="ic">↗</div>
+          <div class="body">
+            <span class="label">Sub-product</span>
+            <a href="https://getmyjob.officebeatllc.com/">getmemyjob — curated job search</a>
+          </div>
+        </div>
+
+        <div style="margin-top:24px;padding:16px 18px;background:var(--white);border:1px dashed var(--accent);border-radius:8px;font-size:13.5px;line-height:1.55;color:var(--ink);">
+          <strong style="color:var(--navy);">Working with a regulator deadline?</strong><br>
+          Mention it in your message. We will prioritize the response.
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="brand">
+        <img src="assets/officebeat-logo.png" alt="OfficeBeat LLC">
+        Navigate Complexity, Secure Your Future.
+      </div>
+      <div class="links">
+        <a href="index.html">Home</a>
+        <a href="services.html">Services</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="https://getmyjob.officebeatllc.com/">getmemyjob ↗</a>
+      </div>
+    </div>
+    <div class="legal">
+      <span>© 2026 OfficeBeat LLC. All rights reserved.</span>
+      <span>info@officebeatllc.com · +1 (201) 446-2837 · New York, NY</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function submitContact(e) {
+    e.preventDefault();
+    const f = e.target;
+    const name = f.name.value.trim();
+    const email = f.email.value.trim();
+    const company = f.company.value.trim();
+    const role = f.role.value.trim();
+    const topic = f.topic.value.trim();
+    const msg = f.message.value.trim();
+    const subject = encodeURIComponent('OfficeBeat inquiry — ' + (name || 'New contact'));
+    const body = encodeURIComponent(
+      'Name: ' + name + '\n' +
+      'Email: ' + email + '\n' +
+      'Company: ' + company + '\n' +
+      'Role: ' + role + '\n' +
+      'Topic: ' + topic + '\n\n' +
+      msg + '\n\n' +
+      '— Sent via officebeatllc.com contact form'
+    );
+    window.location.href = 'mailto:info@officebeatllc.com?subject=' + subject + '&body=' + body;
+    document.getElementById('contact-status').textContent = 'Your default mail app should have opened with the message ready. Hit send and we will be in touch.';
+    document.getElementById('contact-status').style.color = 'var(--navy)';
+  }
+</script>
+
+</body>
+</html>
