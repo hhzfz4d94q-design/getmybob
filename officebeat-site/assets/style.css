@@ -291,6 +291,43 @@ nav.top .row {
 .cap-chip.outline { background: transparent; border-color: var(--indigo); color: var(--indigo); }
 .cap-chip.outline::before { color: var(--indigo); }
 
+/* Framework tile grid (4x4) */
+.frameworks-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-top: 28px;
+}
+.framework-tile {
+  background: var(--white);
+  border: 1px solid var(--hairline);
+  border-radius: 10px;
+  padding: 22px 16px;
+  text-align: center;
+  transition: transform .15s, border-color .15s, box-shadow .15s;
+  display: flex; flex-direction: column; justify-content: center;
+  min-height: 96px;
+}
+.framework-tile:hover {
+  transform: translateY(-2px);
+  border-color: var(--indigo);
+  box-shadow: 0 6px 18px rgba(92,92,214,.10);
+}
+.framework-tile .name {
+  font-weight: 700; color: var(--indigo);
+  font-size: 14.5px; line-height: 1.2; display: block;
+}
+.framework-tile .desc {
+  color: var(--muted); font-size: 11.5px;
+  margin-top: 6px; line-height: 1.35; display: block;
+}
+@media (max-width: 900px) {
+  .frameworks-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 480px) {
+  .frameworks-grid { grid-template-columns: 1fr; }
+}
+
 /* Contact form */
 .contact-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 48px; }
 .contact-form { background: var(--white); border: 1px solid var(--hairline); border-radius: 14px; padding: 32px; }
