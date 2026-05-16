@@ -1103,9 +1103,13 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
 
 
 def generate_all_dashboards(conn):
-    """Generate one dashboard per user in users.json. Also writes index.html
-    as a copy of the first user (for the bare custom-domain URL)."""
-    import shutil
+    """Generate one dashboard per user in users.json.
+
+    Note: index.html is the public-facing landing page (getmemyjob marketing
+    page), NOT a dashboard. Users access their dashboards directly at
+    /<slug>.html (e.g. /geetu.html for Geetanjali). This refresh job does not
+    touch index.html or landing.html.
+    """
     # Ensure COMPANY_INDUSTRIES is built (may not have been if called standalone)
     if not COMPANY_INDUSTRIES:
         try:
@@ -1120,12 +1124,6 @@ def generate_all_dashboards(conn):
         name = user.get("name", slug)
         out = os.path.join(ROOT, f"{slug}.html")
         generate_dashboard(conn, user_slug=slug, user_name=name, output_path=out)
-    # Backward-compat: bare URL serves the first user's dashboard (Geetanjali).
-    first_slug = users[0]["slug"]
-    first_path = os.path.join(ROOT, f"{first_slug}.html")
-    if os.path.exists(first_path):
-        shutil.copyfile(first_path, DASHBOARD_PATH)
-        print(f"[multi-user] index.html = copy of {first_slug}.html")
 
 
 def _days_old(iso):

@@ -24,14 +24,21 @@ jobs:
         run: |
           python3 fetch_jobs.py
 
-      - name: Commit updated index.html and jobs.db
+      - name: Commit updated per-user dashboards and jobs.db
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add *.html jobs.db
+          # Stage jobs.db and every *.html EXCEPT index.html (landing page)
+          # and landing.html (canonical landing copy). This keeps the public
+          # homepage stable across auto-refresh runs.
+          git add jobs.db
+          for f in *.html; do
+            if [ "$f" != "index.html" ] && [ "$f" != "landing.html" ]; then
+              git add "$f"
+            fi
+          done
           if ! git diff --staged --quiet; then
             git commit -m "auto: refresh dashboard $(date -u +'%Y-%m-%dT%H:%MZ')"
-            git pull --rebase -X ours origin main
             git push
           else
             echo "No changes to commit"
