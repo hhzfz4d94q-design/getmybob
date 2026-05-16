@@ -79,104 +79,166 @@
   </div>
 </section>
 
-<section id="services" class="dark-section">
+<section id="services">
   <div class="container">
-    <span class="eyebrow-tag on-dark">Finance Practice — Services</span>
+    <span class="eyebrow-tag">Finance Practice — Services</span>
     <h2>What we deliver for banks &amp; financial institutions.</h2>
     <p class="lead">Targeted, fixed-fee engagements that ship in weeks — not the open-ended retainer model. Each starts with a 2-week diagnostic.</p>
 
-    <div class="grid-3">
-      <div class="card">
-        <div class="icon">CR</div>
-        <h3>Credit risk programs</h3>
-        <p>Portfolio strategy, counterparty modeling, PD/LGD/EAD calibration, stress testing, concentration analytics, and CECL/IFRS9 implementation support.</p>
+    <div class="tabs-wrap">
+      <div class="tab-bar" role="tablist">
+        <button class="tab-btn active" data-tab="risk" onclick="setFinTab('risk')">Risk &amp; Compliance</button>
+        <button class="tab-btn" data-tab="ops" onclick="setFinTab('ops')">Banking Operations</button>
+        <button class="tab-btn" data-tab="strategy" onclick="setFinTab('strategy')">Strategy &amp; Advisory</button>
+        <button class="tab-btn" data-tab="offshore" onclick="setFinTab('offshore')">Offshore Delivery</button>
       </div>
-      <div class="card">
-        <div class="icon">ER</div>
-        <h3>Enterprise risk &amp; ERM build</h3>
-        <p>Stand-up or refresh of ERM frameworks — risk taxonomy, appetite, KRIs, board reporting, and integrated governance aligned to COSO ERM and ISO 31000.</p>
+
+      <!-- Sub-tab 1: Risk & Compliance -->
+      <div class="tab-panel active" id="fin-risk">
+        <div class="grid-3">
+          <div class="card">
+            <div class="icon">CR</div>
+            <h3>Credit risk programs</h3>
+            <p>Portfolio strategy, counterparty modeling, PD/LGD/EAD calibration, stress testing, concentration analytics, and CECL/IFRS9 implementation support.</p>
+          </div>
+          <div class="card">
+            <div class="icon">ER</div>
+            <h3>Enterprise risk &amp; ERM build</h3>
+            <p>Stand-up or refresh of ERM frameworks — risk taxonomy, appetite, KRIs, board reporting, and integrated governance aligned to COSO ERM and ISO 31000.</p>
+          </div>
+          <div class="card">
+            <div class="icon">CY</div>
+            <h3>Cybersecurity &amp; Zero Trust</h3>
+            <p>NIST CSF maturity, FFIEC CAT alignment, Zero Trust architecture, incident-response playbooks, and cyber-insurance readiness.</p>
+          </div>
+          <div class="card">
+            <div class="icon">TP</div>
+            <h3>Third-Party Risk (TPRM)</h3>
+            <p>Vendor tiering, due-diligence workflows, ongoing monitoring, renewal &amp; offboarding controls. Designed for regulator scrutiny without strangling procurement.</p>
+          </div>
+          <div class="card">
+            <div class="icon">GR</div>
+            <h3>GRC platform rollouts</h3>
+            <p>ServiceNow IRM, Archer, MetricStream — selection, implementation, content design, and operationalization. Reduce manual monitoring up to 70%.</p>
+          </div>
+          <div class="card">
+            <div class="icon">RE</div>
+            <h3>Regulatory exam &amp; audit prep</h3>
+            <p>OCC, FRB, FDIC, NYDFS, SEC — pre-exam diagnostics, MRA / MRIA response, formal-action remediation, and SOX-ITGC support.</p>
+          </div>
+          <div class="card">
+            <div class="icon">CM</div>
+            <h3>Capital markets risk</h3>
+            <p>Trading-floor risk, post-trade operations, market infrastructure (CLS-style settlement), liquidity, intraday exposure, and OMS/EMS platform risk.</p>
+          </div>
+          <div class="card">
+            <div class="icon">FR</div>
+            <h3>Fraud risk &amp; operations</h3>
+            <p>First-party / third-party fraud taxonomy, controls design across payments and lending, fraud-loss reporting, model tuning, and customer-friction trade-off analysis.</p>
+          </div>
+          <div class="card">
+            <div class="icon">SE</div>
+            <h3>Security architecture &amp; IAM</h3>
+            <p>Identity &amp; access management strategy, privileged access reviews, Zero Trust segmentation, SOC operating-model design, and security tooling rationalization.</p>
+          </div>
+          <div class="card">
+            <div class="icon">CR</div>
+            <h3>Cloud migration risk</h3>
+            <p>Risk-aware cloud strategy, control baselines for AWS / Azure / GCP, FedRAMP-adjacent posture for regulated workloads, and cloud-vendor concentration risk frameworks.</p>
+          </div>
+        </div>
       </div>
-      <div class="card">
-        <div class="icon">CY</div>
-        <h3>Cybersecurity &amp; Zero Trust</h3>
-        <p>NIST CSF maturity, FFIEC CAT alignment, Zero Trust architecture, incident-response playbooks, and cyber-insurance readiness.</p>
+
+      <!-- Sub-tab 2: Banking Operations -->
+      <div class="tab-panel" id="fin-ops">
+        <div class="grid-3">
+          <div class="card">
+            <div class="icon">CL</div>
+            <h3>Commercial lending</h3>
+            <p>Origination platform diligence, workflow modernization, underwriting workbench design, and risk-aware product launches across small-business through middle-market.</p>
+          </div>
+          <div class="card">
+            <div class="icon">TS</div>
+            <h3>Treasury solutions</h3>
+            <p>Treasury services digital strategy, cash management modernization, payments rails diligence, FX &amp; liquidity risk frameworks, and treasury operations risk &amp; controls.</p>
+          </div>
+          <div class="card">
+            <div class="icon">DB</div>
+            <h3>Digital banking transformation</h3>
+            <p>Operating model design, agile delivery enablement, vendor portfolio rationalization, and modernization of core platforms with risk built in.</p>
+          </div>
+          <div class="card">
+            <div class="icon">VS</div>
+            <h3>Vendor strategy &amp; sourcing</h3>
+            <p>Strategic vendor segmentation, RFP design, contract structure with risk clauses, ongoing performance &amp; risk monitoring, and concentration / single-point-of-failure analysis.</p>
+          </div>
+        </div>
       </div>
-      <div class="card">
-        <div class="icon">TP</div>
-        <h3>Third-Party Risk (TPRM)</h3>
-        <p>Vendor tiering, due-diligence workflows, ongoing monitoring, renewal &amp; offboarding controls. Designed for regulator scrutiny without strangling procurement.</p>
+
+      <!-- Sub-tab 3: Strategy & Advisory -->
+      <div class="tab-panel" id="fin-strategy">
+        <div class="grid-3">
+          <div class="card">
+            <div class="icon">MA</div>
+            <h3>M&amp;A risk diligence</h3>
+            <p>Pre-LOI risk diagnostic, IT &amp; cyber due diligence, integration risk planning, day-1 / day-100 readiness, and post-merger control rationalization. Both buy-side and sell-side.</p>
+          </div>
+          <div class="card">
+            <div class="icon">CS</div>
+            <h3>Corporate strategy advisory</h3>
+            <p>Risk-informed strategic planning, growth-portfolio prioritization, enterprise governance framework design, and board-level decision support across capital deployment, M&amp;A, and digital investment.</p>
+          </div>
+          <div class="card">
+            <div class="icon">FA</div>
+            <h3>Fractional risk leadership</h3>
+            <p>Interim CRO / CISO, board &amp; audit-committee prep, regulator engagement, and crisis incident command — engaged by the month for moments that don't justify a full-time hire.</p>
+          </div>
+          <div class="card">
+            <div class="icon">DA</div>
+            <h3>Crypto &amp; digital assets risk</h3>
+            <p>For trust banks, fintechs, and traditional banks entering digital-asset services: custody risk, market infrastructure diligence, and supervisory-expectation alignment (OCC, NYDFS BitLicense).</p>
+          </div>
+        </div>
       </div>
-      <div class="card">
-        <div class="icon">GR</div>
-        <h3>GRC platform rollouts</h3>
-        <p>ServiceNow IRM, Archer, MetricStream — selection, implementation, content design, and operationalization. Reduce manual monitoring up to 70%.</p>
-      </div>
-      <div class="card">
-        <div class="icon">RE</div>
-        <h3>Regulatory exam &amp; audit prep</h3>
-        <p>OCC, FRB, FDIC, NYDFS, SEC — pre-exam diagnostics, MRA / MRIA response, formal-action remediation, and SOX-ITGC support.</p>
-      </div>
-      <div class="card">
-        <div class="icon">CL</div>
-        <h3>Commercial lending</h3>
-        <p>Origination platform diligence, workflow modernization, underwriting workbench design, and risk-aware product launches across small business through middle-market.</p>
-      </div>
-      <div class="card">
-        <div class="icon">TS</div>
-        <h3>Treasury solutions</h3>
-        <p>Treasury services digital strategy, cash management modernization, payments rails diligence, FX &amp; liquidity risk frameworks, and treasury operations risk &amp; controls.</p>
-      </div>
-      <div class="card">
-        <div class="icon">DB</div>
-        <h3>Digital banking transformation</h3>
-        <p>Operating model design, agile delivery enablement, vendor portfolio rationalization, and modernization of core platforms with risk built in.</p>
-      </div>
-      <div class="card">
-        <div class="icon">MA</div>
-        <h3>M&amp;A risk diligence</h3>
-        <p>Pre-LOI risk diagnostic, IT &amp; cyber due diligence, integration risk planning, day-1 / day-100 readiness, and post-merger control rationalization. Both buy-side and sell-side.</p>
-      </div>
-      <div class="card">
-        <div class="icon">CS</div>
-        <h3>Corporate strategy advisory</h3>
-        <p>Risk-informed strategic planning, growth-portfolio prioritization, enterprise governance framework design, and board-level decision support across capital deployment, M&amp;A, and digital investment.</p>
-      </div>
-      <div class="card">
-        <div class="icon">FA</div>
-        <h3>Fractional risk leadership</h3>
-        <p>Interim CRO / CISO, board &amp; audit-committee prep, regulator engagement, and crisis incident command — engaged by the month for moments that don't justify a full-time hire.</p>
-      </div>
-      <div class="card">
-        <div class="icon">CM</div>
-        <h3>Capital markets risk</h3>
-        <p>Trading-floor risk, post-trade operations, market infrastructure (CLS-style settlement), liquidity, intraday exposure, and OMS/EMS platform risk. Direct CLS Bank experience.</p>
-      </div>
-      <div class="card">
-        <div class="icon">FR</div>
-        <h3>Fraud risk &amp; operations</h3>
-        <p>First-party / third-party fraud taxonomy, controls design across payments and lending, fraud-loss reporting, model tuning, and customer-friction trade-off analysis.</p>
-      </div>
-      <div class="card">
-        <div class="icon">SE</div>
-        <h3>Security architecture &amp; IAM</h3>
-        <p>Identity &amp; access management strategy, privileged access reviews, Zero Trust segmentation, SOC operating-model design, and security tooling rationalization.</p>
-      </div>
-      <div class="card">
-        <div class="icon">CR</div>
-        <h3>Cloud migration risk</h3>
-        <p>Risk-aware cloud strategy, control baselines for AWS / Azure / GCP, FedRAMP-adjacent posture for regulated workloads, and cloud-vendor concentration risk frameworks.</p>
-      </div>
-      <div class="card">
-        <div class="icon">VS</div>
-        <h3>Vendor strategy &amp; sourcing</h3>
-        <p>Strategic vendor segmentation, RFP design, contract structure with risk clauses, ongoing performance &amp; risk monitoring, and concentration / single-point-of-failure analysis.</p>
-      </div>
-      <div class="card">
-        <div class="icon">DA</div>
-        <h3>Crypto &amp; digital assets risk</h3>
-        <p>For trust banks, fintechs, and traditional banks entering digital-asset services: custody risk, AML for crypto, market infrastructure diligence, and supervisory-expectation alignment (OCC, NYDFS BitLicense).</p>
+
+      <!-- Sub-tab 4: Offshore Delivery -->
+      <div class="tab-panel" id="fin-offshore">
+        <p style="font-size:16px;color:var(--muted);line-height:1.6;margin-bottom:24px;">Leverage OfficeBeat's global network of expert talent for cost-effective, high-quality delivery. Our offshore services seamlessly extend your finance / risk capabilities — ensuring project continuity, enhanced efficiency, and access to specialized skills without geographical boundaries. <strong style="color:var(--ink)">24/7 productivity · significant cost savings · seamless collaboration model.</strong></p>
+        <div class="grid-3">
+          <div class="card">
+            <div class="icon">FS</div>
+            <h3>Financial spreading</h3>
+            <p>Spreading financial statements to support credit risk evaluation, underwriting decisions, covenant monitoring, and portfolio analytics. Standardized templates, fast turnaround.</p>
+          </div>
+          <div class="card">
+            <div class="icon">RC</div>
+            <h3>Risk &amp; compliance operations</h3>
+            <p>Ongoing operation of your risk and compliance programs — testing, evidence collection, issue tracking, and remediation support across SOX-ITGC, regulatory exams, and internal audit.</p>
+          </div>
+          <div class="card">
+            <div class="icon">AD</div>
+            <h3>Application development &amp; maintenance</h3>
+            <p>Build and maintain robust software solutions tailored to your finance / risk team's needs — custom apps, legacy modernization, API &amp; integration work, ongoing support.</p>
+          </div>
+          <div class="card">
+            <div class="icon">QA</div>
+            <h3>QA &amp; testing</h3>
+            <p>Ensure reliability, performance, and security of your finance and risk applications. Test strategy, functional / regression / performance / security testing protocols.</p>
+          </div>
+          <div class="card">
+            <div class="icon">DA</div>
+            <h3>Data analytics &amp; reporting</h3>
+            <p>Transform raw operational, risk, and customer data into actionable insights. Pipeline design, dashboard development, KPI / KRI reporting, predictive analytics.</p>
+          </div>
+          <div class="card">
+            <div class="icon">PM</div>
+            <h3>PMO support</h3>
+            <p>Streamline project execution and governance for optimal outcomes. PMO setup &amp; standards, project tracking &amp; reporting, resource management, stakeholder coordination.</p>
+          </div>
+        </div>
       </div>
     </div>
+
   </div>
 </section>
 
@@ -338,6 +400,18 @@
     </div>
   </div>
 </footer>
+
+<script>
+  function setFinTab(name) {
+    document.querySelectorAll('#services .tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+    document.querySelectorAll('#services .tab-panel').forEach(p => p.classList.toggle('active', p.id === 'fin-' + name));
+    if (history.replaceState) history.replaceState(null, '', '#' + name);
+  }
+  (function(){
+    var h = (location.hash || '').replace('#','');
+    if (h && document.getElementById('fin-' + h)) setFinTab(h);
+  })();
+</script>
 
 </body>
 </html>
