@@ -164,7 +164,7 @@
 
 <header>
   <h1>Jobs for Shreyaa Arora</h1>
-  <div class="sub">Awaiting resume upload — click Resume to get started · Generated 2026-05-16 01:54</div>
+  <div class="sub">Awaiting resume upload — click Resume to get started · Generated 2026-05-16 02:03</div>
   <div class="header-actions">
     <button class="wiz-help-btn" onclick="replayTour()" title="Replay setup tour">?</button>
     <button id="resume-btn" class="header-btn" onclick="openResumeModal()">Resume</button>
@@ -1914,11 +1914,7 @@ function _csvSplitLine(line) {
 function _parseConnectionsCSV(text) {
   if (!text) return [];
   // Normalize newlines
-  const lines = text.replace(/
-/g, '
-').replace(//g, '
-').split('
-');
+  const lines = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
   // Find header row — must contain "First Name" and "Last Name"
   let headerIdx = -1;
   for (let i = 0; i < lines.length; i++) {
