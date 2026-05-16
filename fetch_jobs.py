@@ -1068,7 +1068,7 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         cards_html = (
             f"<div style='padding:32px;max-width:640px;margin:30px auto;background:#fff;"
             f"border:1px solid #e2e5ea;border-radius:8px;line-height:1.55;'>"
-            f"<h3 style='margin:0 0 10px 0;color:#1F2C6F;'>No matching jobs yet for {_esc(user_name)}</h3>"
+            f"<h3 style='margin:0 0 10px 0;color:#5C5CD6;'>No matching jobs yet for {_esc(user_name)}</h3>"
             f"<p style='color:#555;font-size:14px;'>Your profile industries: "
             f"<strong>{_esc(', '.join(user_industries[:5]))}</strong>. "
             f"We haven't indexed companies in these industries yet. "
@@ -1078,7 +1078,7 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         cards_html = (
             f"<div style='padding:32px;max-width:640px;margin:30px auto;background:#fff;"
             f"border:1px solid #e2e5ea;border-radius:8px;line-height:1.55;'>"
-            f"<h3 style='margin:0 0 10px 0;color:#1F2C6F;'>Welcome, {_esc(user_name)}!</h3>"
+            f"<h3 style='margin:0 0 10px 0;color:#5C5CD6;'>Welcome, {_esc(user_name)}!</h3>"
             f"<p style='color:#555;font-size:14px;'>Click the <strong>Resume</strong> button (top-right) and "
             f"upload your resume as PDF or Word. The AI will read it and start matching jobs to your background. "
             f"Your tailored dashboard will appear here after the next refresh.</p></div>"
@@ -1143,7 +1143,7 @@ def _esc(s):
 HTML_TEMPLATE = """<!doctype html>
 <html><head><meta charset="utf-8"><title>Jobs for {user_name}</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#1F2C6F">
+<meta name="theme-color" content="#5C5CD6">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="icon" type="image/png" sizes="256x256" href="favicon.png">
 <link rel="apple-touch-icon" href="favicon.png">
@@ -1157,7 +1157,7 @@ HTML_TEMPLATE = """<!doctype html>
 <meta name="twitter:image" content="https://getmyjob.officebeatllc.com/og-card.png">
 <style>
   body {{ font: 14px -apple-system, system-ui, sans-serif; margin: 0; background: #f7f7f8; color: #222; }}
-  header {{ background: #1F2C6F; color: white; padding: 18px 28px; position: relative; }}
+  header {{ background: #5C5CD6; color: white; padding: 18px 28px; position: relative; }}
   header h1 {{ margin: 0; font-size: 20px; }}
   header .sub {{ opacity: .85; font-size: 13px; margin-top: 4px; }}
   .header-actions {{ position: absolute; right: 28px; top: 50%; transform: translateY(-50%); display: flex; gap: 8px; }}
@@ -1166,19 +1166,19 @@ HTML_TEMPLATE = """<!doctype html>
   .header-btn:disabled {{ opacity: 0.5; cursor: not-allowed; }}
   .stats {{ display: flex; gap: 24px; padding: 14px 28px; background: white; border-bottom: 1px solid #e5e5ea; }}
   .stat {{ font-size: 13px; }}
-  .stat b {{ font-size: 22px; display: block; color: #1F2C6F; }}
+  .stat b {{ font-size: 22px; display: block; color: #5C5CD6; }}
   .filters {{ padding: 12px 28px; background: white; border-bottom: 1px solid #e5e5ea; display: flex; gap: 12px; }}
   .filters input, .filters select {{ padding: 6px 10px; font-size: 13px; border: 1px solid #ddd; border-radius: 6px; }}
   .grid {{ padding: 18px 28px; display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 14px; }}
   .card {{ background: white; border-radius: 10px; padding: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }}
   .row1 {{ display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }}
-  .title a {{ color: #1F2C6F; text-decoration: none; font-weight: 600; font-size: 15px; }}
+  .title a {{ color: #5C5CD6; text-decoration: none; font-weight: 600; font-size: 15px; }}
   .title a:hover {{ text-decoration: underline; }}
-  .score {{ background: #1F2C6F; color: white; border-radius: 999px; padding: 2px 10px; font-size: 12px; font-weight: 600; }}
+  .score {{ background: #5C5CD6; color: white; border-radius: 999px; padding: 2px 10px; font-size: 12px; font-weight: 600; }}
   .row2 {{ font-size: 12px; color: #666; margin-top: 4px; }}
   .badges {{ margin: 8px 0; display: flex; flex-wrap: wrap; gap: 6px; }}
   .b {{ font-size: 11px; padding: 2px 8px; border-radius: 999px; }}
-  .b.senior {{ background: #e6f0ff; color: #1F2C6F; }}
+  .b.senior {{ background: #e6f0ff; color: #5C5CD6; }}
   .b.remote {{ background: #e6fff0; color: #0a6b3a; }}
   .b.contract {{ background: #f3e6ff; color: #5a1f8a; }}
   .b.ghost {{ background: #fff1e6; color: #a85c00; }}
@@ -1186,12 +1186,12 @@ HTML_TEMPLATE = """<!doctype html>
   .b.fresh {{ background: #fffbe6; color: #8a6d00; font-weight: 600; }}
   .b.week {{ background: #f0e6ff; color: #4b2e9c; }}
   .pill {{ font-size: 12px; padding: 5px 12px; border-radius: 999px; border: 1px solid #ddd; background: white; cursor: pointer; }}
-  .pill.active {{ background: #1F2C6F; color: white; border-color: #1F2C6F; }}
+  .pill.active {{ background: #5C5CD6; color: white; border-color: #5C5CD6; }}
   .actions {{ margin-top: 10px; display: flex; gap: 6px; flex-wrap: wrap; }}
   .btn {{ font-size: 12px; padding: 6px 10px; border-radius: 6px; border: 1px solid #ddd; background: white; cursor: pointer; color: #333; text-decoration: none; display: inline-block; }}
   .btn:hover {{ background: #f0f0f0; }}
-  .btn.primary {{ background: #1F2C6F; color: white; border-color: #1F2C6F; }}
-  .btn.primary:hover {{ background: #14205A; }}
+  .btn.primary {{ background: #5C5CD6; color: white; border-color: #5C5CD6; }}
+  .btn.primary:hover {{ background: #4B4BBE; }}
   .btn.track.applied {{ background: #0a6b3a; color: white; border-color: #0a6b3a; }}
   .btn.track.phonescreen {{ background: #c97a00; color: white; border-color: #c97a00; }}
   .btn.track.onsite {{ background: #7a009c; color: white; border-color: #7a009c; }}
@@ -1214,7 +1214,7 @@ HTML_TEMPLATE = """<!doctype html>
   .app-stat.onsite {{ background: #ead4ff; color: #4b2e9c; }}
   .app-stat.offer {{ background: #ffd9b3; color: #a04500; }}
   .app-stat.rejected {{ background: #e8e8e8; color: #666; }}
-  .app-stat.response {{ background: #1F2C6F; color: white; }}
+  .app-stat.response {{ background: #5C5CD6; color: white; }}
   body.apps-mode .card[data-status="offer"] {{ order: 1; }}
   body.apps-mode .card[data-status="onsite"] {{ order: 2; }}
   body.apps-mode .card[data-status="phonescreen"] {{ order: 3; }}
@@ -1223,7 +1223,7 @@ HTML_TEMPLATE = """<!doctype html>
   .modal-overlay {{ display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center; padding: 20px; }}
   .modal-overlay.show {{ display: flex; }}
   .modal {{ background: white; border-radius: 12px; padding: 24px; max-width: 600px; width: 100%; max-height: 80vh; overflow-y: auto; }}
-  .modal h3 {{ margin: 0 0 12px 0; color: #1F2C6F; }}
+  .modal h3 {{ margin: 0 0 12px 0; color: #5C5CD6; }}
   .modal pre {{ background: #f5f5f5; padding: 12px; border-radius: 6px; font-size: 12px; overflow-x: auto; white-space: pre-wrap; word-break: break-all; }}
   .modal .copy-btn {{ margin-top: 10px; }}
   .modal-close {{ float: right; cursor: pointer; font-size: 22px; line-height: 1; color: #999; }}
@@ -1232,44 +1232,44 @@ HTML_TEMPLATE = """<!doctype html>
   .prep-status.error {{ color: #a80000; }}
   .prep-section {{ margin: 18px 0; padding-bottom: 18px; border-bottom: 1px solid #eee; }}
   .prep-section:last-child {{ border-bottom: none; }}
-  .prep-label {{ font-size: 12px; font-weight: 700; color: #1F2C6F; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }}
+  .prep-label {{ font-size: 12px; font-weight: 700; color: #5C5CD6; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }}
   .prep-text {{ background: #f7f7f8; padding: 12px; border-radius: 6px; font-size: 13px; white-space: pre-wrap; word-wrap: break-word; line-height: 1.5; font-family: inherit; max-height: 260px; overflow-y: auto; margin: 0 0 8px 0; }}
   .desc {{ font-size: 12.5px; color: #444; margin-top: 6px; line-height: 1.4; }}
   .salary-row {{ margin: 6px 0 2px 0; }}
   .salary {{ display: inline-block; background: #e6fff0; color: #0a6b3a; padding: 2px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; }}
   .tabs {{ display: flex; gap: 4px; border-bottom: 1px solid #e0e0e0; margin: 10px 0 16px 0; }}
   .tab-btn {{ background: none; border: none; padding: 8px 14px; cursor: pointer; font-size: 13px; color: #666; border-bottom: 2px solid transparent; font-weight: 500; }}
-  .tab-btn.active {{ color: #1F2C6F; border-bottom-color: #1F2C6F; font-weight: 700; }}
+  .tab-btn.active {{ color: #5C5CD6; border-bottom-color: #5C5CD6; font-weight: 700; }}
   .tab-panel {{ display: none; }}
   .tab-panel.active {{ display: block; }}
   .dropzone {{ display: block; box-sizing: border-box; width: 100%; border: 2px dashed #c0c8d4; border-radius: 8px; padding: 28px 16px; text-align: center; background: #fafbfc; transition: all 0.15s; cursor: pointer; }}
-  .dropzone:hover, .dropzone.drag {{ background: #eef3fa; border-color: #1F2C6F; }}
-  .dropzone strong {{ display: block; font-size: 14px; color: #1F2C6F; margin-bottom: 4px; }}
+  .dropzone:hover, .dropzone.drag {{ background: #eef3fa; border-color: #5C5CD6; }}
+  .dropzone strong {{ display: block; font-size: 14px; color: #5C5CD6; margin-bottom: 4px; }}
   .dropzone span {{ display: block; font-size: 12px; color: #666; }}
   .version-row {{ display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid #e6e8eb; border-radius: 6px; margin-bottom: 6px; background: #fff; }}
-  .version-row.active {{ border-color: #1F2C6F; background: #f3f7fc; }}
+  .version-row.active {{ border-color: #5C5CD6; background: #f3f7fc; }}
   .version-main {{ flex: 1; min-width: 0; }}
-  .version-label {{ font-weight: 600; font-size: 13px; color: #1F2C6F; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+  .version-label {{ font-weight: 600; font-size: 13px; color: #5C5CD6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
   .version-meta {{ font-size: 11px; color: #777; margin-top: 2px; }}
-  .version-badge {{ background: #1F2C6F; color: white; font-size: 10px; padding: 2px 7px; border-radius: 10px; font-weight: 700; letter-spacing: 0.3px; }}
+  .version-badge {{ background: #5C5CD6; color: white; font-size: 10px; padding: 2px 7px; border-radius: 10px; font-weight: 700; letter-spacing: 0.3px; }}
   .version-actions {{ display: flex; gap: 4px; }}
   .v-btn {{ background: #f3f4f6; border: 1px solid #ddd; color: #333; padding: 5px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; font-weight: 500; }}
   .v-btn:hover {{ background: #e6e8eb; }}
   .v-btn.danger {{ color: #b00; }}
-  .v-btn.primary {{ background: #1F2C6F; color: white; border-color: #1F2C6F; }}
+  .v-btn.primary {{ background: #5C5CD6; color: white; border-color: #5C5CD6; }}
   /* LinkedIn contacts feature */
   .contact-badge {{ display: inline-flex; align-items: center; gap: 4px; background: #eaf2fb; color: #0a66c2; border: 1px solid #c9defb; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; cursor: pointer; margin-left: 8px; transition: all 0.12s; }}
   .contact-badge:hover {{ background: #d8e7f8; border-color: #0a66c2; }}
   .contact-badge .ic {{ font-size: 12px; line-height: 1; }}
   .contact-row {{ display: flex; flex-direction: column; gap: 6px; padding: 12px 14px; border: 1px solid #e6e8eb; border-radius: 8px; margin-bottom: 10px; background: #fff; }}
   .contact-row .name-line {{ display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }}
-  .contact-row .cname {{ font-weight: 700; color: #1F2C6F; font-size: 14px; }}
+  .contact-row .cname {{ font-weight: 700; color: #5C5CD6; font-size: 14px; }}
   .contact-row .ctitle {{ font-size: 12px; color: #555; }}
   .contact-row .cmeta {{ font-size: 11px; color: #888; }}
   .contact-row .crow-actions {{ display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }}
   .contact-row .msg-box {{ background: #f7f9fc; border: 1px solid #e2e7ef; border-radius: 6px; padding: 10px 12px; font-size: 12.5px; line-height: 1.55; color: #1f2a3a; white-space: pre-wrap; font-family: ui-sans-serif, system-ui, sans-serif; margin-top: 6px; }}
   .contact-empty {{ padding: 18px; text-align: center; color: #777; font-size: 13px; }}
-  .contact-summary {{ background:#f3f7fc; border:1px solid #d6e1f1; border-radius:8px; padding:10px 14px; font-size:12px; color:#1F2C6F; margin-bottom:14px; display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; }}
+  .contact-summary {{ background:#f3f7fc; border:1px solid #d6e1f1; border-radius:8px; padding:10px 14px; font-size:12px; color:#5C5CD6; margin-bottom:14px; display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; }}
   .contact-summary .clear-btn {{ background: transparent; border: 1px solid #c9defb; color: #0a66c2; padding: 3px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; }}
   .contact-summary .clear-btn:hover {{ background: #fff; }}
   /* ---- First-login wizard ---- */
@@ -1280,22 +1280,22 @@ HTML_TEMPLATE = """<!doctype html>
   .wiz-progress {{ display: flex; gap: 6px; margin-bottom: 22px; }}
   .wiz-progress .dot {{ width: 28px; height: 4px; border-radius: 2px; background: #E2E2F2; }}
   .wiz-progress .dot.done {{ background: #5C6BC0; }}
-  .wiz-progress .dot.active {{ background: #1F2C6F; }}
-  .wiz-title {{ font-size: 24px; font-weight: 700; color: #1F2C6F; margin: 0 0 10px 0; line-height: 1.2; }}
+  .wiz-progress .dot.active {{ background: #5C5CD6; }}
+  .wiz-title {{ font-size: 24px; font-weight: 700; color: #5C5CD6; margin: 0 0 10px 0; line-height: 1.2; }}
   .wiz-body {{ font-size: 14.5px; color: #333; line-height: 1.55; margin: 0 0 22px 0; }}
   .wiz-body p {{ margin: 0 0 10px 0; }}
   .wiz-body ul {{ padding-left: 20px; margin: 8px 0; }}
   .wiz-body li {{ margin-bottom: 4px; }}
-  .wiz-body strong {{ color: #1F2C6F; }}
+  .wiz-body strong {{ color: #5C5CD6; }}
   .wiz-actions {{ display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }}
-  .wiz-btn-primary {{ background: #1F2C6F; color: #fff; border: none; padding: 11px 22px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }}
-  .wiz-btn-primary:hover {{ background: #14205A; }}
+  .wiz-btn-primary {{ background: #5C5CD6; color: #fff; border: none; padding: 11px 22px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }}
+  .wiz-btn-primary:hover {{ background: #4B4BBE; }}
   .wiz-btn-ghost {{ background: transparent; color: #666; border: none; padding: 11px 14px; font-size: 13.5px; cursor: pointer; }}
-  .wiz-btn-ghost:hover {{ color: #1F2C6F; text-decoration: underline; }}
+  .wiz-btn-ghost:hover {{ color: #5C5CD6; text-decoration: underline; }}
   .wiz-skip {{ margin-left: auto; }}
   .wiz-help-btn {{ background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: white; width: 32px; height: 32px; border-radius: 50%; font-size: 14px; font-weight: 700; cursor: pointer; padding: 0; display: inline-flex; align-items: center; justify-content: center; }}
   .wiz-help-btn:hover {{ background: rgba(255,255,255,0.28); }}
-  .wiz-banner {{ position: fixed; top: 80px; left: 50%; transform: translateX(-50%); background: #1F2C6F; color: #fff; padding: 14px 22px; border-radius: 8px; box-shadow: 0 6px 20px rgba(0,0,0,0.25); z-index: 200; font-size: 14px; font-weight: 500; max-width: 90%; text-align: center; }}
+  .wiz-banner {{ position: fixed; top: 80px; left: 50%; transform: translateX(-50%); background: #5C5CD6; color: #fff; padding: 14px 22px; border-radius: 8px; box-shadow: 0 6px 20px rgba(0,0,0,0.25); z-index: 200; font-size: 14px; font-weight: 500; max-width: 90%; text-align: center; }}
 
   /* ---- Mobile responsive ---- */
   @media (max-width: 640px) {{
@@ -1471,7 +1471,7 @@ HTML_TEMPLATE = """<!doctype html>
         <div id="profile-display"><p style="font-size:12px;color:#888;">Loading profile…</p></div>
         <div id="profile-actions" style="margin-top:14px; display:flex; gap:8px; flex-wrap:wrap;">
           <button class="btn primary" id="edit-profile-btn" onclick="openEditProfileModal()">Edit profile</button>
-          <button class="btn" id="regen-profile-btn" onclick="regenerateProfile(this)" style="background:#f3f4f6;color:#1F2C6F;border:1px solid #ccd0d6;">Regenerate from resume</button>
+          <button class="btn" id="regen-profile-btn" onclick="regenerateProfile(this)" style="background:#f3f4f6;color:#5C5CD6;border:1px solid #ccd0d6;">Regenerate from resume</button>
           <span id="regen-profile-status" style="font-size: 12px; color: #555;"></span>
         </div>
       </div>
@@ -1479,12 +1479,12 @@ HTML_TEMPLATE = """<!doctype html>
       <!-- Edit profile modal -->
       <div id="edit-profile-overlay" style="display:none; position:fixed; inset:0; background:rgba(20,30,50,0.45); z-index:60; align-items:center; justify-content:center;" onclick="if(event.target===this)closeEditProfileModal()">
         <div style="background:#fff; padding:24px 28px; border-radius:10px; max-width:640px; width:100%; margin:12px; max-height:88vh; overflow-y:auto; box-shadow:0 24px 60px rgba(0,0,0,0.2);">
-          <h3 style="margin:0 0 6px 0; color:#1F2C6F;">Edit your profile</h3>
+          <h3 style="margin:0 0 6px 0; color:#5C5CD6;">Edit your profile</h3>
           <p style="font-size:13px; color:#555; margin:0 0 16px 0;">Each field is a comma-separated list. Add things the AI missed (e.g. NIST CSF, HIPAA, ISO 27001). Remove anything inaccurate. Saving updates the profile used for job matching.</p>
           <div id="edit-profile-fields"></div>
           <div style="margin-top:18px; display:flex; gap:8px; flex-wrap:wrap;">
             <button class="btn primary" onclick="saveProfileEdits()">Save changes</button>
-            <button class="btn" onclick="closeEditProfileModal()" style="background:#f3f4f6;color:#1F2C6F;border:1px solid #ccd0d6;">Cancel</button>
+            <button class="btn" onclick="closeEditProfileModal()" style="background:#f3f4f6;color:#5C5CD6;border:1px solid #ccd0d6;">Cancel</button>
             <span id="edit-profile-status" style="font-size:12px;color:#555;align-self:center;"></span>
           </div>
         </div>
@@ -1760,7 +1760,7 @@ function refreshTrackerUI() {{
         detailsBtn = document.createElement('button');
         detailsBtn.className = 'btn details-btn';
         detailsBtn.textContent = 'Details';
-        detailsBtn.style.cssText = 'background:#f3f4f6;color:#1F2C6F;border:1px solid #ccd0d6;';
+        detailsBtn.style.cssText = 'background:#f3f4f6;color:#5C5CD6;border:1px solid #ccd0d6;';
         detailsBtn.onclick = (e) => {{ e.stopPropagation(); openAppDetail(fp); }};
         const actions = card.querySelector('.actions');
         if (actions) actions.insertBefore(detailsBtn, actions.querySelector('.ghost-btn'));
@@ -1822,7 +1822,7 @@ function renderFunnel(counts) {{
   const c_offer = counts.offer;
   function stage(label, count, prevCount, color) {{
     const pct = prevCount > 0 ? Math.round(100 * count / prevCount) + '%' : '';
-    return '<div class="funnel-stage" style="flex:1; background:' + color + '; padding:10px 14px; border-radius:8px; color:#1F2C6F; min-width:0;">' +
+    return '<div class="funnel-stage" style="flex:1; background:' + color + '; padding:10px 14px; border-radius:8px; color:#5C5CD6; min-width:0;">' +
       '<div style="font-size:11px; text-transform:uppercase; letter-spacing:0.5px; color:#666; font-weight:600;">' + label + '</div>' +
       '<div style="font-size:22px; font-weight:700; line-height:1.1; margin-top:2px;">' + count + '</div>' +
       (pct ? '<div style="font-size:11px; color:#666; margin-top:2px;">' + pct + ' from prev</div>' : '<div style="font-size:11px; color:#999; margin-top:2px;">&nbsp;</div>') +
@@ -2062,7 +2062,7 @@ function _renderInterviewPrep(qs) {{
   return qs.map((q, i) => {{
     const type = q.type || '';
     return '<div class="prep-section">' +
-      '<div class="prep-label">' + (i+1) + '. ' + _esc(q.q || '') + (type ? ' <span style="background:#eef; color:#1F2C6F; padding:1px 7px; border-radius:10px; font-size:10px; margin-left:6px;">' + type + '</span>' : '') + '</div>' +
+      '<div class="prep-label">' + (i+1) + '. ' + _esc(q.q || '') + (type ? ' <span style="background:#eef; color:#5C5CD6; padding:1px 7px; border-radius:10px; font-size:10px; margin-left:6px;">' + type + '</span>' : '') + '</div>' +
       '<pre class="prep-text">' + _esc(q.a || '') + '</pre>' +
       '</div>';
   }}).join('');
@@ -2239,7 +2239,7 @@ async function loadProfile() {{
       el.innerHTML =
         '<div style="background:#f3f7fc;border:1px solid #d6e1f1;border-radius:10px;padding:22px 24px;text-align:center;">' +
           '<div style="font-size:36px;line-height:1;margin-bottom:8px;">📄</div>' +
-          '<div style="font-size:15px;font-weight:600;color:#1F2C6F;margin-bottom:6px;">No skills profile yet</div>' +
+          '<div style="font-size:15px;font-weight:600;color:#5C5CD6;margin-bottom:6px;">No skills profile yet</div>' +
           '<div style="font-size:13px;color:#555;margin-bottom:16px;line-height:1.5;">Upload your resume (PDF or Word) and our AI will extract your target roles, industries, skills, technologies, and regulations — so the dashboard only shows jobs that actually match you.</div>' +
           '<button class="btn primary" onclick="setResumeTab(\\'upload\\')" style="padding:10px 22px;font-size:13.5px;">Upload your resume →</button>' +
         '</div>';
@@ -2261,19 +2261,19 @@ function _renderProfileHTML(p) {{
     const chips = items.map(s => {{
       const safe = _esc(s);
       const jsSafe = String(s).replace(/'/g, "\\\\'").replace(/"/g, '&quot;');
-      return '<span style="display:inline-flex;align-items:center;background:' + color + ';color:#1F2C6F;padding:3px 4px 3px 9px;border-radius:12px;font-size:11.5px;margin:2px 4px 2px 0;font-weight:500;">' +
+      return '<span style="display:inline-flex;align-items:center;background:' + color + ';color:#5C5CD6;padding:3px 4px 3px 9px;border-radius:12px;font-size:11.5px;margin:2px 4px 2px 0;font-weight:500;">' +
              safe +
              (fieldKey ? '<button onclick="removeChip(\\''+ fieldKey +'\\', \\''+ jsSafe +'\\')" style="background:none;border:0;color:#888;cursor:pointer;padding:0 0 0 6px;font-size:14px;line-height:1;font-weight:600;" title="Remove">&times;</button>' : '') +
              '</span>';
     }}).join('');
     const addBtn = fieldKey
-      ? '<button onclick="addChip(\\''+ fieldKey +'\\')" style="display:inline-block;background:#fafbfc;border:1px dashed #c0c8d4;color:#1F2C6F;padding:3px 11px;border-radius:12px;font-size:11.5px;cursor:pointer;font-weight:500;margin:2px 4px 2px 0;">+ Add</button>'
+      ? '<button onclick="addChip(\\''+ fieldKey +'\\')" style="display:inline-block;background:#fafbfc;border:1px dashed #c0c8d4;color:#5C5CD6;padding:3px 11px;border-radius:12px;font-size:11.5px;cursor:pointer;font-weight:500;margin:2px 4px 2px 0;">+ Add</button>'
       : '';
     const count = items.length > 0 ? (' <span style="color:#999;font-weight:500;">· ' + items.length + '</span>') : '';
     return '<div style="margin-bottom:12px;"><div style="font-size:11px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px;">' + title + count + '</div><div>' + chips + addBtn + '</div></div>';
   }}
   let html = '';
-  if (p.primaryRole) html += '<div style="font-size:14px;color:#1F2C6F;font-weight:600;margin-bottom:4px;">' + _esc(p.primaryRole) + '</div>';
+  if (p.primaryRole) html += '<div style="font-size:14px;color:#5C5CD6;font-weight:600;margin-bottom:4px;">' + _esc(p.primaryRole) + '</div>';
   if (p.summary) html += '<div style="font-size:13px;color:#555;margin-bottom:14px;line-height:1.45;">' + _esc(p.summary) + '</div>';
   html += '<div style="background:#f8f9fb;padding:14px 16px;border-radius:8px;border:1px solid #e6e8eb;">';
   if (p.seniorityLevel) html += '<div style="font-size:12px;color:#777;margin-bottom:8px;">Seniority: <strong style="color:#333;">' + _esc(p.seniorityLevel) + '</strong>' + (p.salaryFloor ? ' · Salary floor ~$' + Number(p.salaryFloor).toLocaleString() : '') + (p.remotePreferred ? ' · Remote preferred' : '') + '</div>';
@@ -2885,18 +2885,18 @@ function _renderResumeHTML(r) {{
   const contact = [p.location, p.phone, p.email, p.linkedin].filter(Boolean).map(x => _escHtml(x)).join(' &nbsp;·&nbsp; ');
   let html = '';
   html += '<div style="text-align:center; margin-bottom:14px;">';
-  html += '<div style="font-size:20px; font-weight:700; color:#1F2C6F; letter-spacing:0.3px;">' + _escHtml(p.name || '') + '</div>';
+  html += '<div style="font-size:20px; font-weight:700; color:#5C5CD6; letter-spacing:0.3px;">' + _escHtml(p.name || '') + '</div>';
   if (contact) html += '<div style="font-size:11.5px; color:#555; margin-top:4px;">' + contact + '</div>';
   html += '</div>';
   if (r.summary) {{
     html += '<div style="margin-bottom:12px;">' + _escHtml(r.summary) + '</div>';
   }}
   if (r.skills && r.skills.length) {{
-    html += '<div style="margin-bottom:14px;"><div style="font-weight:700; color:#1F2C6F; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #d0d6e0; padding-bottom:3px; margin-bottom:6px;">Core Skills</div>';
+    html += '<div style="margin-bottom:14px;"><div style="font-weight:700; color:#5C5CD6; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #d0d6e0; padding-bottom:3px; margin-bottom:6px;">Core Skills</div>';
     html += '<div style="font-size:12.5px;">' + r.skills.map(s => _escHtml(s)).join(' &nbsp;·&nbsp; ') + '</div></div>';
   }}
   if (r.experience && r.experience.length) {{
-    html += '<div style="margin-bottom:14px;"><div style="font-weight:700; color:#1F2C6F; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #d0d6e0; padding-bottom:3px; margin-bottom:6px;">Experience</div>';
+    html += '<div style="margin-bottom:14px;"><div style="font-weight:700; color:#5C5CD6; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #d0d6e0; padding-bottom:3px; margin-bottom:6px;">Experience</div>';
     r.experience.forEach(exp => {{
       html += '<div style="margin-bottom:10px;">';
       html += '<div style="display:flex; justify-content:space-between; gap:10px;"><div><strong>' + _escHtml(exp.title || '') + '</strong> — ' + _escHtml(exp.company || '') + (exp.location ? '<span style="color:#666;"> (' + _escHtml(exp.location) + ')</span>' : '') + '</div>';
@@ -2911,7 +2911,7 @@ function _renderResumeHTML(r) {{
     html += '</div>';
   }}
   if (r.education && r.education.length) {{
-    html += '<div style="margin-bottom:12px;"><div style="font-weight:700; color:#1F2C6F; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #d0d6e0; padding-bottom:3px; margin-bottom:6px;">Education</div>';
+    html += '<div style="margin-bottom:12px;"><div style="font-weight:700; color:#5C5CD6; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #d0d6e0; padding-bottom:3px; margin-bottom:6px;">Education</div>';
     r.education.forEach(ed => {{
       const line = [ed.degree, ed.field].filter(Boolean).join(' in ');
       html += '<div style="margin-bottom:4px;">' + _escHtml(line) + (ed.school ? ' — ' + _escHtml(ed.school) : '') + (ed.year ? ' <span style="color:#666;">(' + _escHtml(ed.year) + ')</span>' : '') + '</div>';
@@ -2919,7 +2919,7 @@ function _renderResumeHTML(r) {{
     html += '</div>';
   }}
   if (r.certifications && r.certifications.length) {{
-    html += '<div><div style="font-weight:700; color:#1F2C6F; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #d0d6e0; padding-bottom:3px; margin-bottom:6px;">Certifications</div>';
+    html += '<div><div style="font-weight:700; color:#5C5CD6; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #d0d6e0; padding-bottom:3px; margin-bottom:6px;">Certifications</div>';
     html += '<div>' + r.certifications.map(c => _escHtml(c)).join(' &nbsp;·&nbsp; ') + '</div></div>';
   }}
   return html;
@@ -2979,9 +2979,9 @@ function _buildPrintableHTML(r) {{
   // Letter-paper friendly HTML. Word opens HTML-with-.doc-extension natively.
   return `<!doctype html><html><head><meta charset="utf-8"><title>${{_escHtml((r.personal && r.personal.name) || 'Resume')}}</title>` +
          `<style>body{{font-family:Calibri,Arial,sans-serif;color:#222;font-size:11pt;line-height:1.4;margin:32px 40px;}}` +
-         `h1{{font-size:18pt;margin:0 0 4px 0;color:#1F2C6F;text-align:center;letter-spacing:.5px;}}` +
+         `h1{{font-size:18pt;margin:0 0 4px 0;color:#5C5CD6;text-align:center;letter-spacing:.5px;}}` +
          `.contact{{text-align:center;font-size:10pt;color:#555;margin-bottom:14px;}}` +
-         `h2{{font-size:11pt;color:#1F2C6F;text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid #c0c8d4;padding-bottom:2px;margin:14px 0 6px 0;}}` +
+         `h2{{font-size:11pt;color:#5C5CD6;text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid #c0c8d4;padding-bottom:2px;margin:14px 0 6px 0;}}` +
          `.role{{display:flex;justify-content:space-between;gap:10px;font-weight:bold;margin-top:8px;}}` +
          `.dates{{color:#666;font-weight:normal;font-size:10pt;}}` +
          `ul{{margin:4px 0 0 20px;padding:0;}}li{{margin-bottom:2px;}}p{{margin:0 0 6px 0;}}` +
@@ -3290,7 +3290,7 @@ function renderContactsList() {{
     const list = map[normCo].slice().sort((a,b) => (a.last||'').localeCompare(b.last||''));
     const display = list[0].company || normCo;
     html += '<div style="margin-bottom:14px;">';
-    html += '<div style="font-weight:700;color:#1F2C6F;font-size:13px;margin-bottom:6px;">' + _escHtml(display) + ' <span style="color:#888;font-weight:normal;font-size:11px;">(' + list.length + ')</span></div>';
+    html += '<div style="font-weight:700;color:#5C5CD6;font-size:13px;margin-bottom:6px;">' + _escHtml(display) + ' <span style="color:#888;font-weight:normal;font-size:11px;">(' + list.length + ')</span></div>';
     list.forEach(c => {{
       const name = ((c.first || '') + ' ' + (c.last || '')).trim();
       html += '<div style="font-size:12.5px;color:#333;padding:4px 0 4px 10px;border-left:2px solid #eaf2fb;margin-bottom:3px;">';
@@ -3441,7 +3441,7 @@ function openCompanyContactsModal(company, jobTitle, jobUrl, contacts) {{
     if (c.email) {{
       const subj = encodeURIComponent('Quick question about ' + (jobTitle || company));
       const body = encodeURIComponent(msg);
-      html += '<a class="btn" href="mailto:' + _escHtml(c.email) + '?subject=' + subj + '&body=' + body + '" style="text-decoration:none;background:#f3f4f6;color:#1F2C6F;border:1px solid #ccd0d6;">Email instead</a>';
+      html += '<a class="btn" href="mailto:' + _escHtml(c.email) + '?subject=' + subj + '&body=' + body + '" style="text-decoration:none;background:#f3f4f6;color:#5C5CD6;border:1px solid #ccd0d6;">Email instead</a>';
     }}
     html += '</div>';
     html += '</div>';
