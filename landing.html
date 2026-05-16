@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>getmemyjob — by OfficeBeat</title>
+<meta name="description" content="A curated job search, tailored to your skills. Real openings from real companies, AI-matched, with warm intros from your LinkedIn network. By OfficeBeat LLC.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1F2C6F;
+    --navy-deep: #14205A;
+    --indigo: #3F3FBA;
+    --accent: #5C6BC0;
+    --lilac: #E2E2F2;
+    --lilac-soft: #EEEEF8;
+    --off-white: #FAFAFC;
+    --ink: #1A1A2E;
+    --muted: #666680;
+    --hairline: #E5E7EE;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font: 15px/1.55 'Inter', -apple-system, system-ui, sans-serif;
+    color: var(--ink);
+    background: var(--off-white);
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* Layout */
+  .container { max-width: 1080px; margin: 0 auto; padding: 0 28px; }
+  section { padding: 80px 0; }
+  section h2 { font-size: 30px; font-weight: 700; margin: 0 0 12px 0; letter-spacing: -0.01em; }
+  section .lead { font-size: 16px; color: var(--muted); max-width: 640px; margin: 0 0 44px 0; }
+
+  /* Nav */
+  nav.top {
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(250,250,252,0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--hairline);
+  }
+  nav.top .row { display: flex; align-items: center; justify-content: space-between; padding: 14px 28px; max-width: 1080px; margin: 0 auto; }
+  .logo { display: inline-flex; align-items: center; text-decoration: none; }
+  .logo:hover { text-decoration: none; }
+  .logo img { height: 38px; width: auto; display: block; }
+  @media (max-width: 720px) {
+    .logo img { height: 30px; }
+  }
+  nav.top .signin {
+    font-size: 14px; font-weight: 500; color: var(--navy);
+    padding: 8px 16px; border-radius: 6px; border: 1px solid var(--navy);
+    background: transparent; cursor: pointer;
+  }
+  nav.top .signin:hover { background: var(--navy); color: #fff; }
+
+  /* Hero */
+  .hero { background: linear-gradient(180deg, var(--navy-deep) 0%, var(--indigo) 100%); color: #fff; padding: 110px 0 120px 0; position: relative; overflow: hidden; }
+  .hero::after {
+    content: ''; position: absolute; right: -100px; top: -80px;
+    width: 540px; height: 540px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero h1 { font-size: 54px; font-weight: 800; margin: 0 0 18px 0; line-height: 1.05; letter-spacing: -0.025em; max-width: 760px; }
+  .hero h1 em { font-style: normal; color: #C5C7F1; }
+  .hero .sub { font-size: 18px; color: rgba(255,255,255,0.85); margin: 0 0 36px 0; max-width: 600px; line-height: 1.55; }
+  .hero .ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 13px 22px; border-radius: 7px; font-weight: 600; font-size: 15px;
+    cursor: pointer; border: 1px solid transparent; transition: all 0.15s;
+    text-decoration: none;
+  }
+  .btn.primary { background: #fff; color: var(--navy); }
+  .btn.primary:hover { background: #E2E2F2; }
+  .btn.ghost { background: transparent; color: #fff; border-color: rgba(255,255,255,0.4); }
+  .btn.ghost:hover { background: rgba(255,255,255,0.08); border-color: #fff; }
+  .hero .tag { display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #C5C7F1; padding: 5px 11px; border: 1px solid rgba(255,255,255,0.25); border-radius: 999px; margin-bottom: 22px; }
+
+  /* How it works */
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  .step { padding: 24px; background: #fff; border: 1px solid var(--hairline); border-radius: 12px; }
+  .step .num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--lilac); color: var(--navy); font-weight: 700; font-size: 14px;
+    margin-bottom: 14px;
+  }
+  .step h3 { font-size: 16px; font-weight: 700; margin: 0 0 6px 0; color: var(--ink); }
+  .step p { font-size: 14px; color: var(--muted); margin: 0; line-height: 1.5; }
+
+  /* Features */
+  .features-section { background: var(--lilac-soft); }
+  .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  .feature {
+    background: #fff; padding: 28px; border-radius: 12px;
+    border: 1px solid var(--hairline);
+  }
+  .feature .icon {
+    width: 44px; height: 44px; border-radius: 10px;
+    background: var(--lilac); color: var(--navy);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 22px; margin-bottom: 14px;
+  }
+  .feature h3 { font-size: 17px; font-weight: 700; margin: 0 0 6px 0; color: var(--ink); }
+  .feature p { font-size: 14px; color: var(--muted); margin: 0; line-height: 1.55; }
+
+  /* Industries */
+  .industries-section { text-align: center; padding-bottom: 60px; }
+  .industries { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 18px; }
+  .pill {
+    padding: 8px 16px; border: 1px solid var(--navy); color: var(--navy);
+    border-radius: 999px; font-weight: 500; font-size: 14px;
+  }
+  .pill.dim { color: var(--muted); border-color: var(--hairline); }
+
+  /* Waitlist */
+  .waitlist-section { background: var(--navy); color: #fff; }
+  .waitlist-section h2 { color: #fff; }
+  .waitlist-section .lead { color: rgba(255,255,255,0.8); }
+  .waitlist {
+    background: rgba(255,255,255,0.05); padding: 32px;
+    border: 1px solid rgba(255,255,255,0.12); border-radius: 14px;
+    max-width: 580px;
+  }
+  .waitlist label { display: block; font-size: 12px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: rgba(255,255,255,0.7); margin-bottom: 6px; }
+  .waitlist input, .waitlist textarea, .waitlist select {
+    width: 100%; padding: 11px 14px; border-radius: 7px; border: 1px solid rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.06); color: #fff; font-size: 15px; font-family: inherit;
+    margin-bottom: 16px; box-sizing: border-box;
+  }
+  .waitlist input::placeholder, .waitlist textarea::placeholder { color: rgba(255,255,255,0.4); }
+  .waitlist input:focus, .waitlist textarea:focus, .waitlist select:focus { outline: none; border-color: #fff; background: rgba(255,255,255,0.1); }
+  .waitlist textarea { min-height: 72px; resize: vertical; }
+  .waitlist .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .waitlist .row2 > div { margin: 0; }
+  .waitlist button {
+    width: 100%; padding: 13px 22px; background: #fff; color: var(--navy);
+    border: 0; border-radius: 7px; font-weight: 700; font-size: 15px;
+    cursor: pointer; margin-top: 4px;
+  }
+  .waitlist button:hover { background: var(--lilac); }
+  .waitlist .ok { display: none; padding: 20px; background: rgba(255,255,255,0.1); border-radius: 8px; font-size: 15px; text-align: center; }
+  .waitlist.submitted .form { display: none; }
+  .waitlist.submitted .ok { display: block; }
+
+  /* Footer */
+  footer { background: var(--navy-deep); color: rgba(255,255,255,0.7); padding: 40px 0; font-size: 13px; }
+  footer .row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+  footer .brand { color: #fff; font-weight: 600; }
+  footer a { color: rgba(255,255,255,0.8); }
+
+  /* Mobile */
+  @media (max-width: 720px) {
+    section { padding: 56px 0; }
+    .hero { padding: 60px 0 70px 0; }
+    .hero h1 { font-size: 36px; }
+    .hero .sub { font-size: 16px; }
+    .steps, .features { grid-template-columns: 1fr; }
+    .waitlist .row2 { grid-template-columns: 1fr; }
+  }
+
+  /* Sign-in modal */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(20,30,50,0.55); display: none; align-items: center; justify-content: center; z-index: 100; }
+  .modal-overlay.show { display: flex; }
+  .modal { background: #fff; padding: 28px; border-radius: 12px; max-width: 420px; width: calc(100% - 28px); box-shadow: 0 24px 60px rgba(0,0,0,0.25); }
+  .modal h3 { margin: 0 0 10px 0; font-size: 18px; color: var(--ink); }
+  .modal p { margin: 0 0 18px 0; font-size: 14px; color: var(--muted); }
+  .modal input { width: 100%; padding: 11px 14px; border-radius: 7px; border: 1px solid var(--hairline); font-size: 15px; box-sizing: border-box; margin-bottom: 12px; font-family: inherit; }
+  .modal .btn-row { display: flex; gap: 10px; }
+  .modal .btn.primary { background: var(--navy); color: #fff; flex: 1; }
+  .modal .btn.primary:hover { background: var(--navy-deep); }
+  .modal .btn.ghost { background: transparent; color: var(--muted); border-color: var(--hairline); }
+  .modal .modal-close { position: absolute; }
+  .modal .lost-link { font-size: 13px; margin-top: 12px; text-align: center; }
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <div class="row">
+    <a href="/" class="logo">
+      <img src="officebeat-logo.png" alt="OfficeBeat LLC">
+    </a>
+    <button class="signin" onclick="openSignin()">Sign in</button>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="container">
+    <span class="tag">Closed alpha · By invitation</span>
+    <h1>Get me my job — <em>without the noise.</em></h1>
+    <p class="sub">A curated job search tailored to your skills. Real openings from real companies, AI-matched to your profile, with warm intros from your LinkedIn network.</p>
+    <div class="ctas">
+      <a href="#waitlist" class="btn primary">Request alpha access</a>
+      <a href="#how" class="btn ghost">How it works</a>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="container">
+    <h2>How it works</h2>
+    <p class="lead">From "I need a job" to "applying with a warm intro" in four steps.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="num">1</div>
+        <h3>Join the waitlist</h3>
+        <p>Tell us who you are and what you're looking for. We invite in batches.</p>
+      </div>
+      <div class="step">
+        <div class="num">2</div>
+        <h3>Upload your resume</h3>
+        <p>One click. AI extracts your skills profile — titles, industries, frameworks, certifications.</p>
+      </div>
+      <div class="step">
+        <div class="num">3</div>
+        <h3>Customise your profile</h3>
+        <p>Add or remove skill chips. Set target titles, industries, seniority, and salary floor.</p>
+      </div>
+      <div class="step">
+        <div class="num">4</div>
+        <h3>Apply with warm intros</h3>
+        <p>Browse curated openings. Upload your LinkedIn connections — see who you know inside each company.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="features-section">
+  <div class="container">
+    <h2>What you get</h2>
+    <p class="lead">Built for senior leaders who are tired of scraping LinkedIn, fighting ghost jobs, and ignoring recruiter spam.</p>
+    <div class="features">
+      <div class="feature">
+        <div class="icon">📋</div>
+        <h3>Real openings only</h3>
+        <p>Pulled directly from companies' ATS feeds (Greenhouse, Lever, Ashby, Workday). No staffing agencies. No reposts. Ghost jobs flagged automatically.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">🤖</div>
+        <h3>AI skills matching</h3>
+        <p>Your resume becomes a structured profile — industries, frameworks, certifications, target titles. Jobs are scored against it; you see the best matches first.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">🤝</div>
+        <h3>Warm intros, automatically</h3>
+        <p>Upload your LinkedIn connections once. Job cards show who you know at each company, with pre-drafted outreach messages ready to send.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="industries-section">
+  <div class="container">
+    <h2>Currently supporting</h2>
+    <p class="lead" style="margin: 0 auto 22px auto;">We start with the industries we know best. More coming as the alpha expands.</p>
+    <div class="industries">
+      <span class="pill">Healthcare IT</span>
+      <span class="pill">Fintech</span>
+      <span class="pill">Cyber / GRC</span>
+      <span class="pill">Banking</span>
+      <span class="pill dim">+ more soon</span>
+    </div>
+  </div>
+</section>
+
+<section id="waitlist" class="waitlist-section">
+  <div class="container">
+    <h2>Request alpha access</h2>
+    <p class="lead">Tell us a bit about yourself. We're inviting in small batches and reading every response.</p>
+    <div class="waitlist" id="waitlistCard">
+      <form class="form" onsubmit="submitWaitlist(event)">
+        <div class="row2">
+          <div>
+            <label for="wl-name">Name</label>
+            <input id="wl-name" name="name" required placeholder="Jane Doe" autocomplete="name">
+          </div>
+          <div>
+            <label for="wl-email">Email</label>
+            <input id="wl-email" name="email" type="email" required placeholder="you@example.com" autocomplete="email">
+          </div>
+        </div>
+        <label for="wl-role">Current role / title</label>
+        <input id="wl-role" name="role" placeholder="Director, Product Operations" autocomplete="organization-title">
+        <label for="wl-target">Target role or industry</label>
+        <input id="wl-target" name="target" placeholder="VP Digital Transformation in healthcare or fintech">
+        <label for="wl-notes">Anything else? (optional)</label>
+        <textarea id="wl-notes" name="notes" placeholder="What's your search horizon, must-haves, anything we should know."></textarea>
+        <button type="submit">Request access</button>
+      </form>
+      <div class="ok">
+        <strong>Thanks — your request is on its way.</strong><br>
+        Your default mail app should have just opened with the message pre-filled. Hit send and we'll be in touch within a few days.
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="row">
+      <div>
+        <span class="brand">getmemyjob</span> · A product by <a href="mailto:info@officebeatllc.com">OfficeBeat LLC</a>
+      </div>
+      <div>
+        <a href="mailto:info@officebeatllc.com">info@officebeatllc.com</a> · +1 (201) 446-2837 · New York, NY
+      </div>
+    </div>
+    <div class="row" style="margin-top: 12px; font-size: 12px; opacity: 0.6;">© 2026 OfficeBeat LLC. All rights reserved.</div>
+  </div>
+</footer>
+
+<!-- Sign-in modal -->
+<div class="modal-overlay" id="signinModal" onclick="if (event.target.id==='signinModal') closeSignin()">
+  <div class="modal">
+    <h3>Sign in</h3>
+    <p>Already have a dashboard? Paste the full link from your invite email below.</p>
+    <input id="signinUrl" type="text" placeholder="https://getmyjob.officebeatllc.com/your-slug.html?key=...">
+    <div class="btn-row">
+      <button class="btn ghost" onclick="closeSignin()">Cancel</button>
+      <button class="btn primary" onclick="goToDashboard()">Go to my dashboard</button>
+    </div>
+    <div class="lost-link">
+      Lost your link? <a href="mailto:info@officebeatllc.com?subject=Lost%20my%20dashboard%20link">Email us</a> and we'll resend it.
+    </div>
+  </div>
+</div>
+
+<script>
+  function openSignin() { document.getElementById('signinModal').classList.add('show'); }
+  function closeSignin() { document.getElementById('signinModal').classList.remove('show'); }
+  function goToDashboard() {
+    const url = document.getElementById('signinUrl').value.trim();
+    if (!url) return;
+    try {
+      const u = new URL(url);
+      if (u.hostname.endsWith('officebeatllc.com')) {
+        window.location.href = url;
+      } else {
+        alert('That doesn\'t look like a getmemyjob dashboard link.');
+      }
+    } catch (e) {
+      alert('That doesn\'t look like a valid URL.');
+    }
+  }
+  function submitWaitlist(e) {
+    e.preventDefault();
+    const f = e.target;
+    const name = f.name.value.trim();
+    const email = f.email.value.trim();
+    const role = f.role.value.trim();
+    const target = f.target.value.trim();
+    const notes = f.notes.value.trim();
+    const subject = encodeURIComponent('Alpha access request — ' + name);
+    const body = encodeURIComponent(
+      'Name: ' + name + '\n' +
+      'Email: ' + email + '\n' +
+      'Current role: ' + role + '\n' +
+      'Target: ' + target + '\n' +
+      'Notes: ' + notes + '\n\n' +
+      '— Sent from getmemyjob landing page'
+    );
+    window.location.href = 'mailto:info@officebeatllc.com?subject=' + subject + '&body=' + body;
+    document.getElementById('waitlistCard').classList.add('submitted');
+  }
+</script>
+</body>
+</html>
