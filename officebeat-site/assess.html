@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Risk Maturity Assessment — OfficeBeat LLC</title>
+<meta name="description" content="A 10-question self-assessment of your organization's enterprise risk maturity. Free, takes 4 minutes, instant scored result with recommended next steps.">
+<meta name="theme-color" content="#5C5CD6">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Risk Maturity Assessment — OfficeBeat LLC">
+<meta property="og:description" content="A free 10-question self-assessment of your enterprise risk maturity, with personalized recommendations.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  .assess-card {
+    background: var(--white); border: 1px solid var(--hairline);
+    border-radius: 14px; padding: 28px 30px; margin-bottom: 16px;
+  }
+  .assess-card .q-num {
+    display: inline-block; background: var(--lilac-soft);
+    color: var(--indigo); font-weight: 700; font-size: 12px;
+    padding: 4px 10px; border-radius: 999px; margin-bottom: 10px;
+  }
+  .assess-card h3 { font-size: 17px; margin: 4px 0 14px 0; color: var(--ink); line-height: 1.4; }
+  .scale {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;
+  }
+  .scale label {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 12px 8px; border: 2px solid var(--hairline);
+    border-radius: 10px; cursor: pointer; background: var(--off-white);
+    transition: all .15s; text-align: center;
+  }
+  .scale label:hover { border-color: var(--indigo-pale); background: var(--white); }
+  .scale label input { display: none; }
+  .scale label .num { font-weight: 800; font-size: 20px; color: var(--indigo); }
+  .scale label .lbl { font-size: 11px; color: var(--muted); margin-top: 4px; font-weight: 500; }
+  .scale input:checked + .pad { display: block; }
+  .scale label.selected { border-color: var(--indigo); background: var(--lilac-soft); }
+  .scale label.selected .num { color: var(--indigo-deep); }
+  .scale label.selected .lbl { color: var(--ink); font-weight: 600; }
+
+  .progress-bar {
+    height: 6px; background: var(--hairline); border-radius: 3px; overflow: hidden;
+    margin: 8px 0 24px 0;
+  }
+  .progress-bar .fill {
+    height: 100%; background: linear-gradient(90deg, var(--indigo), var(--indigo-pale));
+    width: 0; transition: width .3s;
+  }
+  .lead-capture {
+    background: linear-gradient(160deg, var(--indigo-deep), var(--indigo));
+    color: var(--white); border-radius: 14px;
+    padding: 32px; margin-top: 24px;
+  }
+  .lead-capture h3 { color: var(--white); font-size: 22px; margin: 0 0 8px 0; }
+  .lead-capture p { color: rgba(255,255,255,.85); margin: 0 0 18px 0; }
+  .lead-capture .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .lead-capture input {
+    width: 100%; padding: 12px 14px; border-radius: 8px; border: 0;
+    background: rgba(255,255,255,.9); color: var(--ink); font: inherit; font-size: 15px;
+  }
+  .lead-capture input::placeholder { color: var(--muted); }
+  .lead-capture .actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .lead-capture .btn { background: var(--white); color: var(--indigo); }
+  .lead-capture .btn:hover { background: var(--lilac); }
+
+  .result-card {
+    background: var(--white); border: 1px solid var(--hairline);
+    border-radius: 14px; padding: 36px; margin-top: 20px; text-align: center;
+  }
+  .result-card .band {
+    display: inline-block; padding: 8px 18px; border-radius: 999px;
+    font-weight: 700; font-size: 14px; letter-spacing: 0.04em;
+    margin-bottom: 14px;
+  }
+  .result-card .band.emerging { background: #fef3c7; color: #92400e; }
+  .result-card .band.developing { background: #fed7aa; color: #9a3412; }
+  .result-card .band.defined { background: var(--lilac-soft); color: var(--indigo); }
+  .result-card .band.optimized { background: #d1fae5; color: #065f46; }
+  .result-card .score { font-size: 64px; font-weight: 800; color: var(--indigo); line-height: 1; }
+  .result-card .score-of { color: var(--muted); font-size: 18px; font-weight: 500; }
+  .result-card h2 { margin: 14px 0 8px 0; color: var(--ink); font-size: 28px; }
+  .result-card .blurb { color: var(--muted); max-width: 540px; margin: 0 auto 24px; line-height: 1.55; }
+  .next-steps { text-align: left; max-width: 560px; margin: 0 auto; padding-left: 22px; }
+  .next-steps li { margin-bottom: 10px; color: var(--ink); }
+  @media (max-width: 640px) {
+    .lead-capture .row { grid-template-columns: 1fr; }
+    .scale label { padding: 10px 4px; }
+    .scale label .num { font-size: 16px; }
+    .scale label .lbl { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <div class="row">
+    <a href="index.html" class="logo"><img src="assets/officebeat-logo.png" alt="OfficeBeat LLC"></a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="finance.html">Finance</a>
+      <a href="healthcare.html">Healthcare</a>
+      <a href="https://getmyjob.officebeatllc.com/" target="_blank" rel="noopener">getmemyjob ↗</a>
+      <a href="services.html">Services</a>
+      <a href="locations.html">Locations</a>
+      <a href="contact.html" class="nav-cta">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<header class="page-header">
+  <div class="container">
+    <span class="eyebrow-tag on-dark">Free · 4 minutes · No spam</span>
+    <h1>Risk Maturity Assessment</h1>
+    <p class="sub">Ten questions. Honest answers. An instant scored picture of where your organization stands — and the three highest-leverage next moves to make it stronger.</p>
+  </div>
+</header>
+
+<section>
+  <div class="container" style="max-width:780px;">
+
+    <div id="assessment-flow">
+      <div class="progress-bar"><div class="fill" id="prog-fill"></div></div>
+
+      <!-- Questions -->
+      <div class="assess-card">
+        <span class="q-num">Q1 — Risk Governance</span>
+        <h3>Does your organization have a documented enterprise risk framework approved by the board?</h3>
+        <div class="scale" data-q="1">
+          <label><input type="radio" name="q1" value="1"><span class="num">1</span><span class="lbl">No</span></label>
+          <label><input type="radio" name="q1" value="2"><span class="num">2</span><span class="lbl">Informal</span></label>
+          <label><input type="radio" name="q1" value="3"><span class="num">3</span><span class="lbl">Documented</span></label>
+          <label><input type="radio" name="q1" value="4"><span class="num">4</span><span class="lbl">Board-approved</span></label>
+          <label><input type="radio" name="q1" value="5"><span class="num">5</span><span class="lbl">Mature &amp; refreshed</span></label>
+        </div>
+      </div>
+
+      <div class="assess-card">
+        <span class="q-num">Q2 — Risk Appetite</span>
+        <h3>Have you defined and communicated risk appetite statements for your key risks?</h3>
+        <div class="scale" data-q="2">
+          <label><input type="radio" name="q2" value="1"><span class="num">1</span><span class="lbl">No</span></label>
+          <label><input type="radio" name="q2" value="2"><span class="num">2</span><span class="lbl">Verbal only</span></label>
+          <label><input type="radio" name="q2" value="3"><span class="num">3</span><span class="lbl">Documented</span></label>
+          <label><input type="radio" name="q2" value="4"><span class="num">4</span><span class="lbl">Cascaded</span></label>
+          <label><input type="radio" name="q2" value="5"><span class="num">5</span><span class="lbl">Operationalized</span></label>
+        </div>
+      </div>
+
+      <div class="assess-card">
+        <span class="q-num">Q3 — KRI / KPI Reporting</span>
+        <h3>Are key risk indicators tracked and reviewed regularly by leadership?</h3>
+        <div class="scale" data-q="3">
+          <label><input type="radio" name="q3" value="1"><span class="num">1</span><span class="lbl">No</span></label>
+          <label><input type="radio" name="q3" value="2"><span class="num">2</span><span class="lbl">Ad hoc</span></label>
+          <label><input type="radio" name="q3" value="3"><span class="num">3</span><span class="lbl">Monthly</span></label>
+          <label><input type="radio" name="q3" value="4"><span class="num">4</span><span class="lbl">Dashboards</span></label>
+          <label><input type="radio" name="q3" value="5"><span class="num">5</span><span class="lbl">Drives decisions</span></label>
+        </div>
+      </div>
+
+      <div class="assess-card">
+        <span class="q-num">Q4 — Risk Culture &amp; Ownership</span>
+        <h3>Are risk owners identified for each material risk, with named accountability?</h3>
+        <div class="scale" data-q="4">
+          <label><input type="radio" name="q4" value="1"><span class="num">1</span><span class="lbl">No</span></label>
+          <label><input type="radio" name="q4" value="2"><span class="num">2</span><span class="lbl">Some risks</span></label>
+          <label><input type="radio" name="q4" value="3"><span class="num">3</span><span class="lbl">Most risks</span></label>
+          <label><input type="radio" name="q4" value="4"><span class="num">4</span><span class="lbl">All material</span></label>
+          <label><input type="radio" name="q4" value="5"><span class="num">5</span><span class="lbl">With SLAs</span></label>
+        </div>
+      </div>
+
+      <div class="assess-card">
+        <span class="q-num">Q5 — Cyber Maturity</span>
+        <h3>Are you aligned to NIST CSF (or equivalent) with a documented maturity assessment?</h3>
+        <div class="scale" data-q="5">
+          <label><input type="radio" name="q5" value="1"><span class="num">1</span><span class="lbl">No</span></label>
+          <label><input type="radio" name="q5" value="2"><span class="num">2</span><span class="lbl">Started</span></label>
+          <label><input type="radio" name="q5" value="3"><span class="num">3</span><span class="lbl">Assessed</span></label>
+          <label><input type="radio" name="q5" value="4"><span class="num">4</span><span class="lbl">Action plan</span></label>
+          <label><input type="radio" name="q5" value="5"><span class="num">5</span><span class="lbl">Continuously improved</span></label>
+        </div>
+      </div>
+
+      <div class="assess-card">
+        <span class="q-num">Q6 — Third-Party Risk</span>
+        <h3>Do you have a TPRM program with ongoing vendor monitoring (not just onboarding)?</h3>
+        <div class="scale" data-q="6">
+          <label><input type="radio" name="q6" value="1"><span class="num">1</span><span class="lbl">No</span></label>
+          <label><input type="radio" name="q6" value="2"><span class="num">2</span><span class="lbl">Intake only</span></label>
+          <label><input type="radio" name="q6" value="3"><span class="num">3</span><span class="lbl">Tiered</span></label>
+          <label><input type="radio" name="q6" value="4"><span class="num">4</span><span class="lbl">Annual review</span></label>
+          <label><input type="radio" name="q6" value="5"><span class="num">5</span><span class="lbl">Continuous monitoring</span></label>
+        </div>
+      </div>
+
+      <div class="assess-card">
+        <span class="q-num">Q7 — Compliance Mapping</span>
+        <h3>Are your regulatory requirements mapped to specific controls with evidence?</h3>
+        <div class="scale" data-q="7">
+          <label><input type="radio" name="q7" value="1"><span class="num">1</span><span class="lbl">No</span></label>
+          <label><input type="radio" name="q7" value="2"><span class="num">2</span><span class="lbl">Partial</span></label>
+          <label><input type="radio" name="q7" value="3"><span class="num">3</span><span class="lbl">Mapped</span></label>
+          <label><input type="radio" name="q7" value="4"><span class="num">4</span><span class="lbl">Tested</span></label>
+          <label><input type="radio" name="q7" value="5"><span class="num">5</span><span class="lbl">Automated</span></label>
+        </div>
+      </div>
+
+      <div class="assess-card">
+        <span class="q-num">Q8 — Incident Response</span>
+        <h3>Have you tested your incident-response plan (tabletop or live) in the last 12 months?</h3>
+        <div class="scale" data-q="8">
+          <label><input type="radio" name="q8" value="1"><span class="num">1</span><span class="lbl">No plan</span></label>
+          <label><input type="radio" name="q8" value="2"><span class="num">2</span><span class="lbl">Plan exists</span></label>
+          <label><input type="radio" name="q8" value="3"><span class="num">3</span><span class="lbl">Tabletop done</span></label>
+          <label><input type="radio" name="q8" value="4"><span class="num">4</span><span class="lbl">Multiple drills</span></label>
+          <label><input type="radio" name="q8" value="5"><span class="num">5</span><span class="lbl">Quarterly + live</span></label>
+        </div>
+      </div>
+
+      <div class="assess-card">
+        <span class="q-num">Q9 — Audit Findings</span>
+        <h3>Are open audit / regulatory findings tracked with target dates and owners?</h3>
+        <div class="scale" data-q="9">
+          <label><input type="radio" name="q9" value="1"><span class="num">1</span><span class="lbl">No</span></label>
+          <label><input type="radio" name="q9" value="2"><span class="num">2</span><span class="lbl">Spreadsheet</span></label>
+          <label><input type="radio" name="q9" value="3"><span class="num">3</span><span class="lbl">Tracked</span></label>
+          <label><input type="radio" name="q9" value="4"><span class="num">4</span><span class="lbl">Monitored</span></label>
+          <label><input type="radio" name="q9" value="5"><span class="num">5</span><span class="lbl">Closed-loop SLAs</span></label>
+        </div>
+      </div>
+
+      <div class="assess-card">
+        <span class="q-num">Q10 — Continuous Improvement</span>
+        <h3>Does your risk program have a defined annual refresh cycle and feedback loop?</h3>
+        <div class="scale" data-q="10">
+          <label><input type="radio" name="q10" value="1"><span class="num">1</span><span class="lbl">No</span></label>
+          <label><input type="radio" name="q10" value="2"><span class="num">2</span><span class="lbl">Ad hoc</span></label>
+          <label><input type="radio" name="q10" value="3"><span class="num">3</span><span class="lbl">Annual</span></label>
+          <label><input type="radio" name="q10" value="4"><span class="num">4</span><span class="lbl">Bi-annual</span></label>
+          <label><input type="radio" name="q10" value="5"><span class="num">5</span><span class="lbl">Continuous</span></label>
+        </div>
+      </div>
+
+      <!-- Lead capture (always visible — submits result + name + email to OfficeBeat) -->
+      <div class="lead-capture">
+        <h3>Where should we send your detailed report?</h3>
+        <p>We'll email a personalized 1-page breakdown of your score, the gaps it implies, and three specific next moves. No spam, no sales sequence — just the report.</p>
+        <div class="row">
+          <input id="lead-name" type="text" placeholder="Your name" autocomplete="name">
+          <input id="lead-company" type="text" placeholder="Company" autocomplete="organization">
+        </div>
+        <div class="row">
+          <input id="lead-email" type="email" placeholder="Work email" autocomplete="email">
+          <input id="lead-role" type="text" placeholder="Your role (e.g. CRO, CISO)" autocomplete="organization-title">
+        </div>
+        <div class="actions">
+          <button class="btn" id="submit-assess" type="button">Get my report →</button>
+          <span style="font-size:12px;color:rgba(255,255,255,.7);">Takes 2 seconds. We respond within 1 business day.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results (hidden until submit) -->
+    <div id="results" style="display:none;">
+      <div class="result-card">
+        <span class="band" id="result-band"></span>
+        <div class="score"><span id="result-score">0</span><span class="score-of"> / 50</span></div>
+        <h2 id="result-title">Your maturity</h2>
+        <p class="blurb" id="result-blurb"></p>
+        <ol class="next-steps" id="result-steps"></ol>
+        <a href="contact.html" class="btn primary" style="margin-top:24px;">Schedule a deeper conversation</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="brand">
+        <img src="assets/officebeat-logo.png" alt="OfficeBeat LLC">
+        <span class="tag">Navigate Complexity, Secure Your Future.</span>
+      </div>
+      <div class="links">
+        <a href="index.html">Home</a>
+        <a href="finance.html">Finance</a>
+        <a href="healthcare.html">Healthcare</a>
+        <a href="services.html">Services</a>
+        <a href="locations.html">Locations</a>
+        <a href="contact.html">Contact</a>
+        <a href="https://getmyjob.officebeatllc.com/">getmemyjob ↗</a>
+      </div>
+    </div>
+    <div class="legal">
+      <span>© 2026 OfficeBeat LLC. All rights reserved.</span>
+      <span>info@officebeatllc.com · +1 (201) 446-2837 · New York, NY</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Highlight selected scale option
+  document.querySelectorAll('.scale').forEach(scale => {
+    scale.addEventListener('change', e => {
+      scale.querySelectorAll('label').forEach(l => l.classList.remove('selected'));
+      const sel = scale.querySelector('input:checked');
+      if (sel) sel.parentElement.classList.add('selected');
+      updateProgress();
+    });
+  });
+
+  function updateProgress() {
+    const total = 10;
+    const done = document.querySelectorAll('.scale input:checked').length;
+    const pct = (done / total) * 100;
+    document.getElementById('prog-fill').style.width = pct + '%';
+  }
+
+  function bandFor(score) {
+    if (score <= 20) return { key: 'emerging', label: 'Emerging', title: 'Foundation gaps.', blurb: 'Your risk program is reactive — handled when incidents force the conversation, not proactively. This is normal at companies under ~$50M revenue or where the CRO function is new. The good news: a focused 90-day engagement can move you to "Developing" with the right priorities.', steps: ['Stand up a basic risk governance committee with named owners.', 'Build a Tier-1 risk register and present to the board.', 'Pick ONE framework (COSO ERM or NIST CSF) and align everything to it.'] };
+    if (score <= 30) return { key: 'developing', label: 'Developing', title: 'Foundation exists; standardization is the gap.', blurb: 'You have programs in place, but they\'re inconsistent across business units, lack the cadence to drive real decisions, or rely too heavily on one person. The next move is making the program scalable and decision-grade.', steps: ['Standardize risk taxonomy and appetite statements across all units.', 'Implement KRI dashboards reviewed by leadership monthly.', 'Test (tabletop) your incident-response plan within 90 days.'] };
+    if (score <= 40) return { key: 'defined', label: 'Defined', title: 'Programs in place. Scaling is the new challenge.', blurb: 'You have a mature risk program by most measures. The remaining gaps are usually in continuous improvement, third-party risk depth, or compliance automation — not foundational rebuilds. Targeted engagements deliver the highest ROI here.', steps: ['Add quantitative risk methods (FAIR or similar) for top exposures.', 'Move third-party risk from annual reviews to continuous monitoring.', 'Automate evidence collection for your most-audited regulations.'] };
+    return { key: 'optimized', label: 'Optimized', title: 'Mature. The work now is refinement.', blurb: 'You\'re in the top tier — formal, automated, board-engaged, continuously improving. Most engagements at this level focus on emerging-risk integration (AI, climate, geopolitical), regulator-relations strategy, or extracting strategic advantage from the risk function.', steps: ['Build an emerging-risk forum (AI, ESG, geopolitical, supply chain).', 'Pursue ratings-agency engagement to convert maturity into rating uplift.', 'Use risk dashboards as competitive differentiators in customer conversations.'] };
+  }
+
+  document.getElementById('submit-assess').addEventListener('click', () => {
+    // Collect scores
+    const answers = {};
+    let score = 0;
+    for (let i = 1; i <= 10; i++) {
+      const sel = document.querySelector('input[name="q' + i + '"]:checked');
+      if (sel) {
+        answers['q' + i] = parseInt(sel.value, 10);
+        score += parseInt(sel.value, 10);
+      }
+    }
+    if (Object.keys(answers).length < 10) {
+      alert('Please answer all 10 questions before getting your report.');
+      return;
+    }
+    const name = document.getElementById('lead-name').value.trim();
+    const email = document.getElementById('lead-email').value.trim();
+    const company = document.getElementById('lead-company').value.trim();
+    const role = document.getElementById('lead-role').value.trim();
+    if (!email) { alert('Please add an email so we can send your report.'); return; }
+
+    // Build mailto with the responses
+    const subject = encodeURIComponent('Risk Maturity Assessment — ' + (name || 'Inquiry') + ' (Score: ' + score + '/50)');
+    const lines = [
+      'Name: ' + name,
+      'Email: ' + email,
+      'Company: ' + company,
+      'Role: ' + role,
+      '',
+      'Score: ' + score + ' / 50',
+      'Band: ' + bandFor(score).label,
+      '',
+      'Responses:',
+    ];
+    for (let i = 1; i <= 10; i++) lines.push('  Q' + i + ': ' + answers['q' + i] + '/5');
+    lines.push('', '— Submitted via officebeatllc.com/assess');
+    const body = encodeURIComponent(lines.join('\n'));
+    // Fire mailto in background
+    setTimeout(() => { window.location.href = 'mailto:info@officebeatllc.com?subject=' + subject + '&body=' + body; }, 100);
+
+    // Show result on screen
+    const b = bandFor(score);
+    document.getElementById('assessment-flow').style.display = 'none';
+    document.getElementById('results').style.display = 'block';
+    document.getElementById('result-score').textContent = score;
+    document.getElementById('result-band').textContent = b.label;
+    document.getElementById('result-band').className = 'band ' + b.key;
+    document.getElementById('result-title').textContent = b.title;
+    document.getElementById('result-blurb').textContent = b.blurb;
+    const stepsEl = document.getElementById('result-steps');
+    stepsEl.innerHTML = '';
+    b.steps.forEach(s => {
+      const li = document.createElement('li');
+      li.textContent = s;
+      stepsEl.appendChild(li);
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+</script>
+
+</body>
+</html>
