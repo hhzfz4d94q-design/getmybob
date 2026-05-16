@@ -84,185 +84,86 @@
   </div>
 </section>
 
-<section id="services" class="dark-section">
+<section id="services">
   <div class="container">
-    <span class="eyebrow-tag on-dark">Healthcare Practice — Services</span>
+    <span class="eyebrow-tag">Healthcare Practice — Services</span>
     <h2>What we deliver for healthcare organizations.</h2>
     <p class="lead">Engagements that respect clinical workflows, regulatory reality, and the people who have to use the systems you ship.</p>
 
-    <div class="grid-3">
-      <div class="card">
-        <div class="icon">DT</div>
-        <h3>Digital transformation</h3>
-        <p>Stand up agile operating models across 10+ team programs. Define KPIs, transparency, and demand management. Drive measurable efficiency gains — 30% gain documented across teams.</p>
+    <div class="tabs-wrap">
+      <div class="tab-bar" role="tablist">
+        <button class="tab-btn active" data-tab="digital" onclick="setHcTab('digital')">Digital Transformation</button>
+        <button class="tab-btn" data-tab="ehr" onclick="setHcTab('ehr')">EHR &amp; EMR</button>
+        <button class="tab-btn" data-tab="ops" onclick="setHcTab('ops')">Product &amp; Operations</button>
+        <button class="tab-btn" data-tab="offshore" onclick="setHcTab('offshore')">Offshore Delivery</button>
       </div>
-      <div class="card">
-        <div class="icon">EH</div>
-        <h3>EHR product strategy</h3>
-        <p>Specialty EHR product definition, segmentation, packaging, pricing, and go-to-market. Legacy on-premise to SaaS conversion. 20% partner-revenue growth via iBOB strategy.</p>
+
+      <!-- Sub-tab 1: Digital Transformation & AI -->
+      <div class="tab-panel active" id="hc-digital">
+        <div class="grid-3">
+          <div class="card"><div class="icon">DT</div><h3>Digital transformation</h3><p>Stand up agile operating models across 10+ team programs. Define KPIs, transparency, and demand management. Drive measurable efficiency gains — 30% gain documented across teams.</p></div>
+          <div class="card"><div class="icon">AI</div><h3>AI program prioritization</h3><p>Validate AI capabilities through prototypes — SDLC automation, content creation, video, data insights. Prioritize investments grounded in real outcomes, not hype.</p></div>
+          <div class="card"><div class="icon">D2C</div><h3>Direct-to-consumer health</h3><p>End-to-end D2C initiatives — program launch, site build, vendor development, support, and operations. 10M+ visits delivered at 83% CSAT.</p></div>
+          <div class="card"><div class="icon">IP</div><h3>Strategic infrastructure planning</h3><p>Strategic &amp; tactical infrastructure planning for healthcare technology — legacy-to-SaaS roadmaps, cloud migration sequencing, capacity planning, and resilience design.</p></div>
+          <div class="card"><div class="icon">RF</div><h3>Reporting &amp; dashboarding</h3><p>Cross-business-unit reporting for alignment and accountability. Executive dashboards, KPI definition, performance review cadences, data-driven decision enablement.</p></div>
+          <div class="card"><div class="icon">BC</div><h3>Budget &amp; cost optimization</h3><p>Budgeting, cost control, and profit optimization for healthcare-tech functions. Recurring revenue conversion, offshore economics, vendor consolidation, operating leverage analysis.</p></div>
+        </div>
       </div>
-      <div class="card">
-        <div class="icon">AI</div>
-        <h3>AI program prioritization</h3>
-        <p>Validate AI capabilities through prototypes — SDLC automation, content creation, video, data insights. Prioritize investments grounded in real outcomes, not hype.</p>
+
+      <!-- Sub-tab 2: EHR & EMR -->
+      <div class="tab-panel" id="hc-ehr">
+        <p style="font-size:16px;color:var(--muted);line-height:1.6;margin-bottom:24px;">A dedicated EHR/EMR practice covering the entire lifecycle — selection through implementation through optimization through long-term operations. Multi-vendor experience across specialty and enterprise systems.</p>
+        <div class="grid-3">
+          <div class="card"><div class="icon">E1</div><h3>Vendor selection &amp; RFP</h3><p>Structured EHR evaluation — Epic vs Cerner vs Athena vs Allscripts vs NextGen vs eClinicalWorks vs specialty options. RFP design, scripted demos, scoring frameworks, total-cost modeling. Independent advisor.</p></div>
+          <div class="card"><div class="icon">E2</div><h3>Implementation &amp; rollout</h3><p>Multi-site EHR implementation programs — project governance, build &amp; configuration oversight, integrated testing, go-live command, training, 90-day stabilization. Risk-aware from day 1.</p></div>
+          <div class="card"><div class="icon">E3</div><h3>Optimization &amp; clinician adoption</h3><p>Post go-live optimization for systems that "work" but aren't loved. Workflow redesign, template &amp; order-set rationalization, note-bloat reduction, AVS tuning, clinician advisory councils.</p></div>
+          <div class="card"><div class="icon">E4</div><h3>Data migration &amp; consolidation</h3><p>Legacy EHR-to-modern migrations. M&amp;A-driven EHR consolidations across acquired practices. Discrete vs document-imaging strategy, chart conversion, longitudinal record reconciliation.</p></div>
+          <div class="card"><div class="icon">E5</div><h3>HL7 / FHIR interoperability</h3><p>EHR integration with labs, Rx, imaging, patient engagement, payers, registries. HL7 v2 / FHIR R4 API strategy, USCDI alignment, Cures Information Blocking response, TEFCA participation.</p></div>
+          <div class="card"><div class="icon">E6</div><h3>Security, privacy &amp; PHI controls</h3><p>HIPAA Privacy &amp; Security applied inside the EHR — role-based access, break-glass workflows, audit-log monitoring, PHI minimization in research extracts, integration with enterprise DLP / SIEM.</p></div>
+          <div class="card"><div class="icon">E7</div><h3>Specialty EHR product strategy</h3><p>Direct experience leading specialty EHR product portfolios — definitions, segmentation, packaging, pricing, go-to-market. SaaS transition, iBOB integrations, 96% client-retention track record.</p></div>
+          <div class="card"><div class="icon">E8</div><h3>Upgrade &amp; version migrations</h3><p>Major-version upgrades on Epic / Cerner / specialty EHRs. Regression testing, sandbox-to-prod sequencing, third-party-extension compatibility, downtime / parallel-run strategy.</p></div>
+          <div class="card"><div class="icon">E9</div><h3>Analytics &amp; population health</h3><p>Turn EHR data into actionable insight. MIPS, HEDIS, eCQM measure reporting, population health stratification, care-gap closure workflows, clinical / operational dashboards on EHR data warehouses.</p></div>
+          <div class="card"><div class="icon">E10</div><h3>Patient portal &amp; engagement</h3><p>Patient-facing engagement layered on the EHR. Portal adoption strategy, secure messaging governance, online scheduling, mobile experience, accessibility (Section 508 / WCAG 2.1) compliance.</p></div>
+          <div class="card"><div class="icon">E11</div><h3>Telehealth integration with EHR</h3><p>Embedding virtual care into the EHR — scheduling, charting, billing capture, multi-state licensure considerations, direct-to-consumer telehealth program build (10M+ visits delivered).</p></div>
+          <div class="card"><div class="icon">E12</div><h3>Audit &amp; ONC surveillance</h3><p>ONC certification surveillance prep, MIPS audit defense, OIG / RAC audit support, continuous monitoring of EHR usage to surface compliance risk before a regulator does.</p></div>
+        </div>
       </div>
-      <div class="card">
-        <div class="icon">PM</div>
-        <h3>Product portfolio management</h3>
-        <p>Multi-million-dollar program governance, executive program sponsorship, PMO &amp; release management. EHR compliance roadmaps across enterprise scale.</p>
+
+      <!-- Sub-tab 3: Product & Operations -->
+      <div class="tab-panel" id="hc-ops">
+        <div class="grid-3">
+          <div class="card"><div class="icon">EH</div><h3>EHR / SaaS product strategy</h3><p>Specialty EHR product definition, segmentation, packaging, pricing, and go-to-market. Legacy on-premise to SaaS conversion. 20% partner-revenue growth via iBOB strategy.</p></div>
+          <div class="card"><div class="icon">PM</div><h3>Product portfolio management</h3><p>Multi-million-dollar program governance, executive program sponsorship, PMO &amp; release management. EHR compliance roadmaps across enterprise scale.</p></div>
+          <div class="card"><div class="icon">VI</div><h3>Vendor &amp; clinical integrations</h3><p>Lab information systems, patient engagement, prescription management, billing. Forge partnerships with multiple vendors in matrixed environments.</p></div>
+          <div class="card"><div class="icon">SA</div><h3>SaaS transition strategy</h3><p>Re-direct from on-premise to SaaS without increasing expenditure — convert one-time license revenue into recurring revenue models.</p></div>
+          <div class="card"><div class="icon">GO</div><h3>Governance &amp; demand management</h3><p>Digital steering committees, demand-management frameworks, end-to-end intake-to-delivery tooling — data-driven decisions for the business.</p></div>
+          <div class="card"><div class="icon">HC</div><h3>HIPAA / HITRUST &amp; regulatory</h3><p>Healthcare-specific compliance — HIPAA Privacy/Security, HITRUST CSF, state privacy law mapping, regulatory roadmaps for software products in regulated workflows.</p></div>
+          <div class="card"><div class="icon">NP</div><h3>New product launch &amp; GTM</h3><p>End-to-end go-to-market for healthcare technology — positioning, pricing, packaging, market segmentation, launch readiness, post-launch ops. Multiple specialty-EHR launches delivered.</p></div>
+          <div class="card"><div class="icon">PO</div><h3>Multi-million-dollar PMO</h3><p>Multi-million-dollar program management for healthcare enterprises. Executive program sponsorship, release management, EHR compliance roadmaps, Digital Steering Committees.</p></div>
+          <div class="card"><div class="icon">OE</div><h3>Operations excellence &amp; hyper care</h3><p>Drive maintenance phases through hyper care to steady state. Cross-BU reporting frameworks, intake-to-delivery tooling, KPI design, process standardization.</p></div>
+          <div class="card"><div class="icon">CN</div><h3>Contract negotiation &amp; vendor strategy</h3><p>Strategic vendor selection, contract negotiation, ongoing vendor lifecycle management. Includes iBOB (integrated best-of-breed) ecosystem design for specialty EHR platforms.</p></div>
+          <div class="card"><div class="icon">TB</div><h3>Team building &amp; leadership development</h3><p>High-performance team enablement — hiring policies, training manifests, performance frameworks, Scrum/LEAN/Agile training, mentoring for healthcare-tech leaders.</p></div>
+          <div class="card"><div class="icon">SE</div><h3>Software engineering excellence</h3><p>SDLC best-practices for healthcare-software teams. QA, governance, release management, automated testing, deployment pipelines — 50% cycle-time reduction track record.</p></div>
+          <div class="card"><div class="icon">IA</div><h3>Integration architecture &amp; API strategy</h3><p>Third-party vendor integrations across clinical workflows — labs, Rx, patient engagement, billing, scheduling, telemedicine. HL7 / FHIR / DICOM expertise.</p></div>
+          <div class="card"><div class="icon">DS</div><h3>Digital Steering Committee design</h3><p>Demand-management governance for product &amp; technology requests. Committee charters, prioritization frameworks, business-driver alignment, smarter use of tech dollars.</p></div>
+          <div class="card"><div class="icon">RM</div><h3>Release management &amp; deployment</h3><p>Release management operations for healthcare software. Deployment automation, blue-green / canary patterns for regulated environments, change-management gates, rollback playbooks.</p></div>
+        </div>
       </div>
-      <div class="card">
-        <div class="icon">VI</div>
-        <h3>Vendor &amp; clinical integrations</h3>
-        <p>Lab information systems, patient engagement, prescription management, billing. Forge partnerships with multiple vendors in matrixed environments.</p>
-      </div>
-      <div class="card">
-        <div class="icon">D2C</div>
-        <h3>Direct-to-consumer health</h3>
-        <p>End-to-end D2C initiatives — program launch, site build, vendor development, support, and operations. 10M+ visits delivered at 83% CSAT.</p>
-      </div>
-      <div class="card">
-        <div class="icon">SA</div>
-        <h3>SaaS transition strategy</h3>
-        <p>Re-direct from on-premise to SaaS without increasing expenditure — convert one-time license revenue into recurring revenue models.</p>
-      </div>
-      <div class="card">
-        <div class="icon">GO</div>
-        <h3>Governance &amp; demand management</h3>
-        <p>Digital steering committees, demand-management frameworks, end-to-end intake-to-delivery tooling — enabling data-driven decisions for the business.</p>
-      </div>
-      <div class="card">
-        <div class="icon">HC</div>
-        <h3>HIPAA / HITRUST &amp; regulatory</h3>
-        <p>Healthcare-specific compliance — HIPAA Privacy/Security, HITRUST CSF, state privacy law mapping, and regulatory roadmaps for software products in regulated workflows.</p>
-      </div>
-      <div class="card">
-        <div class="icon">NP</div>
-        <h3>New product launch &amp; GTM</h3>
-        <p>End-to-end go-to-market strategy for healthcare technology — positioning, pricing, packaging, market segmentation, launch readiness, and post-launch operationalization. Track record of multiple new specialty-EHR launches.</p>
-      </div>
-      <div class="card">
-        <div class="icon">PO</div>
-        <h3>Multi-million-dollar PMO</h3>
-        <p>Multi-million-dollar program management for healthcare enterprises. Executive program sponsorship, release management, EHR compliance roadmaps, and demand management for product &amp; technology requests via Digital Steering Committees.</p>
-      </div>
-      <div class="card">
-        <div class="icon">OE</div>
-        <h3>Operations excellence &amp; hyper care</h3>
-        <p>Drive maintenance phases through hyper care and steady state. Establish reporting frameworks for alignment and accountability across business units. End-to-end intake-to-delivery tooling, KPI design, and process standardization.</p>
-      </div>
-      <div class="card">
-        <div class="icon">CN</div>
-        <h3>Contract negotiation &amp; vendor strategy</h3>
-        <p>Strategic vendor selection, contract negotiation, and ongoing vendor lifecycle management — including iBOB (integrated best-of-breed) ecosystem design for specialty EHR platforms.</p>
-      </div>
-      <div class="card">
-        <div class="icon">TB</div>
-        <h3>Team building &amp; leadership development</h3>
-        <p>High-performance team enablement — hiring policies, training manifests, performance frameworks, Scrum/LEAN/Agile training, and mentoring for healthcare-tech leaders building or scaling their organizations.</p>
-      </div>
-      <div class="card">
-        <div class="icon">SE</div>
-        <h3>Software engineering excellence</h3>
-        <p>SDLC best-practices for healthcare-software teams. QA, governance, release management, automated testing, deployment pipelines, and offshore-extended engineering — 50% cycle-time reduction track record.</p>
-      </div>
-      <div class="card">
-        <div class="icon">IA</div>
-        <h3>Integration architecture &amp; API strategy</h3>
-        <p>Third-party vendor integrations across clinical workflows — labs, Rx, patient engagement, billing, scheduling, telemedicine. HL7 / FHIR / DICOM expertise and integration-platform strategy.</p>
-      </div>
-      <div class="card">
-        <div class="icon">DS</div>
-        <h3>Digital Steering Committee design</h3>
-        <p>Demand-management governance for product &amp; technology requests. Steering Committee charters, prioritization frameworks, business-driver alignment, and smarter use of technology dollars.</p>
-      </div>
-      <div class="card">
-        <div class="icon">IP</div>
-        <h3>Strategic infrastructure planning</h3>
-        <p>Strategic &amp; tactical infrastructure planning for healthcare technology — legacy-to-SaaS roadmaps, cloud migration sequencing, capacity planning, and resilience design.</p>
-      </div>
-      <div class="card">
-        <div class="icon">BC</div>
-        <h3>Budget &amp; cost optimization</h3>
-        <p>Budgeting, cost control, and profit optimization for healthcare-tech functions. Recurring revenue conversion, offshore augmentation economics, vendor consolidation, and operating leverage analysis.</p>
-      </div>
-      <div class="card">
-        <div class="icon">RF</div>
-        <h3>Reporting &amp; dashboarding frameworks</h3>
-        <p>Cross-business-unit reporting for alignment and accountability. Executive dashboards, KPI definition, performance review cadences, and data-driven decision enablement.</p>
-      </div>
-      <div class="card">
-        <div class="icon">RM</div>
-        <h3>Release management &amp; deployment</h3>
-        <p>Release management operations for healthcare software. Deployment automation, blue-green / canary patterns for regulated environments, change-management gates, and rollback playbooks.</p>
+
+      <!-- Sub-tab 4: Offshore Delivery -->
+      <div class="tab-panel" id="hc-offshore">
+        <p style="font-size:16px;color:var(--muted);line-height:1.6;margin-bottom:24px;">Leverage OfficeBeat's global network of expert talent for cost-effective, high-quality delivery. Offshore services that seamlessly extend your healthcare-tech capabilities — project continuity, enhanced efficiency, and access to specialized skills without geographical boundaries. <strong style="color:var(--ink)">24/7 productivity · significant cost savings · seamless collaboration model.</strong></p>
+        <div class="grid-3">
+          <div class="card"><div class="icon">AD</div><h3>Application development &amp; maintenance</h3><p>Build and maintain robust healthcare software — custom EHR extensions, integration layers, patient-facing apps, legacy modernization, ongoing maintenance &amp; support.</p></div>
+          <div class="card"><div class="icon">QA</div><h3>QA &amp; testing</h3><p>Ensure reliability, performance, and security of healthcare software. Test strategy, functional / regression / performance / security testing, HIPAA-aware test data handling.</p></div>
+          <div class="card"><div class="icon">DA</div><h3>Data analytics &amp; reporting</h3><p>Transform clinical and operational data into actionable insight. Pipeline design, dashboard development, MIPS / HEDIS / quality-measure reporting, predictive analytics.</p></div>
+          <div class="card"><div class="icon">PM</div><h3>PMO support</h3><p>Streamline EHR implementation and digital-transformation execution. PMO setup &amp; standards, project tracking &amp; reporting, resource management, stakeholder coordination.</p></div>
+          <div class="card"><div class="icon">IM</div><h3>Implementation support</h3><p>Offshore-augmented EHR / SaaS implementation teams. Build &amp; config oversight, testing, training material development, go-live command center support.</p></div>
+          <div class="card"><div class="icon">RC</div><h3>Risk &amp; compliance operations</h3><p>Ongoing operation of HIPAA / HITRUST programs — testing, evidence collection, issue tracking, audit response, and continuous monitoring of compliance posture.</p></div>
+        </div>
       </div>
     </div>
 
-    <h3 style="font-size:24px;color:var(--indigo);margin-top:60px;margin-bottom:8px;">EHR &amp; EMR specialty</h3>
-    <p class="lead" style="margin-bottom:28px;">A dedicated EHR/EMR practice covering the entire lifecycle — selection through implementation through optimization through long-term operations. Multi-vendor experience across specialty &amp; enterprise systems.</p>
-
-    <div class="grid-3">
-      <div class="card">
-        <div class="icon">E1</div>
-        <h3>EHR / EMR vendor selection &amp; RFP</h3>
-        <p>Structured EHR evaluation — Epic vs Cerner vs Athena vs Allscripts vs NextGen vs eClinicalWorks vs specialty options. RFP design, scripted demos, scoring frameworks, and total-cost modeling. Independent advisor, not a reseller.</p>
-      </div>
-      <div class="card">
-        <div class="icon">E2</div>
-        <h3>EHR / EMR implementation &amp; rollout</h3>
-        <p>Multi-site EHR implementation programs — project governance, build &amp; configuration oversight, integrated testing, go-live command, training, and 90-day stabilization. Risk-aware from day 1.</p>
-      </div>
-      <div class="card">
-        <div class="icon">E3</div>
-        <h3>EHR optimization &amp; clinician adoption</h3>
-        <p>Post go-live optimization for systems that "work" but aren't loved. Workflow redesign, template &amp; order-set rationalization, note-bloat reduction, after-visit-summary tuning, and clinician advisory councils.</p>
-      </div>
-      <div class="card">
-        <div class="icon">E4</div>
-        <h3>EHR data migration &amp; consolidation</h3>
-        <p>Legacy EHR-to-modern migrations. M&amp;A-driven EHR consolidations across acquired practices or facilities. Discrete data vs document-imaging strategy, chart conversion, longitudinal record reconciliation.</p>
-      </div>
-      <div class="card">
-        <div class="icon">E5</div>
-        <h3>HL7 / FHIR interoperability</h3>
-        <p>EHR integration with labs, Rx, imaging, patient engagement, payers, registries. HL7 v2 / FHIR R4 API strategy, USCDI alignment, 21st Century Cures Information Blocking response, TEFCA participation.</p>
-      </div>
-      <div class="card">
-        <div class="icon">E6</div>
-        <h3>EHR security, privacy &amp; PHI controls</h3>
-        <p>HIPAA Privacy &amp; Security applied inside the EHR — role-based access, break-glass workflows, audit-log monitoring, PHI minimization in research extracts, and integration with enterprise DLP / SIEM.</p>
-      </div>
-      <div class="card">
-        <div class="icon">E7</div>
-        <h3>Specialty EHR product strategy</h3>
-        <p>Direct experience leading specialty EHR product portfolios — definitions, segmentation, packaging, pricing, and go-to-market. SaaS transition, iBOB integrations, and 96% client-retention track record.</p>
-      </div>
-      <div class="card">
-        <div class="icon">E8</div>
-        <h3>EHR upgrade &amp; version migrations</h3>
-        <p>Major-version upgrades on Epic / Cerner / specialty EHRs. Regression testing, sandbox-to-prod sequencing, third-party-extension compatibility, and downtime / parallel-run strategy.</p>
-      </div>
-      <div class="card">
-        <div class="icon">E9</div>
-        <h3>EHR analytics &amp; population health</h3>
-        <p>Turn EHR data into actionable insight. Quality measure reporting (MIPS, HEDIS, eCQM), population health stratification, care-gap closure workflows, and clinical / operational dashboards built on EHR data warehouses.</p>
-      </div>
-      <div class="card">
-        <div class="icon">E10</div>
-        <h3>Patient portal &amp; engagement</h3>
-        <p>Patient-facing engagement layered on the EHR. Portal adoption strategy, secure messaging governance, online scheduling, mobile experience, and accessibility (Section 508 / WCAG 2.1) compliance.</p>
-      </div>
-      <div class="card">
-        <div class="icon">E11</div>
-        <h3>Telehealth integration with EHR</h3>
-        <p>Embedding virtual care into the EHR — scheduling, charting, billing capture, multi-state licensure considerations, and direct-to-consumer telehealth program build (10M+ visits delivered).</p>
-      </div>
-      <div class="card">
-        <div class="icon">E12</div>
-        <h3>EHR audit &amp; ONC surveillance</h3>
-        <p>ONC certification surveillance prep, MIPS audit defense, OIG / RAC audit support, and continuous monitoring of EHR usage to surface compliance risk before it surfaces to a regulator.</p>
-      </div>
-    </div>
   </div>
 </section>
 
@@ -428,6 +329,18 @@
     </div>
   </div>
 </footer>
+
+<script>
+  function setHcTab(name) {
+    document.querySelectorAll('#services .tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+    document.querySelectorAll('#services .tab-panel').forEach(p => p.classList.toggle('active', p.id === 'hc-' + name));
+    if (history.replaceState) history.replaceState(null, '', '#' + name);
+  }
+  (function(){
+    var h = (location.hash || '').replace('#','');
+    if (h && document.getElementById('hc-' + h)) setHcTab(h);
+  })();
+</script>
 
 </body>
 </html>
