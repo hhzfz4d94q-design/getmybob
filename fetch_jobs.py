@@ -1144,6 +1144,17 @@ HTML_TEMPLATE = """<!doctype html>
 <html><head><meta charset="utf-8"><title>Jobs for {user_name}</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1f3a5f">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="256x256" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
+<meta name="description" content="A curated, AI-matched job feed for senior leadership roles — by OfficeBeat LLC.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="getmemyjob — your tailored job feed">
+<meta property="og:description" content="Real openings from real companies, AI-matched to your skills. By OfficeBeat LLC.">
+<meta property="og:image" content="https://getmyjob.officebeatllc.com/og-card.png">
+<meta property="og:site_name" content="getmemyjob">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://getmyjob.officebeatllc.com/og-card.png">
 <style>
   body {{ font: 14px -apple-system, system-ui, sans-serif; margin: 0; background: #f7f7f8; color: #222; }}
   header {{ background: #1f3a5f; color: white; padding: 18px 28px; position: relative; }}
