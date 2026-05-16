@@ -1601,6 +1601,14 @@ const STATUS_LABEL = {{
   'rejected': 'Rejected'
 }};
 
+// Worker base + user-scoped query string. Declared up here because several
+// const URL declarations below reference these — JS const has temporal dead
+// zone and would throw "Cannot access X before initialization" if these were
+// further down the script.
+const WORKER_BASE = 'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev';
+const USER_SLUG = '{user_slug}';
+const USER_QS = '?user=' + encodeURIComponent(USER_SLUG);
+
 // Tracker is server-side (Cloudflare KV). We cache it in memory for fast reads;
 // every write goes to the Worker.
 const TRACKER_WORKER_URL = WORKER_BASE + '/tracker' + USER_QS;
@@ -2116,9 +2124,7 @@ function filter() {{
 }}
 
 // --- Resume editor (Cloudflare Worker + KV) -----------------------------
-const WORKER_BASE = 'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev';
-const USER_SLUG = '{user_slug}';
-const USER_QS = '?user=' + encodeURIComponent(USER_SLUG);
+// (WORKER_BASE, USER_SLUG, USER_QS now declared earlier near the tracker URLs)
 const RESUME_WORKER_URL = WORKER_BASE + '/resume' + USER_QS;
 const VERSIONS_WORKER_URL = WORKER_BASE + '/resume-versions' + USER_QS;
 const PARSE_RESUME_WORKER_URL = WORKER_BASE + '/parse-resume' + USER_QS;
