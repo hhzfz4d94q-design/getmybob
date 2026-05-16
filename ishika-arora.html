@@ -164,7 +164,7 @@
 
 <header>
   <h1>Jobs for Ishika Arora</h1>
-  <div class="sub">Awaiting resume upload — click Resume to get started · Generated 2026-05-16 02:03</div>
+  <div class="sub">Awaiting resume upload — click Resume to get started · Generated 2026-05-16 02:13</div>
   <div class="header-actions">
     <button class="wiz-help-btn" onclick="replayTour()" title="Replay setup tour">?</button>
     <button id="resume-btn" class="header-btn" onclick="openResumeModal()">Resume</button>
@@ -173,7 +173,7 @@
   </div>
 </header>
 <div class="stats">
-  <div class="stat"><b>8920</b>Total jobs tracked</div>
+  <div class="stat"><b>8921</b>Total jobs tracked</div>
   <div class="stat"><b>389</b>Senior + Remote (last 7d)</div>
   <div class="stat"><b>0</b>Possible ghost jobs (60d+)</div>
   <div class="stat"><b id="shown-counter">0</b>Showing</div>
@@ -458,6 +458,14 @@ const STATUS_LABEL = {
   'offer': 'Offer',
   'rejected': 'Rejected'
 };
+
+// Worker base + user-scoped query string. Declared up here because several
+// const URL declarations below reference these — JS const has temporal dead
+// zone and would throw "Cannot access X before initialization" if these were
+// further down the script.
+const WORKER_BASE = 'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev';
+const USER_SLUG = 'ishika-arora';
+const USER_QS = '?user=' + encodeURIComponent(USER_SLUG);
 
 // Tracker is server-side (Cloudflare KV). We cache it in memory for fast reads;
 // every write goes to the Worker.
@@ -974,9 +982,7 @@ function filter() {
 }
 
 // --- Resume editor (Cloudflare Worker + KV) -----------------------------
-const WORKER_BASE = 'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev';
-const USER_SLUG = 'ishika-arora';
-const USER_QS = '?user=' + encodeURIComponent(USER_SLUG);
+// (WORKER_BASE, USER_SLUG, USER_QS now declared earlier near the tracker URLs)
 const RESUME_WORKER_URL = WORKER_BASE + '/resume' + USER_QS;
 const VERSIONS_WORKER_URL = WORKER_BASE + '/resume-versions' + USER_QS;
 const PARSE_RESUME_WORKER_URL = WORKER_BASE + '/parse-resume' + USER_QS;
