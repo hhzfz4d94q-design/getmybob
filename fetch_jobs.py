@@ -3056,7 +3056,7 @@ function _csvSplitLine(line) {{
 function _parseConnectionsCSV(text) {{
   if (!text) return [];
   // Normalize newlines
-  const lines = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
+  const lines = text.replace(/\\r\\n/g, '\\n').replace(/\\r/g, '\\n').split('\\n');
   // Find header row — must contain "First Name" and "Last Name"
   let headerIdx = -1;
   for (let i = 0; i < lines.length; i++) {{
