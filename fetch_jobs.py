@@ -2454,6 +2454,14 @@ function _renderProfileHTML(p) {{
   html += section('Frameworks', p.frameworks, '#fff3d6', 'frameworks');
   html += section('Regulations', p.regulations, '#fff0e6', 'regulations');
   html += section('Certifications', p.certifications, '#e6fff8', 'certifications');
+  html += section('Preferred locations', p.preferredLocations, '#e6f0ff', 'preferredLocations');
+  if (p.remotePreference) {{
+    const remoteLabel = ({{'remote-only':'Remote only','hybrid':'Hybrid OK','onsite':'Onsite preferred','any':'Any'}})[p.remotePreference] || p.remotePreference;
+    html += section('Remote preference', [remoteLabel], '#ffe6f0', 'remotePreference');
+  }} else {{
+    html += section('Remote preference', [], '#ffe6f0', 'remotePreference');
+  }}
+  html += section('Target companies (AI suggested)', (p.targetCompanies||[]).map(function(c){{ return typeof c==='string' ? c : (c.name + (c.atsHint && c.atsHint !== 'unknown' ? ' ('+c.atsHint+')' : '')); }}), '#fef3e8', 'targetCompanies');
   html += section('Filtered out', p.negativeKeywords, '#ffe6e6', 'negativeKeywords');
   html += '</div>';
   if (p.generatedAt) html += '<div style="font-size:11px;color:#999;margin-top:8px;">Generated ' + new Date(p.generatedAt).toLocaleString() + '</div>';
@@ -2469,6 +2477,7 @@ const EDITABLE_FIELDS = [
   ['regulations', 'Regulations'],
   ['certifications', 'Certifications'],
   ['targetTitles', 'Target titles'],
+  ['preferredLocations', 'Preferred locations'],
   ['negativeKeywords', 'Filtered-out terms'],
 ];
 
@@ -3686,10 +3695,17 @@ const WIZ_STEPS = [
   }},
   {{
     title: "Review your skills profile",
-    body: "<p>We just built a skills profile from your resume — target roles, industries, specialties, technologies, regulations, and more.</p><p>Take a quick look before we use it to match jobs. Click any &times; to remove a chip; click <strong>+ Add</strong> to fill in what we missed.</p>",
+    body: "<p>We just built a skills profile from your resume — target roles, industries, specialties, technologies, regulations, target companies, and more.</p><p>Take a quick look before we use it to match jobs. Click any &times; to remove a chip; click <strong>+ Add</strong> to fill in what we missed.</p>",
     cta: "Review my profile &rarr;",
     action: "open-resume-profile",
     skipText: "Skip — looks good already"
+  }},
+  {{
+    title: "Confirm where you want to work",
+    body: "<p>We extracted your <strong>preferred locations</strong> and <strong>remote preference</strong> from your resume too. They\u2019re shown in your profile as chips you can edit.</p><p>Make sure they reflect what you\u2019re actually open to \u2014 we use them to filter jobs.</p>",
+    cta: "Edit locations &amp; remote &rarr;",
+    action: "open-resume-profile",
+    skipText: "Skip — looks good"
   }},
   {{
     title: "Add your LinkedIn network (optional)",
