@@ -896,14 +896,18 @@ def _merge_user_target_companies(companies):
         print(f"[user-targets] load_users failed: {e}", flush=True)
         return
 
-    # Track what slugs already exist per ATS so we don't duplicate
+    # Track what slugs/tenants already exist per ATS so we don't duplicate
     existing = {ats: set() for ats in ("greenhouse", "lever", "ashby")}
-    for ats, key in existing.items():
+    existing["workday"] = set()
+    for ats in ("greenhouse", "lever", "ashby"):
         for entry in companies.get(ats, []):
             if isinstance(entry, str):
-                key.add(entry.lower())
+                existing[ats].add(entry.lower())
             elif isinstance(entry, dict) and entry.get("slug"):
-                key.add(entry["slug"].lower())
+                existing[ats].add(entry["slug"].lower())
+    for entry in companies.get("workday", []):
+        if isinstance(entry, dict) and entry.get("tenant"):
+            existing["workday"].add(entry["tenant"].lower())
 
     added = {ats: 0 for ats in ("greenhouse", "lever", "ashby")}
     skipped = 0
@@ -940,7 +944,37 @@ def _merge_user_target_companies(companies):
             target_slug = _slugify_company_name(t.get("slug") if isinstance(t, dict) and t.get("slug") else name)
 
             # Greenhouse/Lever/Ashby take a simple slug; Workday needs tenant+subdomain+site
-            # which the AI usually can't infer reliably — skip those for now.
+            # which we now try to parse from an atsUrl the AI may have provided.
+            if hint == "workday":
+                ats_url = t.get("atsUrl") if isinstance(t, dict) else None
+                if not ats_url:
+                    skipped += 1
+                    continue
+                # Parse https://{tenant}.{subdomain}.myworkdayjobs.com/{site}
+                wd_match = re.match(
+                    r"https?://([^./]+)\.(wd\d+)\.myworkdayjobs\.com/([^/?#]+)",
+                    ats_url,
+                )
+                if not wd_match:
+                    skipped += 1
+                    continue
+                wd_tenant, wd_subdomain, wd_site = wd_match.groups()
+                wd_key = wd_tenant.lower()
+                if wd_key in existing.setdefault("workday", set()):
+                    continue
+                companies.setdefault("workday", []).append({
+                    "name": name,
+                    "tenant": wd_tenant,
+                    "subdomain": wd_subdomain,
+                    "site": wd_site,
+                    "industries": user_industries or DEFAULT_INDUSTRIES,
+                    "_added_by_user": slug,
+                })
+                existing["workday"].add(wd_key)
+                added.setdefault("workday", 0)
+                added["workday"] += 1
+                continue
+
             if hint not in ("greenhouse", "lever", "ashby"):
                 skipped += 1
                 continue
