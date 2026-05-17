@@ -115,6 +115,20 @@
   </div>
 </div>
 
+
+<!-- Profile (AI skills) modal -->
+<div class="modal-overlay" id="profile-modal">
+  <div class="modal" style="max-width:680px;">
+    <h3>AI skills profile — <code id="profile-slug">—</code></h3>
+    <p style="font-size:13px; color:#555; margin-top:-6px;">What the AI extracted from this user's resume. Drives job matching.</p>
+    <div id="profile-body" style="max-height:60vh; overflow:auto; font-size:13px;"></div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:14px;">
+      <button class="secondary" onclick="closeProfileModal()">Close</button>
+    </div>
+    <div class="status" id="profile-status"></div>
+  </div>
+</div>
+
 <!-- Invite preview modal -->
 <div class="modal-overlay" id="invite-modal">
   <div class="modal">
@@ -165,6 +179,63 @@ function signOut() {
   $('login-modal').classList.add('show');
 }
 
+
+function openProfileModal(slug) {
+  $('profile-slug').textContent = slug;
+  $('profile-body').innerHTML = '<div style="padding:20px; color:#888;">Loading…</div>';
+  $('profile-status').textContent = '';
+  $('profile-modal').classList.add('show');
+  fetch(WORKER_BASE + '/skills-profile?user=' + encodeURIComponent(slug))
+    .then(r => r.json())
+    .then(data => renderProfile(data.profile || {}))
+    .catch(e => { $('profile-body').innerHTML = '<div style="color:#c00; padding:12px;">Failed to load: ' + escHtml(e.message || e) + '</div>'; });
+}
+
+function closeProfileModal() { $('profile-modal').classList.remove('show'); }
+
+function renderProfile(p) {
+  if (!p || Object.keys(p).length === 0) {
+    $('profile-body').innerHTML = '<div style="padding:20px; color:#888;">No profile yet — user has not uploaded a resume.</div>';
+    return;
+  }
+  function section(title, items) {
+    if (!items || (Array.isArray(items) && items.length === 0)) return '';
+    let chips;
+    if (Array.isArray(items)) {
+      chips = items.map(x => {
+        if (typeof x === 'string') return '<span style="display:inline-block; background:#eef0fb; color:#3b3bb0; padding:3px 8px; border-radius:12px; font-size:12px; margin:2px;">' + escHtml(x) + '</span>';
+        if (x && typeof x === 'object') {
+          const lbl = x.name || x.slug || JSON.stringify(x);
+          const sub = x.atsHint ? ' (' + escHtml(x.atsHint) + ')' : '';
+          const tip = x.why ? ' title="' + escHtml(x.why) + '"' : '';
+          return '<span' + tip + ' style="display:inline-block; background:#fef3e8; color:#9a4a00; padding:3px 8px; border-radius:12px; font-size:12px; margin:2px;">' + escHtml(lbl) + sub + '</span>';
+        }
+        return '';
+      }).join('');
+    } else {
+      chips = '<span style="font-size:13px;">' + escHtml(String(items)) + '</span>';
+    }
+    return '<div style="margin:10px 0;"><div style="font-weight:600; font-size:12px; color:#555; text-transform:uppercase; letter-spacing:0.4px; margin-bottom:4px;">' + escHtml(title) + '</div><div>' + chips + '</div></div>';
+  }
+  let html = '';
+  if (p.primaryRole) html += '<div style="font-size:15px; font-weight:600; color:#5C5CD6; margin-bottom:4px;">' + escHtml(p.primaryRole) + '</div>';
+  if (p.summary) html += '<p style="font-size:13px; color:#444; line-height:1.5;">' + escHtml(p.summary) + '</p>';
+  html += section('Target titles', p.targetTitles);
+  html += section('Target companies (AI suggested)', p.targetCompanies);
+  html += section('Industries', p.industries);
+  html += section('Specialties', p.specialties);
+  html += section('Frameworks', p.frameworks);
+  html += section('Regulations', p.regulations);
+  html += section('Technologies', p.technologies);
+  html += section('Certifications', p.certifications);
+  html += section('Keywords', p.keywords);
+  html += section('Negative keywords', p.negativeKeywords);
+  html += section('Seniority level', p.seniorityLevel);
+  html += section('Seniority titles', p.seniorityTitles);
+  if (p.generatedAt) html += '<div style="font-size:11px; color:#888; margin-top:14px;">Generated ' + escHtml(p.generatedAt) + '</div>';
+  $('profile-body').innerHTML = html;
+}
+
 function escHtml(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
@@ -185,6 +256,7 @@ function renderUsers(users) {
       '<td><a href="' + SITE_BASE + '/' + escHtml(u.slug) + '.html" target="_blank">' + escHtml(u.slug) + '</a></td>' +
       '<td>' + statusBadge + '</td>' +
       '<td class="actions">' +
+        '<button class="secondary" onclick="openProfileModal(\'' + escHtml(u.slug) + '\')">Profile</button>' +
         '<button class="secondary" onclick="openEditModal(\'' + escHtml(u.slug) + '\')">Edit</button>' +
         '<button class="secondary" onclick="resendInvite(\'' + escHtml(u.slug) + '\')">Resend invite</button>' +
         (u.slug === 'geetu' ? '' : '<button class="danger" onclick="deleteUser(\'' + escHtml(u.slug) + '\')">Delete</button>') +

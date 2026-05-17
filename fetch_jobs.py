@@ -879,10 +879,99 @@ def _build_company_industries(companies):
     print(f"[industries] mapped {len(mapping)} companies; default={DEFAULT_INDUSTRIES}", flush=True)
 
 
+def _slugify_company_name(name):
+    """Lowercase, drop non-alphanumerics — best-effort guess at the ATS slug from a company name."""
+    if not name:
+        return ""
+    return re.sub(r"[^a-z0-9]+", "", str(name).lower())
+
+
+def _merge_user_target_companies(companies):
+    """Path 2: read each user's profile.targetCompanies (AI-suggested) and merge them
+    into the in-memory companies dict so the scraper picks them up. No-op if no user
+    profile has targetCompanies yet (e.g. before the Worker prompt is updated)."""
+    try:
+        users = load_users()
+    except Exception as e:
+        print(f"[user-targets] load_users failed: {e}", flush=True)
+        return
+
+    # Track what slugs already exist per ATS so we don't duplicate
+    existing = {ats: set() for ats in ("greenhouse", "lever", "ashby")}
+    for ats, key in existing.items():
+        for entry in companies.get(ats, []):
+            if isinstance(entry, str):
+                key.add(entry.lower())
+            elif isinstance(entry, dict) and entry.get("slug"):
+                key.add(entry["slug"].lower())
+
+    added = {ats: 0 for ats in ("greenhouse", "lever", "ashby")}
+    skipped = 0
+
+    for u in users:
+        slug = (u.get("slug") if isinstance(u, dict) else u) or ""
+        if not slug:
+            continue
+        try:
+            profile = load_skills_profile(slug) or {}
+        except Exception as e:
+            print(f"[user-targets:{slug}] profile fetch failed: {e}", flush=True)
+            continue
+
+        targets = profile.get("targetCompanies") or []
+        if not targets:
+            continue
+
+        user_industries = profile.get("industries", []) or []
+
+        for t in targets:
+            # Each target can be a dict {name, atsHint, why} or a bare string name
+            if isinstance(t, str):
+                name = t
+                hint = "greenhouse"
+            elif isinstance(t, dict):
+                name = t.get("name") or t.get("slug") or ""
+                hint = (t.get("atsHint") or t.get("ats") or "greenhouse").lower()
+            else:
+                continue
+            if not name:
+                continue
+
+            target_slug = _slugify_company_name(t.get("slug") if isinstance(t, dict) and t.get("slug") else name)
+
+            # Greenhouse/Lever/Ashby take a simple slug; Workday needs tenant+subdomain+site
+            # which the AI usually can't infer reliably — skip those for now.
+            if hint not in ("greenhouse", "lever", "ashby"):
+                skipped += 1
+                continue
+            if target_slug in existing[hint]:
+                continue
+
+            companies.setdefault(hint, []).append({
+                "slug": target_slug,
+                "industries": user_industries or DEFAULT_INDUSTRIES,
+                "_added_by_user": slug,  # debugging breadcrumb
+            })
+            existing[hint].add(target_slug)
+            added[hint] += 1
+
+    total = sum(added.values())
+    if total:
+        print(f"[user-targets] merged {total} per-user companies (greenhouse={added['greenhouse']}, lever={added['lever']}, ashby={added['ashby']}); skipped {skipped} non-routable", flush=True)
+    else:
+        print(f"[user-targets] no targetCompanies in any user profile yet (Worker prompt may not be updated)", flush=True)
+
+
 def run():
     with open(COMPANIES_PATH) as f:
         companies = json.load(f)
 
+    _build_company_industries(companies)
+
+    # Path 2: merge per-user target companies (AI-suggested) into the scrape list,
+    # then refresh the industry mapping to include them. No-op if no user profile
+    # has targetCompanies yet (i.e. before the Worker /parse-resume prompt update).
+    _merge_user_target_companies(companies)
     _build_company_industries(companies)
 
     conn = get_conn()
