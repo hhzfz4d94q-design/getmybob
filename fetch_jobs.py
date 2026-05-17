@@ -1037,6 +1037,38 @@ def _parse_salary_max(salary_text):
     return best
 
 
+def _location_remote_ok(r, user_locations, remote_pref):
+    """Filter for user's location + remote preference.
+    r[3] = loc (string), r[9] = remote (0|1).
+    remote_pref: "remote-only" | "hybrid" | "onsite" | "any" | None"""
+    job_loc = (r[3] or "").lower()
+    is_remote_job = bool(r[9])
+    pref = (remote_pref or "any").lower().strip()
+
+    # Remote-only users: drop non-remote jobs
+    if pref == "remote-only" and not is_remote_job:
+        return False
+
+    # Onsite-only users: drop fully-remote jobs (allow hybrid via location match)
+    if pref == "onsite" and is_remote_job and not any(
+        (loc or "").lower() in job_loc for loc in (user_locations or [])
+    ):
+        return False
+
+    # If user listed specific locations, the job must either be remote OR match one of them
+    if user_locations:
+        normalized = [(loc or "").lower().strip() for loc in user_locations if loc]
+        # "remote (us)" type entries effectively whitelist remote jobs
+        wants_remote = any("remote" in loc for loc in normalized)
+        location_match = any(loc and loc in job_loc for loc in normalized if "remote" not in loc)
+        if not (is_remote_job and wants_remote) and not location_match:
+            # Be permissive when remotePreference is "any" or "hybrid"
+            if pref in ("remote-only", "onsite"):
+                return False
+            # For hybrid/any with no location match, still return True (soft filter elsewhere)
+    return True
+
+
 def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", output_path=None):
     """Generate the dashboard HTML for a specific user.
     output_path defaults to <user_slug>.html (or index.html for backward compat if slug='geetu')."""
@@ -1079,6 +1111,20 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
             job_industries = (r[15] or "").split(",") if r[15] else []
             return _industry_match(job_industries, user_industries)
         rows = [r for r in rows if _ind_ok(r)]
+
+    # Location + remote preference filter (Slice 2)
+    if SKILLS_PROFILE:
+        user_locations = SKILLS_PROFILE.get("preferredLocations", []) or []
+        remote_pref = SKILLS_PROFILE.get("remotePreference") or (
+            "remote-only" if SKILLS_PROFILE.get("remotePreferred") else "any"
+        )
+    else:
+        user_locations = []
+        remote_pref = "any"
+    if user_locations or remote_pref not in ("any", None, ""):
+        before_loc = len(rows)
+        rows = [r for r in rows if _location_remote_ok(r, user_locations, remote_pref)]
+        print(f"[location-remote:{user_slug}] filter pref={remote_pref!r} locs={user_locations[:3]} kept {len(rows)}/{before_loc}", flush=True)
 
     # Hide ghost jobs (listed > GHOST_DAYS) from default view
     def _not_ghost(r):
