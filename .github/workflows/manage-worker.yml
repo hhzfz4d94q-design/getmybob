@@ -4,11 +4,9 @@ name: Manage Cloudflare Worker (dump / deploy)
 # the Cloudflare dashboard's flaky Monaco editor.
 #
 # - dump:   GET the current Worker source from Cloudflare, commit it
-#           to the repo as worker_current.js so Claude (or any reviewer)
-#           can read it.
-# - deploy: take worker_target.js from the repo and PUT it back to
-#           Cloudflare via the /content endpoint, preserving secrets
-#           and bindings.
+#           to the repo as worker_current.js so it can be reviewed/edited.
+# - deploy: take worker_target.js from the repo and PUT it back via
+#           the /content endpoint, preserving secrets and bindings.
 
 on:
   workflow_dispatch:
@@ -27,7 +25,7 @@ on:
 env:
   CF_ACCOUNT_ID: 76598c8a5c8c7abbaed5c4292c363e09
   WORKER_NAME: cool-darkness-dce5
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 permissions:
   contents: write
@@ -51,39 +49,10 @@ jobs:
           CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
           set -e
-          # Cloudflare returns a multipart body. The script lives in part[1]
-          # after the first \r\n\r\n header break, ending with a trailing
-          # boundary marker we strip.
           curl -sS -H "Authorization: Bearer $CF_TOKEN" \
             "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/workers/scripts/${WORKER_NAME}" \
             -o /tmp/multipart.raw
-
-          python3 <<'PY'
-import re, sys
-with open("/tmp/multipart.raw","rb") as f: body = f.read()
-# Find the multipart boundary
-m = re.search(rb'--([A-Za-z0-9\-]+)\r\n', body)
-if not m:
-    print("Could not find multipart boundary; raw response saved.", file=sys.stderr)
-    sys.exit(1)
-boundary = m.group(1)
-parts = body.split(b"--" + boundary)
-# Find the part that contains the JS module — heuristic: largest part with `export default` or function bodies
-best = None
-for p in parts:
-    if b"\r\n\r\n" not in p: continue
-    head, _, payload = p.partition(b"\r\n\r\n")
-    if b"export default" in payload or b"async fetch" in payload or len(payload) > 2000:
-        if best is None or len(payload) > len(best):
-            best = payload
-if best is None:
-    print("Could not isolate the worker.js payload.", file=sys.stderr)
-    sys.exit(1)
-# Strip trailing CRLF and any final boundary marker
-best = best.rstrip(b"-").rstrip(b"\r\n").rstrip(b"\r\n--")
-with open("worker_current.js","wb") as f: f.write(best)
-print(f"Wrote worker_current.js ({len(best)} bytes)")
-PY
+          python3 scripts/parse_cf_worker.py /tmp/multipart.raw worker_current.js
 
       - name: Deploy worker_target.js
         if: steps.mode.outputs.value == 'deploy'
@@ -92,10 +61,9 @@ PY
         run: |
           set -e
           if [ ! -f worker_target.js ]; then
-            echo "::error::worker_target.js missing — nothing to deploy"; exit 1
+            echo "::error::worker_target.js missing — nothing to deploy"
+            exit 1
           fi
-          # PUT to /content preserves bindings and secrets.
-          # Multipart body: metadata blob + the JS module blob.
           BOUNDARY="cowork-$(date +%s)"
           {
             printf -- '--%s\r\n' "$BOUNDARY"
