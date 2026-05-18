@@ -1169,6 +1169,24 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         user_industries = []
         target_company_names = set()
 
+    # --- DEBUG: dump filter context once per user to reports/ ---
+    import os as _os
+    _os.makedirs(_os.path.join(ROOT, "reports"), exist_ok=True)
+    _dbg_path = _os.path.join(ROOT, "reports", f"filter_debug_{user_slug}.md")
+    _sample_companies = list({(r[1] or "").strip().lower() for r in rows[:200] if r[1]})
+    _sample_targets = list(target_company_names)
+    with open(_dbg_path, "w", encoding="utf-8") as _fd:
+        _fd.write(f"# filter debug — {user_slug}\n\n")
+        _fd.write(f"target_company_names size: {len(target_company_names)}\n")
+        _fd.write(f"first 25 target names: {sorted(_sample_targets)[:25]}\n\n")
+        _fd.write(f"first 25 job company_name (lowercased): {sorted(_sample_companies)[:25]}\n\n")
+        _overlap = set(_sample_companies) & target_company_names
+        _fd.write(f"overlap (companies in jobs AND in targets): {sorted(_overlap)}\n\n")
+        _fd.write(f"user_industries: {user_industries}\n\n")
+        _fd.write(f"SKILLS_PROFILE.targetCompanies top-level type: {type(SKILLS_PROFILE.get('targetCompanies')).__name__}\n")
+        _fd.write(f"first targetCompany entry: {SKILLS_PROFILE.get('targetCompanies', [None])[0] if SKILLS_PROFILE.get('targetCompanies') else 'NONE'}\n")
+    # --- end DEBUG ---
+
     def _passes_filters(r):
         title = r[2]
         company = (r[1] or "").strip().lower()
