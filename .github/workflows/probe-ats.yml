@@ -7,6 +7,9 @@ on:
         description: 'User slug to probe (e.g. geetu, amit-arora)'
         required: true
         default: 'geetu'
+  repository_dispatch:
+    # Triggered by an API call with client_payload: { user_slug: "..." }
+    types: [probe-ats]
 
 env:
   # Silence the Node 20 deprecation warning — GitHub will force Node 24
@@ -29,26 +32,26 @@ jobs:
           python-version: '3.11'
 
       - name: Run probe
-        run: python probe_ats.py "${{ github.event.inputs.user_slug }}"
+        run: python probe_ats.py "${{ github.event.inputs.user_slug || github.event.client_payload.user_slug }}"
 
       - name: Upload report (artifact, for ad-hoc downloads)
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: probe-report-${{ github.event.inputs.user_slug }}
+          name: probe-report-${{ github.event.inputs.user_slug || github.event.client_payload.user_slug }}
           path: probe_report.md
 
       - name: Commit report to reports/ folder
         if: success()
         run: |
           mkdir -p reports
-          cp probe_report.md "reports/probe_${{ github.event.inputs.user_slug }}.md"
+          cp probe_report.md "reports/probe_${{ github.event.inputs.user_slug || github.event.client_payload.user_slug }}.md"
           git config user.email "actions-bot@getmemyjob.local"
           git config user.name "Probe ATS workflow"
-          git add "reports/probe_${{ github.event.inputs.user_slug }}.md"
+          git add "reports/probe_${{ github.event.inputs.user_slug || github.event.client_payload.user_slug }}.md"
           if git diff --staged --quiet; then
             echo "Report unchanged; nothing to commit."
           else
-            git commit -m "Probe report for ${{ github.event.inputs.user_slug }}"
+            git commit -m "Probe report for ${{ github.event.inputs.user_slug || github.event.client_payload.user_slug }}"
             git push
           fi
