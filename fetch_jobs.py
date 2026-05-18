@@ -4073,10 +4073,14 @@ function replayTour() {{ wizCurrent = 0; wizShow(); }}
       }};
     }}
 
-    // Auto-launch — first time AND no profile yet
+    // Auto-launch when this version of the wizard hasn't been seen yet.
+    // Note: dropped the !HAS_PROFILE_AT_RENDER guard so existing users
+    // also get prompted when we bump the wizard flag (e.g. to ask new
+    // questions like company-size preference). Users can skip steps
+    // that aren't relevant (resume upload, etc.).
     try {{
       const seen = localStorage.getItem("gmj_wizard_seen_v2");
-      if (!seen && !HAS_PROFILE_AT_RENDER) {{ setTimeout(wizShow, 450); }}
+      if (!seen) {{ setTimeout(wizShow, 450); }}
     }} catch(e) {{}}
   }}
   if (document.readyState === "loading") {{
