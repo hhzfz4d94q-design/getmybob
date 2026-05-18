@@ -216,7 +216,7 @@
 
 <header>
   <h1>Jobs for Ishika Arora</h1>
-  <div class="sub">Awaiting resume upload — click Resume to get started · Generated 2026-05-18 18:23</div>
+  <div class="sub">Awaiting resume upload — click Resume to get started · Generated 2026-05-18 18:36</div>
   <div class="header-actions">
     <button class="wiz-help-btn" onclick="replayTour()" title="Replay setup tour">?</button>
     <button id="resume-btn" class="header-btn" onclick="openResumeModal()">Resume</button>
@@ -225,7 +225,7 @@
   </div>
 </header>
 <div class="stats">
-  <div class="stat"><b>10710</b>Total jobs tracked</div>
+  <div class="stat"><b>10745</b>Total jobs tracked</div>
   <div class="stat"><b>397</b>Senior + Remote (last 7d)</div>
   <div class="stat"><b>0</b>Possible ghost jobs (60d+)</div>
   <div class="stat"><b id="shown-counter">0</b>Showing</div>
@@ -271,6 +271,11 @@
     <option value="150000">$150k+</option>
     <option value="200000">$200k+</option>
     <option value="250000">$250k+</option>
+  </select>
+  <select id="recruiterFilter" onchange="filter()" title="Show or hide jobs posted by staffing/recruiting agencies">
+    <option value="hide" selected>Recruiters: Hide</option>
+    <option value="show">Recruiters: Show</option>
+    <option value="only">Recruiters: Only</option>
   </select>
   <select id="sortBy" onchange="sortCards()">
     <option value="score">Sort: Best match</option>
@@ -999,6 +1004,7 @@ function filter() {
   const flt = document.getElementById('srOnly').value;
   const trk = document.getElementById('trackedFilter').value;
   const sal = document.getElementById('salaryFilter')?.value || '';
+  const rec = document.getElementById('recruiterFilter')?.value || 'hide';
   const tracker = getTracker();
   const cards = Array.from(document.querySelectorAll('.card'));
   let shown = 0;
@@ -1026,6 +1032,9 @@ function filter() {
     const emp = c.dataset.employment || 'unknown';
     if (employmentFilter === 'contract' && emp !== 'contract') show = false;
     else if (employmentFilter === 'full-time' && emp === 'contract') show = false;
+    const isRecr = c.dataset.recruiter === '1';
+    if (rec === 'hide' && isRecr) show = false;
+    else if (rec === 'only' && !isRecr) show = false;
     c.style.display = show ? '' : 'none';
     if (show) shown++;
   });
