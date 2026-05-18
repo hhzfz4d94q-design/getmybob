@@ -3906,11 +3906,58 @@ function wizAdvance() {{
   wizRender();
 }}
 function wizBack() {{ if (wizCurrent > 0) {{ wizCurrent--; wizRender(); }} }}
-function wizFinish() {{
+async function wizFinish() {{
   try {{ localStorage.setItem("gmj_wizard_seen_v2", "true"); }} catch(e) {{}}
-  wizHide();
-  try {{ fetch(WORKER_BASE + "/refresh", {{ method: "POST" }}).catch(function(e){{}}); }} catch(e) {{}}
-  wizBanner("Welcome aboard! We're matching jobs to your profile — refresh this page in 2–3 min.");
+
+  // Lock the CTA, show progress in place, run the AI regen against the
+  // user's just-saved companySizePreferences, then trigger a dashboard
+  // refresh. Everything visible to the user — no console required.
+  const ctaBtn = document.getElementById("wiz-cta");
+  const titleEl = document.getElementById("wiz-title");
+  const bodyEl = document.getElementById("wiz-body");
+  const origCtaText = ctaBtn ? ctaBtn.textContent : "";
+  if (ctaBtn) {{ ctaBtn.disabled = true; ctaBtn.textContent = "Personalizing\u2026"; }}
+  if (titleEl) titleEl.textContent = "Personalizing your job feed\u2026";
+  if (bodyEl) bodyEl.innerHTML = '<p style="margin-bottom:8px;">Re-running the AI matcher with your latest preferences. This takes about 30\u201360 seconds.</p><p style="font-size:13px;color:#666;" id="wiz-finish-status">Calling the AI\u2026</p>';
+
+  const statusEl = document.getElementById("wiz-finish-status");
+  const editKey = (typeof getEditKey === "function") ? getEditKey() : (localStorage.getItem("htj_resume_key_" + USER_SLUG) || localStorage.getItem("htj_resume_key"));
+
+  let regenOk = false;
+  let regenTc = 0;
+  if (editKey) {{
+    try {{
+      const r = await fetch(WORKER_BASE + "/regenerate-profile" + USER_QS, {{
+        method: "POST",
+        headers: {{ "X-Edit-Key": editKey }}
+      }});
+      const data = await r.json().catch(function(){{ return {{}}; }});
+      if (r.ok && data && data.profile) {{
+        regenOk = true;
+        regenTc = (data.profile.targetCompanies || []).length;
+        if (statusEl) statusEl.textContent = "Generated " + regenTc + " personalized target companies. Triggering job refresh\u2026";
+      }} else if (statusEl) {{
+        statusEl.textContent = "Couldn\u2019t regenerate (" + ((data && data.error) || ("HTTP " + r.status)) + ") \u2014 your existing AI matches still apply.";
+      }}
+    }} catch (e) {{
+      if (statusEl) statusEl.textContent = "Network error during regen \u2014 your existing AI matches still apply.";
+    }}
+  }} else if (statusEl) {{
+    statusEl.textContent = "No edit key in this browser \u2014 skipping regen. (Use the invite link with ?key=\u2026 once.)";
+  }}
+
+  // Kick the GitHub Action that rebuilds dashboards regardless of regen result
+  try {{ fetch(WORKER_BASE + "/refresh", {{ method: "POST" }}).catch(function(){{}}); }} catch (e) {{}}
+
+  // Final summary then close
+  if (bodyEl) {{
+    const summary = regenOk
+      ? "Your job feed is rebuilding now (2\u20133 min). When it\u2019s done you\u2019ll see new role suggestions tuned to your sizes and locations."
+      : "Your job feed is rebuilding now (2\u20133 min). Refresh this page in a few minutes to see updates.";
+    bodyEl.innerHTML = '<p style="margin-bottom:8px;color:#0a6b3a;font-weight:600;">All set!</p><p>' + summary + '</p>';
+  }}
+  if (titleEl) titleEl.textContent = regenOk ? ("Personalized " + regenTc + " target companies") : "Your job feed is rebuilding";
+  if (ctaBtn) {{ ctaBtn.disabled = false; ctaBtn.textContent = "Close"; ctaBtn.onclick = function(){{ wizHide(); }}; }}
 }}
 function wizSkipPermanent() {{
   try {{ localStorage.setItem("gmj_wizard_seen_v2", "true"); }} catch(e) {{}}
