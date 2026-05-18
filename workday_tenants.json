@@ -1,0 +1,36 @@
+{
+  "_meta": {
+    "version": 1,
+    "purpose": "Curated map of company names to their verified Workday careers URL, so the probe can resolve atsHint=workday companies even when the AI didn't fill in atsUrl. Add new entries as you discover them — keys are matched case-insensitively against the AI's company name.",
+    "verifiedAt": "2026-05-18"
+  },
+  "tenants": {
+    "Bank of America": "https://ghr.wd1.myworkdayjobs.com/Lateral-US",
+    "Wells Fargo": "https://wf.wd1.myworkdayjobs.com/WellsFargoJobs",
+    "Morgan Stanley": "https://ms.wd5.myworkdayjobs.com/External",
+    "US Bancorp": "https://usbank.wd1.myworkdayjobs.com/US_Bank_Careers",
+    "MUFG Americas": "https://mufgub.wd3.myworkdayjobs.com/MUFG-Careers",
+    "Mizuho Americas": "https://mizuho.wd1.myworkdayjobs.com/mizuhoamericas",
+    "Signature Financial / Flagstar Bank": "https://flagstar.wd5.myworkdayjobs.com/flagstar",
+    "Flagstar Bank": "https://flagstar.wd5.myworkdayjobs.com/flagstar",
+    "S&P Global": "https://spgi.wd5.myworkdayjobs.com/SPGI_Careers",
+    "Protiviti": "https://roberthalf.wd1.myworkdayjobs.com/ProtivitiNA",
+    "FIS Global": "https://fis.wd5.myworkdayjobs.com/SearchJobs",
+    "Fiserv": "https://fiserv.wd5.myworkdayjobs.com/EXT",
+    "Citigroup": "https://citi.wd5.myworkdayjobs.com/2",
+    "TD Bank": "https://td.wd3.myworkdayjobs.com/TD_Bank_Careers",
+    "Regions Financial": "https://regions.wd5.myworkdayjobs.com/Regions_Careers"
+  },
+  "not_on_supported_ats": {
+    "JPMorgan Chase": "Oracle Cloud HCM (careers.jpmorgan.com)",
+    "Goldman Sachs": "Proprietary higher.gs.com / goldmansachs.tal.net",
+    "Moody's Analytics": "Phenom/Eightfold (careers.moodys.com)",
+    "Deloitte": "Avature (apply.deloitte.com) — regional Workday tenants exist but no single US one",
+    "KPMG": "Phenom/iCIMS (kpmguscareers.com) US; Oracle HCM globally",
+    "Ernst & Young (EY)": "Avature/SuccessFactors (careers.ey.com)",
+    "ServiceNow": "SmartRecruiters (careers.smartrecruiters.com/servicenow) — existing SR match is correct",
+    "Archer (RSA)": "Proprietary (archerirm.com/careers)",
+    "Valley National Bank": "iCIMS (valley.com/about/careers)",
+    "Signature Bank / New York Community Bancorp": "Acquired by Flagstar — use Flagstar tenant"
+  }
+}

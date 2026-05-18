@@ -26,7 +26,12 @@ UA = "Mozilla/5.0 (compatible; getmemyjob-probe/1.0)"
 # ---------------- slug helpers ----------------
 
 def slug_variants(name: str):
-    """Return ordered, de-duped slug guesses for a company name."""
+    """Return ordered, de-duped slug guesses for a company name.
+
+    Variants shorter than 3 chars are dropped — single-word fragments like
+    'us' (for 'US Bancorp') or 2-letter acronyms collide with unrelated
+    companies on Greenhouse/Lever and produce false positives.
+    """
     base = name.strip().lower().replace("&", "and")
     stripped = re.sub(r"[^\w\s-]", "", base)
     words = stripped.split()
@@ -39,10 +44,35 @@ def slug_variants(name: str):
     ]
     seen, out = set(), []
     for v in variants:
-        if v and v not in seen:
+        if v and len(v) >= 3 and v not in seen:
             seen.add(v)
             out.append(v)
     return out
+
+
+# ---------------- seed map for Workday tenants ----------------
+
+def _norm_company_name(s: str) -> str:
+    """Loose normalize for matching against the seed map."""
+    return re.sub(r"\s+", " ", re.sub(r"[^\w\s&]", "", (s or "").lower())).strip()
+
+
+def _load_workday_seed():
+    """Load workday_tenants.json sitting next to this script. Returns
+    (tenants, not_on_supported_ats) — both dicts keyed by normalized name."""
+    import os
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "workday_tenants.json")
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except (OSError, ValueError):
+        return {}, {}
+    tenants = {_norm_company_name(k): v for k, v in (data.get("tenants") or {}).items()}
+    skip = {_norm_company_name(k): v for k, v in (data.get("not_on_supported_ats") or {}).items()}
+    return tenants, skip
+
+
+WORKDAY_SEED, NOT_ON_SUPPORTED_ATS = _load_workday_seed()
 
 
 # ---------------- network helpers ----------------
@@ -260,16 +290,31 @@ def main():
             f.write(report + "\n")
         return
 
-    lines.append("| Company | AI hint | Verified source | Token | Jobs | Match? |")
-    lines.append("|---|---|---|---|---:|:---:|")
+    lines.append("| Company | AI hint | Verified source | Token | Jobs | Match? | Notes |")
+    lines.append("|---|---|---|---|---:|:---:|---|")
 
     resolved = 0
     disagreements = []
     by_source = {}
+    seed_used = 0
+    skipped_by_seed = []
     for tc in targets:
         name = tc.get("name", "")
         ai_hint = (tc.get("atsHint") or "unknown").lower()
         ats_url = tc.get("atsUrl") or ""
+        norm = _norm_company_name(name)
+
+        # Seed map: fill in atsUrl when the AI didn't, OR mark as known-not-workday.
+        seed_note = ""
+        if not ats_url and norm in WORKDAY_SEED:
+            seed_val = WORKDAY_SEED[norm]
+            if seed_val:
+                ats_url = seed_val
+                seed_used += 1
+                seed_note = "seed"
+        if norm in NOT_ON_SUPPORTED_ATS:
+            skipped_by_seed.append((name, NOT_ON_SUPPORTED_ATS[norm]))
+
         result = probe_company(name, ai_hint, ats_url)
         src = result["source"]
         match = "OK" if src == ai_hint else ("NEW" if src != "unknown" else "--")
@@ -278,14 +323,28 @@ def main():
             by_source[src] = by_source.get(src, 0) + 1
             if ai_hint not in ("unknown", "") and ai_hint != src:
                 disagreements.append((name, ai_hint, src))
+        notes = []
+        if seed_note:
+            notes.append("seed")
+        notes_str = " ".join(notes) or ""
         lines.append(
             f"| {name} | {ai_hint} | {src} | "
-            f"{result['token'] or '—'} | {result['jobs']} | {match} |"
+            f"{result['token'] or '—'} | {result['jobs']} | {match} | {notes_str} |"
         )
 
     rate = (resolved * 100 // len(targets)) if targets else 0
     lines.append("")
     lines.append(f"**Resolved: {resolved} / {len(targets)} ({rate}%)**")
+    if seed_used:
+        lines.append(f"_Seed map provided atsUrl for **{seed_used}** companies the AI left blank._")
+    if skipped_by_seed:
+        lines.append("")
+        lines.append("## Companies the seed map flags as not on a supported ATS")
+        lines.append("")
+        lines.append("These use Avature / Oracle HCM / Phenom / iCIMS / proprietary — separate adapter work needed to scrape them:")
+        lines.append("")
+        for nm, reason in skipped_by_seed:
+            lines.append(f"- **{nm}** — {reason}")
 
     if by_source:
         lines.append("")
