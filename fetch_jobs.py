@@ -1190,9 +1190,13 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         #    slug map and resolve at query time via _company_slug if needed.
         # For safety we store both name-lower and the slug itself.
         _slug_to_size = {k.lower(): v for k, v in _raw_sizes.items()}
+        # 3. Staffing / recruiting firms — used for the "Recruiters: hide/show/only"
+        #    dashboard toggle. Lowercased for case-insensitive match.
+        _recruiter_names = {(s or "").strip().lower() for s in (_cdoc.get("_recruiting_firms") or [])}
     except Exception:
         _size_by_company = {}
         _slug_to_size = {}
+        _recruiter_names = set()
 
     def _company_size(company_name, company_slug=""):
         """Best-effort lookup of size bucket for a job's company."""
@@ -1293,8 +1297,9 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         badge_html = " ".join(badges)
         salary_html = f'<div class="salary-row"><span class="salary">{_esc(salary)}</span></div>' if salary else ''
 
+        _is_recr = 1 if (company or "").strip().lower() in _recruiter_names else 0
         cards.append(f"""
-        <div class="card" data-fp="{fp}" data-score="{score}" data-senior="{senior}" data-remote="{remote}" data-employment="{emp}" data-listed-days="{listed_days if listed_days is not None else 9999}" data-salary-max="{salary_max}" data-last-seen="{last_seen or ''}" data-first-seen="{first_seen or ''}">
+        <div class="card" data-fp="{fp}" data-score="{score}" data-senior="{senior}" data-remote="{remote}" data-employment="{emp}" data-listed-days="{listed_days if listed_days is not None else 9999}" data-salary-max="{salary_max}" data-last-seen="{last_seen or ''}" data-first-seen="{first_seen or ''}" data-recruiter="{_is_recr}">
           <div class="row1">
             <div class="title"><a href="{url}" target="_blank">{_esc(title)}</a></div>
             <div class="score">{score}</div>
@@ -1674,6 +1679,11 @@ HTML_TEMPLATE = """<!doctype html>
     <option value="150000">$150k+</option>
     <option value="200000">$200k+</option>
     <option value="250000">$250k+</option>
+  </select>
+  <select id="recruiterFilter" onchange="filter()" title="Show or hide jobs posted by staffing/recruiting agencies">
+    <option value="hide" selected>Recruiters: Hide</option>
+    <option value="show">Recruiters: Show</option>
+    <option value="only">Recruiters: Only</option>
   </select>
   <select id="sortBy" onchange="sortCards()">
     <option value="score">Sort: Best match</option>
@@ -2402,6 +2412,7 @@ function filter() {{
   const flt = document.getElementById('srOnly').value;
   const trk = document.getElementById('trackedFilter').value;
   const sal = document.getElementById('salaryFilter')?.value || '';
+  const rec = document.getElementById('recruiterFilter')?.value || 'hide';
   const tracker = getTracker();
   const cards = Array.from(document.querySelectorAll('.card'));
   let shown = 0;
@@ -2429,6 +2440,9 @@ function filter() {{
     const emp = c.dataset.employment || 'unknown';
     if (employmentFilter === 'contract' && emp !== 'contract') show = false;
     else if (employmentFilter === 'full-time' && emp === 'contract') show = false;
+    const isRecr = c.dataset.recruiter === '1';
+    if (rec === 'hide' && isRecr) show = false;
+    else if (rec === 'only' && !isRecr) show = false;
     c.style.display = show ? '' : 'none';
     if (show) shown++;
   }});
