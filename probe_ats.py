@@ -172,6 +172,35 @@ def main():
 
     if not targets:
         lines.append("_No targetCompanies in this user's profile — nothing to probe._")
+        lines.append("")
+        lines.append("## Diagnostic dump")
+        lines.append("")
+        lines.append(f"Profile has **{len(profile)}** top-level keys:")
+        lines.append("")
+        lines.append("```")
+        for k in sorted(profile.keys()):
+            v = profile[k]
+            if isinstance(v, list):
+                shape = f"list[{len(v)}]"
+                sample = (json.dumps(v[0]) if v else "[]")[:120]
+            elif isinstance(v, dict):
+                shape = f"dict[{len(v)} keys]"
+                sample = json.dumps(list(v.keys()))[:120]
+            elif isinstance(v, str):
+                shape = f"str[{len(v)}]"
+                sample = repr(v[:80])
+            else:
+                shape = type(v).__name__
+                sample = repr(v)
+            lines.append(f"{k:24s} {shape:18s} {sample}")
+        lines.append("```")
+        lines.append("")
+        # Look for anything that looks like it could be a target-companies field
+        target_keys = [k for k in profile if "target" in k.lower() or "compan" in k.lower()]
+        if target_keys:
+            lines.append("**Candidate target/company keys found:**")
+            for k in target_keys:
+                lines.append(f"- `{k}`: `{json.dumps(profile[k])[:200]}`")
         report = "\n".join(lines)
         print(report)
         with open("probe_report.md", "w", encoding="utf-8") as f:
