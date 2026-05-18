@@ -546,6 +546,15 @@ POSITIVE_TITLE_THEMES = [
     # Programs / portfolio (her core)
     "program management", "head of program", "vp programs", "vp of programs",
     "head of portfolio", "vp portfolio", "head of programs",
+    # Finance / banking / fintech (added Slice B v2 so bank/fintech employers
+    # actually surface relevant senior roles instead of being silently dropped
+    # by a healthcare-only theme list).
+    "finance", "financial", "banking", "investment", "investments", "wealth",
+    "treasury", "trading", "trader", "lending", "credit", "underwriting",
+    "compliance", "risk", "audit", "regulatory", "fintech", "payments",
+    "asset management", "capital markets", "private banking",
+    "investment banking", "wealth management", "portfolio management",
+    "managing director", "principal", "head of risk",
 ]
 
 
@@ -879,139 +888,10 @@ def _build_company_industries(companies):
     print(f"[industries] mapped {len(mapping)} companies; default={DEFAULT_INDUSTRIES}", flush=True)
 
 
-def _slugify_company_name(name):
-    """Lowercase, drop non-alphanumerics — best-effort guess at the ATS slug from a company name."""
-    if not name:
-        return ""
-    return re.sub(r"[^a-z0-9]+", "", str(name).lower())
-
-
-def _merge_user_target_companies(companies):
-    """Path 2: read each user's profile.targetCompanies (AI-suggested) and merge them
-    into the in-memory companies dict so the scraper picks them up. No-op if no user
-    profile has targetCompanies yet (e.g. before the Worker prompt is updated)."""
-    try:
-        users = load_users()
-    except Exception as e:
-        print(f"[user-targets] load_users failed: {e}", flush=True)
-        return
-
-    # Track what slugs/tenants already exist per ATS so we don't duplicate
-    existing = {ats: set() for ats in ("greenhouse", "lever", "ashby")}
-    existing["workday"] = set()
-    for ats in ("greenhouse", "lever", "ashby"):
-        for entry in companies.get(ats, []):
-            if isinstance(entry, str):
-                existing[ats].add(entry.lower())
-            elif isinstance(entry, dict) and entry.get("slug"):
-                existing[ats].add(entry["slug"].lower())
-    for entry in companies.get("workday", []):
-        if isinstance(entry, dict) and entry.get("tenant"):
-            existing["workday"].add(entry["tenant"].lower())
-
-    added = {ats: 0 for ats in ("greenhouse", "lever", "ashby")}
-    skipped = 0
-
-    for u in users:
-        slug = (u.get("slug") if isinstance(u, dict) else u) or ""
-        if not slug:
-            continue
-        try:
-            profile = load_skills_profile(slug) or {}
-        except Exception as e:
-            print(f"[user-targets:{slug}] profile fetch failed: {e}", flush=True)
-            continue
-
-        targets = profile.get("targetCompanies") or []
-        if not targets:
-            continue
-
-        user_industries = profile.get("industries", []) or []
-
-        for t in targets:
-            # Each target can be a dict {name, atsHint, why} or a bare string name
-            if isinstance(t, str):
-                name = t
-                hint = "greenhouse"
-            elif isinstance(t, dict):
-                name = t.get("name") or t.get("slug") or ""
-                hint = (t.get("atsHint") or t.get("ats") or "greenhouse").lower()
-            else:
-                continue
-            if not name:
-                continue
-
-            target_slug = _slugify_company_name(t.get("slug") if isinstance(t, dict) and t.get("slug") else name)
-
-            # Greenhouse/Lever/Ashby take a simple slug; Workday needs tenant+subdomain+site
-            # which we now try to parse from an atsUrl the AI may have provided.
-            if hint == "workday":
-                ats_url = t.get("atsUrl") if isinstance(t, dict) else None
-                wd_tenant = wd_subdomain = wd_site = None
-                if ats_url:
-                    # Parse https://{tenant}.{subdomain}.myworkdayjobs.com/{site}
-                    wd_match = re.match(
-                        r"https?://([^./]+)\.(wd\d+)\.myworkdayjobs\.com/([^/?#]+)",
-                        ats_url,
-                    )
-                    if wd_match:
-                        wd_tenant, wd_subdomain, wd_site = wd_match.groups()
-                if not wd_tenant:
-                    # Slice 3.5 fallback heuristic: AI didn't give us a usable atsUrl,
-                    # but workday tenant slugs often follow a predictable pattern. Try
-                    # the most common combo (wd1 + Careers/External) so the scraper
-                    # gets a chance — it will fail gracefully if the slug is wrong.
-                    wd_tenant = target_slug
-                    wd_subdomain = "wd1"
-                    wd_site = "Careers"
-                    print(f"[user-targets:{slug}] workday fallback for '{name}' -> {wd_tenant}.{wd_subdomain}.myworkdayjobs.com/{wd_site} (no atsUrl from AI)", flush=True)
-                wd_key = wd_tenant.lower()
-                if wd_key in existing.setdefault("workday", set()):
-                    continue
-                companies.setdefault("workday", []).append({
-                    "name": name,
-                    "tenant": wd_tenant,
-                    "subdomain": wd_subdomain,
-                    "site": wd_site,
-                    "industries": user_industries or DEFAULT_INDUSTRIES,
-                    "_added_by_user": slug,
-                })
-                existing["workday"].add(wd_key)
-                added.setdefault("workday", 0)
-                added["workday"] += 1
-                continue
-
-            if hint not in ("greenhouse", "lever", "ashby"):
-                skipped += 1
-                continue
-            if target_slug in existing[hint]:
-                continue
-
-            companies.setdefault(hint, []).append({
-                "slug": target_slug,
-                "industries": user_industries or DEFAULT_INDUSTRIES,
-                "_added_by_user": slug,  # debugging breadcrumb
-            })
-            existing[hint].add(target_slug)
-            added[hint] += 1
-
-    total = sum(added.values())
-    if total:
-        print(f"[user-targets] merged {total} per-user companies (greenhouse={added['greenhouse']}, lever={added['lever']}, ashby={added['ashby']}); skipped {skipped} non-routable", flush=True)
-    else:
-        print(f"[user-targets] no targetCompanies in any user profile yet (Worker prompt may not be updated)", flush=True)
-
-
 def run():
     with open(COMPANIES_PATH) as f:
         companies = json.load(f)
 
-    _build_company_industries(companies)
-
-    # Path 2: merge per-user target companies (AI-suggested) into the scrape list,
-    # then refresh the industry mapping to include them. No-op if no user profile
-    # has targetCompanies yet (i.e. before the Worker /parse-resume prompt update).
-    _merge_user_target_companies(companies)
     _build_company_industries(companies)
 
     conn = get_conn()
@@ -1077,38 +957,6 @@ def _parse_salary_max(salary_text):
     return best
 
 
-def _location_remote_ok(r, user_locations, remote_pref):
-    """Filter for user's location + remote preference.
-    r[3] = loc (string), r[9] = remote (0|1).
-    remote_pref: "remote-only" | "hybrid" | "onsite" | "any" | None"""
-    job_loc = (r[3] or "").lower()
-    is_remote_job = bool(r[9])
-    pref = (remote_pref or "any").lower().strip()
-
-    # Remote-only users: drop non-remote jobs
-    if pref == "remote-only" and not is_remote_job:
-        return False
-
-    # Onsite-only users: drop fully-remote jobs (allow hybrid via location match)
-    if pref == "onsite" and is_remote_job and not any(
-        (loc or "").lower() in job_loc for loc in (user_locations or [])
-    ):
-        return False
-
-    # If user listed specific locations, the job must either be remote OR match one of them
-    if user_locations:
-        normalized = [(loc or "").lower().strip() for loc in user_locations if loc]
-        # "remote (us)" type entries effectively whitelist remote jobs
-        wants_remote = any("remote" in loc for loc in normalized)
-        location_match = any(loc and loc in job_loc for loc in normalized if "remote" not in loc)
-        if not (is_remote_job and wants_remote) and not location_match:
-            # Be permissive when remotePreference is "any" or "hybrid"
-            if pref in ("remote-only", "onsite"):
-                return False
-            # For hybrid/any with no location match, still return True (soft filter elsewhere)
-    return True
-
-
 def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", output_path=None):
     """Generate the dashboard HTML for a specific user.
     output_path defaults to <user_slug>.html (or index.html for backward compat if slug='geetu')."""
@@ -1138,33 +986,47 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
     # Hide jobs that aren't a fit (blacklist)
     rows = [r for r in rows if not _is_irrelevant_title(r[2])]
 
-    # Whitelist: title must contain a positive domain theme or a skills-profile keyword
-    rows = [r for r in rows if _has_positive_theme(r[2], SKILLS_PROFILE)]
-
-    # Industry filter — combine industries + specialties for richer matching
+    # Combine the title-keyword whitelist, the industry filter, and a
+    # target-company override into a single pass (Slice B v2). The previous
+    # behavior required BOTH title-pass AND industry-pass, which over-filtered
+    # senior roles at verified target companies whose titles didn't happen to
+    # contain a healthcare-flavored theme word. New semantics:
+    #
+    #   pass IF (title matches user themes/keywords AND industry overlaps)
+    #     OR (job is senior=1 AND its company is in user's targetCompanies)
+    #
+    # When the user has no industries set, the industry check is treated as
+    # always-pass so the title gate alone applies.
     if SKILLS_PROFILE:
         user_industries = (SKILLS_PROFILE.get("industries", []) or []) + (SKILLS_PROFILE.get("specialties", []) or [])
+        target_company_names = {
+            (tc.get("name") if isinstance(tc, dict) else tc or "").strip().lower()
+            for tc in (SKILLS_PROFILE.get("targetCompanies") or [])
+            if (tc.get("name") if isinstance(tc, dict) else tc)
+        }
     else:
         user_industries = []
-    if user_industries:
-        def _ind_ok(r):
-            job_industries = (r[15] or "").split(",") if r[15] else []
-            return _industry_match(job_industries, user_industries)
-        rows = [r for r in rows if _ind_ok(r)]
+        target_company_names = set()
 
-    # Location + remote preference filter (Slice 2)
-    if SKILLS_PROFILE:
-        user_locations = SKILLS_PROFILE.get("preferredLocations", []) or []
-        remote_pref = SKILLS_PROFILE.get("remotePreference") or (
-            "remote-only" if SKILLS_PROFILE.get("remotePreferred") else "any"
-        )
-    else:
-        user_locations = []
-        remote_pref = "any"
-    if user_locations or remote_pref not in ("any", None, ""):
-        before_loc = len(rows)
-        rows = [r for r in rows if _location_remote_ok(r, user_locations, remote_pref)]
-        print(f"[location-remote:{user_slug}] filter pref={remote_pref!r} locs={user_locations[:3]} kept {len(rows)}/{before_loc}", flush=True)
+    def _passes_filters(r):
+        title = r[2]
+        company = (r[1] or "").strip().lower()
+        senior_flag = r[10]
+        job_inds = (r[15] or "").split(",") if r[15] else []
+        # Override: senior role at the user's verified target company. The
+        # user explicitly asked for this employer, so trust that signal over
+        # the title-keyword heuristic.
+        if senior_flag and company and company in target_company_names:
+            return True
+        # Standard path: title gate (now includes finance themes + per-user
+        # keywords via _has_positive_theme) AND industry overlap.
+        if not _has_positive_theme(title, SKILLS_PROFILE):
+            return False
+        if user_industries and job_inds:
+            return _industry_match(job_inds, user_industries)
+        return True  # no industry data on either side — title gate is enough
+
+    rows = [r for r in rows if _passes_filters(r)]
 
     # Hide ghost jobs (listed > GHOST_DAYS) from default view
     def _not_ghost(r):
@@ -2460,14 +2322,6 @@ function _renderProfileHTML(p) {{
   html += section('Frameworks', p.frameworks, '#fff3d6', 'frameworks');
   html += section('Regulations', p.regulations, '#fff0e6', 'regulations');
   html += section('Certifications', p.certifications, '#e6fff8', 'certifications');
-  html += section('Preferred locations', p.preferredLocations, '#e6f0ff', 'preferredLocations');
-  if (p.remotePreference) {{
-    const remoteLabel = ({{'remote-only':'Remote only','hybrid':'Hybrid OK','onsite':'Onsite preferred','any':'Any'}})[p.remotePreference] || p.remotePreference;
-    html += section('Remote preference', [remoteLabel], '#ffe6f0', 'remotePreference');
-  }} else {{
-    html += section('Remote preference', [], '#ffe6f0', 'remotePreference');
-  }}
-  html += section('Target companies (AI suggested)', (p.targetCompanies||[]).map(function(c){{ return typeof c==='string' ? c : (c.name + (c.atsHint && c.atsHint !== 'unknown' ? ' ('+c.atsHint+')' : '')); }}), '#fef3e8', 'targetCompanies');
   html += section('Filtered out', p.negativeKeywords, '#ffe6e6', 'negativeKeywords');
   html += '</div>';
   if (p.generatedAt) html += '<div style="font-size:11px;color:#999;margin-top:8px;">Generated ' + new Date(p.generatedAt).toLocaleString() + '</div>';
@@ -2483,7 +2337,6 @@ const EDITABLE_FIELDS = [
   ['regulations', 'Regulations'],
   ['certifications', 'Certifications'],
   ['targetTitles', 'Target titles'],
-  ['preferredLocations', 'Preferred locations'],
   ['negativeKeywords', 'Filtered-out terms'],
 ];
 
@@ -3701,28 +3554,10 @@ const WIZ_STEPS = [
   }},
   {{
     title: "Review your skills profile",
-    body: "<p>We just built a skills profile from your resume — target roles, industries, specialties, technologies, regulations, target companies, and more.</p><p>Take a quick look before we use it to match jobs. Click any &times; to remove a chip; click <strong>+ Add</strong> to fill in what we missed.</p>",
+    body: "<p>We just built a skills profile from your resume — target roles, industries, specialties, technologies, regulations, and more.</p><p>Take a quick look before we use it to match jobs. Click any &times; to remove a chip; click <strong>+ Add</strong> to fill in what we missed.</p>",
     cta: "Review my profile &rarr;",
     action: "open-resume-profile",
     skipText: "Skip — looks good already"
-  }},
-  {{
-    title: "Confirm where you want to work",
-    body: '<p style="margin-bottom:14px;">We extracted these from your resume. Tweak them so they reflect what you\u2019re actually open to \u2014 we use them to filter jobs.</p>' +
-      '<label for="wiz-locs" style="display:block;font-size:12px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px;">Preferred locations</label>' +
-      '<input id="wiz-locs" type="text" placeholder="e.g. New York City, Remote (US)" style="width:100%;padding:8px 10px;border:1px solid #d0d4dc;border-radius:6px;font-size:14px;margin-bottom:6px;">' +
-      '<div style="font-size:12px;color:#888;margin-bottom:14px;">Comma-separated. Add &ldquo;Remote (US)&rdquo; if you\u2019re open to remote.</div>' +
-      '<label for="wiz-remote" style="display:block;font-size:12px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px;">Remote preference</label>' +
-      '<select id="wiz-remote" style="width:100%;padding:8px 10px;border:1px solid #d0d4dc;border-radius:6px;font-size:14px;background:white;">' +
-      '<option value="any">Any &mdash; show me everything</option>' +
-      '<option value="remote-only">Remote only</option>' +
-      '<option value="hybrid">Hybrid (remote OK, but I\u2019ll travel to office sometimes)</option>' +
-      '<option value="onsite">Onsite preferred</option>' +
-      '</select>' +
-      '<div id="wiz-locs-status" style="font-size:12px;color:#888;margin-top:10px;min-height:16px;"></div>',
-    cta: "Save preferences &rarr;",
-    action: "save-location-remote",
-    skipText: "Skip \u2014 use AI defaults"
   }},
   {{
     title: "Add your LinkedIn network (optional)",
@@ -3758,16 +3593,6 @@ function wizRender() {{
   document.getElementById("wiz-title").textContent = s.title;
   document.getElementById("wiz-body").innerHTML = s.body;
   document.getElementById("wiz-cta").innerHTML = s.cta;
-  // Slice 2.5: prefill the location/remote form if this step is the inline form
-  if (s.action === "save-location-remote") {{
-    fetch(PROFILE_WORKER_URL).then(function(r){{ return r.json(); }}).then(function(d){{
-      const p = (d && d.profile) || {{}};
-      const locsEl = document.getElementById("wiz-locs");
-      const remoteEl = document.getElementById("wiz-remote");
-      if (locsEl && Array.isArray(p.preferredLocations)) locsEl.value = p.preferredLocations.join(", ");
-      if (remoteEl) remoteEl.value = p.remotePreference || (p.remotePreferred ? "remote-only" : "any");
-    }}).catch(function(){{}});
-  }}
   let dots = "";
   for (let i = 0; i < WIZ_STEPS.length; i++) {{
     if (i < wizCurrent) dots += '<div class="dot done"></div>';
@@ -3837,44 +3662,6 @@ function replayTour() {{ wizCurrent = 0; wizShow(); }}
         wizHide();
         try {{ openContactsModal(); }} catch(e) {{ console.error(e); }}
         window._wizExpect = "contacts";
-        return;
-      }}
-      if (s.action === "save-location-remote") {{
-        const locsInput = document.getElementById("wiz-locs");
-        const remoteSel = document.getElementById("wiz-remote");
-        const statusEl = document.getElementById("wiz-locs-status");
-        if (!locsInput || !remoteSel) {{ wizAdvance(); return; }}
-        const locs = locsInput.value.split(",").map(function(x){{ return x.trim(); }}).filter(Boolean);
-        const remotePref = remoteSel.value || "any";
-        if (statusEl) statusEl.textContent = "Saving\u2026";
-        const editKey = (typeof getEditKey === "function") ? getEditKey() : (localStorage.getItem("htj_resume_key_" + USER_SLUG) || localStorage.getItem("htj_resume_key"));
-        if (!editKey) {{
-          if (statusEl) statusEl.textContent = "No edit key found \u2014 your changes can't be saved. Skipping.";
-          setTimeout(wizAdvance, 1200);
-          return;
-        }}
-        const ctaBtn = document.getElementById("wiz-cta");
-        if (ctaBtn) ctaBtn.disabled = true;
-        fetch(PROFILE_WORKER_URL, {{
-          method: "POST",
-          headers: {{ "Content-Type": "application/json", "X-Edit-Key": editKey }},
-          body: JSON.stringify({{ patchFields: {{ preferredLocations: locs, remotePreference: remotePref }} }})
-        }})
-          .then(function(r){{ return r.json().then(function(d){{ return {{ ok: r.ok, status: r.status, data: d }}; }}); }})
-          .then(function(res){{
-            if (!res.ok || (res.data && res.data.error)) {{
-              if (statusEl) statusEl.textContent = "Save failed (" + (res.data.error || ("HTTP " + res.status)) + ") \u2014 continuing anyway.";
-              setTimeout(wizAdvance, 1500);
-            }} else {{
-              if (statusEl) statusEl.textContent = "Saved.";
-              setTimeout(wizAdvance, 400);
-            }}
-          }})
-          .catch(function(e){{
-            if (statusEl) statusEl.textContent = "Network error \u2014 continuing anyway.";
-            setTimeout(wizAdvance, 1200);
-          }})
-          .finally(function(){{ if (ctaBtn) ctaBtn.disabled = false; }});
         return;
       }}
       if (s.action === "finish") {{ wizFinish(); return; }}
