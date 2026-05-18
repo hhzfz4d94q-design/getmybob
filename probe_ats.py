@@ -290,8 +290,8 @@ def main():
             f.write(report + "\n")
         return
 
-    lines.append("| Company | AI hint | Verified source | Token | Jobs | Match? | Notes |")
-    lines.append("|---|---|---|---|---:|:---:|---|")
+    lines.append("| Company | AI hint | AI atsUrl | Verified source | Token | Jobs | Match? | Notes |")
+    lines.append("|---|---|---|---|---|---:|:---:|---|")
 
     resolved = 0
     disagreements = []
@@ -304,11 +304,12 @@ def main():
         ats_url = tc.get("atsUrl") or ""
         norm = _norm_company_name(name)
 
-        # Seed map: fill in atsUrl when the AI didn't, OR mark as known-not-workday.
+        # Seed map: prefer the curated value over whatever the AI guessed.
         seed_note = ""
-        if not ats_url and norm in WORKDAY_SEED:
+        ai_url = ats_url  # keep for diagnostics
+        if norm in WORKDAY_SEED and WORKDAY_SEED[norm]:
             seed_val = WORKDAY_SEED[norm]
-            if seed_val:
+            if seed_val != ats_url:
                 ats_url = seed_val
                 seed_used += 1
                 seed_note = "seed"
@@ -327,8 +328,9 @@ def main():
         if seed_note:
             notes.append("seed")
         notes_str = " ".join(notes) or ""
+        ai_url_display = (ai_url[:40] + "…") if ai_url and len(ai_url) > 40 else (ai_url or "—")
         lines.append(
-            f"| {name} | {ai_hint} | {src} | "
+            f"| {name} | {ai_hint} | `{ai_url_display}` | {src} | "
             f"{result['token'] or '—'} | {result['jobs']} | {match} | {notes_str} |"
         )
 
