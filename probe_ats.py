@@ -152,10 +152,14 @@ def probe_company(name: str, ai_hint: str = "unknown"):
 # ---------------- main ----------------
 
 def load_profile(user_slug: str):
+    """The Worker returns {profile: {...}, user: "<slug>"}. Unwrap the
+    inner profile so callers see the same shape regardless of envelope."""
     url = f"{WORKER_URL}/skills-profile?user={user_slug}"
     data = http_get_json(url)
     if not data:
         raise RuntimeError(f"Could not load profile for {user_slug} from {url}")
+    if isinstance(data, dict) and isinstance(data.get("profile"), dict):
+        return data["profile"]
     return data
 
 
