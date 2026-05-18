@@ -1,0 +1,31 @@
+name: Probe ATS resolution
+
+on:
+  workflow_dispatch:
+    inputs:
+      user_slug:
+        description: 'User slug to probe (e.g. geetu, amit-arora)'
+        required: true
+        default: 'geetu'
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run probe
+        run: python probe_ats.py "${{ github.event.inputs.user_slug }}"
+
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: probe-report-${{ github.event.inputs.user_slug }}
+          path: probe_report.md
