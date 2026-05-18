@@ -13,6 +13,9 @@ env:
   # by default starting 2026-06-02. Opting in early keeps logs clean.
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
+permissions:
+  contents: write   # so the workflow can commit the report back to the repo
+
 jobs:
   probe:
     runs-on: ubuntu-latest
@@ -28,9 +31,24 @@ jobs:
       - name: Run probe
         run: python probe_ats.py "${{ github.event.inputs.user_slug }}"
 
-      - name: Upload report
+      - name: Upload report (artifact, for ad-hoc downloads)
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: probe-report-${{ github.event.inputs.user_slug }}
           path: probe_report.md
+
+      - name: Commit report to reports/ folder
+        if: success()
+        run: |
+          mkdir -p reports
+          cp probe_report.md "reports/probe_${{ github.event.inputs.user_slug }}.md"
+          git config user.email "actions-bot@getmemyjob.local"
+          git config user.name "Probe ATS workflow"
+          git add "reports/probe_${{ github.event.inputs.user_slug }}.md"
+          if git diff --staged --quiet; then
+            echo "Report unchanged; nothing to commit."
+          else
+            git commit -m "Probe report for ${{ github.event.inputs.user_slug }}"
+            git push
+          fi
