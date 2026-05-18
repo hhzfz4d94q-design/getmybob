@@ -947,18 +947,24 @@ def _merge_user_target_companies(companies):
             # which we now try to parse from an atsUrl the AI may have provided.
             if hint == "workday":
                 ats_url = t.get("atsUrl") if isinstance(t, dict) else None
-                if not ats_url:
-                    skipped += 1
-                    continue
-                # Parse https://{tenant}.{subdomain}.myworkdayjobs.com/{site}
-                wd_match = re.match(
-                    r"https?://([^./]+)\.(wd\d+)\.myworkdayjobs\.com/([^/?#]+)",
-                    ats_url,
-                )
-                if not wd_match:
-                    skipped += 1
-                    continue
-                wd_tenant, wd_subdomain, wd_site = wd_match.groups()
+                wd_tenant = wd_subdomain = wd_site = None
+                if ats_url:
+                    # Parse https://{tenant}.{subdomain}.myworkdayjobs.com/{site}
+                    wd_match = re.match(
+                        r"https?://([^./]+)\.(wd\d+)\.myworkdayjobs\.com/([^/?#]+)",
+                        ats_url,
+                    )
+                    if wd_match:
+                        wd_tenant, wd_subdomain, wd_site = wd_match.groups()
+                if not wd_tenant:
+                    # Slice 3.5 fallback heuristic: AI didn't give us a usable atsUrl,
+                    # but workday tenant slugs often follow a predictable pattern. Try
+                    # the most common combo (wd1 + Careers/External) so the scraper
+                    # gets a chance — it will fail gracefully if the slug is wrong.
+                    wd_tenant = target_slug
+                    wd_subdomain = "wd1"
+                    wd_site = "Careers"
+                    print(f"[user-targets:{slug}] workday fallback for '{name}' -> {wd_tenant}.{wd_subdomain}.myworkdayjobs.com/{wd_site} (no atsUrl from AI)", flush=True)
                 wd_key = wd_tenant.lower()
                 if wd_key in existing.setdefault("workday", set()):
                     continue
@@ -3702,10 +3708,21 @@ const WIZ_STEPS = [
   }},
   {{
     title: "Confirm where you want to work",
-    body: "<p>We extracted your <strong>preferred locations</strong> and <strong>remote preference</strong> from your resume too. They\u2019re shown in your profile as chips you can edit.</p><p>Make sure they reflect what you\u2019re actually open to \u2014 we use them to filter jobs.</p>",
-    cta: "Edit locations &amp; remote &rarr;",
-    action: "open-resume-profile",
-    skipText: "Skip — looks good"
+    body: '<p style="margin-bottom:14px;">We extracted these from your resume. Tweak them so they reflect what you\u2019re actually open to \u2014 we use them to filter jobs.</p>' +
+      '<label for="wiz-locs" style="display:block;font-size:12px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px;">Preferred locations</label>' +
+      '<input id="wiz-locs" type="text" placeholder="e.g. New York City, Remote (US)" style="width:100%;padding:8px 10px;border:1px solid #d0d4dc;border-radius:6px;font-size:14px;margin-bottom:6px;">' +
+      '<div style="font-size:12px;color:#888;margin-bottom:14px;">Comma-separated. Add &ldquo;Remote (US)&rdquo; if you\u2019re open to remote.</div>' +
+      '<label for="wiz-remote" style="display:block;font-size:12px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px;">Remote preference</label>' +
+      '<select id="wiz-remote" style="width:100%;padding:8px 10px;border:1px solid #d0d4dc;border-radius:6px;font-size:14px;background:white;">' +
+      '<option value="any">Any &mdash; show me everything</option>' +
+      '<option value="remote-only">Remote only</option>' +
+      '<option value="hybrid">Hybrid (remote OK, but I\u2019ll travel to office sometimes)</option>' +
+      '<option value="onsite">Onsite preferred</option>' +
+      '</select>' +
+      '<div id="wiz-locs-status" style="font-size:12px;color:#888;margin-top:10px;min-height:16px;"></div>',
+    cta: "Save preferences &rarr;",
+    action: "save-location-remote",
+    skipText: "Skip \u2014 use AI defaults"
   }},
   {{
     title: "Add your LinkedIn network (optional)",
@@ -3741,6 +3758,16 @@ function wizRender() {{
   document.getElementById("wiz-title").textContent = s.title;
   document.getElementById("wiz-body").innerHTML = s.body;
   document.getElementById("wiz-cta").innerHTML = s.cta;
+  // Slice 2.5: prefill the location/remote form if this step is the inline form
+  if (s.action === "save-location-remote") {{
+    fetch(PROFILE_WORKER_URL).then(function(r){{ return r.json(); }}).then(function(d){{
+      const p = (d && d.profile) || {{}};
+      const locsEl = document.getElementById("wiz-locs");
+      const remoteEl = document.getElementById("wiz-remote");
+      if (locsEl && Array.isArray(p.preferredLocations)) locsEl.value = p.preferredLocations.join(", ");
+      if (remoteEl) remoteEl.value = p.remotePreference || (p.remotePreferred ? "remote-only" : "any");
+    }}).catch(function(){{}});
+  }}
   let dots = "";
   for (let i = 0; i < WIZ_STEPS.length; i++) {{
     if (i < wizCurrent) dots += '<div class="dot done"></div>';
@@ -3810,6 +3837,44 @@ function replayTour() {{ wizCurrent = 0; wizShow(); }}
         wizHide();
         try {{ openContactsModal(); }} catch(e) {{ console.error(e); }}
         window._wizExpect = "contacts";
+        return;
+      }}
+      if (s.action === "save-location-remote") {{
+        const locsInput = document.getElementById("wiz-locs");
+        const remoteSel = document.getElementById("wiz-remote");
+        const statusEl = document.getElementById("wiz-locs-status");
+        if (!locsInput || !remoteSel) {{ wizAdvance(); return; }}
+        const locs = locsInput.value.split(",").map(function(x){{ return x.trim(); }}).filter(Boolean);
+        const remotePref = remoteSel.value || "any";
+        if (statusEl) statusEl.textContent = "Saving\u2026";
+        const editKey = (typeof getEditKey === "function") ? getEditKey() : (localStorage.getItem("htj_resume_key_" + USER_SLUG) || localStorage.getItem("htj_resume_key"));
+        if (!editKey) {{
+          if (statusEl) statusEl.textContent = "No edit key found \u2014 your changes can't be saved. Skipping.";
+          setTimeout(wizAdvance, 1200);
+          return;
+        }}
+        const ctaBtn = document.getElementById("wiz-cta");
+        if (ctaBtn) ctaBtn.disabled = true;
+        fetch(PROFILE_WORKER_URL, {{
+          method: "POST",
+          headers: {{ "Content-Type": "application/json", "X-Edit-Key": editKey }},
+          body: JSON.stringify({{ patchFields: {{ preferredLocations: locs, remotePreference: remotePref }} }})
+        }})
+          .then(function(r){{ return r.json().then(function(d){{ return {{ ok: r.ok, status: r.status, data: d }}; }}); }})
+          .then(function(res){{
+            if (!res.ok || (res.data && res.data.error)) {{
+              if (statusEl) statusEl.textContent = "Save failed (" + (res.data.error || ("HTTP " + res.status)) + ") \u2014 continuing anyway.";
+              setTimeout(wizAdvance, 1500);
+            }} else {{
+              if (statusEl) statusEl.textContent = "Saved.";
+              setTimeout(wizAdvance, 400);
+            }}
+          }})
+          .catch(function(e){{
+            if (statusEl) statusEl.textContent = "Network error \u2014 continuing anyway.";
+            setTimeout(wizAdvance, 1200);
+          }})
+          .finally(function(){{ if (ctaBtn) ctaBtn.disabled = false; }});
         return;
       }}
       if (s.action === "finish") {{ wizFinish(); return; }}
