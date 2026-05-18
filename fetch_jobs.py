@@ -1165,38 +1165,64 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
             for tc in (SKILLS_PROFILE.get("targetCompanies") or [])
             if (tc.get("name") if isinstance(tc, dict) else tc)
         }
+        # Company-size preference (Slice B v3). Missing/empty == all three.
+        # When 1-2 sizes are picked we hard-filter; with 3 (all) we pass through.
+        prefs = SKILLS_PROFILE.get("companySizePreferences") or []
+        size_prefs = {p.lower() for p in prefs if isinstance(p, str)} or {"startup", "midsize", "large"}
     else:
         user_industries = []
         target_company_names = set()
+        size_prefs = {"startup", "midsize", "large"}
 
-    # --- DEBUG: dump filter context once per user to reports/ ---
+    # Load size lookup. Build a single map keyed by lowercased company_name and
+    # by lowercased slug/tenant for fallback. Built once per dashboard.
     try:
-        import os as _os
-        _os.makedirs(_os.path.join(ROOT, "reports"), exist_ok=True)
-        _dbg_path = _os.path.join(ROOT, "reports", f"filter_debug_{user_slug}.md")
-        _sample_companies = list({(r[1] or "").strip().lower() for r in (rows or [])[:200] if r and r[1]})
-        _sample_targets = list(target_company_names)
-        _tc = (SKILLS_PROFILE or {}).get("targetCompanies") or []
-        with open(_dbg_path, "w", encoding="utf-8") as _fd:
-            _fd.write(f"# filter debug — {user_slug}\n\n")
-            _fd.write(f"SKILLS_PROFILE is None? {SKILLS_PROFILE is None}\n\n")
-            _fd.write(f"target_company_names size: {len(target_company_names)}\n")
-            _fd.write(f"first 25 target names: {sorted(_sample_targets)[:25]}\n\n")
-            _fd.write(f"first 25 job company_name (lowercased): {sorted(_sample_companies)[:25]}\n\n")
-            _overlap = set(_sample_companies) & target_company_names
-            _fd.write(f"overlap (companies in jobs AND in targets): {sorted(_overlap)}\n\n")
-            _fd.write(f"user_industries: {user_industries}\n\n")
-            _fd.write(f"profile.targetCompanies length: {len(_tc)}\n")
-            _fd.write(f"first targetCompany entry: {_tc[0] if _tc else 'NONE'}\n")
-    except Exception as _e:
-        print(f"[filter-debug:{user_slug}] failed: {_e}", flush=True)
-    # --- end DEBUG ---
+        with open(COMPANIES_PATH) as _cf:
+            _cdoc = json.load(_cf)
+        _raw_sizes = _cdoc.get("_company_sizes") or {}
+        _size_by_company = {}
+        # 1. Workday entries: key by name (lowercase)
+        for _e in _cdoc.get("workday", []):
+            if isinstance(_e, dict) and _e.get("name") and _e["name"] in _raw_sizes:
+                _size_by_company[_e["name"].lower()] = _raw_sizes[_e["name"]]
+        # 2. Greenhouse/Lever/Ashby: slug -> tagged size. The DB stores
+        #    company_name which may differ from slug, so we also keep the
+        #    slug map and resolve at query time via _company_slug if needed.
+        # For safety we store both name-lower and the slug itself.
+        _slug_to_size = {k.lower(): v for k, v in _raw_sizes.items()}
+    except Exception:
+        _size_by_company = {}
+        _slug_to_size = {}
+
+    def _company_size(company_name, company_slug=""):
+        """Best-effort lookup of size bucket for a job's company."""
+        if not company_name:
+            return None
+        nm = company_name.strip().lower()
+        if nm in _size_by_company:
+            return _size_by_company[nm]
+        if nm in _slug_to_size:
+            return _slug_to_size[nm]
+        slug = (company_slug or "").strip().lower()
+        if slug and slug in _slug_to_size:
+            return _slug_to_size[slug]
+        return None
+
 
     def _passes_filters(r):
         title = r[2]
         company = (r[1] or "").strip().lower()
         senior_flag = r[10]
         job_inds = (r[15] or "").split(",") if r[15] else []
+
+        # Hard-filter by company-size preference when the user has selected
+        # only some sizes. If size is unknown (untagged company), let it
+        # through so we don't accidentally hide everything.
+        if len(size_prefs) < 3:
+            sz = _company_size(company)
+            if sz is not None and sz not in size_prefs:
+                return False
+
         # Override: senior role at the user's verified target company. The
         # user explicitly asked for this employer, so trust that signal over
         # the title-keyword heuristic.
