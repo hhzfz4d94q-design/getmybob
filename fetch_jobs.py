@@ -1626,7 +1626,7 @@ HTML_TEMPLATE = """<!doctype html>
   <h1>Jobs for {user_name}</h1>
   <div class="sub">{subtitle} · Generated {generated}</div>
   <div class="header-actions">
-    <button class="wiz-help-btn" onclick="replayTour()" title="Replay setup tour">?</button>
+    <button id="prefs-btn" class="header-btn" onclick="replayTour()" title="Re-open the setup wizard to change your locations, remote pref, and company sizes">Preferences</button>
     <button id="resume-btn" class="header-btn" onclick="openResumeModal()">Resume</button>
     <button id="contacts-btn" class="header-btn" onclick="openContactsModal()">LinkedIn Contacts</button>
     <button id="refresh-btn" class="header-btn" onclick="refreshData()">Refresh data</button>
