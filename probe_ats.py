@@ -136,51 +136,39 @@ WORKDAY_URL_RE = re.compile(
 )
 
 
-def _workday_candidates(slug, ats_url):
-    """Yield (subdomain, instance_num, tenant, site) tuples to try."""
-    seen = set()
-    if ats_url:
-        m = WORKDAY_URL_RE.match(ats_url.strip())
-        if m:
-            sub, n, site = m.groups()
-            key = (sub.lower(), n, sub.lower(), site)
-            seen.add(key)
-            yield key
-    # Cheap generic guesses
-    for n in ("1", "5", "3", "2"):
-        for site in ("External", "Careers", "External_Career_Site"):
-            key = (slug, n, slug, site)
-            if key not in seen:
-                seen.add(key)
-                yield key
+WORKDAY_TIMEOUT = 4  # tighter than the GET timeout; bad subdomains hang on DNS
 
 
 def probe_workday(slug, ats_url=None):
-    for sub, n, tenant, site in _workday_candidates(slug, ats_url):
-        url = f"https://{sub}.wd{n}.myworkdayjobs.com/wday/cxs/{tenant}/{site}/jobs"
-        try:
-            req = urllib.request.Request(
-                url,
-                method="POST",
-                data=b'{"limit":1,"offset":0,"searchText":""}',
-                headers={"User-Agent": UA, "Content-Type": "application/json", "Accept": "application/json"},
-            )
-            with urllib.request.urlopen(req, timeout=TIMEOUT) as resp:
-                if resp.status != 200:
-                    continue
-                if "json" not in resp.headers.get("content-type", "").lower():
-                    continue
-                body = json.loads(resp.read().decode("utf-8", errors="replace"))
-        except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError, ValueError):
-            continue
-        total = body.get("total", 0) if isinstance(body, dict) else 0
-        if total > 0:
-            return {
-                "source": "workday",
-                "token": f"{sub}/{site}",
-                "jobs": total,
-                "url": url,
-            }
+    """Only probe Workday when the AI gave us an explicit atsUrl hint.
+    Generic guessing across thousands of possible subdomains causes minutes
+    of DNS timeouts and is rarely productive — better to leave a company
+    as 'unknown' and surface it for manual atsUrl entry."""
+    if not ats_url:
+        return None
+    m = WORKDAY_URL_RE.match(ats_url.strip())
+    if not m:
+        return None
+    sub, n, site = m.groups()
+    url = f"https://{sub.lower()}.wd{n}.myworkdayjobs.com/wday/cxs/{sub.lower()}/{site}/jobs"
+    try:
+        req = urllib.request.Request(
+            url,
+            method="POST",
+            data=b'{"limit":1,"offset":0,"searchText":""}',
+            headers={"User-Agent": UA, "Content-Type": "application/json", "Accept": "application/json"},
+        )
+        with urllib.request.urlopen(req, timeout=WORKDAY_TIMEOUT) as resp:
+            if resp.status != 200:
+                return None
+            if "json" not in resp.headers.get("content-type", "").lower():
+                return None
+            body = json.loads(resp.read().decode("utf-8", errors="replace"))
+    except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError, ValueError):
+        return None
+    total = body.get("total", 0) if isinstance(body, dict) else 0
+    if total > 0:
+        return {"source": "workday", "token": f"{sub}/{site}", "jobs": total, "url": url}
     return None
 
 
