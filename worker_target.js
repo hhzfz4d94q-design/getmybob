@@ -298,23 +298,54 @@ async function regenerateSkillsProfile(env, slug) {
   if (!resumeJson) return null;
   const activeId = await env.RESUMES.get(uk(slug, 'resume:active'));
 
-  // Read the user's existing size preference (set via the wizard) so the
-  // AI can bias targetCompanies toward sizes the user actually wants.
-  let sizePrefs = ["startup", "midsize", "large"];
+  // Read the user's existing size preferences so the AI can bias
+  // targetCompanies toward sizes the user actually wants. New format
+  // is companySizeMix (object with %s); fall back to companySizePreferences
+  // (older array format) for backward compat.
+  let sizeMix = null;
+  let preservedMix = null;
   let preservedPrefs = null;
   try {
     const existingRaw = await env.RESUMES.get(uk(slug, 'skills_profile'));
     if (existingRaw) {
       const existing = JSON.parse(existingRaw);
+      if (existing && typeof existing.companySizeMix === 'object' && existing.companySizeMix) {
+        sizeMix = existing.companySizeMix;
+        preservedMix = existing.companySizeMix;
+      }
       if (Array.isArray(existing.companySizePreferences) && existing.companySizePreferences.length) {
-        sizePrefs = existing.companySizePreferences;
         preservedPrefs = existing.companySizePreferences;
+        if (!sizeMix) {
+          // Synthesize equal-weight mix from picked prefs
+          const share = Math.floor(100 / existing.companySizePreferences.length);
+          sizeMix = {};
+          existing.companySizePreferences.forEach((k, i, arr) => {
+            sizeMix[k] = (i === arr.length - 1) ? 100 - share * (arr.length - 1) : share;
+          });
+        }
       }
     }
   } catch (e) { /* fall through with defaults */ }
-  const sizeInstruction = sizePrefs.length < 3
-    ? `IMPORTANT: this user has explicitly told us they only want jobs at ${sizePrefs.join(' / ')} companies. ALL of your targetCompanies suggestions must be ${sizePrefs.join(' or ')} employers — do NOT suggest any companies outside those sizes. Size definitions: startup = under 500 employees / typically Series A-C; midsize = 500-10k employees / established but not Fortune 500; large = 10k+ employees / Fortune 500 / public.`
-    : `This user is open to all company sizes. Provide a balanced mix in targetCompanies: roughly 30% startups (<500 emp), 40% mid-size (500-10k), 30% large (10k+). Avoid suggesting only Fortune 500 brand-name employers — sample across stages.`;
+  if (!sizeMix) sizeMix = { startup: 33, midsize: 33, large: 34 };
+  const _norm = (v) => Math.max(0, Math.min(100, Number(v) || 0));
+  sizeMix = {
+    startup: _norm(sizeMix.startup),
+    midsize: _norm(sizeMix.midsize),
+    large: _norm(sizeMix.large),
+  };
+  const sizeInstruction = (() => {
+    const total = sizeMix.startup + sizeMix.midsize + sizeMix.large || 1;
+    const pct = {
+      startup: Math.round(sizeMix.startup * 100 / total),
+      midsize: Math.round(sizeMix.midsize * 100 / total),
+      large: Math.round(sizeMix.large * 100 / total),
+    };
+    const excluded = ['startup','midsize','large'].filter(k => pct[k] === 0);
+    const excludeLine = excluded.length
+      ? `Do NOT suggest any ${excluded.join(' or ')} employers — the user has explicitly excluded them. `
+      : '';
+    return `IMPORTANT: the user wants their target-company list to mirror this size mix (sums to ~100%): startups ${pct.startup}% / mid-size ${pct.midsize}% / large ${pct.large}%. ${excludeLine}Across the 15-25 targetCompanies you suggest, the proportion of each size category must roughly match those percentages. Size definitions: startup = under 500 employees / typically Series A-C; midsize = 500-10k employees / established but not Fortune 500; large = 10k+ employees / Fortune 500 / public. For startup suggestions prefer "greenhouse"/"lever"/"ashby" atsHint; for large prefer "workday".`;
+  })();
 
   const prompt = `Analyze this resume EXHAUSTIVELY and produce a comprehensive structured skills profile.
 
@@ -440,7 +471,8 @@ ${resumeJson}`;
     // This ensures a banking-GRC profile always gets NIST CSF, COSO, FFIEC etc. even if the AI omits them.
     augmentProfileWithStandards(parsed);
     const profile = Object.assign({}, parsed, { resumeId: activeId, generatedAt: new Date().toISOString(), user: slug });
-    // Preserve the user's wizard-set companySizePreferences across regen
+    // Preserve the user's wizard-set size preferences across regen
+    if (preservedMix) profile.companySizeMix = preservedMix;
     if (preservedPrefs) profile.companySizePreferences = preservedPrefs;
     await env.RESUMES.put(uk(slug, 'skills_profile'), JSON.stringify(profile));
     return profile;
@@ -464,7 +496,7 @@ async function handleSkillsProfile(request, env, cors, slug) {
       const raw = await env.RESUMES.get(uk(slug, 'skills_profile'));
       const existing = raw ? JSON.parse(raw) : {};
       const updated = Object.assign({}, existing);
-      const SCALAR_FIELDS = new Set(['salaryFloor', 'remotePreferred', 'seniorityLevel', 'primaryRole', 'summary']);
+      const SCALAR_FIELDS = new Set(['salaryFloor', 'remotePreferred', 'seniorityLevel', 'primaryRole', 'summary', 'companySizeMix', 'companySizePreferences']);
       for (const [field, items] of Object.entries(body.patchFields)) {
         if (SCALAR_FIELDS.has(field)) {
           updated[field] = items;

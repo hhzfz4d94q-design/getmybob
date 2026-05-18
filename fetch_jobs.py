@@ -1165,10 +1165,18 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
             for tc in (SKILLS_PROFILE.get("targetCompanies") or [])
             if (tc.get("name") if isinstance(tc, dict) else tc)
         }
-        # Company-size preference (Slice B v3). Missing/empty == all three.
-        # When 1-2 sizes are picked we hard-filter; with 3 (all) we pass through.
-        prefs = SKILLS_PROFILE.get("companySizePreferences") or []
-        size_prefs = {p.lower() for p in prefs if isinstance(p, str)} or {"startup", "midsize", "large"}
+        # Company-size preference (Slice B v3). Prefer the new companySizeMix
+        # (object with %s for each size) — hard-exclude any size at 0%. Fall
+        # back to the older companySizePreferences (array of picked sizes) so
+        # we don't break profiles that haven't been re-saved yet.
+        size_mix = SKILLS_PROFILE.get("companySizeMix") or {}
+        if isinstance(size_mix, dict) and size_mix:
+            size_prefs = {k.lower() for k, v in size_mix.items() if isinstance(v, (int, float)) and v > 0}
+            if not size_prefs:
+                size_prefs = {"startup", "midsize", "large"}
+        else:
+            prefs = SKILLS_PROFILE.get("companySizePreferences") or []
+            size_prefs = {p.lower() for p in prefs if isinstance(p, str)} or {"startup", "midsize", "large"}
     else:
         user_industries = []
         target_company_names = set()
@@ -1242,6 +1250,30 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
 
     rows = [r for r in rows if _passes_filters(r)]
 
+    # Multi-location dedup: many enterprise employers (CVS, BMO, BofA) post
+    # the same role in hundreds of stores/branches — separate fingerprints
+    # because location is in the hash, but logically the same job. Collapse
+    # to one card per (company, normalized title); record location count.
+    _dedup = {}
+    _location_counts = {}
+    _order = []
+    for r in rows:
+        company_key = (r[1] or "").strip().lower()
+        title_key = _normalize_title(r[2] or "")
+        key = (company_key, title_key)
+        if key in _dedup:
+            _location_counts[key] += 1
+            # Keep the row with the highest score
+            if r[11] is not None and r[11] > (_dedup[key][11] or 0):
+                _dedup[key] = r
+        else:
+            _dedup[key] = r
+            _location_counts[key] = 1
+            _order.append(key)
+    rows = [_dedup[k] for k in _order]
+    # Stash per-row location count so card rendering can show a "Nx locations" badge
+    LOCATION_COUNTS = {(_dedup[k][0]): _location_counts[k] for k in _order}
+
     # Location + remote preference filter (Slice 2)
     if SKILLS_PROFILE:
         user_locations = SKILLS_PROFILE.get("preferredLocations", []) or []
@@ -1292,6 +1324,8 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         if emp == "contract": badges.append('<span class="b contract">Contract</span>')
         if listed_days == 0: badges.append('<span class="b fresh">New today</span>')
         elif listed_days is not None and listed_days <= 7: badges.append('<span class="b week">This week</span>')
+        _loc_count = LOCATION_COUNTS.get(fp, 1)
+        if _loc_count > 1: badges.append(f'<span class="b multi-loc">{_loc_count} locations</span>')
         if ghost_flag: badges.append(f'<span class="b ghost">Ghost? {listed_days}d</span>')
         if sightings > 3: badges.append(f'<span class="b repost">Seen {sightings}×</span>')
         badge_html = " ".join(badges)
@@ -3825,24 +3859,20 @@ const WIZ_STEPS = [
     skipText: "Skip \u2014 use AI defaults"
   }},
   {{
-    title: "Which company sizes interest you?",
-    body: '<p style="margin-bottom:14px;">We mix jobs from startups, mid-size companies, and large employers. Pick whichever interest you \u2014 we\u2019ll only show roles from those.</p>' +
-      '<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #d0d4dc;border-radius:8px;margin-bottom:8px;cursor:pointer;">' +
-      '<input type="checkbox" id="wiz-size-startup" checked style="width:18px;height:18px;cursor:pointer;">' +
-      '<span><strong>Startups</strong> &mdash; <span style="color:#666;">under 500 employees, often early-stage and fast-moving</span></span>' +
-      '</label>' +
-      '<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #d0d4dc;border-radius:8px;margin-bottom:8px;cursor:pointer;">' +
-      '<input type="checkbox" id="wiz-size-midsize" checked style="width:18px;height:18px;cursor:pointer;">' +
-      '<span><strong>Mid-size</strong> &mdash; <span style="color:#666;">500\u201310k employees, established but still growing</span></span>' +
-      '</label>' +
-      '<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #d0d4dc;border-radius:8px;margin-bottom:8px;cursor:pointer;">' +
-      '<input type="checkbox" id="wiz-size-large" checked style="width:18px;height:18px;cursor:pointer;">' +
-      '<span><strong>Large</strong> &mdash; <span style="color:#666;">10k+ employees, Fortune 500 / public</span></span>' +
-      '</label>' +
-      '<div id="wiz-size-status" style="font-size:12px;color:#888;margin-top:10px;min-height:16px;"></div>',
+    title: "What's your ideal mix of company sizes?",
+    body: '<p style="margin-bottom:14px;">We mix jobs across startups, mid-size, and large employers. Tell us your ideal balance \u2014 drag the sliders or type a number. Total has to add up to 100. Set any one to 0 to exclude that size entirely.</p>' +
+      '<div style="display:flex;flex-direction:column;gap:14px;">' +
+      '<div>' +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +'<span><strong>Startups</strong> <span style=\"color:#888;font-weight:normal;\">&mdash; under 500 employees, often early-stage</span></span>' +'<span style="display:flex;align-items:center;gap:4px;"><input id="wiz-mix-startup-num" type="number" min="0" max="100" value="33" oninput="wizMixOnNum(\'startup\')" style="width:54px;padding:4px 6px;border:1px solid #d0d4dc;border-radius:4px;text-align:right;font-size:13px;">%</span>' +'</div>' +'<input type="range" id="wiz-mix-startup" min="0" max="100" value="33" oninput="wizMixOnSlide(\'startup\')" style="width:100%;">' +'</div>' +
+      '<div>' +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +'<span><strong>Mid-size</strong> <span style=\"color:#888;font-weight:normal;\">&mdash; 500\u201310k employees, established</span></span>' +'<span style="display:flex;align-items:center;gap:4px;"><input id="wiz-mix-midsize-num" type="number" min="0" max="100" value="33" oninput="wizMixOnNum(\'midsize\')" style="width:54px;padding:4px 6px;border:1px solid #d0d4dc;border-radius:4px;text-align:right;font-size:13px;">%</span>' +'</div>' +'<input type="range" id="wiz-mix-midsize" min="0" max="100" value="33" oninput="wizMixOnSlide(\'midsize\')" style="width:100%;">' +'</div>' +
+      '<div>' +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +'<span><strong>Large</strong> <span style=\"color:#888;font-weight:normal;\">&mdash; 10k+ employees, Fortune 500 / public</span></span>' +'<span style="display:flex;align-items:center;gap:4px;"><input id="wiz-mix-large-num" type="number" min="0" max="100" value="33" oninput="wizMixOnNum(\'large\')" style="width:54px;padding:4px 6px;border:1px solid #d0d4dc;border-radius:4px;text-align:right;font-size:13px;">%</span>' +'</div>' +'<input type="range" id="wiz-mix-large" min="0" max="100" value="33" oninput="wizMixOnSlide(\'large\')" style="width:100%;">' +'</div>' +
+      '</div>' +
+      '<div id="wiz-mix-status" style="display:flex;justify-content:space-between;font-size:12px;color:#888;margin-top:10px;min-height:18px;">' +
+      '<span>Total: <strong id="wiz-mix-sum-val">99</strong>%</span>' +
+      '<span id="wiz-mix-msg"></span>' +
+      '</div>',
     cta: "Save preferences &rarr;",
     action: "save-company-sizes",
-    skipText: "Skip \u2014 show me all sizes"
+    skipText: "Skip \u2014 use an even mix"
   }},
   {{
     title: "Add your LinkedIn network (optional)",
@@ -3972,6 +4002,50 @@ function wizBanner(msg) {{
 }}
 function replayTour() {{ wizCurrent = 0; wizShow(); }}
 
+
+// --- Wizard step 5: company-size mix sliders ---------------------------
+// Drag any slider; the other two auto-adjust proportionally so the
+// total stays at 100. Same when a number input is typed.
+function _wizMixRebalance(changedKey) {{
+  const keys = ["startup", "midsize", "large"];
+  const vals = {{}};
+  keys.forEach(function(k) {{
+    const el = document.getElementById("wiz-mix-" + k);
+    vals[k] = Math.max(0, Math.min(100, parseInt(el.value, 10) || 0));
+  }});
+  const others = keys.filter(function(k) {{ return k !== changedKey; }});
+  const remaining = 100 - vals[changedKey];
+  if (remaining <= 0) {{
+    vals[changedKey] = 100;
+    others.forEach(function(k) {{ vals[k] = 0; }});
+  }} else {{
+    const otherSum = vals[others[0]] + vals[others[1]];
+    if (otherSum === 0) {{
+      const half = Math.floor(remaining / 2);
+      vals[others[0]] = half;
+      vals[others[1]] = remaining - half;
+    }} else {{
+      vals[others[0]] = Math.round(vals[others[0]] / otherSum * remaining);
+      vals[others[1]] = remaining - vals[others[0]];
+    }}
+  }}
+  keys.forEach(function(k) {{
+    const slider = document.getElementById("wiz-mix-" + k);
+    const num = document.getElementById("wiz-mix-" + k + "-num");
+    if (slider) slider.value = vals[k];
+    if (num) num.value = vals[k];
+  }});
+  const sumEl = document.getElementById("wiz-mix-sum-val");
+  if (sumEl) sumEl.textContent = vals.startup + vals.midsize + vals.large;
+}}
+function wizMixOnSlide(key) {{ _wizMixRebalance(key); }}
+function wizMixOnNum(key) {{
+  const num = document.getElementById("wiz-mix-" + key + "-num");
+  const slider = document.getElementById("wiz-mix-" + key);
+  if (num && slider) slider.value = num.value;
+  _wizMixRebalance(key);
+}}
+
 (function wizardSetup() {{
   function setup() {{
     const cta = document.getElementById("wiz-cta");
@@ -4045,21 +4119,31 @@ function replayTour() {{ wizCurrent = 0; wizShow(); }}
         return;
       }}
       if (s.action === "save-company-sizes") {{
-        const startup = document.getElementById("wiz-size-startup");
-        const midsize = document.getElementById("wiz-size-midsize");
-        const large = document.getElementById("wiz-size-large");
-        const statusEl = document.getElementById("wiz-size-status");
-        const picks = [];
-        if (startup && startup.checked) picks.push("startup");
-        if (midsize && midsize.checked) picks.push("midsize");
-        if (large && large.checked) picks.push("large");
-        // Empty = same as all three. Save explicitly so future re-renders show
-        // intent rather than relying on the default.
-        const toSave = picks.length ? picks : ["startup","midsize","large"];
-        if (statusEl) statusEl.textContent = "Saving\u2026";
+        const statusEl = document.getElementById("wiz-mix-msg");
+        function _readVal(k) {{
+          const el = document.getElementById("wiz-mix-" + k);
+          return Math.max(0, Math.min(100, parseInt(el ? el.value : 0, 10) || 0));
+        }}
+        const mix = {{
+          startup: _readVal("startup"),
+          midsize: _readVal("midsize"),
+          large: _readVal("large")
+        }};
+        const total = mix.startup + mix.midsize + mix.large;
+        if (total !== 100) {{
+          // Normalize so sum == 100 (rounding-safe)
+          if (total === 0) {{ mix.startup = 33; mix.midsize = 33; mix.large = 34; }}
+          else {{
+            mix.startup = Math.round(mix.startup * 100 / total);
+            mix.midsize = Math.round(mix.midsize * 100 / total);
+            mix.large = 100 - mix.startup - mix.midsize;
+          }}
+        }}
+        const derivedPrefs = ["startup","midsize","large"].filter(function(k){{ return mix[k] > 0; }});
+        if (statusEl) {{ statusEl.style.color = "#888"; statusEl.textContent = "Saving\u2026"; }}
         const editKey = (typeof getEditKey === "function") ? getEditKey() : (localStorage.getItem("htj_resume_key_" + USER_SLUG) || localStorage.getItem("htj_resume_key"));
         if (!editKey) {{
-          if (statusEl) statusEl.textContent = "No edit key found \u2014 your choice can't be saved. Skipping.";
+          if (statusEl) statusEl.textContent = "No edit key in this browser \u2014 your choice can't be saved. Skipping.";
           setTimeout(wizAdvance, 1200);
           return;
         }}
@@ -4068,20 +4152,20 @@ function replayTour() {{ wizCurrent = 0; wizShow(); }}
         fetch(PROFILE_WORKER_URL, {{
           method: "POST",
           headers: {{ "Content-Type": "application/json", "X-Edit-Key": editKey }},
-          body: JSON.stringify({{ patchFields: {{ companySizePreferences: toSave }} }})
+          body: JSON.stringify({{ patchFields: {{ companySizeMix: mix, companySizePreferences: derivedPrefs }} }})
         }})
           .then(function(r){{ return r.json().then(function(d){{ return {{ ok: r.ok, status: r.status, data: d }}; }}); }})
           .then(function(res){{
             if (!res.ok || (res.data && res.data.error)) {{
-              if (statusEl) statusEl.textContent = "Save failed (" + (res.data.error || ("HTTP " + res.status)) + ") \u2014 continuing anyway.";
+              if (statusEl) {{ statusEl.style.color = "#b00"; statusEl.textContent = "Save failed (" + (res.data.error || ("HTTP " + res.status)) + ") \u2014 continuing."; }}
               setTimeout(wizAdvance, 1500);
             }} else {{
-              if (statusEl) statusEl.textContent = "Saved.";
-              setTimeout(wizAdvance, 400);
+              if (statusEl) {{ statusEl.style.color = "#0a6b3a"; statusEl.textContent = "Saved: " + mix.startup + "/" + mix.midsize + "/" + mix.large + " (startup/mid/large)."; }}
+              setTimeout(wizAdvance, 600);
             }}
           }})
           .catch(function(e){{
-            if (statusEl) statusEl.textContent = "Network error \u2014 continuing anyway.";
+            if (statusEl) {{ statusEl.style.color = "#b00"; statusEl.textContent = "Network error \u2014 continuing."; }}
             setTimeout(wizAdvance, 1200);
           }})
           .finally(function(){{ if (ctaBtn) ctaBtn.disabled = false; }});
