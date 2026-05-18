@@ -3811,6 +3811,26 @@ const WIZ_STEPS = [
     skipText: "Skip \u2014 use AI defaults"
   }},
   {{
+    title: "Which company sizes interest you?",
+    body: '<p style="margin-bottom:14px;">We mix jobs from startups, mid-size companies, and large employers. Pick whichever interest you \u2014 we\u2019ll only show roles from those.</p>' +
+      '<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #d0d4dc;border-radius:8px;margin-bottom:8px;cursor:pointer;">' +
+      '<input type="checkbox" id="wiz-size-startup" checked style="width:18px;height:18px;cursor:pointer;">' +
+      '<span><strong>Startups</strong> &mdash; <span style="color:#666;">under 500 employees, often early-stage and fast-moving</span></span>' +
+      '</label>' +
+      '<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #d0d4dc;border-radius:8px;margin-bottom:8px;cursor:pointer;">' +
+      '<input type="checkbox" id="wiz-size-midsize" checked style="width:18px;height:18px;cursor:pointer;">' +
+      '<span><strong>Mid-size</strong> &mdash; <span style="color:#666;">500\u201310k employees, established but still growing</span></span>' +
+      '</label>' +
+      '<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #d0d4dc;border-radius:8px;margin-bottom:8px;cursor:pointer;">' +
+      '<input type="checkbox" id="wiz-size-large" checked style="width:18px;height:18px;cursor:pointer;">' +
+      '<span><strong>Large</strong> &mdash; <span style="color:#666;">10k+ employees, Fortune 500 / public</span></span>' +
+      '</label>' +
+      '<div id="wiz-size-status" style="font-size:12px;color:#888;margin-top:10px;min-height:16px;"></div>',
+    cta: "Save preferences &rarr;",
+    action: "save-company-sizes",
+    skipText: "Skip \u2014 show me all sizes"
+  }},
+  {{
     title: "Add your LinkedIn network (optional)",
     body: "<p>Upload your LinkedIn connections (one CSV) and the job feed will show <strong>&#x1f91d; N contacts</strong> badges on companies where you have warm intros.</p><p>It's a 30-second optional step. You can also do this later.</p>",
     cta: "Add LinkedIn contacts &rarr;",
@@ -3873,13 +3893,13 @@ function wizAdvance() {{
 }}
 function wizBack() {{ if (wizCurrent > 0) {{ wizCurrent--; wizRender(); }} }}
 function wizFinish() {{
-  try {{ localStorage.setItem("gmj_wizard_seen_v1", "true"); }} catch(e) {{}}
+  try {{ localStorage.setItem("gmj_wizard_seen_v2", "true"); }} catch(e) {{}}
   wizHide();
   try {{ fetch(WORKER_BASE + "/refresh", {{ method: "POST" }}).catch(function(e){{}}); }} catch(e) {{}}
   wizBanner("Welcome aboard! We're matching jobs to your profile — refresh this page in 2–3 min.");
 }}
 function wizSkipPermanent() {{
-  try {{ localStorage.setItem("gmj_wizard_seen_v1", "true"); }} catch(e) {{}}
+  try {{ localStorage.setItem("gmj_wizard_seen_v2", "true"); }} catch(e) {{}}
   wizHide();
 }}
 function wizBanner(msg) {{
@@ -3963,6 +3983,49 @@ function replayTour() {{ wizCurrent = 0; wizShow(); }}
           .finally(function(){{ if (ctaBtn) ctaBtn.disabled = false; }});
         return;
       }}
+      if (s.action === "save-company-sizes") {{
+        const startup = document.getElementById("wiz-size-startup");
+        const midsize = document.getElementById("wiz-size-midsize");
+        const large = document.getElementById("wiz-size-large");
+        const statusEl = document.getElementById("wiz-size-status");
+        const picks = [];
+        if (startup && startup.checked) picks.push("startup");
+        if (midsize && midsize.checked) picks.push("midsize");
+        if (large && large.checked) picks.push("large");
+        // Empty = same as all three. Save explicitly so future re-renders show
+        // intent rather than relying on the default.
+        const toSave = picks.length ? picks : ["startup","midsize","large"];
+        if (statusEl) statusEl.textContent = "Saving\u2026";
+        const editKey = (typeof getEditKey === "function") ? getEditKey() : (localStorage.getItem("htj_resume_key_" + USER_SLUG) || localStorage.getItem("htj_resume_key"));
+        if (!editKey) {{
+          if (statusEl) statusEl.textContent = "No edit key found \u2014 your choice can't be saved. Skipping.";
+          setTimeout(wizAdvance, 1200);
+          return;
+        }}
+        const ctaBtn = document.getElementById("wiz-cta");
+        if (ctaBtn) ctaBtn.disabled = true;
+        fetch(PROFILE_WORKER_URL, {{
+          method: "POST",
+          headers: {{ "Content-Type": "application/json", "X-Edit-Key": editKey }},
+          body: JSON.stringify({{ patchFields: {{ companySizePreferences: toSave }} }})
+        }})
+          .then(function(r){{ return r.json().then(function(d){{ return {{ ok: r.ok, status: r.status, data: d }}; }}); }})
+          .then(function(res){{
+            if (!res.ok || (res.data && res.data.error)) {{
+              if (statusEl) statusEl.textContent = "Save failed (" + (res.data.error || ("HTTP " + res.status)) + ") \u2014 continuing anyway.";
+              setTimeout(wizAdvance, 1500);
+            }} else {{
+              if (statusEl) statusEl.textContent = "Saved.";
+              setTimeout(wizAdvance, 400);
+            }}
+          }})
+          .catch(function(e){{
+            if (statusEl) statusEl.textContent = "Network error \u2014 continuing anyway.";
+            setTimeout(wizAdvance, 1200);
+          }})
+          .finally(function(){{ if (ctaBtn) ctaBtn.disabled = false; }});
+        return;
+      }}
       if (s.action === "finish") {{ wizFinish(); return; }}
     }});
     back.addEventListener("click", wizBack);
@@ -3998,7 +4061,7 @@ function replayTour() {{ wizCurrent = 0; wizShow(); }}
 
     // Auto-launch — first time AND no profile yet
     try {{
-      const seen = localStorage.getItem("gmj_wizard_seen_v1");
+      const seen = localStorage.getItem("gmj_wizard_seen_v2");
       if (!seen && !HAS_PROFILE_AT_RENDER) {{ setTimeout(wizShow, 450); }}
     }} catch(e) {{}}
   }}
