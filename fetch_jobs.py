@@ -546,6 +546,15 @@ POSITIVE_TITLE_THEMES = [
     # Programs / portfolio (her core)
     "program management", "head of program", "vp programs", "vp of programs",
     "head of portfolio", "vp portfolio", "head of programs",
+    # Finance / banking / fintech (added Slice B v2 so bank/fintech employers
+    # actually surface relevant senior roles instead of being silently dropped
+    # by a healthcare-only theme list).
+    "finance", "financial", "banking", "investment", "investments", "wealth",
+    "treasury", "trading", "trader", "lending", "credit", "underwriting",
+    "compliance", "risk", "audit", "regulatory", "fintech", "payments",
+    "asset management", "capital markets", "private banking",
+    "investment banking", "wealth management", "portfolio management",
+    "managing director", "principal", "head of risk",
 ]
 
 
@@ -1138,19 +1147,47 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
     # Hide jobs that aren't a fit (blacklist)
     rows = [r for r in rows if not _is_irrelevant_title(r[2])]
 
-    # Whitelist: title must contain a positive domain theme or a skills-profile keyword
-    rows = [r for r in rows if _has_positive_theme(r[2], SKILLS_PROFILE)]
-
-    # Industry filter — combine industries + specialties for richer matching
+    # Combine the title-keyword whitelist, the industry filter, and a
+    # target-company override into a single pass (Slice B v2). The previous
+    # behavior required BOTH title-pass AND industry-pass, which over-filtered
+    # senior roles at verified target companies whose titles didn't happen to
+    # contain a healthcare-flavored theme word. New semantics:
+    #
+    #   pass IF (title matches user themes/keywords AND industry overlaps)
+    #     OR (job is senior=1 AND its company is in user's targetCompanies)
+    #
+    # When the user has no industries set, the industry check is treated as
+    # always-pass so the title gate alone applies.
     if SKILLS_PROFILE:
         user_industries = (SKILLS_PROFILE.get("industries", []) or []) + (SKILLS_PROFILE.get("specialties", []) or [])
+        target_company_names = {
+            (tc.get("name") if isinstance(tc, dict) else tc or "").strip().lower()
+            for tc in (SKILLS_PROFILE.get("targetCompanies") or [])
+            if (tc.get("name") if isinstance(tc, dict) else tc)
+        }
     else:
         user_industries = []
-    if user_industries:
-        def _ind_ok(r):
-            job_industries = (r[15] or "").split(",") if r[15] else []
-            return _industry_match(job_industries, user_industries)
-        rows = [r for r in rows if _ind_ok(r)]
+        target_company_names = set()
+
+    def _passes_filters(r):
+        title = r[2]
+        company = (r[1] or "").strip().lower()
+        senior_flag = r[10]
+        job_inds = (r[15] or "").split(",") if r[15] else []
+        # Override: senior role at the user's verified target company. The
+        # user explicitly asked for this employer, so trust that signal over
+        # the title-keyword heuristic.
+        if senior_flag and company and company in target_company_names:
+            return True
+        # Standard path: title gate (now includes finance themes + per-user
+        # keywords via _has_positive_theme) AND industry overlap.
+        if not _has_positive_theme(title, SKILLS_PROFILE):
+            return False
+        if user_industries and job_inds:
+            return _industry_match(job_inds, user_industries)
+        return True  # no industry data on either side — title gate is enough
+
+    rows = [r for r in rows if _passes_filters(r)]
 
     # Location + remote preference filter (Slice 2)
     if SKILLS_PROFILE:
