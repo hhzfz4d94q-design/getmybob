@@ -1650,6 +1650,7 @@ HTML_TEMPLATE = """<!doctype html>
     <div class="wiz-body" id="wiz-body"></div>
     <div class="wiz-actions">
       <button class="wiz-btn-primary" id="wiz-cta" type="button">Let's go</button>
+      <button class="wiz-btn-ghost" id="wiz-save-exit" type="button" style="display:none">Save &amp; exit</button>
       <button class="wiz-btn-ghost" id="wiz-back" type="button" style="display:none">Back</button>
       <button class="wiz-btn-ghost wiz-skip" id="wiz-skip" type="button">Skip for now</button>
     </div>
@@ -3905,6 +3906,13 @@ function wizHide() {{
 function wizRender() {{
   const s = WIZ_STEPS[wizCurrent];
   document.getElementById("wiz-step-count").textContent = "Step " + (wizCurrent + 1) + " of " + WIZ_STEPS.length;
+  // Show "Save & exit" only on steps where the action actually saves something
+  const _saveExit = document.getElementById("wiz-save-exit");
+  if (_saveExit) {{
+    const _s = WIZ_STEPS[wizCurrent];
+    const _canSaveExit = _s && (_s.action === "save-location-remote" || _s.action === "save-company-sizes");
+    _saveExit.style.display = _canSaveExit ? "" : "none";
+  }}
   document.getElementById("wiz-title").textContent = s.title;
   document.getElementById("wiz-body").innerHTML = s.body;
   document.getElementById("wiz-cta").innerHTML = s.cta;
@@ -4108,12 +4116,18 @@ function wizMixOnNum(key) {{
               setTimeout(wizAdvance, 1500);
             }} else {{
               if (statusEl) statusEl.textContent = "Saved.";
-              setTimeout(wizAdvance, 400);
+              setTimeout(function(){{
+                if (window._wizExitAfterSave) {{ window._wizExitAfterSave = false; wizFinish(); }}
+                else {{ wizAdvance(); }}
+              }}, 400);
             }}
           }})
           .catch(function(e){{
             if (statusEl) statusEl.textContent = "Network error \u2014 continuing anyway.";
-            setTimeout(wizAdvance, 1200);
+            setTimeout(function(){{
+              if (window._wizExitAfterSave) {{ window._wizExitAfterSave = false; wizFinish(); }}
+              else {{ wizAdvance(); }}
+            }}, 1200);
           }})
           .finally(function(){{ if (ctaBtn) ctaBtn.disabled = false; }});
         return;
@@ -4161,12 +4175,18 @@ function wizMixOnNum(key) {{
               setTimeout(wizAdvance, 1500);
             }} else {{
               if (statusEl) {{ statusEl.style.color = "#0a6b3a"; statusEl.textContent = "Saved: " + mix.startup + "/" + mix.midsize + "/" + mix.large + " (startup/mid/large)."; }}
-              setTimeout(wizAdvance, 600);
+              setTimeout(function(){{
+                if (window._wizExitAfterSave) {{ window._wizExitAfterSave = false; wizFinish(); }}
+                else {{ wizAdvance(); }}
+              }}, 600);
             }}
           }})
           .catch(function(e){{
             if (statusEl) {{ statusEl.style.color = "#b00"; statusEl.textContent = "Network error \u2014 continuing."; }}
-            setTimeout(wizAdvance, 1200);
+            setTimeout(function(){{
+              if (window._wizExitAfterSave) {{ window._wizExitAfterSave = false; wizFinish(); }}
+              else {{ wizAdvance(); }}
+            }}, 1200);
           }})
           .finally(function(){{ if (ctaBtn) ctaBtn.disabled = false; }});
         return;
@@ -4179,6 +4199,15 @@ function wizMixOnNum(key) {{
       if (s.action && s.action !== "next" && s.action !== "finish") {{ wizAdvance(); return; }}
       wizSkipPermanent();
     }});
+    const saveExitBtn = document.getElementById("wiz-save-exit");
+    if (saveExitBtn) {{
+      saveExitBtn.addEventListener("click", function() {{
+        // Set a flag the save handlers honor: after a successful save, exit
+        // the wizard (run regen + close) instead of advancing to the next step.
+        window._wizExitAfterSave = true;
+        cta.click();
+      }});
+    }}
 
     // Wrap existing close handlers so the wizard resumes after a modal closes
     if (typeof closeResumeModal === "function") {{
