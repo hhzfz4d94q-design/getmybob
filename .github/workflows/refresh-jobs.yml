@@ -35,6 +35,7 @@ jobs:
           # and landing.html (canonical landing copy). This keeps the public
           # homepage stable across auto-refresh runs.
           git add jobs.db
+          git add reports/ 2>/dev/null || true
           for f in *.html; do
             if [ "$f" != "index.html" ] && [ "$f" != "landing.html" ]; then
               git add "$f"
