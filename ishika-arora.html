@@ -217,7 +217,7 @@
 
 <header>
   <h1>Jobs for Ishika Arora</h1>
-  <div class="sub">Awaiting resume upload — click Resume to get started · Generated 2026-05-18 20:21</div>
+  <div class="sub">Awaiting resume upload — click Resume to get started · Generated 2026-05-18 20:30</div>
   <div class="header-actions">
     <button id="prefs-btn" class="header-btn" onclick="replayTour()" title="Re-open the setup wizard to change your locations, remote pref, and company sizes">Preferences</button>
     <button id="resume-btn" class="header-btn" onclick="openResumeModal()">Resume</button>
@@ -226,8 +226,8 @@
   </div>
 </header>
 <div class="stats">
-  <div class="stat"><b>11095</b>Total jobs tracked</div>
-  <div class="stat"><b>397</b>Senior + Remote (last 7d)</div>
+  <div class="stat"><b>11116</b>Total jobs tracked</div>
+  <div class="stat"><b>398</b>Senior + Remote (last 7d)</div>
   <div class="stat"><b>0</b>Possible ghost jobs (60d+)</div>
   <div class="stat"><b id="shown-counter">0</b>Showing</div>
 </div>
@@ -2421,9 +2421,9 @@ const WIZ_STEPS = [
     title: "What's your ideal mix of company sizes?",
     body: '<p style="margin-bottom:14px;">We mix jobs across startups, mid-size, and large employers. Tell us your ideal balance — drag the sliders or type a number. Total has to add up to 100. Set any one to 0 to exclude that size entirely.</p>' +
       '<div style="display:flex;flex-direction:column;gap:14px;">' +
-      '<div>' +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +'<span><strong>Startups</strong> <span style="color:#888;font-weight:normal;">&mdash; under 500 employees, often early-stage</span></span>' +'<span style="display:flex;align-items:center;gap:4px;"><input id="wiz-mix-startup-num" type="number" min="0" max="100" value="33" oninput="wizMixOnNum('startup')" style="width:54px;padding:4px 6px;border:1px solid #d0d4dc;border-radius:4px;text-align:right;font-size:13px;">%</span>' +'</div>' +'<input type="range" id="wiz-mix-startup" min="0" max="100" value="33" oninput="wizMixOnSlide('startup')" style="width:100%;">' +'</div>' +
-      '<div>' +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +'<span><strong>Mid-size</strong> <span style="color:#888;font-weight:normal;">&mdash; 500–10k employees, established</span></span>' +'<span style="display:flex;align-items:center;gap:4px;"><input id="wiz-mix-midsize-num" type="number" min="0" max="100" value="33" oninput="wizMixOnNum('midsize')" style="width:54px;padding:4px 6px;border:1px solid #d0d4dc;border-radius:4px;text-align:right;font-size:13px;">%</span>' +'</div>' +'<input type="range" id="wiz-mix-midsize" min="0" max="100" value="33" oninput="wizMixOnSlide('midsize')" style="width:100%;">' +'</div>' +
-      '<div>' +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +'<span><strong>Large</strong> <span style="color:#888;font-weight:normal;">&mdash; 10k+ employees, Fortune 500 / public</span></span>' +'<span style="display:flex;align-items:center;gap:4px;"><input id="wiz-mix-large-num" type="number" min="0" max="100" value="33" oninput="wizMixOnNum('large')" style="width:54px;padding:4px 6px;border:1px solid #d0d4dc;border-radius:4px;text-align:right;font-size:13px;">%</span>' +'</div>' +'<input type="range" id="wiz-mix-large" min="0" max="100" value="33" oninput="wizMixOnSlide('large')" style="width:100%;">' +'</div>' +
+      '<div>' +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +'<span><strong>Startups</strong> <span style="color:#888;font-weight:normal;">&mdash; under 500 employees, often early-stage</span></span>' +'<span style="display:flex;align-items:center;gap:4px;"><input id="wiz-mix-startup-num" type="number" min="0" max="100" value="33" oninput="wizMixOnNum(\'startup\')" style="width:54px;padding:4px 6px;border:1px solid #d0d4dc;border-radius:4px;text-align:right;font-size:13px;">%</span>' +'</div>' +'<input type="range" id="wiz-mix-startup" min="0" max="100" value="33" oninput="wizMixOnSlide(\'startup\')" style="width:100%;">' +'</div>' +
+      '<div>' +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +'<span><strong>Mid-size</strong> <span style="color:#888;font-weight:normal;">&mdash; 500–10k employees, established</span></span>' +'<span style="display:flex;align-items:center;gap:4px;"><input id="wiz-mix-midsize-num" type="number" min="0" max="100" value="33" oninput="wizMixOnNum(\'midsize\')" style="width:54px;padding:4px 6px;border:1px solid #d0d4dc;border-radius:4px;text-align:right;font-size:13px;">%</span>' +'</div>' +'<input type="range" id="wiz-mix-midsize" min="0" max="100" value="33" oninput="wizMixOnSlide(\'midsize\')" style="width:100%;">' +'</div>' +
+      '<div>' +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +'<span><strong>Large</strong> <span style="color:#888;font-weight:normal;">&mdash; 10k+ employees, Fortune 500 / public</span></span>' +'<span style="display:flex;align-items:center;gap:4px;"><input id="wiz-mix-large-num" type="number" min="0" max="100" value="33" oninput="wizMixOnNum(\'large\')" style="width:54px;padding:4px 6px;border:1px solid #d0d4dc;border-radius:4px;text-align:right;font-size:13px;">%</span>' +'</div>' +'<input type="range" id="wiz-mix-large" min="0" max="100" value="33" oninput="wizMixOnSlide(\'large\')" style="width:100%;">' +'</div>' +
       '</div>' +
       '<div id="wiz-mix-status" style="display:flex;justify-content:space-between;font-size:12px;color:#888;margin-top:10px;min-height:18px;">' +
       '<span>Total: <strong id="wiz-mix-sum-val">99</strong>%</span>' +
