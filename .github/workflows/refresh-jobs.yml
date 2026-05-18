@@ -1,10 +1,13 @@
 name: Refresh jobs and deploy dashboard
 
-# Run every 6 hours and on manual trigger
+# Run every 6 hours, on manual trigger, or via repository_dispatch (lets the
+# probe / other tooling kick a refresh without needing actions:write).
 on:
   schedule:
     - cron: "0 */6 * * *"
   workflow_dispatch: {}
+  repository_dispatch:
+    types: [refresh-jobs]
 
 jobs:
   refresh:
