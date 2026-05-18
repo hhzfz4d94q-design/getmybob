@@ -1139,7 +1139,7 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         FROM jobs
         WHERE last_seen >= datetime('now', '-30 days')
         ORDER BY score DESC, last_seen DESC
-        LIMIT 2000
+        LIMIT 20000
     """).fetchall()
     # No profile → no jobs. User must upload resume first to see anything.
     if not SKILLS_PROFILE:
