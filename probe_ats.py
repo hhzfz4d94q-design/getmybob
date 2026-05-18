@@ -71,7 +71,7 @@ def http_get_json(url: str):
 def probe_greenhouse(slug):
     url = f"https://boards-api.greenhouse.io/v1/boards/{slug}/jobs"
     data = http_get_json(url)
-    if isinstance(data, dict) and "jobs" in data:
+    if isinstance(data, dict) and isinstance(data.get("jobs"), list) and len(data["jobs"]) > 0:
         return {"source": "greenhouse", "token": slug, "jobs": len(data["jobs"]), "url": url}
     return None
 
@@ -79,7 +79,7 @@ def probe_greenhouse(slug):
 def probe_lever(slug):
     url = f"https://api.lever.co/v0/postings/{slug}?mode=json"
     data = http_get_json(url)
-    if isinstance(data, list):
+    if isinstance(data, list) and len(data) > 0:
         return {"source": "lever", "token": slug, "jobs": len(data), "url": url}
     return None
 
@@ -87,28 +87,28 @@ def probe_lever(slug):
 def probe_ashby(slug):
     url = f"https://api.ashbyhq.com/posting-api/job-board/{slug}"
     data = http_get_json(url)
-    if isinstance(data, dict) and "jobs" in data:
+    if isinstance(data, dict) and isinstance(data.get("jobs"), list) and len(data["jobs"]) > 0:
         return {"source": "ashby", "token": slug, "jobs": len(data["jobs"]), "url": url}
     return None
 
 
 def probe_smartrecruiters(slug):
+    """SR returns 200 + totalFound:0 for ANY slug, so 0 jobs is NOT a real hit.
+    Only count it if at least one posting is actually present."""
     url = f"https://api.smartrecruiters.com/v1/companies/{slug}/postings"
     data = http_get_json(url)
-    if isinstance(data, dict) and ("content" in data or "totalFound" in data):
-        return {
-            "source": "smartrecruiters",
-            "token": slug,
-            "jobs": data.get("totalFound", len(data.get("content", []))),
-            "url": url,
-        }
+    if not isinstance(data, dict):
+        return None
+    total = data.get("totalFound", len(data.get("content", []) or []))
+    if total > 0:
+        return {"source": "smartrecruiters", "token": slug, "jobs": total, "url": url}
     return None
 
 
 def probe_wttj(slug):
-    """Welcome to the Jungle is a job-board, not an ATS. The public company
-    page is HTML — we confirm the company exists by checking the page loads
-    and references the slug, and we estimate job count from job-card links."""
+    """Welcome to the Jungle is a job-board, not an ATS. Confirm the page
+    loads, looks like a real company page for this slug, and exposes at
+    least one job link."""
     url = f"https://www.welcometothejungle.com/en/companies/{slug}"
     try:
         status, ctype, body = http_get(url)
@@ -117,14 +117,71 @@ def probe_wttj(slug):
     if status != 200:
         return None
     html = body.decode("utf-8", errors="replace").lower()
-    # Sanity: page must look like a WTTJ company page for this slug
-    if "welcome to the jungle" not in html:
+    if "welcome to the jungle" not in html or slug.lower() not in html:
         return None
-    if slug.lower() not in html:
-        return None
-    # Job count proxy: count unique job links under this company.
     job_links = set(re.findall(rf"/companies/{re.escape(slug.lower())}/jobs/[a-z0-9\-]+", html))
+    if not job_links:
+        return None
     return {"source": "wttj", "token": slug, "jobs": len(job_links), "url": url}
+
+
+# --------- Workday ---------
+# Workday is per-company. The AI's targetCompanies entries can carry an
+# `atsUrl` like "capitalone.wd1.myworkdayjobs.com/External"; we use that
+# hint when available, and fall back to a small set of common patterns.
+
+WORKDAY_URL_RE = re.compile(
+    r"^(?:https?://)?([a-z0-9-]+)\.wd(\d+)\.myworkdayjobs\.com/(?:wday/cxs/[^/]+/)?([^/?#]+)",
+    re.IGNORECASE,
+)
+
+
+def _workday_candidates(slug, ats_url):
+    """Yield (subdomain, instance_num, tenant, site) tuples to try."""
+    seen = set()
+    if ats_url:
+        m = WORKDAY_URL_RE.match(ats_url.strip())
+        if m:
+            sub, n, site = m.groups()
+            key = (sub.lower(), n, sub.lower(), site)
+            seen.add(key)
+            yield key
+    # Cheap generic guesses
+    for n in ("1", "5", "3", "2"):
+        for site in ("External", "Careers", "External_Career_Site"):
+            key = (slug, n, slug, site)
+            if key not in seen:
+                seen.add(key)
+                yield key
+
+
+def probe_workday(slug, ats_url=None):
+    for sub, n, tenant, site in _workday_candidates(slug, ats_url):
+        url = f"https://{sub}.wd{n}.myworkdayjobs.com/wday/cxs/{tenant}/{site}/jobs"
+        try:
+            req = urllib.request.Request(
+                url,
+                method="POST",
+                data=b'{"limit":1,"offset":0,"searchText":""}',
+                headers={"User-Agent": UA, "Content-Type": "application/json", "Accept": "application/json"},
+            )
+            with urllib.request.urlopen(req, timeout=TIMEOUT) as resp:
+                if resp.status != 200:
+                    continue
+                if "json" not in resp.headers.get("content-type", "").lower():
+                    continue
+                body = json.loads(resp.read().decode("utf-8", errors="replace"))
+        except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError, ValueError):
+            continue
+        total = body.get("total", 0) if isinstance(body, dict) else 0
+        if total > 0:
+            return {
+                "source": "workday",
+                "token": f"{sub}/{site}",
+                "jobs": total,
+                "url": url,
+            }
+    return None
 
 
 # (source-name, probe-fn) — checked in this order, with AI hint reordering
@@ -133,16 +190,20 @@ PROBES = [
     ("lever", probe_lever),
     ("ashby", probe_ashby),
     ("smartrecruiters", probe_smartrecruiters),
+    ("workday", probe_workday),
     ("wttj", probe_wttj),
 ]
 
 
-def probe_company(name: str, ai_hint: str = "unknown"):
+def probe_company(name: str, ai_hint: str = "unknown", ats_url: str = None):
     """Try every (slug, source) combination until one returns a hit."""
     ordered = sorted(PROBES, key=lambda p: 0 if p[0] == ai_hint else 1)
     for slug in slug_variants(name):
         for source_name, fn in ordered:
-            hit = fn(slug)
+            try:
+                hit = fn(slug, ats_url) if source_name == "workday" else fn(slug)
+            except TypeError:
+                hit = fn(slug)
             if hit:
                 return hit
         time.sleep(0.05)
@@ -220,7 +281,8 @@ def main():
     for tc in targets:
         name = tc.get("name", "")
         ai_hint = (tc.get("atsHint") or "unknown").lower()
-        result = probe_company(name, ai_hint)
+        ats_url = tc.get("atsUrl") or ""
+        result = probe_company(name, ai_hint, ats_url)
         src = result["source"]
         match = "OK" if src == ai_hint else ("NEW" if src != "unknown" else "--")
         if src != "unknown":
