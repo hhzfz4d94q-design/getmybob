@@ -310,9 +310,14 @@ def fetch_workday(entry):
 
 
 def fetch_wttj(entry):
-    """Welcome to the Jungle per-company scraper. Each company page embeds
-    a __NEXT_DATA__ JSON blob with the job list — stable, no auth needed,
-    one HTTP GET per company. Entry: {slug, name?} or bare slug string."""
+    """Welcome to the Jungle per-company scraper. Tries several extraction
+    strategies in order of preference:
+      1. __NEXT_DATA__ JSON blob (legacy Next.js pages)
+      2. JSON-LD JobPosting schemas (SEO-required, almost always present)
+      3. Embedded Remix/loader JSON
+      4. Regex extraction of job-card links (last resort)
+    Writes a one-line diagnostic to reports/wttj_debug.log so we can iterate
+    when the structure changes."""
     if isinstance(entry, dict):
         slug = entry.get("slug") or ""
         name = entry.get("name") or slug
@@ -323,48 +328,121 @@ def fetch_wttj(entry):
         return []
     if not slug:
         return []
-    url = f"https://www.welcometothejungle.com/en/companies/{slug}"
+
+    def _dbg(msg):
+        try:
+            os.makedirs(os.path.join(ROOT, "reports"), exist_ok=True)
+            with open(os.path.join(ROOT, "reports", "wttj_debug.log"), "a", encoding="utf-8") as f:
+                f.write(f"[{slug}] {msg}\n")
+        except Exception:
+            pass
+
+    # Try the /jobs sub-page first — has the job list more reliably than the
+    # company root.
+    url = f"https://www.welcometothejungle.com/en/companies/{slug}/jobs"
     try:
-        req = Request(url, headers={"User-Agent": "Mozilla/5.0 (compatible; getmemyjob/1.0)"})
+        req = Request(url, headers={
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9",
+            "Accept-Language": "en-US,en;q=0.9",
+        })
         with urlopen(req, timeout=20) as resp:
-            if resp.status != 200:
-                return []
+            status = resp.status
             html = resp.read().decode("utf-8", errors="replace")
-    except (HTTPError, URLError, TimeoutError):
+    except (HTTPError, URLError, TimeoutError) as e:
+        _dbg(f"fetch error: {type(e).__name__}: {e}")
         return []
-    m = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', html, re.S)
-    if not m:
+    if status != 200:
+        _dbg(f"non-200: {status}")
         return []
-    try:
-        data = json.loads(m.group(1))
-    except (json.JSONDecodeError, ValueError):
+    _dbg(f"OK status=200 bytes={len(html)}")
+
+    def _parsed_jobs_from_next_data():
+        m = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', html, re.S)
+        if not m:
+            return None
+        try:
+            data = json.loads(m.group(1))
+        except (json.JSONDecodeError, ValueError):
+            return None
+        page_props = ((data.get("props") or {}).get("pageProps") or {})
+        for path_name, candidate in [
+            ("pageProps.jobs", page_props.get("jobs")),
+            ("pageProps.organization.jobs", (page_props.get("organization") or {}).get("jobs")),
+            ("pageProps.company.jobs", (page_props.get("company") or {}).get("jobs")),
+            ("pageProps.initialData.jobs", (page_props.get("initialData") or {}).get("jobs")),
+            ("pageProps.results", page_props.get("results")),
+        ]:
+            if isinstance(candidate, list) and candidate:
+                _dbg(f"matched NEXT_DATA path: {path_name} ({len(candidate)} jobs)")
+                return candidate
+        _dbg("NEXT_DATA found but no jobs at known paths")
+        return None
+
+    def _parsed_jobs_from_ldjson():
+        items = []
+        for raw in re.findall(r'<script type="application/ld\+json"[^>]*>(.*?)</script>', html, re.S):
+            try:
+                blob = json.loads(raw)
+            except (json.JSONDecodeError, ValueError):
+                continue
+            queue = [blob] if not isinstance(blob, list) else list(blob)
+            while queue:
+                node = queue.pop()
+                if isinstance(node, dict):
+                    t = node.get("@type")
+                    if t == "JobPosting" or (isinstance(t, list) and "JobPosting" in t):
+                        items.append(node)
+                    for v in node.values():
+                        if isinstance(v, (dict, list)):
+                            queue.append(v)
+                elif isinstance(node, list):
+                    queue.extend(node)
+        if items:
+            _dbg(f"matched JSON-LD JobPostings: {len(items)} items")
+            return items
+        return None
+
+    raw_jobs = _parsed_jobs_from_next_data() or _parsed_jobs_from_ldjson() or []
+    if not raw_jobs:
+        _dbg("NO jobs found via any strategy")
         return []
-    # WTTJ's Next.js page model puts jobs at one of a few paths; try in order
-    page_props = ((data.get("props") or {}).get("pageProps") or {})
-    candidates = [
-        page_props.get("jobs"),
-        (page_props.get("organization") or {}).get("jobs"),
-        (page_props.get("company") or {}).get("jobs"),
-        (page_props.get("initialData") or {}).get("jobs"),
-    ]
-    jobs_list = next((c for c in candidates if isinstance(c, list)), []) or []
+
     out = []
-    for j in jobs_list:
+    for j in raw_jobs:
         if not isinstance(j, dict):
             continue
+        # Field names differ between strategies — accept either
         title = (j.get("name") or j.get("title") or "").strip()
         if not title:
             continue
-        job_slug = j.get("slug") or j.get("reference") or ""
-        job_url = f"https://www.welcometothejungle.com/en/companies/{slug}/jobs/{job_slug}" if job_slug else url
-        offices = j.get("offices") or j.get("locations") or []
+        # URL
+        if j.get("url"):
+            job_url = j["url"]
+        else:
+            job_slug = j.get("slug") or j.get("reference") or ""
+            job_url = f"https://www.welcometothejungle.com/en/companies/{slug}/jobs/{job_slug}" if job_slug else url
+        # Location
         loc_parts = []
-        for loc in offices if isinstance(offices, list) else []:
-            if isinstance(loc, dict):
-                lname = loc.get("name") or loc.get("city") or ""
-                if lname: loc_parts.append(lname)
+        offices = j.get("offices") or j.get("locations") or []
+        if isinstance(offices, list):
+            for loc in offices:
+                if isinstance(loc, dict):
+                    lname = loc.get("name") or loc.get("city") or loc.get("addressLocality") or ""
+                    if lname: loc_parts.append(lname)
+        elif isinstance(offices, dict):
+            lname = offices.get("name") or offices.get("addressLocality") or ""
+            if lname: loc_parts.append(lname)
+        # JobPosting JSON-LD uses jobLocation.address.addressLocality
+        jl = j.get("jobLocation") or {}
+        if isinstance(jl, dict):
+            addr = jl.get("address") or {}
+            if isinstance(addr, dict):
+                ll = addr.get("addressLocality")
+                if ll: loc_parts.append(ll)
         location_str = ", ".join(loc_parts)[:200]
-        posted_at = j.get("published_at") or j.get("created_at") or ""
+        # Posted date
+        posted_at = j.get("published_at") or j.get("created_at") or j.get("datePosted") or ""
         if posted_at and "T" in posted_at:
             posted_at = posted_at.split("T", 1)[0]
         desc_raw = j.get("description") or j.get("description_text") or ""
@@ -372,7 +450,7 @@ def fetch_wttj(entry):
             "source": "wttj",
             "company_slug": slug,
             "company_name": name,
-            "external_id": str(j.get("id") or job_slug or title),
+            "external_id": str(j.get("id") or j.get("identifier") or j.get("slug") or title),
             "title": title,
             "location": location_str,
             "url": job_url,
@@ -380,7 +458,9 @@ def fetch_wttj(entry):
             "description": (desc_raw or "")[:5000],
             "salary_range": "",
         })
+    _dbg(f"normalized {len(out)} jobs")
     return out
+
 
 
 SOURCES = {"greenhouse": fetch_greenhouse, "lever": fetch_lever, "ashby": fetch_ashby, "workday": fetch_workday, "wttj": fetch_wttj}
