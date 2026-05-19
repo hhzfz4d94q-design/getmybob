@@ -340,37 +340,64 @@ def fetch_wttj(entry):
     # Try several endpoints in order. The public web pages are
     # Cloudflare-protected; api.welcometothejungle.com sometimes serves
     # the same data without the bot challenge.
-    candidates = [
-        # Try various known-or-guessed jobs endpoints first
-        f"https://api.welcometothejungle.com/api/v1/organizations/{slug}/job_offers?per_page=100",
-        f"https://api.welcometothejungle.com/api/v1/organizations/{slug}/jobs?per_page=100",
-        f"https://api.welcometothejungle.com/api/v2/organizations/{slug}/jobs?per_page=100",
-        f"https://api.welcometothejungle.com/api/v1/job_offers?organization_slug={slug}&per_page=100",
-        f"https://api.welcometothejungle.com/api/v1/jobs?organization_slug={slug}&per_page=100",
-        f"https://api.welcometothejungle.com/api/v1/companies/{slug}/jobs?per_page=100",
-        # Fallback: org metadata (no jobs but at least returns 200; we can read 'urls')
-        f"https://api.welcometothejungle.com/api/v1/organizations/{slug}",
-        f"https://www.welcometothejungle.com/en/companies/{slug}/jobs",
-    ]
-    html = None
-    for cand in candidates:
+    common_headers = {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "application/json, text/html;q=0.9",
+        "Accept-Language": "en-US,en;q=0.9",
+    }
+    def _try(url):
         try:
-            req = Request(cand, headers={
-                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-                "Accept": "application/json, text/html;q=0.9",
-                "Accept-Language": "en-US,en;q=0.9",
-            })
+            req = Request(url, headers=common_headers)
             with urlopen(req, timeout=15) as resp:
                 if resp.status != 200:
-                    _dbg(f"{cand}: HTTP {resp.status}")
-                    continue
-                html = resp.read().decode("utf-8", errors="replace")
-                _dbg(f"OK {cand}: {len(html)} bytes")
-                break
+                    _dbg(f"{url}: HTTP {resp.status}")
+                    return None
+                return resp.read().decode("utf-8", errors="replace")
         except (HTTPError, URLError, TimeoutError) as e:
-            _dbg(f"{cand}: {type(e).__name__}: {e}")
+            _dbg(f"{url}: {type(e).__name__}: {e}")
+            return None
+
+    # Phase 1: pull org metadata so we get the reference UUID
+    org_html = _try(f"https://api.welcometothejungle.com/api/v1/organizations/{slug}")
+    org_ref = None
+    if org_html:
+        try:
+            org_data = json.loads(org_html)
+            org_node = org_data.get("organization") or org_data
+            if isinstance(org_node, dict):
+                org_ref = org_node.get("reference")
+                _dbg(f"resolved org.reference={org_ref!r}")
+        except (json.JSONDecodeError, ValueError):
+            pass
+
+    # Phase 2: try jobs endpoints. Both slug-keyed and reference-UUID-keyed
+    # variants since we don't know which the API prefers.
+    keys_to_try = [slug]
+    if org_ref and org_ref not in keys_to_try:
+        keys_to_try.append(org_ref)
+    html = None
+    for key in keys_to_try:
+        for shape in [
+            f"https://api.welcometothejungle.com/api/v1/organizations/{key}/jobs",
+            f"https://api.welcometothejungle.com/api/v1/organizations/{key}/job_offers",
+            f"https://api.welcometothejungle.com/api/v1/organizations/{key}/job_postings",
+            f"https://api.welcometothejungle.com/api/v1/profiles/{key}/jobs",
+            f"https://api.welcometothejungle.com/api/v2/organizations/{key}/jobs",
+        ]:
+            html = _try(shape)
+            if html:
+                _dbg(f"OK jobs endpoint: {shape}")
+                break
+        if html:
+            break
     if not html:
-        _dbg("all candidates failed — Cloudflare bot protection probably active")
+        # Last resort: bare org metadata (returned non-empty; we use it for
+        # company description even though it has no jobs)
+        html = org_html
+        if html:
+            _dbg("falling back to org metadata only (no jobs)")
+    if not html:
+        _dbg("all WTTJ candidates failed — likely Cloudflare bot protection")
         return []
 
     def _parsed_jobs_from_next_data():
