@@ -1013,5 +1013,159 @@
       ]
     }
   ],
+  "wttj": [
+    {
+      "slug": "alan",
+      "name": "Alan",
+      "industries": [
+        "healthcare",
+        "health-insurance",
+        "digital-health",
+        "insurtech"
+      ]
+    },
+    {
+      "slug": "doctolib",
+      "name": "Doctolib",
+      "industries": [
+        "healthcare",
+        "healthcare-it",
+        "digital-health",
+        "telehealth"
+      ]
+    },
+    {
+      "slug": "withings",
+      "name": "Withings",
+      "industries": [
+        "healthcare",
+        "health-devices",
+        "digital-health",
+        "wearables"
+      ]
+    },
+    {
+      "slug": "owkin",
+      "name": "Owkin",
+      "industries": [
+        "healthcare",
+        "biotech",
+        "clinical-ai",
+        "life-sciences"
+      ]
+    },
+    {
+      "slug": "qonto",
+      "name": "Qonto",
+      "industries": [
+        "fintech",
+        "banking",
+        "business-banking",
+        "sme-banking"
+      ]
+    },
+    {
+      "slug": "spendesk",
+      "name": "Spendesk",
+      "industries": [
+        "fintech",
+        "spend-management",
+        "b2b-saas",
+        "corporate-cards"
+      ]
+    },
+    {
+      "slug": "pennylane-2",
+      "name": "Pennylane",
+      "industries": [
+        "fintech",
+        "accounting",
+        "b2b-saas"
+      ]
+    },
+    {
+      "slug": "ledger",
+      "name": "Ledger",
+      "industries": [
+        "fintech",
+        "crypto",
+        "wallets",
+        "security"
+      ]
+    },
+    {
+      "slug": "swile",
+      "name": "Swile",
+      "industries": [
+        "fintech",
+        "payments",
+        "employee-benefits"
+      ]
+    },
+    {
+      "slug": "algolia",
+      "name": "Algolia",
+      "industries": [
+        "search",
+        "developer-tools",
+        "saas"
+      ]
+    },
+    {
+      "slug": "datadog",
+      "name": "Datadog",
+      "industries": [
+        "observability",
+        "cybersecurity",
+        "developer-tools",
+        "saas"
+      ]
+    },
+    {
+      "slug": "datadome",
+      "name": "DataDome",
+      "industries": [
+        "cybersecurity",
+        "bot-protection",
+        "saas"
+      ]
+    },
+    {
+      "slug": "blablacar",
+      "name": "BlaBlaCar",
+      "industries": [
+        "marketplace",
+        "mobility",
+        "consumer-tech"
+      ]
+    },
+    {
+      "slug": "back-market",
+      "name": "Back Market",
+      "industries": [
+        "marketplace",
+        "sustainability",
+        "e-commerce"
+      ]
+    },
+    {
+      "slug": "mirakl",
+      "name": "Mirakl",
+      "industries": [
+        "marketplace",
+        "b2b-saas",
+        "retail-tech"
+      ]
+    },
+    {
+      "slug": "shift-technology",
+      "name": "Shift Technology",
+      "industries": [
+        "insurtech",
+        "fraud-detection",
+        "ai"
+      ]
+    }
+  ],
   "_notes": "~135 Greenhouse, ~28 Lever, ~17 Ashby, 3 Workday companies. Workday URLs follow pattern: https://{tenant}.{subdomain}.myworkdayjobs.com/{site}. To find a company's Workday details, visit their careers page and look at the URL once you're on the job search. UnitedHealth/Optum use a non-Workday careers portal (careers.unitedhealthgroup.com) and aren't easily scraped via public API; they're not included here. To add a Workday entry, append to the workday array."
 }

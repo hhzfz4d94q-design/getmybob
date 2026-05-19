@@ -309,7 +309,81 @@ def fetch_workday(entry):
     return out
 
 
-SOURCES = {"greenhouse": fetch_greenhouse, "lever": fetch_lever, "ashby": fetch_ashby, "workday": fetch_workday}
+def fetch_wttj(entry):
+    """Welcome to the Jungle per-company scraper. Each company page embeds
+    a __NEXT_DATA__ JSON blob with the job list — stable, no auth needed,
+    one HTTP GET per company. Entry: {slug, name?} or bare slug string."""
+    if isinstance(entry, dict):
+        slug = entry.get("slug") or ""
+        name = entry.get("name") or slug
+    elif isinstance(entry, str):
+        slug = entry
+        name = entry
+    else:
+        return []
+    if not slug:
+        return []
+    url = f"https://www.welcometothejungle.com/en/companies/{slug}"
+    try:
+        req = Request(url, headers={"User-Agent": "Mozilla/5.0 (compatible; getmemyjob/1.0)"})
+        with urlopen(req, timeout=20) as resp:
+            if resp.status != 200:
+                return []
+            html = resp.read().decode("utf-8", errors="replace")
+    except (HTTPError, URLError, TimeoutError):
+        return []
+    m = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', html, re.S)
+    if not m:
+        return []
+    try:
+        data = json.loads(m.group(1))
+    except (json.JSONDecodeError, ValueError):
+        return []
+    # WTTJ's Next.js page model puts jobs at one of a few paths; try in order
+    page_props = ((data.get("props") or {}).get("pageProps") or {})
+    candidates = [
+        page_props.get("jobs"),
+        (page_props.get("organization") or {}).get("jobs"),
+        (page_props.get("company") or {}).get("jobs"),
+        (page_props.get("initialData") or {}).get("jobs"),
+    ]
+    jobs_list = next((c for c in candidates if isinstance(c, list)), []) or []
+    out = []
+    for j in jobs_list:
+        if not isinstance(j, dict):
+            continue
+        title = (j.get("name") or j.get("title") or "").strip()
+        if not title:
+            continue
+        job_slug = j.get("slug") or j.get("reference") or ""
+        job_url = f"https://www.welcometothejungle.com/en/companies/{slug}/jobs/{job_slug}" if job_slug else url
+        offices = j.get("offices") or j.get("locations") or []
+        loc_parts = []
+        for loc in offices if isinstance(offices, list) else []:
+            if isinstance(loc, dict):
+                lname = loc.get("name") or loc.get("city") or ""
+                if lname: loc_parts.append(lname)
+        location_str = ", ".join(loc_parts)[:200]
+        posted_at = j.get("published_at") or j.get("created_at") or ""
+        if posted_at and "T" in posted_at:
+            posted_at = posted_at.split("T", 1)[0]
+        desc_raw = j.get("description") or j.get("description_text") or ""
+        out.append({
+            "source": "wttj",
+            "company_slug": slug,
+            "company_name": name,
+            "external_id": str(j.get("id") or job_slug or title),
+            "title": title,
+            "location": location_str,
+            "url": job_url,
+            "posted_at": posted_at[:10] if posted_at else "",
+            "description": (desc_raw or "")[:5000],
+            "salary_range": "",
+        })
+    return out
+
+
+SOURCES = {"greenhouse": fetch_greenhouse, "lever": fetch_lever, "ashby": fetch_ashby, "workday": fetch_workday, "wttj": fetch_wttj}
 
 
 # --- Utilities -----------------------------------------------------------
@@ -884,6 +958,11 @@ def _build_company_industries(companies):
             key = (entry.get("tenant") or entry.get("name", "")).lower()
             if key:
                 mapping[key] = entry.get("industries", DEFAULT_INDUSTRIES)
+    for entry in companies.get("wttj", []):
+        if isinstance(entry, dict):
+            key = (entry.get("slug") or entry.get("name", "")).lower()
+            if key:
+                mapping[key] = entry.get("industries", DEFAULT_INDUSTRIES)
     COMPANY_INDUSTRIES = mapping
     print(f"[industries] mapped {len(mapping)} companies; default={DEFAULT_INDUSTRIES}", flush=True)
 
@@ -990,6 +1069,21 @@ def _merge_user_target_companies(companies):
                 added["workday"] += 1
                 continue
 
+            if hint == "wttj":
+                wttj_key = target_slug
+                existing.setdefault("wttj", set())
+                if wttj_key in existing["wttj"]:
+                    continue
+                companies.setdefault("wttj", []).append({
+                    "slug": wttj_key,
+                    "name": name,
+                    "industries": user_industries or DEFAULT_INDUSTRIES,
+                    "_added_by_user": slug,
+                })
+                existing["wttj"].add(wttj_key)
+                added.setdefault("wttj", 0)
+                added["wttj"] += 1
+                continue
             if hint not in ("greenhouse", "lever", "ashby"):
                 skipped += 1
                 continue
