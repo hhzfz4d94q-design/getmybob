@@ -1167,5 +1167,25 @@
       ]
     }
   ],
+  "remoteok": [
+    {
+      "slug": "_all",
+      "name": "Remote OK feed",
+      "industries": [
+        "healthcare",
+        "healthcare-it",
+        "digital-health",
+        "health-saas",
+        "pharma",
+        "pharmaceuticals",
+        "biotech",
+        "life-sciences",
+        "diagnostics",
+        "telehealth",
+        "mental-health",
+        "clinical-ai"
+      ]
+    }
+  ],
   "_notes": "~135 Greenhouse, ~28 Lever, ~17 Ashby, 3 Workday companies. Workday URLs follow pattern: https://{tenant}.{subdomain}.myworkdayjobs.com/{site}. To find a company's Workday details, visit their careers page and look at the URL once you're on the job search. UnitedHealth/Optum use a non-Workday careers portal (careers.unitedhealthgroup.com) and aren't easily scraped via public API; they're not included here. To add a Workday entry, append to the workday array."
 }
