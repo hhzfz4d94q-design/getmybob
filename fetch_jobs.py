@@ -413,21 +413,43 @@ def fetch_wttj(entry):
         return None
 
     # If the response was raw JSON from api.welcometothejungle.com, try
-    # parsing it directly as a jobs array or {jobs: [...]} wrapper.
+    # to extract a jobs list. WTTJ's /organizations/{slug} endpoint returns
+    # org metadata with the jobs nested somewhere — recursively scan all
+    # arrays-of-dicts in the response and pick the one that looks like jobs.
     raw_jobs = None
     try:
         maybe_json = json.loads(html)
-        if isinstance(maybe_json, list):
-            raw_jobs = maybe_json
-            _dbg(f"parsed direct JSON array: {len(raw_jobs)} items")
-        elif isinstance(maybe_json, dict):
-            for key in ("jobs", "items", "data", "results"):
-                if isinstance(maybe_json.get(key), list):
-                    raw_jobs = maybe_json[key]
-                    _dbg(f"parsed JSON.{key}: {len(raw_jobs)} items")
-                    break
     except (json.JSONDecodeError, ValueError):
-        pass
+        maybe_json = None
+    if maybe_json is not None:
+        if isinstance(maybe_json, dict):
+            _dbg(f"JSON top-level keys: {sorted(maybe_json.keys())[:30]}")
+            # Some responses wrap the org in an "organization" key
+            org = maybe_json.get("organization") or maybe_json
+            if isinstance(org, dict):
+                _dbg(f"org keys: {sorted(org.keys())[:30]}")
+        # Recursively find arrays whose first element looks like a job
+        def _looks_like_job(d):
+            return (isinstance(d, dict) and
+                    any(k in d for k in ("name","title","slug","position")) and
+                    any(k in d for k in ("offices","locations","jobLocation","contract_type","reference","published_at")))
+        def _find_jobs(node, depth=0):
+            if depth > 8: return None
+            if isinstance(node, list):
+                if node and _looks_like_job(node[0]):
+                    return node
+                for item in node:
+                    r = _find_jobs(item, depth+1)
+                    if r: return r
+            elif isinstance(node, dict):
+                for v in node.values():
+                    r = _find_jobs(v, depth+1)
+                    if r: return r
+            return None
+        found = _find_jobs(maybe_json)
+        if found:
+            raw_jobs = found
+            _dbg(f"recursive scan found {len(raw_jobs)} job-like records")
     if not raw_jobs:
         raw_jobs = _parsed_jobs_from_next_data() or _parsed_jobs_from_ldjson() or []
     if not raw_jobs:
