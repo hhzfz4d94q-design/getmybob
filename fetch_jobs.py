@@ -341,7 +341,14 @@ def fetch_wttj(entry):
     # Cloudflare-protected; api.welcometothejungle.com sometimes serves
     # the same data without the bot challenge.
     candidates = [
+        # Try various known-or-guessed jobs endpoints first
+        f"https://api.welcometothejungle.com/api/v1/organizations/{slug}/job_offers?per_page=100",
         f"https://api.welcometothejungle.com/api/v1/organizations/{slug}/jobs?per_page=100",
+        f"https://api.welcometothejungle.com/api/v2/organizations/{slug}/jobs?per_page=100",
+        f"https://api.welcometothejungle.com/api/v1/job_offers?organization_slug={slug}&per_page=100",
+        f"https://api.welcometothejungle.com/api/v1/jobs?organization_slug={slug}&per_page=100",
+        f"https://api.welcometothejungle.com/api/v1/companies/{slug}/jobs?per_page=100",
+        # Fallback: org metadata (no jobs but at least returns 200; we can read 'urls')
         f"https://api.welcometothejungle.com/api/v1/organizations/{slug}",
         f"https://www.welcometothejungle.com/en/companies/{slug}/jobs",
     ]
@@ -424,10 +431,13 @@ def fetch_wttj(entry):
     if maybe_json is not None:
         if isinstance(maybe_json, dict):
             _dbg(f"JSON top-level keys: {sorted(maybe_json.keys())[:30]}")
-            # Some responses wrap the org in an "organization" key
             org = maybe_json.get("organization") or maybe_json
             if isinstance(org, dict):
                 _dbg(f"org keys: {sorted(org.keys())[:30]}")
+                if "urls" in org:
+                    _dbg(f"org.urls: {json.dumps(org['urls'])[:400]}")
+                if "reference" in org:
+                    _dbg(f"org.reference: {org['reference']!r}")
         # Recursively find arrays whose first element looks like a job
         def _looks_like_job(d):
             return (isinstance(d, dict) and
