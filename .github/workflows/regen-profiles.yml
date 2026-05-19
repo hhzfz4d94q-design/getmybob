@@ -5,20 +5,18 @@ name: Regenerate AI profiles
 # size-aware Anthropic prompt and saves a fresh skills_profile +
 # targetCompanies for each.
 #
-# Auth: prefers the WORKER_ADMIN_KEY GitHub secret (the durable path).
-# Falls back to an admin_key passed via workflow_dispatch input for one-off
-# transient use. Triggering via repository_dispatch only works with the
-# secret (no input mechanism in dispatch payloads here).
+# Auth: prefers the WORKER_ADMIN_KEY GitHub secret (durable). Falls back
+# to an admin_key passed via workflow_dispatch input for one-off use.
 
 on:
   workflow_dispatch:
     inputs:
       user_slug:
-        description: 'Which user to regen? Use "all" to loop every user in the registry.'
+        description: 'Which user to regen? "all" loops every user.'
         required: true
         default: 'all'
       admin_key:
-        description: 'X-Admin-Key (leave empty to use the WORKER_ADMIN_KEY GitHub secret).'
+        description: 'X-Admin-Key (leave empty to use WORKER_ADMIN_KEY secret)'
         required: false
         default: ''
   repository_dispatch:
@@ -37,87 +35,34 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Resolve admin key and user slug
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Resolve auth + slug
         id: cfg
         env:
           INPUT_KEY: ${{ github.event.inputs.admin_key }}
           SECRET_KEY: ${{ secrets.WORKER_ADMIN_KEY }}
         run: |
-          set -e
           KEY="${INPUT_KEY:-$SECRET_KEY}"
           if [ -z "$KEY" ]; then
             echo "::error::No admin key — set WORKER_ADMIN_KEY secret or pass admin_key input"
             exit 1
           fi
-          # Mask the key so it never appears in logs
           echo "::add-mask::$KEY"
           echo "key=$KEY" >> "$GITHUB_OUTPUT"
           SLUG="${{ github.event.inputs.user_slug || github.event.client_payload.user_slug || 'all' }}"
           echo "slug=$SLUG" >> "$GITHUB_OUTPUT"
-          echo "Slug: $SLUG"
 
-      - name: Regenerate
+      - name: Run regen
         env:
+          WORKER_URL: ${{ env.WORKER_URL }}
           ADMIN_KEY: ${{ steps.cfg.outputs.key }}
-          SLUG: ${{ steps.cfg.outputs.slug }}
-        run: |
-          set -e
-          mkdir -p reports
-          REPORT="reports/regen_$(date -u +%Y%m%dT%H%MZ).md"
-          echo "# Profile regeneration report" > "$REPORT"
-          echo "" >> "$REPORT"
-          echo "Triggered: $(date -u +%Y-%m-%dT%H:%MZ)" >> "$REPORT"
-          echo "" >> "$REPORT"
-
-          if [ "$SLUG" = "all" ]; then
-            SLUGS=$(curl -sS "$WORKER_URL/users" | python3 -c "import sys,json; d=json.load(sys.stdin); print(' '.join(u['slug'] for u in d.get('users',d if isinstance(d,list) else []) if isinstance(u,dict) and u.get('slug')))")
-            echo "Found users: $SLUGS" >> "$REPORT"
-            echo "" >> "$REPORT"
-          else
-            SLUGS="$SLUG"
-          fi
-          echo "| User | targetCompanies | size pref | Status |" >> "$REPORT"
-          echo "|---|---:|---|---|" >> "$REPORT"
-
-          for s in $SLUGS; do
-            echo "▶ regenerating $s…"
-            RESP=$(curl -sS -X POST \
-              -H "X-Admin-Key: $ADMIN_KEY" \
-              -H "Accept: application/json" \
-              "$WORKER_URL/regenerate-profile?user=$s")
-            echo "$RESP" > /tmp/last_resp.json
-            STATUS=$(echo "$RESP" | python3 -c "
-import sys, json
-try:
-    d = json.loads(sys.stdin.read())
-except Exception:
-    print('error|||error|||error|||malformed json'); sys.exit(0)
-if d.get('error'):
-    print(f'error|||error|||error|||{d[\"error\"]}'); sys.exit(0)
-p = d.get('profile') or {}
-tc = p.get('targetCompanies') or []
-mix = p.get('companySizeMix')
-prefs = p.get('companySizePreferences') or []
-if isinstance(mix, dict):
-    sp = f\"{mix.get('startup',0)}/{mix.get('midsize',0)}/{mix.get('large',0)}\"
-else:
-    sp = (', '.join(prefs) if prefs else 'default (no wizard pick)')
-print(f'{len(tc)}|||{sp}|||{p.get(\"primaryRole\",\"?\")[:60]}|||OK')
-")
-            IFS='|||' read -ra PARTS <<< "$STATUS"
-            TC="${PARTS[0]}"
-            SP="${PARTS[3]:-default}"
-            ROLE="${PARTS[6]:-?}"
-            RESULT="${PARTS[9]:-?}"
-            echo "  → $s: $RESULT  ($TC targetCompanies, size=$SP)"
-            echo "| \`$s\` | $TC | $SP | $RESULT |" >> "$REPORT"
-          done
-          echo "" >> "$REPORT"
-          echo "All done." >> "$REPORT"
-          echo "::notice::Report written to $REPORT"
+        run: python3 scripts/regen_profiles.py "${{ steps.cfg.outputs.slug }}"
 
       - name: Commit regen report
-        if: success()
+        if: always()
         run: |
           git config user.email "actions-bot@getmemyjob.local"
           git config user.name "Regen-profiles workflow"
