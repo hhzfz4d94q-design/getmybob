@@ -337,25 +337,34 @@ def fetch_wttj(entry):
         except Exception:
             pass
 
-    # Try the /jobs sub-page first — has the job list more reliably than the
-    # company root.
-    url = f"https://www.welcometothejungle.com/en/companies/{slug}/jobs"
-    try:
-        req = Request(url, headers={
-            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9",
-            "Accept-Language": "en-US,en;q=0.9",
-        })
-        with urlopen(req, timeout=20) as resp:
-            status = resp.status
-            html = resp.read().decode("utf-8", errors="replace")
-    except (HTTPError, URLError, TimeoutError) as e:
-        _dbg(f"fetch error: {type(e).__name__}: {e}")
+    # Try several endpoints in order. The public web pages are
+    # Cloudflare-protected; api.welcometothejungle.com sometimes serves
+    # the same data without the bot challenge.
+    candidates = [
+        f"https://api.welcometothejungle.com/api/v1/organizations/{slug}/jobs?per_page=100",
+        f"https://api.welcometothejungle.com/api/v1/organizations/{slug}",
+        f"https://www.welcometothejungle.com/en/companies/{slug}/jobs",
+    ]
+    html = None
+    for cand in candidates:
+        try:
+            req = Request(cand, headers={
+                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+                "Accept": "application/json, text/html;q=0.9",
+                "Accept-Language": "en-US,en;q=0.9",
+            })
+            with urlopen(req, timeout=15) as resp:
+                if resp.status != 200:
+                    _dbg(f"{cand}: HTTP {resp.status}")
+                    continue
+                html = resp.read().decode("utf-8", errors="replace")
+                _dbg(f"OK {cand}: {len(html)} bytes")
+                break
+        except (HTTPError, URLError, TimeoutError) as e:
+            _dbg(f"{cand}: {type(e).__name__}: {e}")
+    if not html:
+        _dbg("all candidates failed — Cloudflare bot protection probably active")
         return []
-    if status != 200:
-        _dbg(f"non-200: {status}")
-        return []
-    _dbg(f"OK status=200 bytes={len(html)}")
 
     def _parsed_jobs_from_next_data():
         m = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', html, re.S)
@@ -403,7 +412,24 @@ def fetch_wttj(entry):
             return items
         return None
 
-    raw_jobs = _parsed_jobs_from_next_data() or _parsed_jobs_from_ldjson() or []
+    # If the response was raw JSON from api.welcometothejungle.com, try
+    # parsing it directly as a jobs array or {jobs: [...]} wrapper.
+    raw_jobs = None
+    try:
+        maybe_json = json.loads(html)
+        if isinstance(maybe_json, list):
+            raw_jobs = maybe_json
+            _dbg(f"parsed direct JSON array: {len(raw_jobs)} items")
+        elif isinstance(maybe_json, dict):
+            for key in ("jobs", "items", "data", "results"):
+                if isinstance(maybe_json.get(key), list):
+                    raw_jobs = maybe_json[key]
+                    _dbg(f"parsed JSON.{key}: {len(raw_jobs)} items")
+                    break
+    except (json.JSONDecodeError, ValueError):
+        pass
+    if not raw_jobs:
+        raw_jobs = _parsed_jobs_from_next_data() or _parsed_jobs_from_ldjson() or []
     if not raw_jobs:
         _dbg("NO jobs found via any strategy")
         return []
