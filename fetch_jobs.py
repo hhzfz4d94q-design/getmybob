@@ -628,7 +628,316 @@ def fetch_remoteok(entry):
     return out
 
 
-SOURCES = {"greenhouse": fetch_greenhouse, "lever": fetch_lever, "ashby": fetch_ashby, "workday": fetch_workday, "wttj": fetch_wttj, "remoteok": fetch_remoteok}
+def _dbg_to_file(source_key, msg):
+    """Write a diagnostic line to reports/{source}_debug.log so we can
+    iterate on these scrapers when their HTML/JSON changes."""
+    try:
+        os.makedirs(os.path.join(ROOT, "reports"), exist_ok=True)
+        with open(os.path.join(ROOT, "reports", f"{source_key}_debug.log"), "a", encoding="utf-8") as f:
+            f.write(msg + "\n")
+    except Exception:
+        pass
+
+
+def fetch_yc(entry):
+    """Y Combinator Work at a Startup. The site is an SPA so the static
+    /jobs HTML is mostly a shell. We try __NEXT_DATA__ first, then fall
+    back to crawling the public companies index. This is a best-effort
+    adapter — if it returns 0, we fall back to whatever we got."""
+    url = "https://www.workatastartup.com/jobs"
+    try:
+        req = Request(url, headers={
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "Accept": "text/html,application/xhtml+xml",
+        })
+        with urlopen(req, timeout=20) as resp:
+            if resp.status != 200:
+                _dbg_to_file("yc", f"HTTP {resp.status} on {url}")
+                return []
+            html = resp.read().decode("utf-8", errors="replace")
+    except (HTTPError, URLError, TimeoutError) as e:
+        _dbg_to_file("yc", f"fetch error: {type(e).__name__}: {e}")
+        return []
+    _dbg_to_file("yc", f"OK {url}: {len(html)} bytes")
+    # Try __NEXT_DATA__
+    m = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', html, re.S)
+    raw_jobs = None
+    if m:
+        try:
+            data = json.loads(m.group(1))
+            page_props = ((data.get("props") or {}).get("pageProps") or {})
+            for k in ("jobs", "initialJobs", "allJobs", "results"):
+                if isinstance(page_props.get(k), list):
+                    raw_jobs = page_props[k]
+                    _dbg_to_file("yc", f"NEXT_DATA path {k}: {len(raw_jobs)} jobs")
+                    break
+        except (json.JSONDecodeError, ValueError) as e:
+            _dbg_to_file("yc", f"NEXT_DATA parse failed: {e}")
+    if not raw_jobs:
+        # Try JSON-LD JobPosting
+        for ld in re.findall(r'<script type="application/ld\+json"[^>]*>(.*?)</script>', html, re.S):
+            try:
+                blob = json.loads(ld)
+            except (json.JSONDecodeError, ValueError):
+                continue
+            if isinstance(blob, list):
+                items = [b for b in blob if isinstance(b, dict) and b.get("@type") == "JobPosting"]
+                if items:
+                    raw_jobs = items
+                    _dbg_to_file("yc", f"JSON-LD JobPostings: {len(items)}")
+                    break
+            elif isinstance(blob, dict) and blob.get("@type") == "JobPosting":
+                raw_jobs = [blob]
+                break
+    if not raw_jobs:
+        _dbg_to_file("yc", "no jobs found via NEXT_DATA or JSON-LD (likely SPA, needs JS render)")
+        return []
+    out = []
+    for j in raw_jobs:
+        if not isinstance(j, dict):
+            continue
+        title = (j.get("title") or j.get("name") or "").strip()
+        if not title:
+            continue
+        company = (j.get("company_name") or j.get("hiringOrganization", {}).get("name") if isinstance(j.get("hiringOrganization"), dict) else j.get("company") or "").strip() or "YC Startup"
+        job_url = j.get("show_url") or j.get("url") or "https://www.workatastartup.com/jobs"
+        if isinstance(job_url, str) and job_url.startswith("/"):
+            job_url = "https://www.workatastartup.com" + job_url
+        loc = j.get("location") or ""
+        if isinstance(loc, dict):
+            loc = loc.get("name") or loc.get("addressLocality") or ""
+        posted = j.get("posted") or j.get("datePosted") or j.get("created_at") or ""
+        if isinstance(posted, str) and "T" in posted:
+            posted = posted.split("T", 1)[0]
+        out.append({
+            "source": "yc",
+            "company_slug": (company.lower().replace(" ", "-"))[:40],
+            "company_name": company,
+            "external_id": str(j.get("id") or j.get("show_url") or title),
+            "title": title,
+            "location": loc[:200] if isinstance(loc, str) else "",
+            "url": job_url,
+            "posted_at": str(posted)[:10] if posted else "",
+            "description": (j.get("description") or "")[:5000],
+            "salary_range": j.get("salary_range") or "",
+        })
+    _dbg_to_file("yc", f"normalized {len(out)} jobs")
+    return out
+
+
+def fetch_hn_hiring(entry):
+    """Hacker News monthly 'Ask HN: Who is hiring?' thread. Use the Algolia
+    HN API to find the latest thread, then fetch its tree to get all
+    top-level comments — each is one job posting (best-effort parse)."""
+    # 1. Find most recent 'Ask HN: Who is hiring?' story
+    try:
+        search = "https://hn.algolia.com/api/v1/search_by_date?tags=story,author_whoishiring&hitsPerPage=5"
+        req = Request(search, headers={"User-Agent": "getmemyjob/1.0"})
+        with urlopen(req, timeout=15) as resp:
+            search_data = json.loads(resp.read().decode("utf-8", errors="replace"))
+    except (HTTPError, URLError, TimeoutError, json.JSONDecodeError) as e:
+        _dbg_to_file("hn_hiring", f"search fail: {e}")
+        return []
+    hiring_id = None
+    for h in search_data.get("hits", []):
+        title = (h.get("title") or "").lower()
+        if "who is hiring" in title or "who's hiring" in title:
+            hiring_id = h.get("objectID")
+            _dbg_to_file("hn_hiring", f"found thread: {h.get('title')} (id={hiring_id})")
+            break
+    if not hiring_id:
+        _dbg_to_file("hn_hiring", "no Who-is-hiring thread found in recent search")
+        return []
+    # 2. Fetch the thread tree
+    try:
+        tree_url = f"https://hn.algolia.com/api/v1/items/{hiring_id}"
+        req = Request(tree_url, headers={"User-Agent": "getmemyjob/1.0"})
+        with urlopen(req, timeout=30) as resp:
+            tree = json.loads(resp.read().decode("utf-8", errors="replace"))
+    except (HTTPError, URLError, TimeoutError, json.JSONDecodeError) as e:
+        _dbg_to_file("hn_hiring", f"tree fail: {e}")
+        return []
+    kids = tree.get("children") or []
+    _dbg_to_file("hn_hiring", f"thread has {len(kids)} top-level comments")
+    out = []
+    for c in kids:
+        if not isinstance(c, dict):
+            continue
+        text = c.get("text") or ""
+        if not text or len(text) < 60:
+            continue
+        # First line of the comment is usually 'Company Name | Title | Location'
+        # or 'Company Name (Location, Remote ok) ...' — best-effort parse.
+        plain = re.sub(r"<[^>]+>", " ", text).strip()
+        plain = re.sub(r"\s+", " ", plain)
+        first_line = plain.split(".")[0][:400]
+        # Try pipe-delimited first
+        company = title = location = ""
+        if " | " in first_line:
+            parts = [p.strip() for p in first_line.split("|")]
+            if len(parts) >= 2:
+                company = parts[0]
+                title = parts[1]
+                location = parts[2] if len(parts) > 2 else ""
+        if not company:
+            # Match "Company Name (location) ..." pattern
+            m2 = re.match(r"^([A-Z][A-Za-z0-9&.,\s]+?)\s*\(([^)]+)\)", first_line)
+            if m2:
+                company = m2.group(1).strip()
+                location = m2.group(2).strip()
+                # Title not clearly parsable — use the rest of the line
+                title = first_line.split(")", 1)[1].strip(" -—:")[:100] or "Engineering role"
+        if not company or not title:
+            continue
+        out.append({
+            "source": "hn_hiring",
+            "company_slug": company.lower().replace(" ", "-")[:40],
+            "company_name": company[:80],
+            "external_id": str(c.get("id")),
+            "title": title[:140],
+            "location": location[:200],
+            "url": f"https://news.ycombinator.com/item?id={c.get('id')}",
+            "posted_at": (c.get("created_at") or "")[:10],
+            "description": plain[:5000],
+            "salary_range": "",
+        })
+    _dbg_to_file("hn_hiring", f"normalized {len(out)} jobs from {len(kids)} comments")
+    return out
+
+
+def fetch_healthecareers(entry):
+    """Health eCareers — healthcare-only job board with a public search page.
+    Best-effort HTML scrape of the search results. Tries the JSON-LD
+    JobPosting schemas embedded in each page (SEO-required)."""
+    out = []
+    # Focus on healthcare-IT and senior roles — Geetanjali's lane
+    for query in ["healthcare-it", "informatics", "digital-health", "ehr"]:
+        url = f"https://www.healthecareers.com/jobs?q={query}"
+        try:
+            req = Request(url, headers={
+                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+                "Accept": "text/html",
+            })
+            with urlopen(req, timeout=20) as resp:
+                if resp.status != 200:
+                    _dbg_to_file("healthecareers", f"HTTP {resp.status} on {url}")
+                    continue
+                html = resp.read().decode("utf-8", errors="replace")
+        except (HTTPError, URLError, TimeoutError) as e:
+            _dbg_to_file("healthecareers", f"fetch error on {query}: {type(e).__name__}: {e}")
+            continue
+        _dbg_to_file("healthecareers", f"OK {query}: {len(html)} bytes")
+        seen_ids = set()
+        for ld in re.findall(r'<script type="application/ld\+json"[^>]*>(.*?)</script>', html, re.S):
+            try:
+                blob = json.loads(ld)
+            except (json.JSONDecodeError, ValueError):
+                continue
+            items = blob if isinstance(blob, list) else [blob]
+            for j in items:
+                if not isinstance(j, dict):
+                    continue
+                if j.get("@type") not in ("JobPosting", ["JobPosting"]):
+                    continue
+                title = (j.get("title") or "").strip()
+                org = j.get("hiringOrganization") or {}
+                company = (org.get("name") if isinstance(org, dict) else "") or "Healthcare Employer"
+                if not title:
+                    continue
+                jid = str(j.get("identifier") or j.get("url") or title)
+                if jid in seen_ids:
+                    continue
+                seen_ids.add(jid)
+                jl = j.get("jobLocation") or {}
+                loc_name = ""
+                if isinstance(jl, dict):
+                    addr = jl.get("address") or {}
+                    if isinstance(addr, dict):
+                        loc_name = addr.get("addressLocality") or ""
+                out.append({
+                    "source": "healthecareers",
+                    "company_slug": company.lower().replace(" ", "-")[:40],
+                    "company_name": company[:80],
+                    "external_id": jid[:80],
+                    "title": title[:140],
+                    "location": loc_name[:200],
+                    "url": j.get("url") or url,
+                    "posted_at": (j.get("datePosted") or "")[:10],
+                    "description": (j.get("description") or "")[:5000],
+                    "salary_range": "",
+                })
+    _dbg_to_file("healthecareers", f"normalized {len(out)} total jobs")
+    return out
+
+
+def fetch_himss(entry):
+    """HIMSS Career Center — niche healthcare-IT board. Their listings use
+    Naylor's CareerSite platform under various subdomains. Try the public
+    search RSS/HTML."""
+    out = []
+    # The HIMSS career site URL has changed forms over the years. Try the
+    # most common current locations.
+    candidates = [
+        "https://jobmine.himss.org/jobs/rss",
+        "https://jobmine.himss.org/jobs/",
+        "https://careers.himss.org/jobs/rss",
+        "https://careers.himss.org/jobs/",
+    ]
+    html = ""
+    chosen = None
+    for u in candidates:
+        try:
+            req = Request(u, headers={
+                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+                "Accept": "application/rss+xml, text/html",
+            })
+            with urlopen(req, timeout=20) as resp:
+                if resp.status != 200:
+                    _dbg_to_file("himss", f"HTTP {resp.status} on {u}")
+                    continue
+                html = resp.read().decode("utf-8", errors="replace")
+                chosen = u
+                _dbg_to_file("himss", f"OK {u}: {len(html)} bytes")
+                break
+        except (HTTPError, URLError, TimeoutError) as e:
+            _dbg_to_file("himss", f"{u}: {type(e).__name__}: {e}")
+    if not html:
+        _dbg_to_file("himss", "all HIMSS endpoints failed")
+        return []
+    # RSS path: <item><title>, <link>, <description>
+    if chosen and chosen.endswith("/rss"):
+        items = re.findall(r"<item>(.*?)</item>", html, re.S)
+        _dbg_to_file("himss", f"RSS items found: {len(items)}")
+        for it in items:
+            title = re.search(r"<title>(?:<!\[CDATA\[)?([^<]+?)(?:\]\]>)?</title>", it)
+            link = re.search(r"<link>([^<]+)</link>", it)
+            desc = re.search(r"<description>(?:<!\[CDATA\[)?([^<]+?)(?:\]\]>)?</description>", it, re.S)
+            pub = re.search(r"<pubDate>([^<]+)</pubDate>", it)
+            if not (title and link):
+                continue
+            title_text = title.group(1).strip()
+            # Many RSS feeds put "Title - Company" together
+            if " - " in title_text:
+                tname, company = title_text.rsplit(" - ", 1)
+            else:
+                tname, company = title_text, "Healthcare Employer"
+            out.append({
+                "source": "himss",
+                "company_slug": company.lower().replace(" ", "-")[:40],
+                "company_name": company[:80],
+                "external_id": link.group(1).strip()[:80],
+                "title": tname[:140],
+                "location": "",
+                "url": link.group(1).strip(),
+                "posted_at": (pub.group(1).strip()[:10] if pub else ""),
+                "description": (desc.group(1).strip() if desc else "")[:5000],
+                "salary_range": "",
+            })
+    _dbg_to_file("himss", f"normalized {len(out)} jobs")
+    return out
+
+
+SOURCES = {"greenhouse": fetch_greenhouse, "lever": fetch_lever, "ashby": fetch_ashby, "workday": fetch_workday, "wttj": fetch_wttj, "remoteok": fetch_remoteok, "yc": fetch_yc, "hn_hiring": fetch_hn_hiring, "healthecareers": fetch_healthecareers, "himss": fetch_himss}
 
 
 # --- Utilities -----------------------------------------------------------

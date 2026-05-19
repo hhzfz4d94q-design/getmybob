@@ -1190,5 +1190,53 @@
       ]
     }
   ],
+  "yc": [
+    {
+      "slug": "_all",
+      "name": "YC Work at a Startup",
+      "industries": [
+        "startup",
+        "fintech",
+        "healthtech",
+        "ai",
+        "saas"
+      ]
+    }
+  ],
+  "hn_hiring": [
+    {
+      "slug": "_all",
+      "name": "HN Who is Hiring",
+      "industries": [
+        "startup",
+        "tech",
+        "engineering"
+      ]
+    }
+  ],
+  "healthecareers": [
+    {
+      "slug": "_all",
+      "name": "Health eCareers",
+      "industries": [
+        "healthcare",
+        "healthcare-it",
+        "clinical",
+        "health-saas"
+      ]
+    }
+  ],
+  "himss": [
+    {
+      "slug": "_all",
+      "name": "HIMSS Career Center",
+      "industries": [
+        "healthcare-it",
+        "digital-health",
+        "health-saas",
+        "informatics"
+      ]
+    }
+  ],
   "_notes": "~135 Greenhouse, ~28 Lever, ~17 Ashby, 3 Workday companies. Workday URLs follow pattern: https://{tenant}.{subdomain}.myworkdayjobs.com/{site}. To find a company's Workday details, visit their careers page and look at the URL once you're on the job search. UnitedHealth/Optum use a non-Workday careers portal (careers.unitedhealthgroup.com) and aren't easily scraped via public API; they're not included here. To add a Workday entry, append to the workday array."
 }
