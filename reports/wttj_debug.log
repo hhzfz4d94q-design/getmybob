@@ -1,0 +1,189 @@
+[alan] https://api.welcometothejungle.com/api/v1/organizations/alan/job_offers?per_page=100: HTTPError: HTTP Error 404: Not Found
+[alan] https://api.welcometothejungle.com/api/v1/organizations/alan/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[alan] https://api.welcometothejungle.com/api/v2/organizations/alan/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[alan] https://api.welcometothejungle.com/api/v1/job_offers?organization_slug=alan&per_page=100: HTTPError: HTTP Error 404: Not Found
+[alan] https://api.welcometothejungle.com/api/v1/jobs?organization_slug=alan&per_page=100: HTTPError: HTTP Error 404: Not Found
+[alan] https://api.welcometothejungle.com/api/v1/companies/alan/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[alan] OK https://api.welcometothejungle.com/api/v1/organizations/alan: 8825 bytes
+[alan] JSON top-level keys: ['organization']
+[alan] org keys: ['cover', 'cover_position', 'default_language', 'description', 'equality_indexes', 'expansion_metadata', 'expansion_migration', 'labels', 'logo', 'media_website_url', 'name', 'nb_employees', 'offices', 'profile_type', 'reference', 'sectors', 'slug', 'updated_at', 'urls', 'video_cover', 'website_organization']
+[alan] org.urls: [{"kind": "canonical", "href": "https://www.welcometothejungle.com/en/companies/alan", "language": "en"}, {"kind": "alternate", "href": "https://www.welcometothejungle.com/en/companies/alan", "language": "en"}]
+[alan] org.reference: '0dgXRez'
+[alan] NO jobs found via any strategy
+[doctolib] https://api.welcometothejungle.com/api/v1/organizations/doctolib/job_offers?per_page=100: HTTPError: HTTP Error 404: Not Found
+[doctolib] https://api.welcometothejungle.com/api/v1/organizations/doctolib/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[doctolib] https://api.welcometothejungle.com/api/v2/organizations/doctolib/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[doctolib] https://api.welcometothejungle.com/api/v1/job_offers?organization_slug=doctolib&per_page=100: HTTPError: HTTP Error 404: Not Found
+[doctolib] https://api.welcometothejungle.com/api/v1/jobs?organization_slug=doctolib&per_page=100: HTTPError: HTTP Error 404: Not Found
+[doctolib] https://api.welcometothejungle.com/api/v1/companies/doctolib/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[doctolib] OK https://api.welcometothejungle.com/api/v1/organizations/doctolib: 4653 bytes
+[doctolib] JSON top-level keys: ['organization']
+[doctolib] org keys: ['cover', 'cover_position', 'default_language', 'equality_indexes', 'expansion_metadata', 'expansion_migration', 'labels', 'logo', 'media_website_url', 'name', 'nb_employees', 'offices', 'profile_type', 'reference', 'sectors', 'slug', 'updated_at', 'urls', 'video_cover', 'website_organization']
+[doctolib] org.urls: [{"kind": "alternate", "href": "https://www.welcometothejungle.com/en/companies/doctolib", "language": "en"}, {"kind": "canonical", "href": "https://www.welcometothejungle.com/fr/companies/doctolib", "language": "fr"}, {"kind": "alternate", "href": "https://www.welcometothejungle.com/fr/companies/doctolib", "language": "fr"}]
+[doctolib] org.reference: '8GNWxLL'
+[doctolib] NO jobs found via any strategy
+[withings] https://api.welcometothejungle.com/api/v1/organizations/withings/job_offers?per_page=100: HTTPError: HTTP Error 404: Not Found
+[withings] https://api.welcometothejungle.com/api/v1/organizations/withings/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[withings] https://api.welcometothejungle.com/api/v2/organizations/withings/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[withings] https://api.welcometothejungle.com/api/v1/job_offers?organization_slug=withings&per_page=100: HTTPError: HTTP Error 404: Not Found
+[withings] https://api.welcometothejungle.com/api/v1/jobs?organization_slug=withings&per_page=100: HTTPError: HTTP Error 404: Not Found
+[withings] https://api.welcometothejungle.com/api/v1/companies/withings/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[withings] OK https://api.welcometothejungle.com/api/v1/organizations/withings: 4306 bytes
+[withings] JSON top-level keys: ['organization']
+[withings] org keys: ['cover', 'cover_position', 'default_language', 'equality_indexes', 'expansion_metadata', 'expansion_migration', 'labels', 'logo', 'media_website_url', 'name', 'nb_employees', 'offices', 'profile_type', 'reference', 'sectors', 'slug', 'updated_at', 'urls', 'video_cover', 'website_organization']
+[withings] org.urls: [{"kind": "canonical", "href": "https://www.welcometothejungle.com/fr/companies/withings", "language": "fr"}, {"kind": "alternate", "href": "https://www.welcometothejungle.com/fr/companies/withings", "language": "fr"}]
+[withings] org.reference: 'mK7ez9q'
+[withings] NO jobs found via any strategy
+[owkin] https://api.welcometothejungle.com/api/v1/organizations/owkin/job_offers?per_page=100: HTTPError: HTTP Error 404: Not Found
+[owkin] https://api.welcometothejungle.com/api/v1/organizations/owkin/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[owkin] https://api.welcometothejungle.com/api/v2/organizations/owkin/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[owkin] https://api.welcometothejungle.com/api/v1/job_offers?organization_slug=owkin&per_page=100: HTTPError: HTTP Error 404: Not Found
+[owkin] https://api.welcometothejungle.com/api/v1/jobs?organization_slug=owkin&per_page=100: HTTPError: HTTP Error 404: Not Found
+[owkin] https://api.welcometothejungle.com/api/v1/companies/owkin/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[owkin] OK https://api.welcometothejungle.com/api/v1/organizations/owkin: 8462 bytes
+[owkin] JSON top-level keys: ['organization']
+[owkin] org keys: ['cover', 'cover_position', 'default_language', 'equality_indexes', 'expansion_metadata', 'expansion_migration', 'labels', 'logo', 'media_website_url', 'name', 'nb_employees', 'offices', 'profile_type', 'reference', 'sectors', 'slug', 'updated_at', 'urls', 'video_cover', 'website_organization']
+[owkin] org.urls: [{"kind": "alternate", "href": "https://www.welcometothejungle.com/en/companies/owkin", "language": "en"}, {"kind": "canonical", "href": "https://www.welcometothejungle.com/fr/companies/owkin", "language": "fr"}, {"kind": "alternate", "href": "https://www.welcometothejungle.com/fr/companies/owkin", "language": "fr"}]
+[owkin] org.reference: 'JoKemDV'
+[owkin] NO jobs found via any strategy
+[qonto] https://api.welcometothejungle.com/api/v1/organizations/qonto/job_offers?per_page=100: HTTPError: HTTP Error 404: Not Found
+[qonto] https://api.welcometothejungle.com/api/v1/organizations/qonto/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[qonto] https://api.welcometothejungle.com/api/v2/organizations/qonto/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[qonto] https://api.welcometothejungle.com/api/v1/job_offers?organization_slug=qonto&per_page=100: HTTPError: HTTP Error 404: Not Found
+[qonto] https://api.welcometothejungle.com/api/v1/jobs?organization_slug=qonto&per_page=100: HTTPError: HTTP Error 404: Not Found
+[qonto] https://api.welcometothejungle.com/api/v1/companies/qonto/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[qonto] OK https://api.welcometothejungle.com/api/v1/organizations/qonto: 9757 bytes
+[qonto] JSON top-level keys: ['organization']
+[qonto] org keys: ['cover', 'cover_position', 'default_language', 'equality_indexes', 'expansion_metadata', 'expansion_migration', 'labels', 'logo', 'media_website_url', 'name', 'nb_employees', 'offices', 'profile_type', 'reference', 'sectors', 'slug', 'updated_at', 'urls', 'video_cover', 'website_organization']
+[qonto] org.urls: [{"kind": "canonical", "href": "https://www.welcometothejungle.com/en/companies/qonto", "language": "en"}, {"kind": "alternate", "href": "https://www.welcometothejungle.com/en/companies/qonto", "language": "en"}]
+[qonto] org.reference: '1dxkRJx'
+[qonto] NO jobs found via any strategy
+[spendesk] https://api.welcometothejungle.com/api/v1/organizations/spendesk/job_offers?per_page=100: HTTPError: HTTP Error 404: Not Found
+[spendesk] https://api.welcometothejungle.com/api/v1/organizations/spendesk/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[spendesk] https://api.welcometothejungle.com/api/v2/organizations/spendesk/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[spendesk] https://api.welcometothejungle.com/api/v1/job_offers?organization_slug=spendesk&per_page=100: HTTPError: HTTP Error 404: Not Found
+[spendesk] https://api.welcometothejungle.com/api/v1/jobs?organization_slug=spendesk&per_page=100: HTTPError: HTTP Error 404: Not Found
+[spendesk] https://api.welcometothejungle.com/api/v1/companies/spendesk/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[spendesk] OK https://api.welcometothejungle.com/api/v1/organizations/spendesk: 8378 bytes
+[spendesk] JSON top-level keys: ['organization']
+[spendesk] org keys: ['cover', 'cover_position', 'default_language', 'equality_indexes', 'expansion_metadata', 'expansion_migration', 'labels', 'logo', 'media_website_url', 'name', 'nb_employees', 'offices', 'profile_type', 'reference', 'sectors', 'slug', 'updated_at', 'urls', 'video_cover', 'website_organization']
+[spendesk] org.urls: [{"kind": "canonical", "href": "https://www.welcometothejungle.com/en/companies/spendesk", "language": "en"}, {"kind": "alternate", "href": "https://www.welcometothejungle.com/en/companies/spendesk", "language": "en"}, {"kind": "alternate", "href": "https://www.welcometothejungle.com/fr/companies/spendesk", "language": "fr"}]
+[spendesk] org.reference: '8LGom7d'
+[spendesk] NO jobs found via any strategy
+[pennylane-2] https://api.welcometothejungle.com/api/v1/organizations/pennylane-2/job_offers?per_page=100: HTTPError: HTTP Error 404: Not Found
+[pennylane-2] https://api.welcometothejungle.com/api/v1/organizations/pennylane-2/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[pennylane-2] https://api.welcometothejungle.com/api/v2/organizations/pennylane-2/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[pennylane-2] https://api.welcometothejungle.com/api/v1/job_offers?organization_slug=pennylane-2&per_page=100: HTTPError: HTTP Error 404: Not Found
+[pennylane-2] https://api.welcometothejungle.com/api/v1/jobs?organization_slug=pennylane-2&per_page=100: HTTPError: HTTP Error 404: Not Found
+[pennylane-2] https://api.welcometothejungle.com/api/v1/companies/pennylane-2/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[pennylane-2] https://api.welcometothejungle.com/api/v1/organizations/pennylane-2: HTTPError: HTTP Error 404: Not Found
+[pennylane-2] https://www.welcometothejungle.com/en/companies/pennylane-2/jobs: HTTP 202
+[pennylane-2] all candidates failed — Cloudflare bot protection probably active
+[ledger] https://api.welcometothejungle.com/api/v1/organizations/ledger/job_offers?per_page=100: HTTPError: HTTP Error 404: Not Found
+[ledger] https://api.welcometothejungle.com/api/v1/organizations/ledger/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[ledger] https://api.welcometothejungle.com/api/v2/organizations/ledger/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[ledger] https://api.welcometothejungle.com/api/v1/job_offers?organization_slug=ledger&per_page=100: HTTPError: HTTP Error 404: Not Found
+[ledger] https://api.welcometothejungle.com/api/v1/jobs?organization_slug=ledger&per_page=100: HTTPError: HTTP Error 404: Not Found
+[ledger] https://api.welcometothejungle.com/api/v1/companies/ledger/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[ledger] OK https://api.welcometothejungle.com/api/v1/organizations/ledger: 8498 bytes
+[ledger] JSON top-level keys: ['organization']
+[ledger] org keys: ['cover', 'cover_position', 'default_language', 'equality_indexes', 'expansion_metadata', 'expansion_migration', 'labels', 'logo', 'media_website_url', 'name', 'nb_employees', 'offices', 'profile_type', 'reference', 'sectors', 'slug', 'updated_at', 'urls', 'video_cover', 'website_organization']
+[ledger] org.urls: [{"kind": "alternate", "href": "https://www.welcometothejungle.com/en/companies/ledger", "language": "en"}, {"kind": "canonical", "href": "https://www.welcometothejungle.com/fr/companies/ledger", "language": "fr"}, {"kind": "alternate", "href": "https://www.welcometothejungle.com/fr/companies/ledger", "language": "fr"}]
+[ledger] org.reference: 'GV49obX'
+[ledger] NO jobs found via any strategy
+[swile] https://api.welcometothejungle.com/api/v1/organizations/swile/job_offers?per_page=100: HTTPError: HTTP Error 404: Not Found
+[swile] https://api.welcometothejungle.com/api/v1/organizations/swile/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[swile] https://api.welcometothejungle.com/api/v2/organizations/swile/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[swile] https://api.welcometothejungle.com/api/v1/job_offers?organization_slug=swile&per_page=100: HTTPError: HTTP Error 404: Not Found
+[swile] https://api.welcometothejungle.com/api/v1/jobs?organization_slug=swile&per_page=100: HTTPError: HTTP Error 404: Not Found
+[swile] https://api.welcometothejungle.com/api/v1/companies/swile/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[swile] OK https://api.welcometothejungle.com/api/v1/organizations/swile: 7343 bytes
+[swile] JSON top-level keys: ['organization']
+[swile] org keys: ['cover', 'cover_position', 'default_language', 'equality_indexes', 'expansion_metadata', 'expansion_migration', 'labels', 'logo', 'media_website_url', 'name', 'nb_employees', 'offices', 'profile_type', 'reference', 'sectors', 'slug', 'updated_at', 'urls', 'video_cover', 'website_organization']
+[swile] org.urls: [{"kind": "alternate", "href": "https://www.welcometothejungle.com/en/companies/swile", "language": "en"}, {"kind": "canonical", "href": "https://www.welcometothejungle.com/fr/companies/swile", "language": "fr"}, {"kind": "alternate", "href": "https://www.welcometothejungle.com/fr/companies/swile", "language": "fr"}]
+[swile] org.reference: 'mP9wgL1'
+[swile] NO jobs found via any strategy
+[algolia] https://api.welcometothejungle.com/api/v1/organizations/algolia/job_offers?per_page=100: HTTPError: HTTP Error 404: Not Found
+[algolia] https://api.welcometothejungle.com/api/v1/organizations/algolia/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[algolia] https://api.welcometothejungle.com/api/v2/organizations/algolia/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[algolia] https://api.welcometothejungle.com/api/v1/job_offers?organization_slug=algolia&per_page=100: HTTPError: HTTP Error 404: Not Found
+[algolia] https://api.welcometothejungle.com/api/v1/jobs?organization_slug=algolia&per_page=100: HTTPError: HTTP Error 404: Not Found
+[algolia] https://api.welcometothejungle.com/api/v1/companies/algolia/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[algolia] OK https://api.welcometothejungle.com/api/v1/organizations/algolia: 13268 bytes
+[algolia] JSON top-level keys: ['organization']
+[algolia] org keys: ['cover', 'cover_position', 'default_language', 'equality_indexes', 'expansion_metadata', 'expansion_migration', 'labels', 'logo', 'media_website_url', 'name', 'nb_employees', 'offices', 'profile_type', 'reference', 'sectors', 'slug', 'updated_at', 'urls', 'video_cover', 'website_organization']
+[algolia] org.urls: [{"kind": "canonical", "href": "https://www.welcometothejungle.com/en/companies/algolia", "language": "en"}, {"kind": "alternate", "href": "https://www.welcometothejungle.com/en/companies/algolia", "language": "en"}, {"kind": "alternate", "href": "https://www.welcometothejungle.com/fr/companies/algolia", "language": "fr"}]
+[algolia] org.reference: 'K6wNw78'
+[algolia] NO jobs found via any strategy
+[datadog] https://api.welcometothejungle.com/api/v1/organizations/datadog/job_offers?per_page=100: HTTPError: HTTP Error 404: Not Found
+[datadog] https://api.welcometothejungle.com/api/v1/organizations/datadog/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[datadog] https://api.welcometothejungle.com/api/v2/organizations/datadog/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[datadog] https://api.welcometothejungle.com/api/v1/job_offers?organization_slug=datadog&per_page=100: HTTPError: HTTP Error 404: Not Found
+[datadog] https://api.welcometothejungle.com/api/v1/jobs?organization_slug=datadog&per_page=100: HTTPError: HTTP Error 404: Not Found
+[datadog] https://api.welcometothejungle.com/api/v1/companies/datadog/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[datadog] OK https://api.welcometothejungle.com/api/v1/organizations/datadog: 11315 bytes
+[datadog] JSON top-level keys: ['organization']
+[datadog] org keys: ['cover', 'cover_position', 'default_language', 'description', 'equality_indexes', 'expansion_metadata', 'expansion_migration', 'labels', 'logo', 'media_website_url', 'name', 'nb_employees', 'offices', 'profile_type', 'reference', 'sectors', 'slug', 'updated_at', 'urls', 'video_cover', 'website_organization']
+[datadog] org.urls: [{"kind": "canonical", "href": "https://www.welcometothejungle.com/en/companies/datadog", "language": "en"}, {"kind": "alternate", "href": "https://www.welcometothejungle.com/en/companies/datadog", "language": "en"}]
+[datadog] org.reference: '94QlOOm'
+[datadog] NO jobs found via any strategy
+[datadome] https://api.welcometothejungle.com/api/v1/organizations/datadome/job_offers?per_page=100: HTTPError: HTTP Error 404: Not Found
+[datadome] https://api.welcometothejungle.com/api/v1/organizations/datadome/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[datadome] https://api.welcometothejungle.com/api/v2/organizations/datadome/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[datadome] https://api.welcometothejungle.com/api/v1/job_offers?organization_slug=datadome&per_page=100: HTTPError: HTTP Error 404: Not Found
+[datadome] https://api.welcometothejungle.com/api/v1/jobs?organization_slug=datadome&per_page=100: HTTPError: HTTP Error 404: Not Found
+[datadome] https://api.welcometothejungle.com/api/v1/companies/datadome/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[datadome] OK https://api.welcometothejungle.com/api/v1/organizations/datadome: 8654 bytes
+[datadome] JSON top-level keys: ['organization']
+[datadome] org keys: ['cover', 'cover_position', 'default_language', 'equality_indexes', 'expansion_metadata', 'expansion_migration', 'labels', 'logo', 'media_website_url', 'name', 'nb_employees', 'offices', 'profile_type', 'reference', 'sectors', 'slug', 'updated_at', 'urls', 'video_cover', 'website_organization']
+[datadome] org.urls: [{"kind": "alternate", "href": "https://www.welcometothejungle.com/en/companies/datadome", "language": "en"}, {"kind": "canonical", "href": "https://www.welcometothejungle.com/fr/companies/datadome", "language": "fr"}, {"kind": "alternate", "href": "https://www.welcometothejungle.com/fr/companies/datadome", "language": "fr"}]
+[datadome] org.reference: '5Mk7yWD'
+[datadome] NO jobs found via any strategy
+[blablacar] https://api.welcometothejungle.com/api/v1/organizations/blablacar/job_offers?per_page=100: HTTPError: HTTP Error 404: Not Found
+[blablacar] https://api.welcometothejungle.com/api/v1/organizations/blablacar/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[blablacar] https://api.welcometothejungle.com/api/v2/organizations/blablacar/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[blablacar] https://api.welcometothejungle.com/api/v1/job_offers?organization_slug=blablacar&per_page=100: HTTPError: HTTP Error 404: Not Found
+[blablacar] https://api.welcometothejungle.com/api/v1/jobs?organization_slug=blablacar&per_page=100: HTTPError: HTTP Error 404: Not Found
+[blablacar] https://api.welcometothejungle.com/api/v1/companies/blablacar/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[blablacar] OK https://api.welcometothejungle.com/api/v1/organizations/blablacar: 8367 bytes
+[blablacar] JSON top-level keys: ['organization']
+[blablacar] org keys: ['cover', 'cover_position', 'default_language', 'equality_indexes', 'expansion_metadata', 'expansion_migration', 'labels', 'logo', 'media_website_url', 'name', 'nb_employees', 'offices', 'profile_type', 'reference', 'sectors', 'slug', 'updated_at', 'urls', 'video_cover', 'website_organization']
+[blablacar] org.urls: [{"kind": "canonical", "href": "https://www.welcometothejungle.com/en/companies/blablacar", "language": "en"}, {"kind": "alternate", "href": "https://www.welcometothejungle.com/en/companies/blablacar", "language": "en"}]
+[blablacar] org.reference: 'R9xozmy'
+[blablacar] NO jobs found via any strategy
+[back-market] https://api.welcometothejungle.com/api/v1/organizations/back-market/job_offers?per_page=100: HTTPError: HTTP Error 404: Not Found
+[back-market] https://api.welcometothejungle.com/api/v1/organizations/back-market/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[back-market] https://api.welcometothejungle.com/api/v2/organizations/back-market/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[back-market] https://api.welcometothejungle.com/api/v1/job_offers?organization_slug=back-market&per_page=100: HTTPError: HTTP Error 404: Not Found
+[back-market] https://api.welcometothejungle.com/api/v1/jobs?organization_slug=back-market&per_page=100: HTTPError: HTTP Error 404: Not Found
+[back-market] https://api.welcometothejungle.com/api/v1/companies/back-market/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[back-market] OK https://api.welcometothejungle.com/api/v1/organizations/back-market: 14668 bytes
+[back-market] JSON top-level keys: ['organization']
+[back-market] org keys: ['cover', 'cover_position', 'default_language', 'equality_indexes', 'expansion_metadata', 'expansion_migration', 'labels', 'logo', 'media_website_url', 'name', 'nb_employees', 'offices', 'profile_type', 'reference', 'sectors', 'slug', 'updated_at', 'urls', 'video_cover', 'website_organization']
+[back-market] org.urls: [{"kind": "canonical", "href": "https://www.welcometothejungle.com/en/companies/back-market", "language": "en"}, {"kind": "alternate", "href": "https://www.welcometothejungle.com/en/companies/back-market", "language": "en"}, {"kind": "alternate", "href": "https://www.welcometothejungle.com/fr/companies/back-market", "language": "fr"}]
+[back-market] org.reference: 'ZMmVp03'
+[back-market] NO jobs found via any strategy
+[mirakl] https://api.welcometothejungle.com/api/v1/organizations/mirakl/job_offers?per_page=100: HTTPError: HTTP Error 404: Not Found
+[mirakl] https://api.welcometothejungle.com/api/v1/organizations/mirakl/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[mirakl] https://api.welcometothejungle.com/api/v2/organizations/mirakl/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[mirakl] https://api.welcometothejungle.com/api/v1/job_offers?organization_slug=mirakl&per_page=100: HTTPError: HTTP Error 404: Not Found
+[mirakl] https://api.welcometothejungle.com/api/v1/jobs?organization_slug=mirakl&per_page=100: HTTPError: HTTP Error 404: Not Found
+[mirakl] https://api.welcometothejungle.com/api/v1/companies/mirakl/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[mirakl] OK https://api.welcometothejungle.com/api/v1/organizations/mirakl: 15398 bytes
+[mirakl] JSON top-level keys: ['organization']
+[mirakl] org keys: ['cover', 'cover_position', 'default_language', 'equality_indexes', 'expansion_metadata', 'expansion_migration', 'labels', 'logo', 'media_website_url', 'name', 'nb_employees', 'offices', 'profile_type', 'reference', 'sectors', 'slug', 'updated_at', 'urls', 'video_cover', 'website_organization']
+[mirakl] org.urls: [{"kind": "alternate", "href": "https://www.welcometothejungle.com/en/companies/mirakl", "language": "en"}, {"kind": "canonical", "href": "https://www.welcometothejungle.com/fr/companies/mirakl", "language": "fr"}, {"kind": "alternate", "href": "https://www.welcometothejungle.com/fr/companies/mirakl", "language": "fr"}]
+[mirakl] org.reference: '7ZGdoAj'
+[mirakl] NO jobs found via any strategy
+[shift-technology] https://api.welcometothejungle.com/api/v1/organizations/shift-technology/job_offers?per_page=100: HTTPError: HTTP Error 404: Not Found
+[shift-technology] https://api.welcometothejungle.com/api/v1/organizations/shift-technology/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[shift-technology] https://api.welcometothejungle.com/api/v2/organizations/shift-technology/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[shift-technology] https://api.welcometothejungle.com/api/v1/job_offers?organization_slug=shift-technology&per_page=100: HTTPError: HTTP Error 404: Not Found
+[shift-technology] https://api.welcometothejungle.com/api/v1/jobs?organization_slug=shift-technology&per_page=100: HTTPError: HTTP Error 404: Not Found
+[shift-technology] https://api.welcometothejungle.com/api/v1/companies/shift-technology/jobs?per_page=100: HTTPError: HTTP Error 404: Not Found
+[shift-technology] OK https://api.welcometothejungle.com/api/v1/organizations/shift-technology: 17986 bytes
+[shift-technology] JSON top-level keys: ['organization']
+[shift-technology] org keys: ['cover', 'cover_position', 'default_language', 'description', 'equality_indexes', 'expansion_metadata', 'expansion_migration', 'labels', 'logo', 'media_website_url', 'name', 'nb_employees', 'offices', 'profile_type', 'reference', 'sectors', 'slug', 'updated_at', 'urls', 'video_cover', 'website_organization']
+[shift-technology] org.urls: [{"kind": "canonical", "href": "https://www.welcometothejungle.com/en/companies/shift-technology", "language": "en"}, {"kind": "alternate", "href": "https://www.welcometothejungle.com/en/companies/shift-technology", "language": "en"}]
+[shift-technology] org.reference: 'dQyD1OV'
+[shift-technology] NO jobs found via any strategy
