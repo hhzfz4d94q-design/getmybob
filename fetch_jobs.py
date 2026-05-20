@@ -1953,9 +1953,9 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
           <div class="badges" data-badges>{badge_html}</div>
           <div class="desc">{_esc(_strip_html(desc)[:300])}…</div>
           <div class="actions">
-            <button class="btn primary" onclick="prepApplication('{fp}', this)">Prep Application</button>
+            <button class="btn primary" onclick="applyAndOpen('{fp}', this, '{url}')">Apply now &rarr;</button>
+            <button class="btn ghost-btn" onclick="prepApplication('{fp}', this)">Prep materials</button>
             <button class="btn track" onclick="cycleStatus('{fp}', this)" data-status-for="{fp}">Mark Applied</button>
-            <a class="btn ghost-btn" href="{url}" target="_blank">Open Listing →</a>
           </div>
         </div>""")
 
@@ -2072,6 +2072,8 @@ HTML_TEMPLATE = """<!doctype html>
   .header-btn:disabled {{ opacity: 0.5; cursor: not-allowed; }}
   .stats {{ display: flex; gap: 24px; padding: 14px 28px; background: white; border-bottom: 1px solid #e5e5ea; }}
   .stat {{ font-size: 13px; }}
+  .goal-stat {{ background: linear-gradient(135deg, #f8f4ff 0%, #eef0ff 100%) !important; }}
+  .goal-stat b {{ color: #5C5CD6 !important; }}
   .stat b {{ font-size: 22px; display: block; color: #5C5CD6; }}
   .filters {{ padding: 12px 28px; background: white; border-bottom: 1px solid #e5e5ea; display: flex; gap: 12px; }}
   .filters input, .filters select {{ padding: 6px 10px; font-size: 13px; border: 1px solid #ddd; border-radius: 6px; }}
@@ -2166,6 +2168,9 @@ HTML_TEMPLATE = """<!doctype html>
   /* LinkedIn contacts feature */
   .contact-badge {{ display: inline-flex; align-items: center; gap: 4px; background: #eaf2fb; color: #0a66c2; border: 1px solid #c9defb; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; cursor: pointer; margin-left: 8px; transition: all 0.12s; }}
   .contact-badge:hover {{ background: #d8e7f8; border-color: #0a66c2; }}
+  .contact-badge.hiring {{ background: #fff3d6; color: #b85c00; border-color: #f0c47a; }}
+  .contact-badge.hiring:hover {{ background: #ffe7a8; }}
+  .btn.pending-confirm {{ background: #fff3d6 !important; color: #b85c00 !important; border-color: #f0c47a !important; }}
   .contact-badge .ic {{ font-size: 12px; line-height: 1; }}
   .contact-row {{ display: flex; flex-direction: column; gap: 6px; padding: 12px 14px; border: 1px solid #e6e8eb; border-radius: 8px; margin-bottom: 10px; background: #fff; }}
   .contact-row .name-line {{ display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }}
@@ -2313,6 +2318,10 @@ HTML_TEMPLATE = """<!doctype html>
   <div class="stat"><b>{senior_remote}</b>Senior + Remote (last 7d)</div>
   <div class="stat"><b>{ghost}</b>Possible ghost jobs (60d+)</div>
   <div class="stat"><b id="shown-counter">{shown}</b>Showing</div>
+  <div class="stat goal-stat" id="goal-stat">
+    <b><span id="goal-today-count">0</span>/<span id="goal-today-target">5</span></b>
+    <span>Today\u2019s applications<br><span id="goal-progress-bar" style="display:inline-block;width:90%;height:5px;background:#e6e8eb;border-radius:3px;margin-top:4px;overflow:hidden;"><span id="goal-progress-fill" style="display:block;height:100%;width:0%;background:#5C5CD6;border-radius:3px;transition:width 0.3s;"></span></span> <span id="goal-streak" style="font-size:11px;color:#777;margin-left:4px;"></span></span>
+  </div>
 </div>
 <div class="app-tracker">
   <div class="view-toggle">
@@ -2653,6 +2662,104 @@ async function _trackerAction(action, payload) {{
   }} catch (e) {{ alert('Network error: ' + (e.message || e)); return null; }}
 }}
 
+// One-click apply: open the job listing in a new tab and STASH it as a
+// pending-confirm. We don't auto-mark Applied — that would inflate the
+// counter for jobs the user just browses. Instead we ask them later
+// (immediately if they tab back here, or on next dashboard load):
+// "Did you complete your application to <Job> at <Company>?"
+const PENDING_APPLY_KEY = "htj_pending_apply_" + USER_SLUG;
+
+function _readPendingApplies() {{
+  try {{ const r = localStorage.getItem(PENDING_APPLY_KEY); return r ? JSON.parse(r) : []; }} catch (e) {{ return []; }}
+}}
+function _writePendingApplies(arr) {{
+  try {{ localStorage.setItem(PENDING_APPLY_KEY, JSON.stringify(arr.slice(0, 50))); }} catch (e) {{}}
+}}
+
+async function applyAndOpen(fp, btn, url) {{
+  // Open immediately (before any await) so popup blockers don't kick in.
+  try {{ window.open(url, "_blank", "noopener,noreferrer"); }} catch (e) {{}}
+  // Stash a pending entry — we'll ask the user "did you finish?" shortly.
+  const card = btn.closest(".card");
+  const jobMeta = card ? {{
+    fp: fp,
+    title: (card.querySelector(".title a")?.textContent || "").trim(),
+    company: (card.querySelector(".company")?.textContent || "").trim(),
+    url: url,
+    openedAt: new Date().toISOString(),
+  }} : {{ fp: fp, title: "", company: "", url: url, openedAt: new Date().toISOString() }};
+  const pending = _readPendingApplies().filter(p => p.fp !== fp);
+  pending.push(jobMeta);
+  _writePendingApplies(pending);
+  // Visual cue on the button itself
+  const orig = btn.textContent;
+  btn.textContent = "Opened \u2192 confirm?";
+  btn.disabled = false;
+  btn.classList.add("pending-confirm");
+  // Listen for tab refocus so we can prompt as soon as they come back
+  setTimeout(function() {{ btn.textContent = orig; btn.classList.remove("pending-confirm"); }}, 8000);
+  // Set up a one-shot prompt on next focus
+  if (!window._pendingConfirmListenerAttached) {{
+    window._pendingConfirmListenerAttached = true;
+    window.addEventListener("focus", function() {{
+      setTimeout(promptPendingApplies, 800);
+    }});
+  }}
+  // Also schedule a prompt in 90s in case they don't come back to this tab
+  setTimeout(promptPendingApplies, 90000);
+}}
+
+// Build a queue of unconfirmed apply-opens and prompt the user one at a time.
+function promptPendingApplies() {{
+  const pending = _readPendingApplies();
+  if (!pending.length) return;
+  // Already showing a prompt? Don't stack.
+  if (document.getElementById("apply-confirm-modal")) return;
+  const job = pending[0];
+  const overlay = document.createElement("div");
+  overlay.id = "apply-confirm-modal";
+  overlay.className = "recovery-overlay show";
+  overlay.style.zIndex = "1200";
+  overlay.innerHTML =
+    '<div class="recovery-card">' +
+      '<h3 style="margin:0 0 6px 0;color:#5C5CD6;font-size:20px;">Did you finish applying?</h3>' +
+      '<p style="margin:0 0 16px 0;color:#666;font-size:13px;">You opened <strong>' + (job.title || "this job") + '</strong>' + (job.company ? ' at <strong>' + job.company + '</strong>' : '') + '. Knowing whether you actually submitted lets us track your daily goal accurately.</p>' +
+      '<div class="recovery-row">' +
+        '<button class="recovery-btn" id="apply-confirm-yes">Yes \u2014 application submitted</button>' +
+        '<button class="recovery-btn ghost" id="apply-confirm-no">No \u2014 skipped</button>' +
+        '<button class="recovery-btn ghost" id="apply-confirm-later">Ask me later</button>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(overlay);
+
+  function _finish(action) {{
+    const arr = _readPendingApplies().filter(p => p.fp !== job.fp);
+    _writePendingApplies(arr);
+    overlay.remove();
+    if (action === "applied") {{
+      // Mark as applied via the tracker API
+      _trackerAction("setStatus", {{ fp: job.fp, status: "applied", jobMeta: {{ title: job.title, company: job.company, url: job.url }} }})
+        .then(function(r) {{
+          if (r) _trackerCache[job.fp] = r.record;
+          refreshTrackerUI();
+          filter();
+          if (typeof refreshDailyGoalWidget === "function") refreshDailyGoalWidget();
+        }});
+    }}
+    // After a beat, prompt the next pending if any
+    setTimeout(promptPendingApplies, 300);
+  }}
+  document.getElementById("apply-confirm-yes").onclick = function() {{ _finish("applied"); }};
+  document.getElementById("apply-confirm-no").onclick = function() {{ _finish("skipped"); }};
+  document.getElementById("apply-confirm-later").onclick = function() {{
+    // Keep in pending. Move to back of queue so other pending get asked first.
+    const arr = _readPendingApplies();
+    const idx = arr.findIndex(p => p.fp === job.fp);
+    if (idx >= 0) {{ const e = arr.splice(idx, 1)[0]; arr.push(e); _writePendingApplies(arr); }}
+    overlay.remove();
+  }};
+}}
+
 async function cycleStatus(fp, btn) {{
   const cur = getTracker()[fp]?.status || '';
   const next = STATUS_CYCLE[(STATUS_CYCLE.indexOf(cur) + 1) % STATUS_CYCLE.length];
@@ -2675,6 +2782,7 @@ async function cycleStatus(fp, btn) {{
   }}
   refreshTrackerUI();
   filter();
+  if (typeof refreshDailyGoalWidget === "function") refreshDailyGoalWidget();
 }}
 
 function _daysSince(iso) {{
@@ -3053,11 +3161,17 @@ function sortCards() {{
     return (parseInt(b.dataset.score || '0', 10)) - (parseInt(a.dataset.score || '0', 10));
   }}
   cards.sort((a, b) => {{
-    // PRIMARY criterion: jobs at companies where the user has LinkedIn
-    // contacts always come first. A warm-intro lead beats a higher score.
-    const aHas = a.querySelector('.contact-badge') ? 1 : 0;
-    const bHas = b.querySelector('.contact-badge') ? 1 : 0;
-    if (aHas !== bHas) return bHas - aHas;
+    // PRIMARY criterion (3-tier ladder):
+    //   2 = has at least one recruiter/HR contact (.contact-badge.hiring)
+    //   1 = has any contact (.contact-badge)
+    //   0 = no contact
+    function _tier(el) {
+      const b = el.querySelector('.contact-badge');
+      if (!b) return 0;
+      return b.classList.contains('hiring') ? 2 : 1;
+    }
+    const aT = _tier(a), bT = _tier(b);
+    if (aT !== bT) return bT - aT;
     return _secondary(a, b);
   }});
   cards.forEach(c => grid.appendChild(c));
@@ -3065,9 +3179,14 @@ function sortCards() {{
   const ind = document.getElementById('contacts-priority-indicator');
   if (ind) {{
     const withContacts = cards.filter(c => c.querySelector('.contact-badge') && c.style.display !== 'none').length;
+    const withHiring = cards.filter(c => {{
+      const b = c.querySelector('.contact-badge');
+      return b && b.classList.contains('hiring') && c.style.display !== 'none';
+    }}).length;
     if (withContacts > 0) {{
       ind.style.display = '';
-      ind.innerHTML = '<span style="font-size:11px;color:#0a66c2;font-weight:600;">\ud83e\udd1d ' + withContacts + ' job' + (withContacts === 1 ? '' : 's') + ' at companies where you have LinkedIn contacts \u2014 shown first</span>';
+      const hiringPart = withHiring > 0 ? '<span style="color:#b85c00;">\ud83c\udfaf ' + withHiring + ' with a recruiter contact</span> &middot; ' : '';
+      ind.innerHTML = '<span style="font-size:11px;font-weight:600;">' + hiringPart + '<span style="color:#0a66c2;">\ud83e\udd1d ' + withContacts + ' total with any contact</span> &mdash; shown first</span>';
     }} else {{
       ind.style.display = 'none';
       ind.innerHTML = '';
@@ -3154,6 +3273,15 @@ let _pendingUploadFile = null;
 
 // On first visit via invite link, the password is in the URL as ?key=XXX.
 // Capture it, store to localStorage, then strip from URL so it isn't visible later.
+(function bootstrapDailyWidget() {{
+  function run() {{
+    try {{ refreshDailyGoalWidget(); }} catch (e) {{}}
+    try {{ promptPendingApplies(); }} catch (e) {{}}
+  }}
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
+  else run();
+}})();
+
 (function captureInviteKey() {{
   try {{
     const params = new URLSearchParams(window.location.search);
@@ -4353,8 +4481,15 @@ function injectContactBadgesOnCards() {{
     if (!matches.length) return;
     const badge = document.createElement('span');
     badge.className = 'contact-badge';
-    badge.title = matches.length + ' of your LinkedIn contacts work at ' + company;
-    badge.innerHTML = '<span class="ic">🤝</span> ' + matches.length + ' contact' + (matches.length === 1 ? '' : 's');
+    const hiringCount = matches.filter(_isHiringRoleContact).length;
+    if (hiringCount > 0) {
+      badge.classList.add('hiring');
+      badge.title = hiringCount + ' recruiter/HR contact' + (hiringCount === 1 ? '' : 's') + ' + ' + (matches.length - hiringCount) + ' other at ' + company;
+      badge.innerHTML = '<span class="ic">🎯</span> ' + hiringCount + ' recruiter' + (hiringCount === 1 ? '' : 's') + (matches.length > hiringCount ? ' (+ ' + (matches.length - hiringCount) + ')' : '');
+    } else {
+      badge.title = matches.length + ' of your LinkedIn contacts work at ' + company;
+      badge.innerHTML = '<span class="ic">🤝</span> ' + matches.length + ' contact' + (matches.length === 1 ? '' : 's');
+    }
     badge.addEventListener('click', (e) => {{
       e.stopPropagation();
       const titleEl = card.querySelector('.title a');
@@ -4533,6 +4668,20 @@ const WIZ_STEPS = [
     skipText: "Skip \u2014 use an even mix"
   }},
   {{
+    title: "How many jobs do you want to apply to per day?",
+    body: '<p style="margin-bottom:14px;">A daily goal keeps the job search consistent. You can change this anytime in Preferences.</p>' +
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">' +
+      ['1','3','5','10','15','20'].map(function(n) {{
+        return '<button type="button" class="wiz-quick-pick" data-n="' + n + '" onclick="wizPickDailyTarget(' + n + ')" style="padding:8px 14px;border:1px solid #d0d4dc;border-radius:8px;background:#fff;cursor:pointer;font-size:13px;font-weight:600;">' + n + '</button>';
+      }}).join('') + '</div>' +
+      '<label style="display:block;font-size:12px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px;">Or set a custom number</label>' +
+      '<input id="wiz-daily-target" type="number" min="1" max="50" value="5" style="width:100%;padding:8px 10px;border:1px solid #d0d4dc;border-radius:6px;font-size:14px;">' +
+      '<div id="wiz-daily-status" style="font-size:12px;color:#888;margin-top:10px;min-height:16px;"></div>',
+    cta: "Save target &rarr;",
+    action: "save-daily-target",
+    skipText: "Skip \u2014 default 5/day"
+  }},
+  {{
     title: "Add your LinkedIn network (optional)",
     body: "<p>Upload your LinkedIn connections (one CSV) and the job feed will show <strong>&#x1f91d; N contacts</strong> badges on companies where you have warm intros.</p><p>It's a 30-second optional step. You can also do this later.</p>",
     cta: "Add LinkedIn contacts &rarr;",
@@ -4567,7 +4716,7 @@ function wizRender() {{
   const _saveExit = document.getElementById("wiz-save-exit");
   if (_saveExit) {{
     const _s = WIZ_STEPS[wizCurrent];
-    const _canSaveExit = _s && (_s.action === "save-location-remote" || _s.action === "save-company-sizes");
+    const _canSaveExit = _s && (_s.action === "save-location-remote" || _s.action === "save-company-sizes" || _s.action === "save-daily-target");
     _saveExit.style.display = _canSaveExit ? "" : "none";
   }}
   document.getElementById("wiz-title").textContent = s.title;
@@ -4666,6 +4815,74 @@ function wizBanner(msg) {{
   setTimeout(function(){{ if (b.parentNode) b.parentNode.removeChild(b); }}, 8000);
 }}
 function replayTour() {{ wizCurrent = 0; wizShow(); }}
+
+// --- Daily apply target + progress widget -----------------------------
+const DAILY_TARGET_KEY = "htj_daily_apply_target_" + USER_SLUG;
+function _isoToday() {{ return new Date().toISOString().slice(0, 10); }}
+function refreshDailyGoalWidget() {{
+  try {{
+    const target = loadDailyApplyTarget();
+    const today = _isoToday();
+    const tracker = (typeof getTracker === "function") ? getTracker() : {{}};
+    // Count tracker entries that have status set to applied/phonescreen/onsite/offer
+    // AND were set today
+    let todayCount = 0;
+    let appliedDates = [];
+    Object.values(tracker || {{}}).forEach(function(r) {{
+      const st = (r && r.status) || "";
+      if (!st || st === "rejected") return;
+      const when = (r.statusChangedAt || r.appliedAt || r.updatedAt || r.created_at || "");
+      const day = (when || "").slice(0, 10);
+      if (day) appliedDates.push(day);
+      if (day === today) todayCount += 1;
+    }});
+    const countEl = document.getElementById("goal-today-count");
+    const targEl = document.getElementById("goal-today-target");
+    const fillEl = document.getElementById("goal-progress-fill");
+    const streakEl = document.getElementById("goal-streak");
+    if (countEl) countEl.textContent = todayCount;
+    if (targEl) targEl.textContent = target;
+    if (fillEl) fillEl.style.width = Math.min(100, Math.round(todayCount * 100 / Math.max(1, target))) + "%";
+    if (streakEl) {{
+      // Count days in a row (going backwards from today) that hit target
+      const byDay = {{}};
+      appliedDates.forEach(d => {{ byDay[d] = (byDay[d] || 0) + 1; }});
+      let streak = 0;
+      let cur = new Date();
+      for (let i = 0; i < 30; i++) {{
+        const d = cur.toISOString().slice(0, 10);
+        if ((byDay[d] || 0) >= target) {{ streak += 1; cur.setDate(cur.getDate() - 1); }}
+        else break;
+      }}
+      streakEl.textContent = streak > 0 ? "\ud83d\udd25 " + streak + "-day streak" : "";
+    }}
+  }} catch (e) {{ /* swallow */ }}
+}}
+function wizPickDailyTarget(n) {{
+  const input = document.getElementById("wiz-daily-target");
+  if (input) input.value = n;
+}}
+function loadDailyApplyTarget() {{
+  try {{ const n = parseInt(localStorage.getItem(DAILY_TARGET_KEY) || "5", 10); return (n > 0 && n < 100) ? n : 5; }} catch (e) {{ return 5; }}
+}}
+// --- Hiring-role detection in LinkedIn contacts -----------------------
+// A contact whose Position contains words like "recruiter", "talent",
+// "hiring", "people ops", "VP HR" is a higher-priority warm intro than
+// a random colleague — that's literally their job.
+const HIRING_ROLE_KEYWORDS = [
+  "recruiter", "recruiting", "sourcer", "sourcing",
+  "talent acquisition", "ta partner", "ta specialist", "ta lead",
+  "hiring", "people partner", "people ops", "people operations",
+  "hr business partner", "hrbp", "head of hr", "vp hr", "vp of hr",
+  "vp people", "chief people", "chief talent", "chro",
+  "head of people", "head of talent", "head of recruiting"
+];
+function _isHiringRoleContact(c) {{
+  const pos = ((c && (c.position || c.title)) || "").toLowerCase();
+  if (!pos) return false;
+  return HIRING_ROLE_KEYWORDS.some(k => pos.indexOf(k) !== -1);
+}}
+
 
 // --- Auth recovery modal ----------------------------------------------
 // Surfaced whenever an auth-required action returns 401. Lets the user
@@ -4981,6 +5198,20 @@ function wizMixOnNum(key) {{
             }}, 1200);
           }})
           .finally(function(){{ if (ctaBtn) ctaBtn.disabled = false; }});
+        return;
+      }}
+      if (s.action === "save-daily-target") {{
+        const input = document.getElementById("wiz-daily-target");
+        const statusEl = document.getElementById("wiz-daily-status");
+        let n = parseInt(input ? input.value : "5", 10);
+        if (isNaN(n) || n < 1) n = 5;
+        if (n > 50) n = 50;
+        try {{ localStorage.setItem(DAILY_TARGET_KEY, String(n)); }} catch (e) {{}}
+        if (statusEl) {{ statusEl.style.color = "#0a6b3a"; statusEl.textContent = "Saved: " + n + "/day"; }}
+        setTimeout(function() {{
+          if (window._wizExitAfterSave) {{ window._wizExitAfterSave = false; wizFinish(); }}
+          else {{ wizAdvance(); }}
+        }}, 500);
         return;
       }}
       if (s.action === "finish") {{ wizFinish(); return; }}
