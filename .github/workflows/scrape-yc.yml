@@ -1,0 +1,46 @@
+name: Scrape YC Work at a Startup (Playwright)
+
+# workatastartup.com is a Next.js SPA — plain HTTP returns a shell with
+# no jobs. We use Playwright headless Chromium to render the page, then
+# commit data/yc_jobs.json which the regular refresh-jobs run reads
+# during its fetch_yc step.
+
+on:
+  schedule:
+    - cron: "0 4 * * *"        # daily ~4 AM UTC
+  workflow_dispatch: {}
+  repository_dispatch:
+    types: [scrape-yc]
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+permissions:
+  contents: write
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install Playwright + Chromium
+        run: |
+          pip install playwright
+          playwright install --with-deps chromium
+      - name: Scrape
+        run: python3 scripts/scrape_yc.py
+      - name: Commit yc_jobs.json + debug
+        if: always()
+        run: |
+          git config user.email "actions-bot@getmemyjob.local"
+          git config user.name "Scrape-yc workflow"
+          git add data/yc_jobs.json reports/yc_scrape_debug.log 2>/dev/null || true
+          if git diff --staged --quiet; then
+            echo "no changes to commit"
+          else
+            git commit -m "auto: yc job board snapshot"
+            git push
+          fi

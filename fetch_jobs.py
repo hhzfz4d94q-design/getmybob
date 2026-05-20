@@ -640,89 +640,47 @@ def _dbg_to_file(source_key, msg):
 
 
 def fetch_yc(entry):
-    """Y Combinator Work at a Startup. The site is an SPA so the static
-    /jobs HTML is mostly a shell. We try __NEXT_DATA__ first, then fall
-    back to crawling the public companies index. This is a best-effort
-    adapter — if it returns 0, we fall back to whatever we got."""
-    url = "https://www.workatastartup.com/jobs"
+    """Y Combinator Work at a Startup. The site is an SPA — plain HTTP
+    returns a shell. A separate workflow (scrape-yc.yml) uses Playwright
+    to render the page daily and commits data/yc_jobs.json. We just read
+    that snapshot here, no scraping. If the snapshot is missing or
+    stale, we return [] gracefully."""
+    snapshot_path = os.path.join(ROOT, "data", "yc_jobs.json")
+    if not os.path.exists(snapshot_path):
+        _dbg_to_file("yc", f"no snapshot at {snapshot_path} — run the scrape-yc workflow")
+        return []
     try:
-        req = Request(url, headers={
-            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-            "Accept": "text/html,application/xhtml+xml",
-        })
-        with urlopen(req, timeout=20) as resp:
-            if resp.status != 200:
-                _dbg_to_file("yc", f"HTTP {resp.status} on {url}")
-                return []
-            html = resp.read().decode("utf-8", errors="replace")
-    except (HTTPError, URLError, TimeoutError) as e:
-        _dbg_to_file("yc", f"fetch error: {type(e).__name__}: {e}")
+        with open(snapshot_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except (OSError, json.JSONDecodeError, ValueError) as e:
+        _dbg_to_file("yc", f"snapshot parse error: {e}")
         return []
-    _dbg_to_file("yc", f"OK {url}: {len(html)} bytes")
-    # Try __NEXT_DATA__
-    m = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', html, re.S)
-    raw_jobs = None
-    if m:
-        try:
-            data = json.loads(m.group(1))
-            page_props = ((data.get("props") or {}).get("pageProps") or {})
-            for k in ("jobs", "initialJobs", "allJobs", "results"):
-                if isinstance(page_props.get(k), list):
-                    raw_jobs = page_props[k]
-                    _dbg_to_file("yc", f"NEXT_DATA path {k}: {len(raw_jobs)} jobs")
-                    break
-        except (json.JSONDecodeError, ValueError) as e:
-            _dbg_to_file("yc", f"NEXT_DATA parse failed: {e}")
-    if not raw_jobs:
-        # Try JSON-LD JobPosting
-        for ld in re.findall(r'<script type="application/ld\+json"[^>]*>(.*?)</script>', html, re.S):
-            try:
-                blob = json.loads(ld)
-            except (json.JSONDecodeError, ValueError):
-                continue
-            if isinstance(blob, list):
-                items = [b for b in blob if isinstance(b, dict) and b.get("@type") == "JobPosting"]
-                if items:
-                    raw_jobs = items
-                    _dbg_to_file("yc", f"JSON-LD JobPostings: {len(items)}")
-                    break
-            elif isinstance(blob, dict) and blob.get("@type") == "JobPosting":
-                raw_jobs = [blob]
-                break
-    if not raw_jobs:
-        _dbg_to_file("yc", "no jobs found via NEXT_DATA or JSON-LD (likely SPA, needs JS render)")
-        return []
+    raw_jobs = data.get("jobs") or []
+    meta = data.get("_meta") or {}
+    scraped_at = meta.get("scrapedAt", "?")
+    _dbg_to_file("yc", f"loaded {len(raw_jobs)} jobs from snapshot (scrapedAt={scraped_at})")
     out = []
     for j in raw_jobs:
         if not isinstance(j, dict):
             continue
-        title = (j.get("title") or j.get("name") or "").strip()
+        title = (j.get("title") or "").strip()
+        company = (j.get("company") or "YC Startup").strip()
         if not title:
             continue
-        company = (j.get("company_name") or j.get("hiringOrganization", {}).get("name") if isinstance(j.get("hiringOrganization"), dict) else j.get("company") or "").strip() or "YC Startup"
-        job_url = j.get("show_url") or j.get("url") or "https://www.workatastartup.com/jobs"
-        if isinstance(job_url, str) and job_url.startswith("/"):
-            job_url = "https://www.workatastartup.com" + job_url
-        loc = j.get("location") or ""
-        if isinstance(loc, dict):
-            loc = loc.get("name") or loc.get("addressLocality") or ""
-        posted = j.get("posted") or j.get("datePosted") or j.get("created_at") or ""
-        if isinstance(posted, str) and "T" in posted:
-            posted = posted.split("T", 1)[0]
         out.append({
             "source": "yc",
-            "company_slug": (company.lower().replace(" ", "-"))[:40],
-            "company_name": company,
-            "external_id": str(j.get("id") or j.get("show_url") or title),
-            "title": title,
-            "location": loc[:200] if isinstance(loc, str) else "",
-            "url": job_url,
-            "posted_at": str(posted)[:10] if posted else "",
+            "company_slug": company.lower().replace(" ", "-")[:40],
+            "company_name": company[:80],
+            "external_id": str(j.get("id") or j.get("url") or title),
+            "title": title[:140],
+            "location": (j.get("location") or "")[:200],
+            "url": j.get("url") or "https://www.workatastartup.com/jobs",
+            "posted_at": (j.get("posted_at") or "")[:10],
             "description": (j.get("description") or "")[:5000],
-            "salary_range": j.get("salary_range") or "",
+            "salary_range": "",
         })
-    _dbg_to_file("yc", f"normalized {len(out)} jobs")
     return out
+
 
 
 def fetch_hn_hiring(entry):
