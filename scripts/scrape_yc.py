@@ -117,25 +117,55 @@ async def scrape():
                     await page.evaluate("window.scrollBy(0, window.innerHeight * 0.9)")
                     await page.wait_for_timeout(1200)
                 # Look for anchor tags pointing at job detail pages
+                # Real job URLs match /jobs/<digits>. /jobs/l/<category>
+                # are filter buttons — skip those.
                 anchors = await page.query_selector_all("a[href*='/jobs/']")
                 log(f"DOM scrape: found {len(anchors)} candidate anchors")
                 seen = set()
                 for a in anchors:
                     try:
                         href = await a.get_attribute("href")
-                        text = (await a.inner_text()).strip()
-                        if not href or not text or href in seen: continue
+                        if not href: continue
+                        # Filter to real job links (numeric ID), skip /jobs/l/ filters
+                        if not re.search(r"/jobs/\d+", href): continue
+                        if href in seen: continue
                         seen.add(href)
+                        text = (await a.inner_text()).strip()
                         url = href if href.startswith("http") else "https://www.workatastartup.com" + href
-                        # Title is usually the link text; company often in a sibling element
-                        title = text.split("\n")[0].strip()[:140]
-                        if len(title) < 4: continue
+                        # The anchor's inner text often contains "Title\nCompany\nLocation..."
+                        parts = [p.strip() for p in text.split("\n") if p.strip()]
+                        title = parts[0] if parts else ""
+                        company = parts[1] if len(parts) > 1 else ""
+                        location = parts[2] if len(parts) > 2 else ""
+                        # Try the parent card too — sometimes title is inside a child h-tag
+                        if not title or len(title) < 4:
+                            try:
+                                h = await a.query_selector("h1, h2, h3, h4, [class*='title']")
+                                if h:
+                                    title = (await h.inner_text()).strip()
+                            except Exception:
+                                pass
+                        if not title or len(title) < 4: continue
+                        if not company:
+                            # Look at the enclosing card for a separate company line
+                            try:
+                                card = await a.evaluate_handle("(el) => el.closest('div')")
+                                if card:
+                                    cards_text = await card.evaluate("el => el.innerText")
+                                    cards_parts = [p.strip() for p in (cards_text or "").split("\n") if p.strip()]
+                                    # Heuristic: company is usually the second non-title line
+                                    for p in cards_parts:
+                                        if p != title and len(p) < 80 and p.isascii():
+                                            company = p
+                                            break
+                            except Exception:
+                                pass
                         jobs_out.append({
                             "id": url,
-                            "title": title,
-                            "company": "YC Startup",  # we'll try to enrich from the URL
+                            "title": title[:140],
+                            "company": (company or "YC Startup")[:80],
                             "url": url,
-                            "location": "",
+                            "location": location[:200],
                             "posted_at": "",
                             "description": "",
                         })
