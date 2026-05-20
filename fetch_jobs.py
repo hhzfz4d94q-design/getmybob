@@ -2380,6 +2380,7 @@ HTML_TEMPLATE = """<!doctype html>
     <button class="pill active" data-window="all" onclick="setWindow(this,'all')">All</button>
     <button class="pill" data-window="0" onclick="setWindow(this,0)">Today</button>
     <button class="pill" data-window="7" onclick="setWindow(this,7)">Last 7 days</button>
+    <button class="pill" data-window="14" onclick="setWindow(this,14)">Last 14 days</button>
     <button class="pill" data-window="30" onclick="setWindow(this,30)">Last 30 days</button>
   </span>
 </div>
@@ -2597,7 +2598,10 @@ HTML_TEMPLATE = """<!doctype html>
 </div>
 
 <script>
-let activeWindow = 'all';
+const RECENCY_WINDOW_KEY = 'htj_recency_window_' + USER_SLUG;
+let activeWindow = (function() {{
+  try {{ const v = localStorage.getItem(RECENCY_WINDOW_KEY); return v === null ? 'all' : v; }} catch (e) {{ return 'all'; }}
+}})();
 
 // --- Tracker state (localStorage) -----------------------------------------
 const STATUS_CYCLE = ['', 'applied', 'phonescreen', 'onsite', 'offer', 'rejected'];
@@ -3194,11 +3198,22 @@ function sortCards() {{
 
 // --- Filtering ----------------------------------------------------------
 function setWindow(btn, w) {{
-  activeWindow = w;
+  activeWindow = String(w);
+  try {{ localStorage.setItem(RECENCY_WINDOW_KEY, String(w)); }} catch (e) {{}}
   // Only toggle time-window pills (don't touch View / Type pills)
   document.querySelectorAll('[data-window]').forEach(p => p.classList.remove('active'));
-  btn.classList.add('active');
+  if (btn) btn.classList.add('active');
   filter();
+}}
+// On load, restore the saved recency window
+function _restoreRecencyWindow() {{
+  try {{
+    const w = activeWindow;
+    document.querySelectorAll('[data-window]').forEach(p => {{
+      p.classList.toggle('active', p.getAttribute('data-window') === String(w));
+    }});
+    filter();
+  }} catch (e) {{}}
 }}
 
 // --- Employment-type filter --------------------------------------------
@@ -3275,6 +3290,7 @@ let _pendingUploadFile = null;
   function run() {{
     try {{ refreshDailyGoalWidget(); }} catch (e) {{}}
     try {{ promptPendingApplies(); }} catch (e) {{}}
+    try {{ _restoreRecencyWindow(); }} catch (e) {{}}
   }}
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
   else run();
@@ -4680,6 +4696,21 @@ const WIZ_STEPS = [
     skipText: "Skip \u2014 default 5/day"
   }},
   {{
+    title: "How recent should jobs be by default?",
+    body: '<p style="margin-bottom:14px;">Older listings are often filled or ghost roles. We\'ll default to this window when you load the dashboard \u2014 you can always change it with the pills above the job feed.</p>' +
+      '<div style="display:flex;flex-direction:column;gap:8px;">' +
+        '<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #d0d4dc;border-radius:8px;cursor:pointer;"><input type="radio" name="wiz-recency" value="0" style="cursor:pointer;"> <span><strong>Last 24 hours</strong> &mdash; only show roles posted today</span></label>' +
+        '<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #d0d4dc;border-radius:8px;cursor:pointer;"><input type="radio" name="wiz-recency" value="7" checked style="cursor:pointer;"> <span><strong>Last 7 days</strong> &mdash; freshest listings, best signal of active hiring</span></label>' +
+        '<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #d0d4dc;border-radius:8px;cursor:pointer;"><input type="radio" name="wiz-recency" value="14" style="cursor:pointer;"> <span><strong>Last 2 weeks</strong> &mdash; balance freshness with broader pool</span></label>' +
+        '<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #d0d4dc;border-radius:8px;cursor:pointer;"><input type="radio" name="wiz-recency" value="30" style="cursor:pointer;"> <span><strong>Last 30 days</strong> &mdash; widest reasonable pool</span></label>' +
+        '<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #d0d4dc;border-radius:8px;cursor:pointer;"><input type="radio" name="wiz-recency" value="all" style="cursor:pointer;"> <span><strong>All jobs</strong> &mdash; show everything, sort handles freshness</span></label>' +
+      '</div>' +
+      '<div id="wiz-recency-status" style="font-size:12px;color:#888;margin-top:10px;min-height:16px;"></div>',
+    cta: "Save default &rarr;",
+    action: "save-recency-window",
+    skipText: "Skip \u2014 default Last 7 days"
+  }},
+  {{
     title: "Add your LinkedIn network (optional)",
     body: "<p>Upload your LinkedIn connections (one CSV) and the job feed will show <strong>&#x1f91d; N contacts</strong> badges on companies where you have warm intros.</p><p>It's a 30-second optional step. You can also do this later.</p>",
     cta: "Add LinkedIn contacts &rarr;",
@@ -4714,7 +4745,7 @@ function wizRender() {{
   const _saveExit = document.getElementById("wiz-save-exit");
   if (_saveExit) {{
     const _s = WIZ_STEPS[wizCurrent];
-    const _canSaveExit = _s && (_s.action === "save-location-remote" || _s.action === "save-company-sizes" || _s.action === "save-daily-target");
+    const _canSaveExit = _s && (_s.action === "save-location-remote" || _s.action === "save-company-sizes" || _s.action === "save-daily-target" || _s.action === "save-recency-window");
     _saveExit.style.display = _canSaveExit ? "" : "none";
   }}
   document.getElementById("wiz-title").textContent = s.title;
@@ -5196,6 +5227,23 @@ function wizMixOnNum(key) {{
             }}, 1200);
           }})
           .finally(function(){{ if (ctaBtn) ctaBtn.disabled = false; }});
+        return;
+      }}
+      if (s.action === "save-recency-window") {{
+        const picked = document.querySelector('input[name="wiz-recency"]:checked');
+        const val = picked ? picked.value : "7";
+        const statusEl = document.getElementById("wiz-recency-status");
+        try {{ localStorage.setItem(RECENCY_WINDOW_KEY, val); }} catch (e) {{}}
+        // Also apply immediately if the user is viewing the dashboard
+        try {{
+          activeWindow = String(val);
+          _restoreRecencyWindow();
+        }} catch (e) {{}}
+        if (statusEl) {{ statusEl.style.color = "#0a6b3a"; statusEl.textContent = "Saved: " + (val === "0" ? "Last 24 hours" : val === "all" ? "All jobs" : "Last " + val + " days"); }}
+        setTimeout(function() {{
+          if (window._wizExitAfterSave) {{ window._wizExitAfterSave = false; wizFinish(); }}
+          else {{ wizAdvance(); }}
+        }}, 500);
         return;
       }}
       if (s.action === "save-daily-target") {{
