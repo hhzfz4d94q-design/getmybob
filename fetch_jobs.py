@@ -2201,6 +2201,19 @@ HTML_TEMPLATE = """<!doctype html>
   .wiz-skip {{ margin-left: auto; }}
   .wiz-help-btn {{ background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: white; width: 32px; height: 32px; border-radius: 50%; font-size: 14px; font-weight: 700; cursor: pointer; padding: 0; display: inline-flex; align-items: center; justify-content: center; }}
   .wiz-help-btn:hover {{ background: rgba(255,255,255,0.28); }}
+  .recovery-overlay {{ position: fixed; inset: 0; background: rgba(15,23,60,0.9); z-index: 1100; display: none; align-items: center; justify-content: center; padding: 24px; }}
+  .recovery-overlay.show {{ display: flex; }}
+  .recovery-card {{ background: #fff; border-radius: 14px; padding: 28px 32px; max-width: 520px; width: 100%; box-shadow: 0 24px 60px rgba(0,0,0,0.3); }}
+  .recovery-card h3 {{ margin: 0 0 12px 0; color: #5C5CD6; font-size: 22px; }}
+  .recovery-card p {{ margin: 0 0 14px 0; line-height: 1.5; font-size: 14px; color: #333; }}
+  .recovery-row {{ margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap; }}
+  .recovery-btn {{ background: #5C5CD6; color: white; border: 0; padding: 10px 18px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; }}
+  .recovery-btn:hover {{ background: #4848bf; }}
+  .recovery-btn.ghost {{ background: #fff; color: #5C5CD6; border: 1px solid #c0c8d4; }}
+  .recovery-input {{ width: 100%; padding: 10px 12px; border: 1px solid #c0c8d4; border-radius: 8px; font-size: 13px; margin-top: 8px; box-sizing: border-box; font-family: monospace; }}
+  .recovery-status {{ font-size: 12px; color: #777; margin-top: 10px; min-height: 16px; }}
+  .recovery-status.ok {{ color: #0a6b3a; }}
+  .recovery-status.err {{ color: #b00; }}
   .wiz-banner {{ position: fixed; top: 80px; left: 50%; transform: translateX(-50%); background: #5C5CD6; color: #fff; padding: 14px 22px; border-radius: 8px; box-shadow: 0 6px 20px rgba(0,0,0,0.25); z-index: 200; font-size: 14px; font-weight: 500; max-width: 90%; text-align: center; }}
 
   /* ---- Mobile responsive ---- */
@@ -2246,6 +2259,27 @@ HTML_TEMPLATE = """<!doctype html>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head><body>
+
+<!-- Access-recovery modal: shown when an auth-required action returns 401 -->
+<div class="recovery-overlay" id="recovery-modal" role="dialog" aria-modal="true" aria-labelledby="recovery-title">
+  <div class="recovery-card">
+    <h3 id="recovery-title">Your access key isn\'t valid anymore</h3>
+    <p>This usually happens after clearing cookies or switching browsers. Two ways to get back in:</p>
+    <p style="font-weight: 600; color: #5C5CD6;">Option A — paste a fresh invite URL</p>
+    <p style="font-size: 13px; color: #555;">If you saved the original invite email or text message, paste the full URL below (it ends with <code>?key=&hellip;</code>):</p>
+    <input id="recovery-paste-input" class="recovery-input" type="text" placeholder="https://getmemyjob.officebeatllc.com/{user_slug}.html?key=&hellip;">
+    <div class="recovery-row">
+      <button class="recovery-btn" onclick="recoveryApplyPaste()">Apply &amp; retry</button>
+    </div>
+    <div id="recovery-paste-status" class="recovery-status"></div>
+    <p style="margin-top: 22px; font-weight: 600; color: #5C5CD6;">Option B — email Amit for a new link</p>
+    <p style="font-size: 13px; color: #555;">If you don\'t have the original link, this opens your email app pre-filled. Amit will resend a fresh invite from the admin panel.</p>
+    <div class="recovery-row">
+      <a class="recovery-btn" id="recovery-mailto" href="#">Email Amit for a new invite</a>
+      <button class="recovery-btn ghost" onclick="recoveryHide()">Close</button>
+    </div>
+  </div>
+</div>
 
 <!-- First-login wizard overlay -->
 <div class="wiz-overlay" id="gmj-wizard" role="dialog" aria-modal="true" aria-labelledby="wiz-title">
@@ -4617,6 +4651,81 @@ function wizBanner(msg) {{
 }}
 function replayTour() {{ wizCurrent = 0; wizShow(); }}
 
+// --- Auth recovery modal ----------------------------------------------
+// Surfaced whenever an auth-required action returns 401. Lets the user
+// (a) paste a fresh invite URL OR (b) email Amit to resend one.
+const ADMIN_EMAIL = "amittarora@gmail.com";
+
+function recoveryShow() {{
+  const o = document.getElementById("recovery-modal");
+  if (!o) return;
+  // Build the mailto link with prefilled subject/body
+  const subj = encodeURIComponent("Please resend my invite link to getmemyjob");
+  const body = encodeURIComponent(
+    "Hi Amit,\n\n" +
+    "My access key to my getmemyjob dashboard isn\'t working anymore. " +
+    "Could you please resend a fresh invite link?\n\n" +
+    "User slug: " + USER_SLUG + "\n" +
+    "Dashboard: " + window.location.origin + "/" + USER_SLUG + ".html\n\n" +
+    "Thanks!"
+  );
+  const a = document.getElementById("recovery-mailto");
+  if (a) a.href = "mailto:" + ADMIN_EMAIL + "?subject=" + subj + "&body=" + body;
+  const status = document.getElementById("recovery-paste-status");
+  if (status) {{ status.textContent = ""; status.className = "recovery-status"; }}
+  o.classList.add("show");
+}}
+function recoveryHide() {{
+  const o = document.getElementById("recovery-modal");
+  if (o) o.classList.remove("show");
+}}
+function recoveryApplyPaste() {{
+  const input = document.getElementById("recovery-paste-input");
+  const status = document.getElementById("recovery-paste-status");
+  if (!input || !status) return;
+  const raw = (input.value || "").trim();
+  if (!raw) {{
+    status.className = "recovery-status err";
+    status.textContent = "Paste your full invite URL here first.";
+    return;
+  }}
+  // Extract ?key=... from the URL
+  let key = null;
+  try {{
+    const u = new URL(raw);
+    key = u.searchParams.get("key");
+    // If the URL is for a different user, warn (but still store the key)
+    const path = u.pathname.replace(/^\/+/, "").replace(/\.html$/, "");
+    if (path && path !== USER_SLUG) {{
+      status.className = "recovery-status err";
+      status.textContent = "That URL is for user '" + path + "', not '" + USER_SLUG + "'. Open the right dashboard URL first.";
+      return;
+    }}
+  }} catch (e) {{
+    // Maybe they just pasted the key itself
+    if (/^[a-zA-Z0-9_-]{{6,}}$/.test(raw)) key = raw;
+  }}
+  if (!key) {{
+    status.className = "recovery-status err";
+    status.textContent = "Couldn\'t find a ?key=... in that URL. Try the full invite link.";
+    return;
+  }}
+  // Stash both per-user and legacy keys
+  try {{
+    localStorage.setItem("htj_resume_key_" + USER_SLUG, key);
+    localStorage.setItem("htj_resume_key", key);
+  }} catch (e) {{}}
+  status.className = "recovery-status ok";
+  status.textContent = "Saved. Retrying\u2026";
+  // Auto-close and trigger a regen retry
+  setTimeout(function() {{
+    recoveryHide();
+    const btn = document.getElementById("regen-btn");
+    if (btn && typeof regenerateFromHeader === "function") regenerateFromHeader(btn);
+  }}, 700);
+}}
+
+
 // Header "Regenerate matches" button — fires /regenerate-profile with
 // whichever auth header the browser has cached. Tries X-Edit-Key first
 // (per-user, from invite link). Falls back to X-Admin-Key (from admin.html)
@@ -4663,6 +4772,14 @@ async function regenerateFromHeader(btn) {{
       lastErr = "network error: " + (e.message || e);
       break;
     }}
+  }}
+  // If the failure looked like an auth problem, pop the recovery modal
+  // instead of just a banner. Otherwise show the banner as before.
+  if (/Invalid X-Edit-Key|Invalid X-Admin-Key|HTTP 401/.test(lastErr)) {{
+    btn.textContent = orig;
+    btn.disabled = false;
+    recoveryShow();
+    return;
   }}
   wizBanner("Regen failed: " + lastErr);
   btn.textContent = orig;
