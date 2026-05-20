@@ -2268,6 +2268,7 @@ HTML_TEMPLATE = """<!doctype html>
   <div class="sub">{subtitle} · Generated {generated}</div>
   <div class="header-actions">
     <button id="prefs-btn" class="header-btn" onclick="replayTour()" title="Re-open the setup wizard to change your locations, remote pref, and company sizes">Preferences</button>
+    <button id="regen-btn" class="header-btn" onclick="regenerateFromHeader(this)" title="Re-run the AI matcher to refresh your suggested target companies and skills. Takes 30-60 seconds.">Regenerate matches</button>
     <button id="resume-btn" class="header-btn" onclick="openResumeModal()">Resume</button>
     <button id="contacts-btn" class="header-btn" onclick="openContactsModal()">LinkedIn Contacts</button>
     <button id="refresh-btn" class="header-btn" onclick="refreshData()">Refresh data</button>
@@ -4615,6 +4616,48 @@ function wizBanner(msg) {{
   setTimeout(function(){{ if (b.parentNode) b.parentNode.removeChild(b); }}, 8000);
 }}
 function replayTour() {{ wizCurrent = 0; wizShow(); }}
+
+// Header "Regenerate matches" button — fires /regenerate-profile with
+// the user's per-user X-Edit-Key. Shows progress in a toast banner
+// and triggers a dashboard refresh on success.
+async function regenerateFromHeader(btn) {{
+  const orig = btn.textContent;
+  const editKey = (typeof getEditKey === "function")
+    ? getEditKey()
+    : (localStorage.getItem("htj_resume_key_" + USER_SLUG) || localStorage.getItem("htj_resume_key"));
+  if (!editKey) {{
+    wizBanner("Can't regenerate \u2014 no edit key in this browser. Use your original invite link with ?key=\u2026 once.");
+    return;
+  }}
+  btn.disabled = true;
+  btn.textContent = "Regenerating\u2026";
+  wizBanner("Re-running the AI matcher with your latest preferences. Takes about 30\u201360 seconds.");
+  try {{
+    const r = await fetch(WORKER_BASE + "/regenerate-profile" + USER_QS, {{
+      method: "POST",
+      headers: {{ "X-Edit-Key": editKey }}
+    }});
+    const data = await r.json().catch(function() {{ return {{}}; }});
+    if (!r.ok || (data && data.error)) {{
+      wizBanner("Regen failed: " + (data.error || ("HTTP " + r.status)));
+      btn.textContent = orig;
+      btn.disabled = false;
+      return;
+    }}
+    const tcCount = ((data.profile || {{}}).targetCompanies || []).length;
+    wizBanner("Generated " + tcCount + " personalized target companies. Triggering job refresh\u2026");
+    // Kick the dashboard refresh in the background
+    try {{ fetch(WORKER_BASE + "/refresh", {{ method: "POST" }}); }} catch (e) {{}}
+    btn.textContent = "Refreshing\u2026 (reload in 2\u20133 min)";
+    btn.disabled = false;
+    // Final hint after the banner fades
+    setTimeout(function() {{ btn.textContent = orig; }}, 12000);
+  }} catch (e) {{
+    wizBanner("Network error during regen \u2014 try again in a minute.");
+    btn.textContent = orig;
+    btn.disabled = false;
+  }}
+}}
 
 
 // --- Wizard step 5: company-size mix sliders ---------------------------
