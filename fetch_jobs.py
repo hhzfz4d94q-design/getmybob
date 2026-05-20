@@ -3161,17 +3161,13 @@ function sortCards() {{
     return (parseInt(b.dataset.score || '0', 10)) - (parseInt(a.dataset.score || '0', 10));
   }}
   cards.sort((a, b) => {{
-    // PRIMARY criterion (3-tier ladder):
-    //   2 = has at least one recruiter/HR contact (.contact-badge.hiring)
-    //   1 = has any contact (.contact-badge)
-    //   0 = no contact
-    function _tier(el) {
-      const b = el.querySelector('.contact-badge');
-      if (!b) return 0;
-      return b.classList.contains('hiring') ? 2 : 1;
-    }
-    const aT = _tier(a), bT = _tier(b);
-    if (aT !== bT) return bT - aT;
+    // PRIMARY criterion: any LinkedIn connection at a company that's
+    // hiring in the user's industry wins, regardless of whether the
+    // contact is a recruiter or a peer. Industry match is already
+    // enforced upstream (jobs without it never reach this list).
+    const aHas = a.querySelector('.contact-badge') ? 1 : 0;
+    const bHas = b.querySelector('.contact-badge') ? 1 : 0;
+    if (aHas !== bHas) return bHas - aHas;
     return _secondary(a, b);
   }});
   cards.forEach(c => grid.appendChild(c));
@@ -3185,8 +3181,10 @@ function sortCards() {{
     }}).length;
     if (withContacts > 0) {{
       ind.style.display = '';
-      const hiringPart = withHiring > 0 ? '<span style="color:#b85c00;">\ud83c\udfaf ' + withHiring + ' with a recruiter contact</span> &middot; ' : '';
-      ind.innerHTML = '<span style="font-size:11px;font-weight:600;">' + hiringPart + '<span style="color:#0a66c2;">\ud83e\udd1d ' + withContacts + ' total with any contact</span> &mdash; shown first</span>';
+      // Single tier — any connection at the hiring company. Recruiter count
+      // is shown as supplementary info in the same line.
+      const recruiterNote = withHiring > 0 ? ' <span style="color:#b85c00;">(' + withHiring + ' include a recruiter/HR contact \ud83c\udfaf)</span>' : '';
+      ind.innerHTML = '<span style="font-size:11px;font-weight:600;color:#0a66c2;">\ud83e\udd1d ' + withContacts + ' job' + (withContacts === 1 ? '' : 's') + ' at companies where you have a LinkedIn connection \u2014 shown first' + recruiterNote + '</span>';
     }} else {{
       ind.style.display = 'none';
       ind.innerHTML = '';
