@@ -4641,11 +4641,35 @@ const WIZ_STEPS = [
     skipText: "Skip — I'll do this later"
   }},
   {{
-    title: "Review your skills profile",
-    body: "<p>We just built a skills profile from your resume — target roles, industries, specialties, technologies, regulations, target companies, and more.</p><p>Take a quick look before we use it to match jobs. Click any &times; to remove a chip; click <strong>+ Add</strong> to fill in what we missed.</p>",
-    cta: "Review my profile &rarr;",
-    action: "open-resume-profile",
-    skipText: "Skip — looks good already"
+    title: "Adjust your industries and skills",
+    body:
+      '<p style="margin-bottom:12px;font-size:14px;color:#444;">These are extracted from your resume. We use them to match you against jobs \u2014 add anything we missed, remove anything inaccurate. <strong>Sharper signals = fewer 0-match days.</strong></p>' +
+      '<div id="wiz-chip-status" style="font-size:12px;color:#888;margin-bottom:8px;min-height:16px;">Loading your profile\u2026</div>' +
+      '<div data-field="industries" class="wiz-chip-section" style="margin-bottom:14px;">' +
+        '<div class="wiz-chip-label" style="font-size:11px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:6px;">Industries <span style="font-weight:400;color:#888;">\u2014 broad sectors (e.g. banking, fintech, healthcare-it)</span></div>' +
+        '<div class="wiz-chip-list" id="wiz-chips-industries" style="min-height:30px;"></div>' +
+        '<div style="display:flex;gap:6px;margin-top:6px;">' +
+          '<input class="wiz-chip-input" data-target="industries" type="text" placeholder="Add an industry\u2026 (Enter)" style="flex:1;padding:6px 10px;border:1px solid #d0d4dc;border-radius:6px;font-size:12.5px;">' +
+        '</div>' +
+      '</div>' +
+      '<div data-field="keywords" class="wiz-chip-section" style="margin-bottom:14px;">' +
+        '<div class="wiz-chip-label" style="font-size:11px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:6px;">Key skills &amp; keywords <span style="font-weight:400;color:#888;">\u2014 must-have terms in job title/desc</span></div>' +
+        '<div class="wiz-chip-list" id="wiz-chips-keywords" style="min-height:30px;"></div>' +
+        '<div style="display:flex;gap:6px;margin-top:6px;">' +
+          '<input class="wiz-chip-input" data-target="keywords" type="text" placeholder="Add a keyword\u2026 (Enter)" style="flex:1;padding:6px 10px;border:1px solid #d0d4dc;border-radius:6px;font-size:12.5px;">' +
+        '</div>' +
+      '</div>' +
+      '<div data-field="specialties" class="wiz-chip-section" style="margin-bottom:6px;">' +
+        '<div class="wiz-chip-label" style="font-size:11px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:6px;">Specialties <span style="font-weight:400;color:#888;">\u2014 granular sub-domains</span></div>' +
+        '<div class="wiz-chip-list" id="wiz-chips-specialties" style="min-height:30px;"></div>' +
+        '<div style="display:flex;gap:6px;margin-top:6px;">' +
+          '<input class="wiz-chip-input" data-target="specialties" type="text" placeholder="Add a specialty\u2026 (Enter)" style="flex:1;padding:6px 10px;border:1px solid #d0d4dc;border-radius:6px;font-size:12.5px;">' +
+        '</div>' +
+      '</div>' +
+      '<div id="wiz-chip-save-status" style="font-size:12px;color:#888;margin-top:10px;min-height:16px;"></div>',
+    cta: "Save changes &rarr;",
+    action: "save-profile-chips",
+    skipText: "Skip \u2014 use AI defaults"
   }},
   {{
     title: "Confirm where you want to work",
@@ -4745,7 +4769,7 @@ function wizRender() {{
   const _saveExit = document.getElementById("wiz-save-exit");
   if (_saveExit) {{
     const _s = WIZ_STEPS[wizCurrent];
-    const _canSaveExit = _s && (_s.action === "save-location-remote" || _s.action === "save-company-sizes" || _s.action === "save-daily-target" || _s.action === "save-recency-window");
+    const _canSaveExit = _s && (_s.action === "save-location-remote" || _s.action === "save-company-sizes" || _s.action === "save-daily-target" || _s.action === "save-recency-window" || _s.action === "save-profile-chips");
     _saveExit.style.display = _canSaveExit ? "" : "none";
   }}
   document.getElementById("wiz-title").textContent = s.title;
@@ -4772,6 +4796,10 @@ function wizRender() {{
   const skip = document.getElementById("wiz-skip");
   if (s.skipText === null) {{ skip.style.display = "none"; }}
   else {{ skip.style.display = ""; skip.textContent = s.skipText || "Skip for now"; }}
+  // Step-specific lazy loaders
+  if (s.action === "save-profile-chips") {{
+    setTimeout(wizLoadProfileChips, 50);
+  }}
 }}
 function wizAdvance() {{
   wizCurrent++;
@@ -4844,6 +4872,62 @@ function wizBanner(msg) {{
   setTimeout(function(){{ if (b.parentNode) b.parentNode.removeChild(b); }}, 8000);
 }}
 function replayTour() {{ wizCurrent = 0; wizShow(); }}
+
+// --- Wizard inline chip editor (Industries / Keywords / Specialties) -----
+const WIZ_CHIP_FIELDS = ["industries", "keywords", "specialties"];
+let _wizChipState = {{ industries: [], keywords: [], specialties: [] }};
+let _wizChipLoaded = false;
+
+function _renderWizChipsFor(field) {{
+  const cont = document.getElementById("wiz-chips-" + field);
+  if (!cont) return;
+  const items = _wizChipState[field] || [];
+  cont.innerHTML = items.map(function(s, i) {{
+    const safe = (s || "").replace(/[&<>"]/g, c => ({{ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }}[c]));
+    return '<span style="display:inline-flex;align-items:center;background:#eef0ff;color:#5C5CD6;padding:3px 4px 3px 9px;border-radius:12px;font-size:11.5px;margin:2px 4px 2px 0;font-weight:500;">' + safe + '<button type="button" data-idx="' + i + '" data-field="' + field + '" class="wiz-chip-remove" style="background:none;border:0;color:#888;cursor:pointer;padding:0 0 0 6px;font-size:14px;line-height:1;font-weight:600;" title="Remove">\u00d7</button></span>';
+  }}).join("");
+  // Wire up the remove buttons
+  cont.querySelectorAll(".wiz-chip-remove").forEach(function(btn) {{
+    btn.addEventListener("click", function() {{
+      const f = btn.getAttribute("data-field");
+      const i = parseInt(btn.getAttribute("data-idx"), 10);
+      _wizChipState[f].splice(i, 1);
+      _renderWizChipsFor(f);
+    }});
+  }});
+}}
+
+async function wizLoadProfileChips() {{
+  const statusEl = document.getElementById("wiz-chip-status");
+  try {{
+    const r = await fetch(WORKER_BASE + "/skills-profile" + USER_QS);
+    const data = await r.json().catch(function() {{ return {{}}; }});
+    const profile = (data && data.profile) || {{}};
+    WIZ_CHIP_FIELDS.forEach(function(f) {{
+      _wizChipState[f] = (profile[f] || []).slice();
+    }});
+    _wizChipLoaded = true;
+    WIZ_CHIP_FIELDS.forEach(_renderWizChipsFor);
+    if (statusEl) statusEl.textContent = "";
+    // Wire add-input listeners (Enter to add)
+    document.querySelectorAll(".wiz-chip-input").forEach(function(inp) {{
+      inp.addEventListener("keydown", function(e) {{
+        if (e.key !== "Enter") return;
+        e.preventDefault();
+        const v = inp.value.trim().toLowerCase();
+        if (!v) return;
+        const f = inp.getAttribute("data-target");
+        if (!_wizChipState[f].includes(v)) {{
+          _wizChipState[f].push(v);
+          _renderWizChipsFor(f);
+        }}
+        inp.value = "";
+      }});
+    }});
+  }} catch (e) {{
+    if (statusEl) {{ statusEl.style.color = "#b00"; statusEl.textContent = "Couldn\'t load your profile \u2014 you can still skip this step."; }}
+  }}
+}}
 
 // --- Daily apply target + progress widget -----------------------------
 const DAILY_TARGET_KEY = "htj_daily_apply_target_" + USER_SLUG;
@@ -5227,6 +5311,44 @@ function wizMixOnNum(key) {{
             }}, 1200);
           }})
           .finally(function(){{ if (ctaBtn) ctaBtn.disabled = false; }});
+        return;
+      }}
+      if (s.action === "save-profile-chips") {{
+        const statusEl = document.getElementById("wiz-chip-save-status");
+        if (!_wizChipLoaded) {{ if (statusEl) statusEl.textContent = "Profile didn\'t load \u2014 skipping."; setTimeout(function() {{ if (window._wizExitAfterSave) {{ window._wizExitAfterSave = false; wizFinish(); }} else {{ wizAdvance(); }} }}, 800); return; }}
+        const editKey = (typeof getEditKey === "function") ? getEditKey() : (localStorage.getItem("htj_resume_key_" + USER_SLUG) || localStorage.getItem("htj_resume_key"));
+        if (!editKey) {{
+          if (statusEl) statusEl.textContent = "No edit key \u2014 can\'t save. Skipping.";
+          setTimeout(function() {{ if (window._wizExitAfterSave) {{ window._wizExitAfterSave = false; wizFinish(); }} else {{ wizAdvance(); }} }}, 1200);
+          return;
+        }}
+        if (statusEl) {{ statusEl.style.color = "#888"; statusEl.textContent = "Saving\u2026"; }}
+        const ctaBtn = document.getElementById("wiz-cta");
+        if (ctaBtn) ctaBtn.disabled = true;
+        fetch(PROFILE_WORKER_URL, {{
+          method: "POST",
+          headers: {{ "Content-Type": "application/json", "X-Edit-Key": editKey }},
+          body: JSON.stringify({{ patchFields: {{
+            industries: _wizChipState.industries,
+            keywords: _wizChipState.keywords,
+            specialties: _wizChipState.specialties,
+          }} }})
+        }})
+          .then(function(r) {{ return r.json().then(function(d) {{ return {{ ok: r.ok, status: r.status, data: d }}; }}); }})
+          .then(function(res) {{
+            if (!res.ok || (res.data && res.data.error)) {{
+              if (statusEl) {{ statusEl.style.color = "#b00"; statusEl.textContent = "Save failed (" + (res.data.error || ("HTTP " + res.status)) + ") \u2014 continuing."; }}
+              setTimeout(function() {{ if (window._wizExitAfterSave) {{ window._wizExitAfterSave = false; wizFinish(); }} else {{ wizAdvance(); }} }}, 1500);
+            }} else {{
+              if (statusEl) {{ statusEl.style.color = "#0a6b3a"; statusEl.textContent = "Saved \u2014 " + (_wizChipState.industries.length + _wizChipState.keywords.length + _wizChipState.specialties.length) + " signals."; }}
+              setTimeout(function() {{ if (window._wizExitAfterSave) {{ window._wizExitAfterSave = false; wizFinish(); }} else {{ wizAdvance(); }} }}, 600);
+            }}
+          }})
+          .catch(function() {{
+            if (statusEl) {{ statusEl.style.color = "#b00"; statusEl.textContent = "Network error \u2014 continuing."; }}
+            setTimeout(function() {{ if (window._wizExitAfterSave) {{ window._wizExitAfterSave = false; wizFinish(); }} else {{ wizAdvance(); }} }}, 1200);
+          }})
+          .finally(function() {{ if (ctaBtn) ctaBtn.disabled = false; }});
         return;
       }}
       if (s.action === "save-recency-window") {{
