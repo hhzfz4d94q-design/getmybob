@@ -2374,6 +2374,7 @@ HTML_TEMPLATE = """<!doctype html>
     <button class="pill" data-window="30" onclick="setWindow(this,30)">Last 30 days</button>
   </span>
 </div>
+<div id="contacts-priority-indicator" style="margin: 0 0 12px 0; min-height: 18px;"></div>
 <div class="grid" id="grid">
 {cards}
 </div>
@@ -3045,21 +3046,33 @@ function sortCards() {{
   const by = sel.value || 'score';
   const grid = document.getElementById('grid');
   const cards = Array.from(grid.querySelectorAll('.card'));
-  cards.sort((a, b) => {{
-    if (by === 'salary') {{
-      return (parseInt(b.dataset.salaryMax || '0', 10)) - (parseInt(a.dataset.salaryMax || '0', 10));
-    }}
-    if (by === 'recent') {{
-      return (b.dataset.lastSeen || '').localeCompare(a.dataset.lastSeen || '');
-    }}
-    if (by === 'ghost') {{
-      // First-seen most recent first (i.e., newest job listings)
-      return (b.dataset.firstSeen || '').localeCompare(a.dataset.firstSeen || '');
-    }}
-    // score (default)
+  function _secondary(a, b) {{
+    if (by === 'salary') return (parseInt(b.dataset.salaryMax || '0', 10)) - (parseInt(a.dataset.salaryMax || '0', 10));
+    if (by === 'recent') return (b.dataset.lastSeen || '').localeCompare(a.dataset.lastSeen || '');
+    if (by === 'ghost') return (b.dataset.firstSeen || '').localeCompare(a.dataset.firstSeen || '');
     return (parseInt(b.dataset.score || '0', 10)) - (parseInt(a.dataset.score || '0', 10));
+  }}
+  cards.sort((a, b) => {{
+    // PRIMARY criterion: jobs at companies where the user has LinkedIn
+    // contacts always come first. A warm-intro lead beats a higher score.
+    const aHas = a.querySelector('.contact-badge') ? 1 : 0;
+    const bHas = b.querySelector('.contact-badge') ? 1 : 0;
+    if (aHas !== bHas) return bHas - aHas;
+    return _secondary(a, b);
   }});
   cards.forEach(c => grid.appendChild(c));
+  // Update the "X jobs with contacts" indicator if it exists
+  const ind = document.getElementById('contacts-priority-indicator');
+  if (ind) {{
+    const withContacts = cards.filter(c => c.querySelector('.contact-badge') && c.style.display !== 'none').length;
+    if (withContacts > 0) {{
+      ind.style.display = '';
+      ind.innerHTML = '<span style="font-size:11px;color:#0a66c2;font-weight:600;">\ud83e\udd1d ' + withContacts + ' job' + (withContacts === 1 ? '' : 's') + ' at companies where you have LinkedIn contacts \u2014 shown first</span>';
+    }} else {{
+      ind.style.display = 'none';
+      ind.innerHTML = '';
+    }}
+  }}
 }}
 
 // --- Filtering ----------------------------------------------------------
@@ -4351,6 +4364,9 @@ function injectContactBadgesOnCards() {{
     }});
     companyEl.parentNode.insertBefore(badge, companyEl.nextSibling);
   }});
+  // Now that contact badges are in place, re-sort so contact-having
+  // jobs bubble to the top.
+  try {{ if (typeof sortCards === 'function') sortCards(); }} catch (e) {{}}
 }}
 
 // --- Per-company contacts modal ---------------------------------------
