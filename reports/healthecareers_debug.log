@@ -78,3 +78,8 @@ fetch error on informatics: URLError: <urlopen error Tunnel connection failed: 4
 fetch error on digital-health: URLError: <urlopen error Tunnel connection failed: 403 Forbidden>
 fetch error on ehr: URLError: <urlopen error Tunnel connection failed: 403 Forbidden>
 normalized 0 total jobs
+fetch error on healthcare-it: HTTPError: HTTP Error 404: Not Found
+fetch error on informatics: HTTPError: HTTP Error 404: Not Found
+fetch error on digital-health: HTTPError: HTTP Error 404: Not Found
+fetch error on ehr: HTTPError: HTTP Error 404: Not Found
+normalized 0 total jobs
