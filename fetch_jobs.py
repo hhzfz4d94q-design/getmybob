@@ -2323,9 +2323,19 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         has_profile_js=("true" if SKILLS_PROFILE else "false"),
     )
     # Some embedded emoji in HTML_TEMPLATE are stored as UTF-16 surrogate
-    # pair literals (\ud83c\udfaf etc). errors='surrogatepass' lets us write
-    # them through as their original 4-byte UTF-8 emoji bytes.
-    with open(output_path, "w", encoding="utf-8", errors="surrogatepass") as f:
+    # pair literals (\ud83c\udfaf etc). Merge them into proper codepoints
+    # so the output is valid UTF-8 (the browser refuses to parse JS that
+    # contains lone surrogate bytes, which would silently break every
+    # onclick on the page including the Preferences button).
+    import re as _re
+    def _merge_surrogates(s):
+        return _re.sub(
+            r"[\ud800-\udbff][\udc00-\udfff]",
+            lambda m: chr(0x10000 + (ord(m.group(0)[0]) - 0xd800) * 0x400 + (ord(m.group(0)[1]) - 0xdc00)),
+            s,
+        )
+    html = _merge_surrogates(html)
+    with open(output_path, "w", encoding="utf-8") as f:
         f.write(html)
     print(f"\nDashboard written: {output_path}")
 
