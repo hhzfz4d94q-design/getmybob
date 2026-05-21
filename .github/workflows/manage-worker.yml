@@ -54,7 +54,7 @@ jobs:
             -o /tmp/multipart.raw
           python3 scripts/parse_cf_worker.py /tmp/multipart.raw worker_current.js
 
-      - name: Deploy worker_target.js
+      - name: Deploy worker_target.js (with diagnostic dump)
         if: steps.mode.outputs.value == 'deploy'
         env:
           CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -98,6 +98,84 @@ jobs:
           echo "=== Activation response ==="
           cat /tmp/activate.json
           python3 -c "import json; d=json.load(open('/tmp/activate.json')); assert d.get('success'), d; print('Version activated — live now.')"
+
+          # === DIAGNOSTIC DUMP ===
+          # List all recent versions so we can see what we have
+          curl -sS -H "Authorization: Bearer $CF_TOKEN" \
+            "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/workers/scripts/${WORKER_NAME}/versions?per_page=10" \
+            -o /tmp/all_versions.json
+          # Get current deployments
+          curl -sS -H "Authorization: Bearer $CF_TOKEN" \
+            "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/workers/scripts/${WORKER_NAME}/deployments?per_page=5" \
+            -o /tmp/deployments.json
+          # Hit the actual worker URL to see what's served
+          sleep 3
+          curl -sS -i "https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/?bust=$(date +%s)" \
+            -o /tmp/live_root.txt || echo "live fetch failed" > /tmp/live_root.txt
+          curl -sS -i "https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/api/auth/me?bust=$(date +%s)" \
+            -o /tmp/live_me.txt || echo "live fetch failed" > /tmp/live_me.txt
+
+          # Write everything to a file in the repo
+          {
+            echo "# Worker deploy diagnostic — $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo ""
+            echo "## 1. Upload response (PUT /content)"
+            echo ""
+            echo '\`\`\`json'
+            cat /tmp/deploy.json
+            echo ""
+            echo '\`\`\`'
+            echo ""
+            echo "## 2. New version_id picked from /versions?per_page=1"
+            echo ""
+            echo "VERSION_ID=$VERSION_ID"
+            echo ""
+            echo '\`\`\`json'
+            cat /tmp/versions.json
+            echo ""
+            echo '\`\`\`'
+            echo ""
+            echo "## 3. All recent versions (last 10)"
+            echo ""
+            echo '\`\`\`json'
+            cat /tmp/all_versions.json
+            echo ""
+            echo '\`\`\`'
+            echo ""
+            echo "## 4. Activation response (POST /deployments)"
+            echo ""
+            echo '\`\`\`json'
+            cat /tmp/activate.json
+            echo ""
+            echo '\`\`\`'
+            echo ""
+            echo "## 5. Current deployments after activation"
+            echo ""
+            echo '\`\`\`json'
+            cat /tmp/deployments.json
+            echo ""
+            echo '\`\`\`'
+            echo ""
+            echo "## 6. LIVE worker GET / (first 1000 bytes)"
+            echo ""
+            echo '\`\`\`'
+            head -c 1000 /tmp/live_root.txt
+            echo ""
+            echo '\`\`\`'
+            echo ""
+            echo "## 7. LIVE worker GET /api/auth/me (first 1000 bytes)"
+            echo ""
+            echo '\`\`\`'
+            head -c 1000 /tmp/live_me.txt
+            echo ""
+            echo '\`\`\`'
+          } > WORKER_DIAG.md
+          # Commit + push
+          git config user.email "actions-bot@getmemyjob.local"
+          git config user.name "Worker diag bot"
+          git add WORKER_DIAG.md
+          git commit -m "diag: deploy run output" || echo "no diff"
+          git push || true
 
       - name: Commit dumped source (dump mode only)
         if: steps.mode.outputs.value == 'dump'
