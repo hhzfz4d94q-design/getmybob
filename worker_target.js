@@ -1390,13 +1390,18 @@ async function handleNotes(request, env, cors, slug) {
     return _json({ notes: raw ? JSON.parse(raw) : {} }, 200, cors);
   }
 
-  // Auth for writes: either valid X-Edit-Key, or a session whose slug matches
-  let authed = await checkEditKey(request, env, slug);
+  // Auth for writes: admin key (any user), or per-user X-Edit-Key, or a Bearer session whose slug matches
+  let authed = false;
+  if (env.ADMIN_KEY) {
+    const adminKey = request.headers.get('X-Admin-Key');
+    if (adminKey && adminKey === env.ADMIN_KEY) authed = true;
+  }
+  if (!authed) authed = await checkEditKey(request, env, slug);
   if (!authed) {
     const sess = await sessionFromRequest(request, env);
     if (sess && sess.slug === slug) authed = true;
   }
-  if (!authed) return _json({ error: 'Unauthorized' }, 401, cors);
+  if (!authed) return _json({ error: 'Unauthorized — need X-Admin-Key, X-Edit-Key for this user, or matching Bearer session' }, 401, cors);
 
   const raw = await env.RESUMES.get(key);
   const notes = raw ? JSON.parse(raw) : {};

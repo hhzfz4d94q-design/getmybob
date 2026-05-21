@@ -1545,7 +1545,9 @@ def load_users():
 
 def score_job(job):
     """0-100 score. Higher = more relevant + more likely 'real'.
-    Uses the AI-extracted skills profile when available; falls back to hardcoded keywords."""
+    Uses the AI-extracted skills profile when available; falls back to hardcoded keywords.
+    Title / Industry / Skills weights come from profile.matchWeights (set via the wizard);
+    defaults to titles=50, industries=25, skills=25 (sum to 100)."""
     s = 50
     blob = f"{job['title']} {job['description']}".lower()
     title = (job["title"] or "").lower()
@@ -1561,18 +1563,47 @@ def score_job(job):
         if any(n and n in title for n in neg):
             return 0
 
-        # Seniority match from profile
-        sen_titles = profile.get("seniorityTitles", []) or SENIOR_TITLE_TERMS
-        if any(t in title for t in sen_titles):
-            s += 15
+        # --- User-configurable weights (sum to 100) ---
+        weights = profile.get("matchWeights") or {}
+        w_t = max(0, int(weights.get("titles", 50)))
+        w_i = max(0, int(weights.get("industries", 25)))
+        w_s = max(0, int(weights.get("skills", 25)))
+        _wsum = w_t + w_i + w_s
+        if _wsum <= 0:
+            w_t, w_i, w_s, _wsum = 50, 25, 25, 100
+        # Normalize to exact 100
+        w_t = w_t * 100.0 / _wsum
+        w_i = w_i * 100.0 / _wsum
+        w_s = w_s * 100.0 / _wsum
+        # Each component contributes up to (weight * 0.5) bonus points, so all
+        # three combined max out at +50 on top of the 50 base = 100 from signals.
 
-        # Profile-driven keyword relevance — weighted hits
-        kw_hits = sum(1 for k in profile.get("keywords", []) if k and k in blob)
-        s += min(kw_hits * 3, 25)
+        # TITLE component: any targetTitles substring match = full credit,
+        # otherwise fall back to seniorityTitles match at 40% credit.
+        target_titles = profile.get("targetTitles", []) or []
+        title_strength = 0.0
+        for t in target_titles:
+            if t and t in title:
+                title_strength = 1.0
+                break
+        if title_strength == 0.0:
+            sen_titles = profile.get("seniorityTitles", []) or SENIOR_TITLE_TERMS
+            if any(t in title for t in sen_titles):
+                title_strength = 0.4
+        s += int(title_strength * w_t * 0.5)
 
-        # Industry match — title or company hint
+        # INDUSTRY component: cap at 3 hits = full credit
         ind_hits = sum(1 for i in profile.get("industries", []) if i and i in blob)
-        s += min(ind_hits * 2, 8)
+        ind_strength = min(ind_hits / 3.0, 1.0)
+        s += int(ind_strength * w_i * 0.5)
+
+        # SKILLS component: keywords + technologies + frameworks; cap at 8 hits
+        skl_terms = (profile.get("keywords", []) or []) + \
+                    (profile.get("technologies", []) or []) + \
+                    (profile.get("frameworks", []) or [])
+        kw_hits = sum(1 for k in skl_terms if k and k in blob)
+        skl_strength = min(kw_hits / 8.0, 1.0)
+        s += int(skl_strength * w_s * 0.5)
     else:
         # Legacy path — used when Worker is unreachable
         if is_senior(job):
@@ -6366,6 +6397,19 @@ function wizWtPrefill() {{
              localStorage.getItem("htj_resume_key") || "";
     } catch(e) { return ""; }
   }
+  function getAdminKeyHere() {
+    try { return localStorage.getItem("htj_admin_key") || ""; } catch(e) { return ""; }
+  }
+  function getSessionTokenHere() {
+    try { return localStorage.getItem("gmj_session_token") || ""; } catch(e) { return ""; }
+  }
+  function notesAuthHeaders() {
+    const h = { 'Content-Type': 'application/json' };
+    const ek = getEditKeyHere();   if (ek) h['X-Edit-Key'] = ek;
+    const ak = getAdminKeyHere();  if (ak) h['X-Admin-Key'] = ak;
+    const st = getSessionTokenHere(); if (st) h['Authorization'] = 'Bearer ' + st;
+    return h;
+  }
 
   function saveNote(fp, fields) {
     const card = document.querySelector('.card[data-fp="'+fp+'"]');
@@ -6378,7 +6422,7 @@ function wizWtPrefill() {{
     }
     return fetch(NOTES_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Edit-Key': getEditKeyHere() },
+      headers: notesAuthHeaders(),
       body: JSON.stringify(body)
     }).then(r => r.json()).then(d => {
       if (d && d.notes) _notes = d.notes;
@@ -6390,7 +6434,7 @@ function wizWtPrefill() {{
   function deleteNote(fp) {
     return fetch(NOTES_URL + "&fp=" + encodeURIComponent(fp), {
       method: 'DELETE',
-      headers: { 'X-Edit-Key': getEditKeyHere() }
+      headers: notesAuthHeaders()
     }).then(r => r.json()).then(d => {
       if (_notes[fp]) delete _notes[fp];
       renderReminders(); decorateAllCards();

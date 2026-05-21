@@ -2697,6 +2697,19 @@ function replayTour() { wizCurrent = 0; wizShow(); }
              localStorage.getItem("htj_resume_key") || "";
     } catch(e) { return ""; }
   }
+  function getAdminKeyHere() {
+    try { return localStorage.getItem("htj_admin_key") || ""; } catch(e) { return ""; }
+  }
+  function getSessionTokenHere() {
+    try { return localStorage.getItem("gmj_session_token") || ""; } catch(e) { return ""; }
+  }
+  function notesAuthHeaders() {
+    const h = { 'Content-Type': 'application/json' };
+    const ek = getEditKeyHere();   if (ek) h['X-Edit-Key'] = ek;
+    const ak = getAdminKeyHere();  if (ak) h['X-Admin-Key'] = ak;
+    const st = getSessionTokenHere(); if (st) h['Authorization'] = 'Bearer ' + st;
+    return h;
+  }
 
   function saveNote(fp, fields) {
     const card = document.querySelector('.card[data-fp="'+fp+'"]');
@@ -2709,7 +2722,7 @@ function replayTour() { wizCurrent = 0; wizShow(); }
     }
     return fetch(NOTES_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Edit-Key': getEditKeyHere() },
+      headers: notesAuthHeaders(),
       body: JSON.stringify(body)
     }).then(r => r.json()).then(d => {
       if (d && d.notes) _notes = d.notes;
@@ -2721,7 +2734,7 @@ function replayTour() { wizCurrent = 0; wizShow(); }
   function deleteNote(fp) {
     return fetch(NOTES_URL + "&fp=" + encodeURIComponent(fp), {
       method: 'DELETE',
-      headers: { 'X-Edit-Key': getEditKeyHere() }
+      headers: notesAuthHeaders()
     }).then(r => r.json()).then(d => {
       if (_notes[fp]) delete _notes[fp];
       renderReminders(); decorateAllCards();
