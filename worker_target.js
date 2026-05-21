@@ -482,6 +482,16 @@ ${resumeJson}`;
     const profile = Object.assign({}, parsed, { resumeId: activeId, generatedAt: new Date().toISOString(), user: slug });
     // Preserve the user's wizard-set size preferences across regen
     if (preservedMix) profile.companySizeMix = preservedMix;
+    // Preserve wizard-set match weights across regen
+    try {
+      const existRaw = await env.RESUMES.get(uk(slug, 'skills_profile'));
+      if (existRaw) {
+        const exist = JSON.parse(existRaw);
+        if (exist && exist.matchWeights && typeof exist.matchWeights === 'object') {
+          profile.matchWeights = exist.matchWeights;
+        }
+      }
+    } catch (e) { /* ignore */ }
     if (preservedPrefs) profile.companySizePreferences = preservedPrefs;
     await env.RESUMES.put(uk(slug, 'skills_profile'), JSON.stringify(profile));
     return profile;
@@ -505,7 +515,7 @@ async function handleSkillsProfile(request, env, cors, slug) {
       const raw = await env.RESUMES.get(uk(slug, 'skills_profile'));
       const existing = raw ? JSON.parse(raw) : {};
       const updated = Object.assign({}, existing);
-      const SCALAR_FIELDS = new Set(['salaryFloor', 'remotePreferred', 'seniorityLevel', 'primaryRole', 'summary', 'companySizeMix', 'companySizePreferences', 'dailyTarget', 'recencyWindow', 'defaultSort', 'hideNoSalary', 'negativeTitles']);
+      const SCALAR_FIELDS = new Set(['salaryFloor', 'remotePreferred', 'seniorityLevel', 'primaryRole', 'summary', 'companySizeMix', 'companySizePreferences', 'dailyTarget', 'recencyWindow', 'defaultSort', 'hideNoSalary', 'negativeTitles', 'matchWeights']);
       for (const [field, items] of Object.entries(body.patchFields)) {
         if (SCALAR_FIELDS.has(field)) {
           updated[field] = items;

@@ -3525,6 +3525,22 @@ const WIZ_STEPS = [
     skipText: "Skip — use an even mix"
   },
   {
+    title: "How should we weight your match score?",
+    body: '<p style="margin-bottom:14px;">Tell us how much each signal should count when we score jobs. Drag a slider; the other two adjust so the total stays at 100. <strong>Default is title-heavy</strong> because exact title matches are the strongest predictor.</p>' +
+      '<div style="display:flex;flex-direction:column;gap:14px;">' +
+      '<div>' +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +'<span><strong>Job title</strong> <span style="color:#888;font-weight:normal;">&mdash; how closely the title matches your target titles</span></span>' +'<span style="display:flex;align-items:center;gap:4px;"><input id="wiz-wt-titles-num" type="number" min="0" max="100" value="50" oninput="wizWtOnNum(\'titles\')" style="width:54px;padding:4px 6px;border:1px solid #d0d4dc;border-radius:4px;text-align:right;font-size:13px;">%</span>' +'</div>' +'<input type="range" id="wiz-wt-titles" min="0" max="100" value="50" oninput="wizWtOnSlide(\'titles\')" style="width:100%;">' +'</div>' +
+      '<div>' +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +'<span><strong>Industry</strong> <span style="color:#888;font-weight:normal;">&mdash; sector overlap (e.g. healthcare-it, banking, fintech)</span></span>' +'<span style="display:flex;align-items:center;gap:4px;"><input id="wiz-wt-industries-num" type="number" min="0" max="100" value="25" oninput="wizWtOnNum(\'industries\')" style="width:54px;padding:4px 6px;border:1px solid #d0d4dc;border-radius:4px;text-align:right;font-size:13px;">%</span>' +'</div>' +'<input type="range" id="wiz-wt-industries" min="0" max="100" value="25" oninput="wizWtOnSlide(\'industries\')" style="width:100%;">' +'</div>' +
+      '<div>' +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +'<span><strong>Skills &amp; keywords</strong> <span style="color:#888;font-weight:normal;">&mdash; specific skills, tools, frameworks, regulations</span></span>' +'<span style="display:flex;align-items:center;gap:4px;"><input id="wiz-wt-skills-num" type="number" min="0" max="100" value="25" oninput="wizWtOnNum(\'skills\')" style="width:54px;padding:4px 6px;border:1px solid #d0d4dc;border-radius:4px;text-align:right;font-size:13px;">%</span>' +'</div>' +'<input type="range" id="wiz-wt-skills" min="0" max="100" value="25" oninput="wizWtOnSlide(\'skills\')" style="width:100%;">' +'</div>' +
+      '</div>' +
+      '<div style="display:flex;justify-content:space-between;font-size:12px;color:#888;margin-top:10px;min-height:18px;">' +
+      '<span>Total: <strong id="wiz-wt-sum-val">100</strong>%</span>' +
+      '<span id="wiz-wt-msg"></span>' +
+      '</div>',
+    cta: "Save weights &rarr;",
+    action: "save-match-weights",
+    skipText: "Skip — use defaults (50/25/25)"
+  },
+  {
     title: "How many jobs do you want to apply to per day?",
     body: '<p style="margin-bottom:14px;">A daily goal keeps the job search consistent. You can change this anytime in Preferences.</p>' +
       '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">' +
@@ -3618,6 +3634,9 @@ function wizRender() {
   // Step-specific lazy loaders
   if (s.action === "save-profile-chips") {
     setTimeout(wizLoadProfileChips, 50);
+  }
+  if (s.action === "save-match-weights") {
+    setTimeout(wizWtPrefill, 50);
   }
 }
 function wizAdvance() {
@@ -3995,6 +4014,64 @@ function wizMixOnNum(key) {
   _wizMixRebalance(key);
 }
 
+
+// --- Wizard: title/industry/skills match-weight sliders -----------------
+function _wizWtRebalance(changedKey) {
+  const keys = ["titles", "industries", "skills"];
+  const vals = {};
+  keys.forEach(function(k) {
+    const el = document.getElementById("wiz-wt-" + k);
+    vals[k] = Math.max(0, Math.min(100, parseInt(el && el.value, 10) || 0));
+  });
+  const others = keys.filter(function(k) { return k !== changedKey; });
+  const remaining = 100 - vals[changedKey];
+  if (remaining <= 0) {
+    vals[changedKey] = 100;
+    others.forEach(function(k) { vals[k] = 0; });
+  } else {
+    const otherSum = vals[others[0]] + vals[others[1]];
+    if (otherSum === 0) {
+      const half = Math.floor(remaining / 2);
+      vals[others[0]] = half;
+      vals[others[1]] = remaining - half;
+    } else {
+      vals[others[0]] = Math.round(vals[others[0]] / otherSum * remaining);
+      vals[others[1]] = remaining - vals[others[0]];
+    }
+  }
+  keys.forEach(function(k) {
+    const slider = document.getElementById("wiz-wt-" + k);
+    const num = document.getElementById("wiz-wt-" + k + "-num");
+    if (slider) slider.value = vals[k];
+    if (num) num.value = vals[k];
+  });
+  const sumEl = document.getElementById("wiz-wt-sum-val");
+  if (sumEl) sumEl.textContent = vals.titles + vals.industries + vals.skills;
+}
+function wizWtOnSlide(key) { _wizWtRebalance(key); }
+function wizWtOnNum(key) {
+  const num = document.getElementById("wiz-wt-" + key + "-num");
+  const slider = document.getElementById("wiz-wt-" + key);
+  if (num && slider) slider.value = num.value;
+  _wizWtRebalance(key);
+}
+// Prefill weight sliders from profile when the step opens
+function wizWtPrefill() {
+  fetch(WORKER_BASE + "/skills-profile" + USER_QS).then(function(r){return r.json();}).then(function(d){
+    const w = (d && d.profile && d.profile.matchWeights) || { titles: 50, industries: 25, skills: 25 };
+    ["titles","industries","skills"].forEach(function(k){
+      const s = document.getElementById("wiz-wt-" + k);
+      const n = document.getElementById("wiz-wt-" + k + "-num");
+      const v = Math.max(0, Math.min(100, parseInt(w[k], 10) || 0));
+      if (s) s.value = v;
+      if (n) n.value = v;
+    });
+    const sum = (parseInt(w.titles,10)||0)+(parseInt(w.industries,10)||0)+(parseInt(w.skills,10)||0);
+    const sumEl = document.getElementById("wiz-wt-sum-val");
+    if (sumEl) sumEl.textContent = sum;
+  }).catch(function(){});
+}
+
 (function wizardSetup() {
   function setup() {
     const cta = document.getElementById("wiz-cta");
@@ -4071,6 +4148,40 @@ function wizMixOnNum(key) {
             }, 1200);
           })
           .finally(function(){ if (ctaBtn) ctaBtn.disabled = false; });
+        return;
+      }
+      if (s.action === "save-match-weights") {
+        const t = parseInt((document.getElementById("wiz-wt-titles")||{}).value,10) || 0;
+        const i = parseInt((document.getElementById("wiz-wt-industries")||{}).value,10) || 0;
+        const k = parseInt((document.getElementById("wiz-wt-skills")||{}).value,10) || 0;
+        const total = t + i + k;
+        if (Math.abs(total - 100) > 1) { alert("Weights must sum to 100. Currently " + total + "."); return; }
+        const msgEl = document.getElementById("wiz-wt-msg");
+        const editKey = (typeof getEditKey === "function") ? getEditKey() : (localStorage.getItem("htj_resume_key_" + USER_SLUG) || localStorage.getItem("htj_resume_key"));
+        if (!editKey) {
+          if (msgEl) msgEl.textContent = "No edit key — skipping save.";
+          setTimeout(wizAdvance, 800);
+          return;
+        }
+        if (msgEl) { msgEl.style.color="#666"; msgEl.textContent = "Saving…"; }
+        const ctaBtn = document.getElementById("wiz-cta");
+        if (ctaBtn) ctaBtn.disabled = true;
+        fetch(PROFILE_WORKER_URL, {
+          method: "POST",
+          headers: Object.assign({ "Content-Type": "application/json" }, authHeader),
+          body: JSON.stringify({ patchFields: { matchWeights: { titles: t, industries: i, skills: k } } })
+        }).then(function(r){return r.json();}).then(function(d){
+          if (ctaBtn) ctaBtn.disabled = false;
+          if (d && (d.ok || d.profile)) {
+            if (msgEl) { msgEl.style.color="#0a6b3a"; msgEl.textContent = "Saved."; }
+            setTimeout(wizAdvance, 400);
+          } else {
+            if (msgEl) { msgEl.style.color="#b00"; msgEl.textContent = (d && d.error) || "Save failed."; }
+          }
+        }).catch(function(e){
+          if (ctaBtn) ctaBtn.disabled = false;
+          if (msgEl) { msgEl.style.color="#b00"; msgEl.textContent = "Network error."; }
+        });
         return;
       }
       if (s.action === "save-company-sizes") {
