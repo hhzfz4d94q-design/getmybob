@@ -166,7 +166,12 @@ form.addEventListener('submit', async (e) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })
     });
-    const j = await r.json();
+    let j;
+    try { j = await r.json(); } catch (e) {
+      const txt = await r.text().catch(() => '');
+      showErr('Worker returned non-JSON (status ' + r.status + '). Did you deploy the Worker? First 80 chars: ' + txt.slice(0, 80));
+      return;
+    }
     if (!r.ok) { showErr(j.error || 'Login failed'); return; }
     localStorage.setItem(TOKEN_KEY, j.token);
     localStorage.setItem('gmj_user_slug', j.slug);
@@ -174,7 +179,7 @@ form.addEventListener('submit', async (e) => {
     localStorage.setItem('gmj_user_email', j.email);
     location.replace('/dashboard.html');
   } catch (err) {
-    showErr('Network error — please try again.');
+    showErr('Could not reach the server. If you just deployed the Worker, give it ~30 seconds and retry. (' + (err && err.message ? err.message : err) + ')');
   } finally {
     btn.disabled = false; btn.textContent = 'Sign in';
   }
