@@ -2929,6 +2929,11 @@ HTML_TEMPLATE = """<!doctype html>
 </div>
 
 <script>
+// === Identity + Worker base — MUST be first; everything below references USER_SLUG ===
+const WORKER_BASE = 'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev';
+const USER_SLUG = '{user_slug}';
+const USER_QS = '?user=' + encodeURIComponent(USER_SLUG);
+
 const RECENCY_WINDOW_KEY = 'htj_recency_window_' + USER_SLUG;
 let activeWindow = (function() {{
   try {{ const v = localStorage.getItem(RECENCY_WINDOW_KEY); return v === null ? '0' : v; }} catch (e) {{ return '0'; }}
@@ -2944,14 +2949,6 @@ const STATUS_LABEL = {{
   'offer': 'Offer',
   'rejected': 'Rejected'
 }};
-
-// Worker base + user-scoped query string. Declared up here because several
-// const URL declarations below reference these — JS const has temporal dead
-// zone and would throw "Cannot access X before initialization" if these were
-// further down the script.
-const WORKER_BASE = 'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev';
-const USER_SLUG = '{user_slug}';
-const USER_QS = '?user=' + encodeURIComponent(USER_SLUG);
 
 // Tracker is server-side (Cloudflare KV). We cache it in memory for fast reads;
 // every write goes to the Worker.
