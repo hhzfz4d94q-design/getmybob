@@ -2145,6 +2145,25 @@ async function activateVersion(id) {
   try {
     await fetch(WORKER_BASE + '/refresh', { method: 'POST' });
   } catch (e) { /* ignore — page reload below still helps */ }
+  // After flipping the active resume, auto-launch the wizard so the user can
+  // re-confirm their preferences (the new resume may have different signals).
+  try {
+    setTimeout(function() {
+      try { closeResumeModal(); } catch(e) {}
+      try { localStorage.removeItem('gmj_wizard_seen_v2'); } catch(e) {}
+      var startIdx = 0;
+      try {
+        for (var i = 0; i < WIZ_STEPS.length; i++) {
+          var act = (WIZ_STEPS[i] && WIZ_STEPS[i].action) || '';
+          if (act === 'open-resume-profile' || act === 'save-profile-chips' ||
+              act === 'save-location-remote') { startIdx = i; break; }
+        }
+      } catch(e) {}
+      if (typeof wizCurrent !== 'undefined') wizCurrent = startIdx;
+      if (typeof wizShow === 'function') wizShow();
+      if (typeof wizRender === 'function') wizRender();
+    }, 800);
+  } catch(e) { /* if wizard absent, skip silently */ }
   // Auto-reload after the GH Action should have finished (3 min is a safe estimate)
   setTimeout(() => window.location.reload(), 180000);
 }
