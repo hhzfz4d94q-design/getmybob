@@ -219,6 +219,12 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head><body>
+<nav style="background:#fff;border-bottom:1px solid #E5E7EE;padding:14px 28px;margin:0;">
+  <a href="/landing.html" style="display:inline-flex;align-items:center;text-decoration:none;">
+    <img src="officebeat-logo.png" alt="OfficeBeat" style="height:38px;width:auto;display:block;">
+  </a>
+</nav>
+
 
 <!-- Access-recovery modal: shown when an auth-required action returns 401 -->
 <div class="recovery-overlay" id="recovery-modal" role="dialog" aria-modal="true" aria-labelledby="recovery-title">
@@ -245,14 +251,18 @@
 <div class="wiz-overlay" id="gmj-wizard" role="dialog" aria-modal="true" aria-labelledby="wiz-title">
   <div class="wiz-card">
     <div class="wiz-step-count" id="wiz-step-count">Step 1 of 5</div>
+        <div style="text-align:center;margin-bottom:14px;"><img src="officebeat-logo.png" alt="OfficeBeat" style="height:28px;width:auto;"></div>
     <div class="wiz-progress" id="wiz-progress"></div>
     <h2 class="wiz-title" id="wiz-title">Welcome</h2>
     <div class="wiz-body" id="wiz-body"></div>
-    <div class="wiz-actions">
-      <button class="wiz-btn-primary" id="wiz-cta" type="button">Let's go</button>
-      <button class="wiz-btn-ghost" id="wiz-save-exit" type="button" style="display:none">Save &amp; exit</button>
-      <button class="wiz-btn-ghost" id="wiz-back" type="button" style="display:none">Back</button>
-      <button class="wiz-btn-ghost wiz-skip" id="wiz-skip" type="button">Skip for now</button>
+    <div class="wiz-actions" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
+      <button class="wiz-btn-ghost" id="wiz-back" type="button">&larr; Back</button>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <button class="wiz-btn-ghost wiz-skip" id="wiz-skip" type="button">Skip for now</button>
+        <button class="wiz-btn-ghost" id="wiz-save-exit" type="button" style="display:none">Save &amp; exit</button>
+        <button class="wiz-btn-primary" id="wiz-cta" type="button">Let's go</button>
+        <button class="wiz-btn-ghost" id="wiz-next" type="button" style="background:#EEEEF8;color:#5C5CD6;border:1px solid #C7C7E8;">Next &rarr;</button>
+      </div>
     </div>
   </div>
 </div>
@@ -4253,6 +4263,52 @@ function wizMixOnNum(key) {
   } else {
     setup();
   }
+})();
+
+// Slice B: explicit Next button — advances without doing the step's save action
+(function setupWizNextBtn() {
+  function wire() {
+    const btn = document.getElementById("wiz-next");
+    if (!btn || btn._wired) return;
+    btn._wired = true;
+    btn.addEventListener("click", function() {
+      try {
+        if (typeof wizCurrent !== "undefined" && typeof WIZ_STEPS !== "undefined" &&
+            wizCurrent >= WIZ_STEPS.length - 1) {
+          // Last step — Next acts like Finish/Close
+          if (typeof wizFinish === "function") { wizFinish(); }
+          else if (typeof wizHide === "function") { wizHide(); }
+          return;
+        }
+        if (typeof wizAdvance === "function") { wizAdvance(); }
+      } catch(e) { console.warn("wiz-next error", e); }
+    });
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", wire);
+  } else { wire(); }
+})();
+
+// Slice B: enhance wizRender to manage the always-visible Back + Next buttons
+(function enhanceWizRender() {
+  if (typeof wizRender !== "function") return;
+  const _orig = wizRender;
+  window.wizRender = function() {
+    _orig.apply(this, arguments);
+    const back = document.getElementById("wiz-back");
+    const next = document.getElementById("wiz-next");
+    if (back) {
+      back.style.display = "";
+      back.disabled = (typeof wizCurrent !== "undefined" && wizCurrent === 0);
+      back.style.opacity = back.disabled ? "0.4" : "";
+      back.style.cursor = back.disabled ? "not-allowed" : "pointer";
+    }
+    if (next && typeof wizCurrent !== "undefined" && typeof WIZ_STEPS !== "undefined") {
+      // Hide Next on the very last step — the primary CTA there is "Finish".
+      const isLast = wizCurrent >= WIZ_STEPS.length - 1;
+      next.style.display = isLast ? "none" : "";
+    }
+  };
 })();
 </script>
 </body></html>
