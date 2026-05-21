@@ -100,6 +100,42 @@ jobs:
           python3 -c "import json; d=json.load(open('/tmp/activate.json')); assert d.get('success'), d; print('Version activated — live now.')"
 
 
+      - name: Dump geetu profile (one-shot diag)
+        if: steps.mode.outputs.value == 'deploy'
+        run: |
+          curl -sS "https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/skills-profile?user=geetu" \
+            -o /tmp/profile.json
+          {
+            echo "# Geetu skills profile dump — $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo ""
+            echo "## Top-level keys present"
+            python3 -c "import json; d=json.load(open('/tmp/profile.json')); p=d.get('profile') or {}; print('  ' + (', '.join(sorted(p.keys())) if p else '(no profile)'))"
+            echo ""
+            echo "## Array field lengths"
+            python3 -c "
+import json
+d = json.load(open('/tmp/profile.json'))
+p = d.get('profile') or {}
+for k in ['seniorityTitles','targetTitles','industries','specialties','keywords','technologies','frameworks','regulations','certifications','negativeKeywords','targetCompanies','preferredLocations']:
+    v = p.get(k, '(missing)')
+    if isinstance(v, list):
+        print(f'  {k}: len={len(v)} {v[:6]}{"..." if len(v)>6 else ""}')
+    else:
+        print(f'  {k}: {v}')
+"
+            echo ""
+            echo "## Raw profile (truncated to 4000 chars)"
+            echo '```json'
+            python3 -c "import json; d=json.load(open('/tmp/profile.json')); print(json.dumps(d, indent=2)[:4000])"
+            echo ""
+            echo '```'
+          } > PROFILE_DUMP.md
+          git config user.email "actions-bot@getmemyjob.local"
+          git config user.name "Diag bot"
+          git add PROFILE_DUMP.md
+          git commit -m "diag: profile dump" || echo "no diff"
+          git push || true
+
       - name: Commit dumped source (dump mode only)
         if: steps.mode.outputs.value == 'dump'
         run: |
