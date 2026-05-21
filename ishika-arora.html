@@ -256,7 +256,7 @@
 
 <header>
   <h1>Jobs for Ishika Arora</h1>
-  <div class="sub">Awaiting resume upload — click Resume to get started · Generated 2026-05-21 16:27</div>
+  <div class="sub">Awaiting resume upload — click Resume to get started · Generated 2026-05-21 16:32</div>
   <div class="header-actions">
     <button id="prefs-btn" class="header-btn" onclick="replayTour()" title="Re-open the setup wizard to change your locations, remote pref, and company sizes">Preferences</button>
     <button id="regen-btn" class="header-btn" onclick="regenerateFromHeader(this)" title="Re-run the AI matcher to refresh your suggested target companies and skills. Takes 30-60 seconds.">Regenerate matches</button>
@@ -266,7 +266,7 @@
   </div>
 </header>
 <div class="stats">
-  <div class="stat"><b>15148</b>Total jobs tracked</div>
+  <div class="stat"><b>15157</b>Total jobs tracked</div>
   <div class="stat"><b>431</b>Senior + Remote (last 7d)</div>
   <div class="stat"><b>0</b>Possible ghost jobs (60d+)</div>
   <div class="stat"><b id="shown-counter">0</b>Showing</div>
@@ -1591,16 +1591,56 @@ function _resortByAiScore() {
   } catch (e) { /* non-fatal */ }
 })();
 
-function getEditKey(promptMsg) {
-  // Prefer per-user key, fall back to legacy single-user key for backward compat
-  let editKey = localStorage.getItem('htj_resume_key_' + USER_SLUG)
-             || localStorage.getItem('htj_resume_key');
-  if (!editKey) {
-    editKey = prompt(promptMsg || 'Enter the password from your invite email:');
-    if (!editKey) return null;
-    localStorage.setItem('htj_resume_key_' + USER_SLUG, editKey);
-  }
-  return editKey;
+function getEditKey() {
+  // Silent lookup only — no native prompt. Callers handle null by either
+  // falling back to admin-key auth or showing the inline Verify Session modal.
+  return localStorage.getItem('htj_resume_key_' + USER_SLUG)
+      || localStorage.getItem('htj_resume_key')
+      || null;
+}
+
+// Inline session-verify modal — replaces the old prompt('Enter the password')
+// flow. Shows up when an action needs auth but no edit key is stored. The user
+// clicks Confirm; if an admin key is stored we try that, otherwise we email
+// for a fresh invite.
+function showVerifyModal(onConfirm) {
+  // Admin-key fallback: silently confirm if it's stored
+  const adminKey = localStorage.getItem('htj_admin_key');
+  if (adminKey) { onConfirm && onConfirm(adminKey, 'admin'); return; }
+  // Build modal with DOM API (no innerHTML, no quote-escape risk)
+  let m = document.getElementById('verify-modal');
+  if (m) { m.style.display = 'flex'; return; }
+  m = document.createElement('div');
+  m.id = 'verify-modal';
+  m.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;z-index:99999;';
+  const card = document.createElement('div');
+  card.style.cssText = 'background:#fff;border-radius:12px;padding:24px;max-width:380px;width:90%;box-shadow:0 6px 24px rgba(0,0,0,0.2);font-family:Inter,sans-serif;';
+  const title = document.createElement('div');
+  title.style.cssText = 'font-size:16px;font-weight:700;margin-bottom:8px;';
+  title.textContent = 'Confirm changes';
+  card.appendChild(title);
+  const desc = document.createElement('div');
+  desc.style.cssText = 'font-size:13px;color:#555;margin-bottom:16px;line-height:1.5;';
+  desc.textContent = 'Your save key is not stored in this browser. Click Confirm to try anyway, or email us for a fresh invite link.';
+  card.appendChild(desc);
+  const row = document.createElement('div');
+  row.style.cssText = 'display:flex;gap:8px;justify-content:flex-end;';
+  const cancel = document.createElement('button');
+  cancel.textContent = 'Cancel';
+  cancel.style.cssText = 'padding:8px 14px;border:1px solid #d0d4dc;border-radius:6px;background:#fff;cursor:pointer;font-size:13px;';
+  cancel.onclick = function() { m.style.display = 'none'; };
+  const emailLink = document.createElement('a');
+  emailLink.textContent = 'Email for link';
+  emailLink.href = 'mailto:info@officebeatllc.com?subject=Fresh%20invite%20link%20needed';
+  emailLink.style.cssText = 'padding:8px 14px;border:1px solid #d0d4dc;border-radius:6px;background:#fff;text-decoration:none;color:#333;font-size:13px;display:inline-block;';
+  const confirm = document.createElement('button');
+  confirm.textContent = 'Confirm';
+  confirm.style.cssText = 'padding:8px 14px;border:none;border-radius:6px;background:#5C5CD6;color:#fff;cursor:pointer;font-size:13px;font-weight:600;';
+  confirm.onclick = function() { m.style.display = 'none'; onConfirm && onConfirm(null, 'none'); };
+  row.appendChild(cancel); row.appendChild(emailLink); row.appendChild(confirm);
+  card.appendChild(row);
+  m.appendChild(card);
+  document.body.appendChild(m);
 }
 
 function setResumeTab(name) {
@@ -3515,7 +3555,7 @@ function wizMixOnNum(key) {
         if (ctaBtn) ctaBtn.disabled = true;
         fetch(PROFILE_WORKER_URL, {
           method: "POST",
-          headers: { "Content-Type": "application/json", "X-Edit-Key": editKey },
+          headers: Object.assign({ "Content-Type": "application/json" }, authHeader),
           body: JSON.stringify({ patchFields: { preferredLocations: locs, remotePreference: remotePref } })
         })
           .then(function(r){ return r.json().then(function(d){ return { ok: r.ok, status: r.status, data: d }; }); })
@@ -3603,10 +3643,12 @@ function wizMixOnNum(key) {
       if (s.action === "save-profile-chips") {
         const statusEl = document.getElementById("wiz-chip-save-status");
         if (!_wizChipLoaded) { if (statusEl) statusEl.textContent = "Profile didn't load — skipping."; setTimeout(function() { if (window._wizExitAfterSave) { window._wizExitAfterSave = false; wizFinish(); } else { wizAdvance(); } }, 800); return; }
-        const editKey = (typeof getEditKey === "function") ? getEditKey() : (localStorage.getItem("htj_resume_key_" + USER_SLUG) || localStorage.getItem("htj_resume_key"));
-        if (!editKey) {
-          if (statusEl) statusEl.textContent = "No edit key — can't save. Skipping.";
-          setTimeout(function() { if (window._wizExitAfterSave) { window._wizExitAfterSave = false; wizFinish(); } else { wizAdvance(); } }, 1200);
+        let editKey = (typeof getEditKey === "function") ? getEditKey() : null;
+        const adminKey = localStorage.getItem("htj_admin_key");
+        const authHeader = editKey ? { "X-Edit-Key": editKey } : (adminKey ? { "X-Admin-Key": adminKey } : null);
+        if (!authHeader) {
+          if (statusEl) statusEl.textContent = "Session expired — click Confirm to verify.";
+          if (typeof showVerifyModal === "function") showVerifyModal(function() { wizAdvance(); });
           return;
         }
         if (statusEl) { statusEl.style.color = "#888"; statusEl.textContent = "Saving…"; }
@@ -3616,6 +3658,7 @@ function wizMixOnNum(key) {
           method: "POST",
           headers: { "Content-Type": "application/json", "X-Edit-Key": editKey },
           body: JSON.stringify({ patchFields: {
+            targetTitles: _wizChipState.targetTitles,
             industries: _wizChipState.industries,
             keywords: _wizChipState.keywords,
             specialties: _wizChipState.specialties,
