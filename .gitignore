@@ -19,3 +19,6 @@ jobs.db-shm
 
 # Sample preview (regenerated each run)
 sample_dashboard.html
+
+# JSDOM was installed locally for parse-checking the dashboard JS; never commit it.
+node_modules/
