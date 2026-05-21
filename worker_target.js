@@ -30,7 +30,7 @@ export default {
     const cors = {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, X-Edit-Key, X-Admin-Key',
+      'Access-Control-Allow-Headers': 'Content-Type, X-Edit-Key, X-Admin-Key, Authorization',
     };
     if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type, X-Admin-Key, X-Edit-Key, Authorization', 'Access-Control-Max-Age': '86400' } });
 
@@ -40,6 +40,13 @@ export default {
     if (url.pathname === '/users') return handlePublicUsers(request, env, cors);
 
     if (url.pathname === '/refresh') return handleRefresh(request, env, cors);
+
+    // --- Auth endpoints (Slice A) — no slug required ---
+    if (url.pathname === '/api/auth/signup') return handleSignup(request, env, cors);
+    if (url.pathname === '/api/auth/login') return handleLogin(request, env, cors);
+    if (url.pathname === '/api/auth/logout') return handleLogout(request, env, cors);
+    if (url.pathname === '/api/auth/me') return handleMe(request, env, cors);
+    if (url.pathname === '/api/auth/change-password') return handleChangePassword(request, env, cors);
 
     // Determine which user this request operates on.
     // Priority: ?user=slug in URL → "user" field in JSON body → DEFAULT_USER
@@ -57,7 +64,7 @@ export default {
     if (url.pathname === '/interview-prep') return handleInterviewPrep(request, env, cors, slug);
     if (url.pathname === '/generate-digest') return handleGenerateDigest(request, env, cors, slug);
     return new Response(
-      'Endpoints: /prep, /resume, /resume-versions, /parse-resume, /skills-profile, /regenerate-profile, /rerank-titles, /tracker, /draft-followup, /interview-prep, /generate-digest, /refresh, /admin/users.',
+      'Endpoints: /api/auth/{signup,login,logout,me,change-password}, /prep, /resume, /resume-versions, /parse-resume, /skills-profile, /regenerate-profile, /rerank-titles, /tracker, /draft-followup, /interview-prep, /generate-digest, /refresh, /admin/users.',
       { status: 404, headers: cors }
     );
   },
@@ -1168,3 +1175,191 @@ Return JSON shape: {"<fp>": <int>, "<fp>": <int>, ...}`;
     return Response.json({ scores: {}, error: String(e) }, { status: 500, headers: cors });
   }
 }
+
+
+// ============================================================
+// Slice A — Auth (signup / login / logout / session / password)
+// KV layout:
+//   auth:email:{email}              -> slug                 (lookup)
+//   user:{slug}:auth                -> { email, name, hash, salt, createdAt }
+//   session:{token}                 -> { slug, expiresAt }  (TTL'd)
+// Tokens are returned in JSON body; clients send them via
+// `Authorization: Bearer <token>` header (cross-origin-friendly).
+// ============================================================
+
+const SESSION_TTL_SECONDS = 60 * 60 * 24 * 30; // 30 days
+const PBKDF2_ITERATIONS = 100000;
+
+function _b64(bytes) {
+  let s = '';
+  for (const b of bytes) s += String.fromCharCode(b);
+  return btoa(s);
+}
+
+function _b64url(bytes) {
+  return _b64(bytes).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function _randomBytes(n) {
+  const a = new Uint8Array(n);
+  crypto.getRandomValues(a);
+  return a;
+}
+
+async function hashPasswordPbkdf2(password, saltB64) {
+  const enc = new TextEncoder();
+  const saltBytes = Uint8Array.from(atob(saltB64), c => c.charCodeAt(0));
+  const keyMaterial = await crypto.subtle.importKey(
+    'raw', enc.encode(password), { name: 'PBKDF2' }, false, ['deriveBits']
+  );
+  const bits = await crypto.subtle.deriveBits(
+    { name: 'PBKDF2', salt: saltBytes, iterations: PBKDF2_ITERATIONS, hash: 'SHA-256' },
+    keyMaterial,
+    256
+  );
+  return _b64(new Uint8Array(bits));
+}
+
+async function createSession(env, slug) {
+  const token = _b64url(_randomBytes(32));
+  const expiresAt = Date.now() + SESSION_TTL_SECONDS * 1000;
+  await env.RESUMES.put(
+    `session:${token}`,
+    JSON.stringify({ slug, expiresAt }),
+    { expirationTtl: SESSION_TTL_SECONDS }
+  );
+  return { token, expiresAt };
+}
+
+async function sessionFromRequest(request, env) {
+  const authHeader = request.headers.get('Authorization') || '';
+  const m = authHeader.match(/^Bearer\s+(.+)$/i);
+  if (!m) return null;
+  const token = m[1].trim();
+  const raw = await env.RESUMES.get(`session:${token}`);
+  if (!raw) return null;
+  try {
+    const sess = JSON.parse(raw);
+    if (sess.expiresAt && sess.expiresAt < Date.now()) {
+      await env.RESUMES.delete(`session:${token}`);
+      return null;
+    }
+    return { token, slug: sess.slug };
+  } catch (e) { return null; }
+}
+
+function _json(body, status, cors, extraHeaders) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json; charset=utf-8', ...cors, ...(extraHeaders || {}) }
+  });
+}
+
+function _normEmail(s) { return String(s || '').trim().toLowerCase(); }
+function _isValidEmail(e) { return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e); }
+
+// POST /api/auth/signup  { email, password, name }
+async function handleSignup(request, env, cors) {
+  if (request.method !== 'POST') return _json({ error: 'POST only' }, 405, cors);
+  if (!env.RESUMES) return _json({ error: 'RESUMES KV binding missing' }, 500, cors);
+  let body;
+  try { body = await request.json(); } catch (e) { return _json({ error: 'Bad JSON' }, 400, cors); }
+  const email = _normEmail(body.email);
+  const password = String(body.password || '');
+  const name = String(body.name || '').trim();
+  if (!_isValidEmail(email)) return _json({ error: 'Valid email required' }, 400, cors);
+  if (password.length < 8) return _json({ error: 'Password must be at least 8 characters' }, 400, cors);
+  if (!name) return _json({ error: 'Name required' }, 400, cors);
+
+  const existing = await env.RESUMES.get(`auth:email:${email}`);
+  if (existing) return _json({ error: 'An account with that email already exists. Try logging in.' }, 409, cors);
+
+  await migrateLegacyIfNeeded(env);
+  const users = await bootstrapUsersListIfEmpty(env);
+  const slug = generateSlug(name, users);
+
+  const salt = _b64(_randomBytes(16));
+  const hash = await hashPasswordPbkdf2(password, salt);
+  const createdAt = new Date().toISOString();
+
+  await env.RESUMES.put(uk(slug, 'auth'), JSON.stringify({ email, name, hash, salt, createdAt }));
+  await env.RESUMES.put(`auth:email:${email}`, slug);
+  await env.RESUMES.put(uk(slug, 'name'), name);
+
+  // Add to users:list so existing admin / refresh flows can see them
+  users.push({ slug, name, email, createdAt });
+  await writeUsersList(env, users);
+
+  const { token, expiresAt } = await createSession(env, slug);
+  return _json({ ok: true, token, expiresAt, slug, name, email }, 200, cors);
+}
+
+// POST /api/auth/login  { email, password }
+async function handleLogin(request, env, cors) {
+  if (request.method !== 'POST') return _json({ error: 'POST only' }, 405, cors);
+  if (!env.RESUMES) return _json({ error: 'RESUMES KV binding missing' }, 500, cors);
+  let body;
+  try { body = await request.json(); } catch (e) { return _json({ error: 'Bad JSON' }, 400, cors); }
+  const email = _normEmail(body.email);
+  const password = String(body.password || '');
+  if (!email || !password) return _json({ error: 'Email and password required' }, 400, cors);
+
+  const slug = await env.RESUMES.get(`auth:email:${email}`);
+  if (!slug) return _json({ error: 'Invalid email or password' }, 401, cors);
+  const authRaw = await env.RESUMES.get(uk(slug, 'auth'));
+  if (!authRaw) return _json({ error: 'Invalid email or password' }, 401, cors);
+  let auth;
+  try { auth = JSON.parse(authRaw); } catch (e) { return _json({ error: 'Account corrupted; contact admin' }, 500, cors); }
+  const hash = await hashPasswordPbkdf2(password, auth.salt);
+  if (hash !== auth.hash) return _json({ error: 'Invalid email or password' }, 401, cors);
+
+  const { token, expiresAt } = await createSession(env, slug);
+  return _json({ ok: true, token, expiresAt, slug, name: auth.name, email: auth.email }, 200, cors);
+}
+
+// POST /api/auth/logout    (Authorization: Bearer <token>)
+async function handleLogout(request, env, cors) {
+  const sess = await sessionFromRequest(request, env);
+  if (sess) await env.RESUMES.delete(`session:${sess.token}`);
+  return _json({ ok: true }, 200, cors);
+}
+
+// GET /api/auth/me         (Authorization: Bearer <token>)
+async function handleMe(request, env, cors) {
+  const sess = await sessionFromRequest(request, env);
+  if (!sess) return _json({ authenticated: false }, 200, cors);
+  const authRaw = await env.RESUMES.get(uk(sess.slug, 'auth'));
+  if (!authRaw) return _json({ authenticated: false }, 200, cors);
+  let auth;
+  try { auth = JSON.parse(authRaw); } catch (e) { return _json({ authenticated: false }, 200, cors); }
+  return _json({
+    authenticated: true,
+    slug: sess.slug,
+    name: auth.name,
+    email: auth.email,
+    createdAt: auth.createdAt || null
+  }, 200, cors);
+}
+
+// POST /api/auth/change-password  { currentPassword, newPassword }
+async function handleChangePassword(request, env, cors) {
+  if (request.method !== 'POST') return _json({ error: 'POST only' }, 405, cors);
+  const sess = await sessionFromRequest(request, env);
+  if (!sess) return _json({ error: 'Not authenticated' }, 401, cors);
+  let body;
+  try { body = await request.json(); } catch (e) { return _json({ error: 'Bad JSON' }, 400, cors); }
+  const current = String(body.currentPassword || '');
+  const next = String(body.newPassword || '');
+  if (next.length < 8) return _json({ error: 'New password must be at least 8 characters' }, 400, cors);
+  const authRaw = await env.RESUMES.get(uk(sess.slug, 'auth'));
+  if (!authRaw) return _json({ error: 'Account not found' }, 404, cors);
+  const auth = JSON.parse(authRaw);
+  const curHash = await hashPasswordPbkdf2(current, auth.salt);
+  if (curHash !== auth.hash) return _json({ error: 'Current password incorrect' }, 401, cors);
+  const newSalt = _b64(_randomBytes(16));
+  const newHash = await hashPasswordPbkdf2(next, newSalt);
+  auth.salt = newSalt; auth.hash = newHash; auth.passwordUpdatedAt = new Date().toISOString();
+  await env.RESUMES.put(uk(sess.slug, 'auth'), JSON.stringify(auth));
+  return _json({ ok: true }, 200, cors);
+}
+

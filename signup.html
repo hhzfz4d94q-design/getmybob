@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Create account — getmemyjob</title>
+<link rel="icon" href="favicon-32.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #5C5CD6; --navy-deep: #4B4BBE; --indigo: #3F3FBA;
+    --off-white: #FAFAFC; --ink: #1A1A2E; --muted: #666680;
+    --hairline: #E5E7EE; --lilac-soft: #EEEEF8;
+    --error: #C2410C; --error-bg: #FFF4ED;
+    --ok: #15803D; --ok-bg: #ECFDF5;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font: 15px/1.55 'Inter', -apple-system, system-ui, sans-serif;
+    color: var(--ink); background: var(--off-white);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh; display: flex; flex-direction: column;
+  }
+  nav.top {
+    background: #fff; border-bottom: 1px solid var(--hairline);
+  }
+  nav.top .row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 28px; max-width: 1080px; margin: 0 auto;
+  }
+  .logo { display: inline-flex; align-items: center; text-decoration: none; }
+  .logo img { height: 38px; width: auto; display: block; }
+  @media (max-width: 720px) { .logo img { height: 30px; } }
+
+  .auth-wrap {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    padding: 40px 20px;
+  }
+  .auth-card {
+    width: 100%; max-width: 440px; background: #fff;
+    border: 1px solid var(--hairline); border-radius: 12px;
+    padding: 36px 32px;
+    box-shadow: 0 4px 24px rgba(60, 60, 120, 0.06);
+  }
+  .auth-card h1 {
+    font-size: 24px; font-weight: 700; margin: 0 0 6px 0;
+    letter-spacing: -0.01em;
+  }
+  .auth-card .sub {
+    color: var(--muted); margin: 0 0 24px 0; font-size: 14px;
+  }
+  .form-row { margin-bottom: 16px; }
+  .form-row label {
+    display: block; font-size: 13px; font-weight: 600; color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .form-row input {
+    width: 100%; padding: 10px 12px; font-size: 14px; font-family: inherit;
+    border: 1px solid var(--hairline); border-radius: 6px;
+    background: #fff; color: var(--ink);
+    transition: border-color 0.15s;
+  }
+  .form-row input:focus {
+    outline: none; border-color: var(--navy);
+    box-shadow: 0 0 0 3px rgba(92, 92, 214, 0.12);
+  }
+  .form-row .hint {
+    font-size: 12px; color: var(--muted); margin-top: 4px;
+  }
+  .submit-btn {
+    width: 100%; padding: 12px; font-size: 15px; font-weight: 600;
+    color: #fff; background: var(--navy); border: none; border-radius: 6px;
+    cursor: pointer; transition: background 0.15s; font-family: inherit;
+  }
+  .submit-btn:hover:not(:disabled) { background: var(--navy-deep); }
+  .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  .err {
+    background: var(--error-bg); color: var(--error);
+    border: 1px solid #FED7AA; border-radius: 6px;
+    padding: 10px 12px; font-size: 13px; margin-bottom: 16px;
+    display: none;
+  }
+  .err.show { display: block; }
+  .alt {
+    text-align: center; margin-top: 20px; font-size: 13px; color: var(--muted);
+  }
+  .alt a { color: var(--navy); text-decoration: none; font-weight: 600; }
+  .alt a:hover { text-decoration: underline; }
+  footer {
+    text-align: center; padding: 24px; color: var(--muted); font-size: 12px;
+  }
+</style>
+</head>
+<body>
+<nav class="top">
+  <div class="row">
+    <a href="/landing.html" class="logo" aria-label="OfficeBeat home">
+      <img src="officebeat-logo.png" alt="OfficeBeat">
+    </a>
+    <a href="/login.html" style="font-size:14px;color:var(--navy);text-decoration:none;font-weight:600;">Sign in</a>
+  </div>
+</nav>
+
+<div class="auth-wrap">
+  <div class="auth-card">
+    <h1>Create your account</h1>
+    <p class="sub">A curated job search, tailored to your skills. Free during alpha.</p>
+
+    <div id="err" class="err" role="alert"></div>
+
+    <form id="signupForm" autocomplete="on">
+      <div class="form-row">
+        <label for="name">Full name</label>
+        <input type="text" id="name" name="name" required autocomplete="name" autofocus>
+      </div>
+      <div class="form-row">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required autocomplete="email">
+      </div>
+      <div class="form-row">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required autocomplete="new-password" minlength="8">
+        <div class="hint">At least 8 characters.</div>
+      </div>
+      <button type="submit" class="submit-btn" id="submitBtn">Create account</button>
+    </form>
+
+    <div class="alt">
+      Already have an account? <a href="/login.html">Sign in</a>
+    </div>
+  </div>
+</div>
+
+<footer>By OfficeBeat LLC</footer>
+
+<script>
+const WORKER = 'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev';
+const TOKEN_KEY = 'gmj_session_token';
+
+(async function checkExisting() {
+  const tok = localStorage.getItem(TOKEN_KEY);
+  if (!tok) return;
+  try {
+    const r = await fetch(WORKER + '/api/auth/me', { headers: { 'Authorization': 'Bearer ' + tok } });
+    const j = await r.json();
+    if (j.authenticated) location.replace('/dashboard.html');
+  } catch (e) { /* ignore */ }
+})();
+
+const form = document.getElementById('signupForm');
+const errEl = document.getElementById('err');
+const btn = document.getElementById('submitBtn');
+
+function showErr(msg) { errEl.textContent = msg; errEl.classList.add('show'); }
+function clearErr() { errEl.classList.remove('show'); errEl.textContent = ''; }
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  clearErr();
+  btn.disabled = true; btn.textContent = 'Creating account…';
+  const name = document.getElementById('name').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  if (password.length < 8) { showErr('Password must be at least 8 characters.'); btn.disabled = false; btn.textContent = 'Create account'; return; }
+  try {
+    const r = await fetch(WORKER + '/api/auth/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, password })
+    });
+    const j = await r.json();
+    if (!r.ok) { showErr(j.error || 'Signup failed'); return; }
+    localStorage.setItem(TOKEN_KEY, j.token);
+    localStorage.setItem('gmj_user_slug', j.slug);
+    localStorage.setItem('gmj_user_name', j.name);
+    localStorage.setItem('gmj_user_email', j.email);
+    location.replace('/dashboard.html');
+  } catch (err) {
+    showErr('Network error — please try again.');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Create account';
+  }
+});
+</script>
+</body>
+</html>

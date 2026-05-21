@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard — getmemyjob</title>
+<link rel="icon" href="favicon-32.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #5C5CD6; --navy-deep: #4B4BBE;
+    --off-white: #FAFAFC; --ink: #1A1A2E; --muted: #666680;
+    --hairline: #E5E7EE; --lilac-soft: #EEEEF8;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font: 15px/1.55 'Inter', -apple-system, system-ui, sans-serif;
+    color: var(--ink); background: var(--off-white);
+    -webkit-font-smoothing: antialiased;
+  }
+  nav.top {
+    background: #fff; border-bottom: 1px solid var(--hairline);
+  }
+  nav.top .row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 28px; max-width: 1080px; margin: 0 auto;
+  }
+  .logo img { height: 38px; }
+  @media (max-width: 720px) { .logo img { height: 30px; } }
+  .nav-right { display: flex; align-items: center; gap: 14px; font-size: 14px; }
+  .nav-right .who { color: var(--muted); }
+  .nav-right .who b { color: var(--ink); }
+  .logout-btn {
+    font-size: 13px; color: var(--navy); background: transparent;
+    border: 1px solid var(--navy); border-radius: 6px;
+    padding: 6px 12px; cursor: pointer; font-family: inherit; font-weight: 500;
+  }
+  .logout-btn:hover { background: var(--navy); color: #fff; }
+
+  .container { max-width: 1080px; margin: 0 auto; padding: 40px 28px; }
+  .welcome-card {
+    background: #fff; border: 1px solid var(--hairline);
+    border-radius: 12px; padding: 32px;
+    box-shadow: 0 4px 24px rgba(60, 60, 120, 0.04);
+  }
+  .welcome-card h1 {
+    margin: 0 0 8px 0; font-size: 28px; font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .welcome-card .sub { color: var(--muted); margin: 0 0 24px 0; }
+  .placeholder {
+    background: var(--lilac-soft); border-radius: 8px;
+    padding: 20px; color: var(--ink); font-size: 14px;
+  }
+  .placeholder strong { color: var(--navy-deep); }
+</style>
+</head>
+<body>
+<nav class="top">
+  <div class="row">
+    <a href="/dashboard.html" class="logo" aria-label="OfficeBeat home">
+      <img src="officebeat-logo.png" alt="OfficeBeat">
+    </a>
+    <div class="nav-right">
+      <span class="who">Signed in as <b id="userName">…</b></span>
+      <button class="logout-btn" id="logoutBtn">Sign out</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="welcome-card">
+    <h1 id="hello">Welcome</h1>
+    <p class="sub" id="emailSub"></p>
+    <div class="placeholder">
+      <strong>Slice A is live.</strong> Auth (signup, login, logout) is working.
+      Next slices will add: <em>Officebeat logo everywhere + wizard Next buttons</em>,
+      <em>per-job notes &amp; reminders</em>, and finally <em>your personalized job feed</em> on this page.
+    </div>
+  </div>
+</div>
+
+<script>
+const WORKER = 'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev';
+const TOKEN_KEY = 'gmj_session_token';
+
+function clearSession() {
+  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem('gmj_user_slug');
+  localStorage.removeItem('gmj_user_name');
+  localStorage.removeItem('gmj_user_email');
+}
+
+(async function init() {
+  const tok = localStorage.getItem(TOKEN_KEY);
+  if (!tok) { location.replace('/login.html'); return; }
+  try {
+    const r = await fetch(WORKER + '/api/auth/me', { headers: { 'Authorization': 'Bearer ' + tok } });
+    const j = await r.json();
+    if (!j.authenticated) { clearSession(); location.replace('/login.html'); return; }
+    document.getElementById('userName').textContent = j.name;
+    document.getElementById('hello').textContent = 'Welcome, ' + j.name.split(' ')[0];
+    document.getElementById('emailSub').textContent = j.email + ' · slug: ' + j.slug;
+  } catch (e) {
+    clearSession(); location.replace('/login.html');
+  }
+})();
+
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+  const tok = localStorage.getItem(TOKEN_KEY);
+  try {
+    if (tok) await fetch(WORKER + '/api/auth/logout', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + tok }
+    });
+  } catch (e) { /* ignore */ }
+  clearSession();
+  location.replace('/login.html');
+});
+</script>
+</body>
+</html>
