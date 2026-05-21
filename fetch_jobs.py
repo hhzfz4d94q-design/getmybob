@@ -1158,6 +1158,142 @@ def _build_positive_re():
     _POSITIVE_THEME_RE = re.compile("|".join(parts), re.I)
 
 
+# === Universal "never relevant" titles =====================================
+# Bank back-office, IC engineering, pre-sales field roles, content production.
+# Categories no user on this platform wants regardless of industry. Hard-
+# excluded BEFORE the target-company override so e.g. "Branch Banking
+# Regional Executive" at Wells Fargo is killed even when Wells is in the
+# user's targetCompanies list.
+NEVER_RELEVANT_TOKENS = [
+    # Bank ops / branches / back-office
+    "branch banking", "branch manager", "branch executive", "branch sales",
+    "regional banking", "regional banking executive",
+    "personal banker", "private banker", "relationship banker",
+    "teller", "investment banking analyst", "investment banking associate",
+    # Trading floor / markets ops
+    "trading platforms support", "trading floor", "trade support",
+    "front office trading",
+    # KYC / AML / fraud / complaints ops
+    "kyc operations", "kyc analyst", "kyc specialist",
+    "anti-money laundering", "aml analyst", "aml ops", "aml officer",
+    "complaints oversight", "fraud analyst", "fraud specialist",
+    "fraud investigator",
+    # Lending / credit ops
+    "debit operations", "loan officer", "credit analyst", "credit officer",
+    "mortgage banker", "mortgage processor", "auto loan officer", "underwriter",
+    # Pre-sales / field / customer engineering
+    "field cto", "field cio", "field engineer", "solutions engineer",
+    "identity specialist", "solutions specialist",
+    # Video / content production
+    "video strategist", "video producer", "video editor",
+    "content moderator", "social media coordinator",
+    # IC engineers (engineering LEADERSHIP titles - VP/Head/Director of
+    # Engineering - still pass the per-user role gate; only IC titles
+    # are blocked here)
+    "software engineer", "software developer", "data engineer",
+    "backend engineer", "frontend engineer", "full stack engineer",
+    "fullstack engineer", "qa engineer", "test engineer",
+    "automation engineer", "systems engineer", "platform engineer",
+    "infrastructure engineer", "security engineer", "site reliability",
+    "devops engineer", "machine learning engineer", "ml engineer",
+    "research scientist", "language engineering", "language engineer",
+    # FinOps / IT ops noise
+    "cloud finops", "finops engineer", "finops analyst",
+    # Generic IC ops / claims
+    "operations associate", "operations analyst", "operations specialist",
+    "operations coordinator", "office coordinator",
+    "claims processor", "claims analyst", "claims adjuster",
+    # Logistics / warehouse / field service
+    "logistics it", "logistics technician", "logistics technical lead",
+    "warehouse associate", "warehouse manager",
+]
+
+_NEVER_RELEVANT_RE = None
+
+def _build_never_re():
+    global _NEVER_RELEVANT_RE
+    parts = []
+    for tok in NEVER_RELEVANT_TOKENS:
+        escaped = re.escape(tok).replace(r"\ ", r"\s+")
+        parts.append(r"\b" + escaped + r"\b")
+    _NEVER_RELEVANT_RE = re.compile("|".join(parts), re.I)
+
+def _is_never_relevant(title):
+    """Universal hard-exclude. Applied before any other gate."""
+    global _NEVER_RELEVANT_RE
+    if _NEVER_RELEVANT_RE is None: _build_never_re()
+    return bool(_NEVER_RELEVANT_RE.search(title or ""))
+
+
+# Words that appear in any senior title but say nothing about which role
+_ROLE_STOPWORDS = {
+    "senior", "sr", "junior", "jr", "lead", "leader", "manager", "managers",
+    "director", "directors", "head", "chief", "principal", "staff",
+    "executive", "vp", "vice", "president", "of", "the", "and", "or", "for",
+    "to", "at", "in", "on", "i", "ii", "iii", "iv", "level", "team", "group",
+    "global", "us", "north", "america", "leads", "an", "a",
+}
+
+
+def _token_matches(needle, haystack_tokens):
+    """A user-token matches a title-token if equal, OR if one is a
+    prefix of the other AND the shorter token has >= 4 characters.
+    Lets 'health' match 'healthcare' and 'inform' match 'informatics'
+    without leaking short tokens like 'it' / 'hr'."""
+    if needle in haystack_tokens:
+        return True
+    if len(needle) < 4:
+        return False
+    for ht in haystack_tokens:
+        if len(ht) < 4:
+            continue
+        if needle.startswith(ht) or ht.startswith(needle):
+            return True
+    return False
+
+
+def _matches_user_role(title, profile):
+    """Strict per-user title gate. The title must contain ALL non-stopword
+    tokens of at least one of the user's targetTitles (in any order,
+    matched via prefix-aware comparison). Falls back to primaryRole.
+
+    Replaces the old global POSITIVE_TITLE_THEMES gate which leaked common
+    words ('product', 'strategist', 'ai', 'compliance') to every user
+    regardless of their resume. If a real job is being filtered out, the
+    user should add the missing targetTitle in the wizard chip editor.
+    """
+    if not title or not profile:
+        return False
+    title_l = title.lower()
+    title_tokens = set(re.findall(r"[a-z]+", title_l))
+    if not title_tokens:
+        return False
+
+    for tt in (profile.get("targetTitles") or []):
+        tt_l = (tt or "").lower().strip()
+        if len(tt_l) < 3:
+            continue
+        tt_tokens = set(re.findall(r"[a-z]+", tt_l)) - _ROLE_STOPWORDS
+        if not tt_tokens:
+            continue
+        if all(_token_matches(t, title_tokens) for t in tt_tokens):
+            return True
+
+    # Fallback to primaryRole tokens + seniority indicator
+    primary = (profile.get("primaryRole") or "").lower()
+    primary_tokens = set(re.findall(r"[a-z]+", primary)) - _ROLE_STOPWORDS
+    if primary_tokens and all(_token_matches(t, title_tokens) for t in primary_tokens):
+        seniority_indicators = {
+            "vp", "vice", "president", "director", "head", "chief",
+            "principal", "staff", "senior", "sr", "lead", "executive",
+            "ceo", "coo", "cto", "cio", "ciso", "cpo", "cdo",
+        }
+        if seniority_indicators & title_tokens:
+            return True
+
+    return False
+
+
 def _has_positive_theme(title, profile):
     """Title qualifies if it contains a positive domain theme OR any of the
     AI-extracted profile signals (keywords, specialties, targetTitles, regulations)."""
@@ -1833,6 +1969,13 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         senior_flag = r[10]
         job_inds = (r[15] or "").split(",") if r[15] else []
 
+        # Universal hard-exclude: bank back-office, IC engineers, pre-sales
+        # field roles, content production. Applied BEFORE the target-company
+        # override so e.g. "Branch Banking Regional Executive" at Wells Fargo
+        # is killed even when Wells is in the user's targetCompanies list.
+        if _is_never_relevant(title):
+            return False
+
         # Hard-filter by company-size preference when the user has selected
         # only some sizes. If size is unknown (untagged company), let it
         # through so we don't accidentally hide everything.
@@ -1841,15 +1984,26 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
             if sz is not None and sz not in size_prefs:
                 return False
 
-        # Override: senior role at the user's verified target company. The
-        # user explicitly asked for this employer, so trust that signal over
-        # the title-keyword heuristic.
+        # Strict per-user title gate. The title must match one of the
+        # user's own targetTitles (or primaryRole). Replaces the old global
+        # theme list which leaked words like "product" / "strategist" /
+        # "ai" / "compliance" to every user regardless of their resume.
+        if SKILLS_PROFILE:
+            if not _matches_user_role(title, SKILLS_PROFILE):
+                return False
+        else:
+            # No profile loaded (extremely rare - awaiting upload). Fall
+            # back to legacy broad-theme gate so the dashboard is not
+            # completely empty.
+            if not _has_positive_theme(title, None):
+                return False
+
+        # Target-company override: user explicitly named this employer, so
+        # waive the industry-overlap check below. The title gate above
+        # still had to pass.
         if senior_flag and company and company in target_company_names:
             return True
-        # Standard path: title gate (now includes finance themes + per-user
-        # keywords via _has_positive_theme) AND industry overlap.
-        if not _has_positive_theme(title, SKILLS_PROFILE):
-            return False
+
         if user_industries and job_inds:
             return _industry_match(job_inds, user_industries)
         return True  # no industry data on either side — title gate is enough
@@ -2600,7 +2754,7 @@ HTML_TEMPLATE = """<!doctype html>
 <script>
 const RECENCY_WINDOW_KEY = 'htj_recency_window_' + USER_SLUG;
 let activeWindow = (function() {{
-  try {{ const v = localStorage.getItem(RECENCY_WINDOW_KEY); return v === null ? 'all' : v; }} catch (e) {{ return 'all'; }}
+  try {{ const v = localStorage.getItem(RECENCY_WINDOW_KEY); return v === null ? '0' : v; }} catch (e) {{ return '0'; }}
 }})();
 
 // --- Tracker state (localStorage) -----------------------------------------
@@ -4697,10 +4851,17 @@ const WIZ_STEPS = [
     skipText: "Skip — I'll do this later"
   }},
   {{
-    title: "Adjust your industries and skills",
+    title: "Adjust your target titles, industries and skills",
     body:
       '<p style="margin-bottom:12px;font-size:14px;color:#444;">These are extracted from your resume. We use them to match you against jobs \u2014 add anything we missed, remove anything inaccurate. <strong>Sharper signals = fewer 0-match days.</strong></p>' +
       '<div id="wiz-chip-status" style="font-size:12px;color:#888;margin-bottom:8px;min-height:16px;">Loading your profile\u2026</div>' +
+      '<div data-field="targetTitles" class="wiz-chip-section" style="margin-bottom:14px;">' +
+        '<div class="wiz-chip-label" style="font-size:11px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:6px;">Target titles <span style="font-weight:400;color:#888;">&mdash; the job titles you actually want (this drives matching the most)</span></div>' +
+        '<div class="wiz-chip-list" data-target="targetTitles" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px;min-height:28px;"></div>' +
+        '<div style="display:flex;gap:6px;">' +
+          '<input class="wiz-chip-input" data-target="targetTitles" type="text" placeholder="Add a target title\u2026 (Enter)" style="flex:1;padding:6px 10px;border:1px solid #d0d4dc;border-radius:6px;font-size:12.5px;">' +
+        '</div>' +
+      '</div>' +
       '<div data-field="industries" class="wiz-chip-section" style="margin-bottom:14px;">' +
         '<div class="wiz-chip-label" style="font-size:11px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:6px;">Industries <span style="font-weight:400;color:#888;">\u2014 broad sectors (e.g. banking, fintech, healthcare-it)</span></div>' +
         '<div class="wiz-chip-list" id="wiz-chips-industries" style="min-height:30px;"></div>' +
@@ -4779,8 +4940,8 @@ const WIZ_STEPS = [
     title: "How recent should jobs be by default?",
     body: '<p style="margin-bottom:14px;">Older listings are often filled or ghost roles. We\'ll default to this window when you load the dashboard \u2014 you can always change it with the pills above the job feed.</p>' +
       '<div style="display:flex;flex-direction:column;gap:8px;">' +
-        '<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #d0d4dc;border-radius:8px;cursor:pointer;"><input type="radio" name="wiz-recency" value="0" style="cursor:pointer;"> <span><strong>Last 24 hours</strong> &mdash; only show roles posted today</span></label>' +
-        '<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #d0d4dc;border-radius:8px;cursor:pointer;"><input type="radio" name="wiz-recency" value="7" checked style="cursor:pointer;"> <span><strong>Last 7 days</strong> &mdash; freshest listings, best signal of active hiring</span></label>' +
+        '<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #d0d4dc;border-radius:8px;cursor:pointer;"><input type="radio" name="wiz-recency" value="0" checked style="cursor:pointer;"> <span><strong>Last 24 hours</strong> &mdash; only show roles posted today</span></label>' +
+        '<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #d0d4dc;border-radius:8px;cursor:pointer;"><input type="radio" name="wiz-recency" value="7" style="cursor:pointer;"> <span><strong>Last 7 days</strong> &mdash; freshest listings, best signal of active hiring</span></label>' +
         '<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #d0d4dc;border-radius:8px;cursor:pointer;"><input type="radio" name="wiz-recency" value="14" style="cursor:pointer;"> <span><strong>Last 2 weeks</strong> &mdash; balance freshness with broader pool</span></label>' +
         '<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #d0d4dc;border-radius:8px;cursor:pointer;"><input type="radio" name="wiz-recency" value="30" style="cursor:pointer;"> <span><strong>Last 30 days</strong> &mdash; widest reasonable pool</span></label>' +
         '<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #d0d4dc;border-radius:8px;cursor:pointer;"><input type="radio" name="wiz-recency" value="all" style="cursor:pointer;"> <span><strong>All jobs</strong> &mdash; show everything, sort handles freshness</span></label>' +
@@ -4930,7 +5091,7 @@ function wizBanner(msg) {{
 function replayTour() {{ wizCurrent = 0; wizShow(); }}
 
 // --- Wizard inline chip editor (Industries / Keywords / Specialties) -----
-const WIZ_CHIP_FIELDS = ["industries", "keywords", "specialties"];
+const WIZ_CHIP_FIELDS = ["targetTitles", "industries", "keywords", "specialties"];
 let _wizChipState = {{ industries: [], keywords: [], specialties: [] }};
 let _wizChipLoaded = false;
 
