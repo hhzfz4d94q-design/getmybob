@@ -3732,11 +3732,27 @@ function _suggestBlocklistFromDismissals() {{
   const [phrase, count] = candidates[0];
   if (sessionStorage.getItem('htj_dismissed_offer_' + phrase)) return;
   sessionStorage.setItem('htj_dismissed_offer_' + phrase, '1');
+  // Build the banner via DOM API to avoid quote-escaping issues
   const banner = document.createElement('div');
   banner.style.cssText = 'position:fixed;bottom:18px;right:18px;background:#fffbe6;border:1px solid #f0c14b;border-radius:8px;padding:14px 16px;max-width:340px;z-index:9999;box-shadow:0 2px 8px rgba(0,0,0,0.18);font-size:13px;';
-  banner.innerHTML = '<strong>Pattern detected:</strong> You\'ve dismissed <strong>' + count + '</strong> jobs starting with \"' + phrase + '\". Want to permanently hide jobs whose title starts with \"' + phrase + '\"?<br><br>' +
-    '<button class="btn primary" style="margin-right:8px;" onclick="_acceptBlocklist(\''+phrase.replace(/\'/g,"\\'")+'\', this)">Yes, hide these</button>' +
-    '<button class="btn ghost-btn" onclick="this.parentElement.remove()">No thanks</button>';
+  const head = document.createElement('div');
+  head.innerHTML = '<strong>Pattern detected</strong>';
+  banner.appendChild(head);
+  const txt = document.createElement('div');
+  txt.style.margin = '6px 0 12px 0';
+  txt.textContent = 'You have dismissed ' + count + ' jobs whose title starts with "' + phrase + '". Hide these permanently?';
+  banner.appendChild(txt);
+  const yes = document.createElement('button');
+  yes.className = 'btn primary';
+  yes.style.marginRight = '8px';
+  yes.textContent = 'Yes, hide these';
+  yes.addEventListener('click', function() {{ _acceptBlocklist(phrase, yes); }});
+  banner.appendChild(yes);
+  const no = document.createElement('button');
+  no.className = 'btn ghost-btn';
+  no.textContent = 'No thanks';
+  no.addEventListener('click', function() {{ banner.remove(); }});
+  banner.appendChild(no);
   document.body.appendChild(banner);
 }}
 
@@ -5374,7 +5390,7 @@ const WIZ_STEPS = [
   }},
   {{
     title: "How recent should jobs be by default?",
-    body: '<p style="margin-bottom:14px;">Older listings are often filled or ghost roles. We\'ll default to this window when you load the dashboard \u2014 you can always change it with the pills above the job feed.</p>' +
+    body: '<p style="margin-bottom:14px;">Older listings are often filled or ghost roles. We will default to this window when you load the dashboard \u2014 you can always change it with the pills above the job feed.</p>' +
       '<div style="display:flex;flex-direction:column;gap:8px;">' +
         '<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #d0d4dc;border-radius:8px;cursor:pointer;"><input type="radio" name="wiz-recency" value="0" checked style="cursor:pointer;"> <span><strong>Last 24 hours</strong> &mdash; only show roles posted today</span></label>' +
         '<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #d0d4dc;border-radius:8px;cursor:pointer;"><input type="radio" name="wiz-recency" value="7" style="cursor:pointer;"> <span><strong>Last 7 days</strong> &mdash; freshest listings, best signal of active hiring</span></label>' +
@@ -5661,11 +5677,11 @@ function recoveryShow() {{
   // Build the mailto link with prefilled subject/body
   const subj = encodeURIComponent("Please resend my invite link to getmemyjob");
   const body = encodeURIComponent(
-    "Hi Amit,\n\n" +
+    "Hi Amit,\\n\\n" +
     "My access key to my getmemyjob dashboard isn\'t working anymore. " +
-    "Could you please resend a fresh invite link?\n\n" +
-    "User slug: " + USER_SLUG + "\n" +
-    "Dashboard: " + window.location.origin + "/" + USER_SLUG + ".html\n\n" +
+    "Could you please resend a fresh invite link?\\n\\n" +
+    "User slug: " + USER_SLUG + "\\n" +
+    "Dashboard: " + window.location.origin + "/" + USER_SLUG + ".html\\n\\n" +
     "Thanks!"
   );
   const a = document.getElementById("recovery-mailto");
