@@ -63,8 +63,9 @@ export default {
     if (url.pathname === '/draft-followup') return handleDraftFollowup(request, env, cors, slug);
     if (url.pathname === '/interview-prep') return handleInterviewPrep(request, env, cors, slug);
     if (url.pathname === '/generate-digest') return handleGenerateDigest(request, env, cors, slug);
+    if (url.pathname === '/notes') return handleNotes(request, env, cors, slug);
     return new Response(
-      'Endpoints: /api/auth/{signup,login,logout,me,change-password}, /prep, /resume, /resume-versions, /parse-resume, /skills-profile, /regenerate-profile, /rerank-titles, /tracker, /draft-followup, /interview-prep, /generate-digest, /refresh, /admin/users.',
+      'Endpoints: /api/auth/{signup,login,logout,me,change-password}, /prep, /resume, /resume-versions, /parse-resume, /skills-profile, /regenerate-profile, /rerank-titles, /tracker, /draft-followup, /interview-prep, /generate-digest, /refresh, /admin/users, /notes.',
       { status: 404, headers: cors }
     );
   },
@@ -1361,5 +1362,64 @@ async function handleChangePassword(request, env, cors) {
   auth.salt = newSalt; auth.hash = newHash; auth.passwordUpdatedAt = new Date().toISOString();
   await env.RESUMES.put(uk(sess.slug, 'auth'), JSON.stringify(auth));
   return _json({ ok: true }, 200, cors);
+}
+
+
+// ============================================================
+// Slice C — Notes + reminders
+// KV: user:{slug}:notes -> { [jobFp]: { text, reminderDate, jobTitle, company, jobUrl, updatedAt } }
+// GET is public per-slug (so the dashboard can display them);
+// POST/DELETE require X-Edit-Key (legacy) OR a Bearer session matching the slug.
+// ============================================================
+async function handleNotes(request, env, cors, slug) {
+  if (!env.RESUMES) return _json({ error: 'RESUMES KV missing' }, 500, cors);
+  const key = uk(slug, 'notes');
+
+  if (request.method === 'GET') {
+    const raw = await env.RESUMES.get(key);
+    return _json({ notes: raw ? JSON.parse(raw) : {} }, 200, cors);
+  }
+
+  // Auth for writes: either valid X-Edit-Key, or a session whose slug matches
+  let authed = await checkEditKey(request, env, slug);
+  if (!authed) {
+    const sess = await sessionFromRequest(request, env);
+    if (sess && sess.slug === slug) authed = true;
+  }
+  if (!authed) return _json({ error: 'Unauthorized' }, 401, cors);
+
+  const raw = await env.RESUMES.get(key);
+  const notes = raw ? JSON.parse(raw) : {};
+
+  if (request.method === 'POST') {
+    let body;
+    try { body = await request.json(); } catch (e) { return _json({ error: 'Bad JSON' }, 400, cors); }
+    const fp = String(body.fp || '').trim();
+    if (!fp) return _json({ error: 'fp (job fingerprint) required' }, 400, cors);
+    const text = String(body.text || '').trim();
+    const reminderDate = body.reminderDate ? String(body.reminderDate).trim() : null;
+    const existing = notes[fp] || {};
+    const jobTitle = body.jobTitle != null ? String(body.jobTitle) : (existing.jobTitle || '');
+    const company = body.company != null ? String(body.company) : (existing.company || '');
+    const jobUrl = body.jobUrl != null ? String(body.jobUrl) : (existing.jobUrl || '');
+    if (!text && !reminderDate) {
+      delete notes[fp];
+    } else {
+      notes[fp] = { text, reminderDate, jobTitle, company, jobUrl, updatedAt: new Date().toISOString() };
+    }
+    await env.RESUMES.put(key, JSON.stringify(notes));
+    return _json({ ok: true, notes }, 200, cors);
+  }
+
+  if (request.method === 'DELETE') {
+    const url = new URL(request.url);
+    const fp = url.searchParams.get('fp');
+    if (!fp) return _json({ error: 'fp query param required' }, 400, cors);
+    delete notes[fp];
+    await env.RESUMES.put(key, JSON.stringify(notes));
+    return _json({ ok: true, notes }, 200, cors);
+  }
+
+  return _json({ error: 'GET/POST/DELETE only' }, 405, cors);
 }
 

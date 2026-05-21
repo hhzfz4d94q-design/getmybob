@@ -2658,5 +2658,217 @@ function replayTour() { wizCurrent = 0; wizShow(); }
     }
   };
 })();
+
+// ============================================================
+// Slice C — Notes & follow-up reminders (injected client-side)
+// Adds a "Notes" button to every job card + a Reminders panel at the top.
+// Notes are persisted via /notes endpoint on the Worker (X-Edit-Key auth).
+// ============================================================
+(function notesAndReminders() {
+  if (window.__slice_c_loaded) return; window.__slice_c_loaded = true;
+  const NOTES_URL = WORKER_BASE + "/notes" + USER_QS;
+  let _notes = {};
+
+  function _todayISO() { return new Date().toISOString().slice(0,10); }
+  function _esc(s) { return (s||"").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+
+  function bucketReminder(dateStr) {
+    if (!dateStr) return null;
+    const t = _todayISO();
+    if (dateStr < t) return "overdue";
+    if (dateStr === t) return "today";
+    const d = new Date(dateStr); const tn = new Date(t);
+    const days = Math.round((d - tn) / 86400000);
+    if (days <= 7) return "upcoming";
+    return "later";
+  }
+
+  function loadNotes() {
+    return fetch(NOTES_URL).then(r => r.json()).then(d => {
+      _notes = (d && d.notes) || {};
+      renderReminders();
+      decorateAllCards();
+    }).catch(()=>{});
+  }
+
+  function getEditKeyHere() {
+    try {
+      return localStorage.getItem("htj_resume_key_" + USER_SLUG) ||
+             localStorage.getItem("htj_resume_key") || "";
+    } catch(e) { return ""; }
+  }
+
+  function saveNote(fp, fields) {
+    const card = document.querySelector('.card[data-fp="'+fp+'"]');
+    const body = Object.assign({ fp: fp }, fields);
+    if (card) {
+      const titleA = card.querySelector('.title a');
+      const compEl = card.querySelector('.company');
+      if (titleA && !body.jobTitle) { body.jobTitle = titleA.textContent.trim(); body.jobUrl = titleA.href || ''; }
+      if (compEl && !body.company) body.company = compEl.textContent.trim();
+    }
+    return fetch(NOTES_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Edit-Key': getEditKeyHere() },
+      body: JSON.stringify(body)
+    }).then(r => r.json()).then(d => {
+      if (d && d.notes) _notes = d.notes;
+      renderReminders(); decorateAllCards();
+      return d;
+    });
+  }
+
+  function deleteNote(fp) {
+    return fetch(NOTES_URL + "&fp=" + encodeURIComponent(fp), {
+      method: 'DELETE',
+      headers: { 'X-Edit-Key': getEditKeyHere() }
+    }).then(r => r.json()).then(d => {
+      if (_notes[fp]) delete _notes[fp];
+      renderReminders(); decorateAllCards();
+      return d;
+    });
+  }
+
+  function decorateAllCards() {
+    document.querySelectorAll('.card[data-fp]').forEach(decorateCard);
+  }
+
+  function decorateCard(card) {
+    const fp = card.getAttribute('data-fp');
+    const actions = card.querySelector('.actions');
+    if (!actions) return;
+    let btn = actions.querySelector('.btn-notes');
+    const hasNote = !!_notes[fp];
+    const note = _notes[fp] || {};
+    const bucket = bucketReminder(note.reminderDate);
+    const label = hasNote
+      ? (bucket === 'overdue' ? '📌 Overdue note'
+        : bucket === 'today'  ? '📌 Reminder today'
+        : note.reminderDate    ? '📌 Note · ' + note.reminderDate
+        : '📌 Note')
+      : '📝 Notes';
+    const color = bucket === 'overdue' ? '#b91c1c'
+                : bucket === 'today'   ? '#b45309'
+                : hasNote              ? '#5C5CD6'
+                : '';
+    if (!btn) {
+      btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'btn ghost-btn small btn-notes';
+      btn.addEventListener('click', function() { toggleEditor(card, fp); });
+      // Insert before the dismiss × if present, otherwise append
+      const dismiss = actions.querySelector('.dismiss');
+      if (dismiss) actions.insertBefore(btn, dismiss);
+      else actions.appendChild(btn);
+    }
+    btn.textContent = label;
+    btn.style.color = color || '';
+    btn.style.borderColor = color || '';
+    btn.style.fontWeight = hasNote ? '600' : '';
+  }
+
+  function toggleEditor(card, fp) {
+    let panel = card.querySelector('.notes-panel');
+    if (panel) { panel.remove(); return; }
+    const note = _notes[fp] || {};
+    panel = document.createElement('div');
+    panel.className = 'notes-panel';
+    panel.style.cssText = 'margin-top:10px;padding:12px;background:#F8F8FC;border:1px solid #E5E7EE;border-radius:6px;';
+    panel.innerHTML =
+      '<div style="font-size:11px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:6px;">Your notes</div>' +
+      '<textarea class="np-text" rows="3" placeholder="Recruiter name, contact info, things to follow up on…" '+
+        'style="width:100%;padding:8px 10px;font:13px/1.4 inherit;border:1px solid #d0d4dc;border-radius:6px;resize:vertical;">' + _esc(note.text || '') + '</textarea>' +
+      '<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px;">' +
+        '<label style="font-size:12px;color:#555;">Remind me on: ' +
+          '<input class="np-date" type="date" value="'+_esc(note.reminderDate||'')+'" style="margin-left:6px;padding:5px 8px;font:13px inherit;border:1px solid #d0d4dc;border-radius:6px;">' +
+        '</label>' +
+        '<button type="button" class="btn primary np-save" style="margin-left:auto;">Save</button>' +
+        (note.text || note.reminderDate ? '<button type="button" class="btn ghost-btn np-del" style="color:#b91c1c;border-color:#fca5a5;">Delete</button>' : '') +
+        '<button type="button" class="btn ghost-btn np-close">Close</button>' +
+      '</div>' +
+      '<div class="np-status" style="font-size:12px;color:#777;margin-top:6px;min-height:14px;"></div>';
+    card.appendChild(panel);
+    const statusEl = panel.querySelector('.np-status');
+    panel.querySelector('.np-close').addEventListener('click', () => panel.remove());
+    panel.querySelector('.np-save').addEventListener('click', () => {
+      statusEl.textContent = 'Saving…';
+      const text = panel.querySelector('.np-text').value;
+      const reminderDate = panel.querySelector('.np-date').value || null;
+      saveNote(fp, { text: text, reminderDate: reminderDate })
+        .then(d => {
+          if (d && d.ok) { statusEl.style.color='#0a6b3a'; statusEl.textContent='Saved.'; setTimeout(()=>panel.remove(), 600); }
+          else { statusEl.style.color='#b91c1c'; statusEl.textContent = (d && d.error) || 'Save failed.'; }
+        })
+        .catch(e => { statusEl.style.color='#b91c1c'; statusEl.textContent = 'Network error.'; });
+    });
+    const delBtn = panel.querySelector('.np-del');
+    if (delBtn) delBtn.addEventListener('click', () => {
+      if (!confirm('Delete this note?')) return;
+      statusEl.textContent = 'Deleting…';
+      deleteNote(fp).then(() => panel.remove());
+    });
+    panel.querySelector('.np-text').focus();
+  }
+
+  function renderReminders() {
+    let panel = document.getElementById('reminders-panel');
+    if (!panel) {
+      panel = document.createElement('div');
+      panel.id = 'reminders-panel';
+      panel.style.cssText = 'background:#fff;border:1px solid #E5E7EE;border-radius:8px;padding:14px 18px;margin:14px 0;';
+      const filters = document.querySelector('.filters');
+      if (filters && filters.parentNode) filters.parentNode.insertBefore(panel, filters);
+      else document.body.insertBefore(panel, document.body.firstChild);
+    }
+    const all = Object.entries(_notes);
+    const withDates = all.filter(([fp, n]) => !!n.reminderDate);
+    const overdue = withDates.filter(([_, n]) => bucketReminder(n.reminderDate) === 'overdue');
+    const today   = withDates.filter(([_, n]) => bucketReminder(n.reminderDate) === 'today');
+    const upcoming= withDates.filter(([_, n]) => bucketReminder(n.reminderDate) === 'upcoming');
+    if (withDates.length === 0 && all.length === 0) { panel.style.display = 'none'; return; }
+    panel.style.display = '';
+    function pill(label, items, color) {
+      if (!items.length) return '';
+      const list = items.slice(0, 5).map(([fp, n]) =>
+        '<a href="#" data-jump="'+fp+'" style="color:'+color+';text-decoration:none;border-bottom:1px dotted '+color+';margin-right:10px;">' +
+          _esc(n.jobTitle || n.company || fp.slice(0,8)) +
+          (n.company ? ' <span style="color:#888;">@ '+_esc(n.company)+'</span>' : '') +
+        '</a>'
+      ).join('');
+      return '<div style="margin-bottom:6px;"><strong style="color:'+color+';">'+label+' ('+items.length+'):</strong> ' + list + '</div>';
+    }
+    panel.innerHTML =
+      '<div style="font-size:11px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:8px;">📌 Follow-ups</div>' +
+      pill('Overdue',  overdue,  '#b91c1c') +
+      pill('Today',    today,    '#b45309') +
+      pill('This week',upcoming, '#5C5CD6') +
+      (withDates.length === 0
+        ? '<div style="color:#888;font-size:13px;">You have '+all.length+' note'+(all.length===1?'':'s')+' but no reminder dates set.</div>'
+        : '');
+    panel.querySelectorAll('a[data-jump]').forEach(a => {
+      a.addEventListener('click', function(e) {
+        e.preventDefault();
+        const fp = a.getAttribute('data-jump');
+        const card = document.querySelector('.card[data-fp="'+fp+'"]');
+        if (card) {
+          card.scrollIntoView({behavior:'smooth', block:'center'});
+          const orig = card.style.boxShadow;
+          card.style.boxShadow = '0 0 0 3px #5C5CD6';
+          setTimeout(() => { card.style.boxShadow = orig; }, 1500);
+        }
+      });
+    });
+  }
+
+  // Re-decorate when the job grid is re-filtered or re-rendered
+  const _origFilter = window.filter;
+  if (typeof _origFilter === 'function') {
+    window.filter = function() { const r = _origFilter.apply(this, arguments); setTimeout(decorateAllCards, 0); return r; };
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', loadNotes);
+  } else { loadNotes(); }
+})();
 </script>
 </body></html>
