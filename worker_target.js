@@ -1296,13 +1296,18 @@ async function handleSignup(request, env, cors) {
   await env.RESUMES.put(uk(slug, 'auth'), JSON.stringify({ email, name, hash, salt, createdAt }));
   await env.RESUMES.put(`auth:email:${email}`, slug);
   await env.RESUMES.put(uk(slug, 'name'), name);
+  // Slice D: also provision an edit_key so this user can do writes on their dashboard
+  // (the per-user HTML dashboards still use X-Edit-Key for write auth).
+  if (!(await env.RESUMES.get(uk(slug, 'edit_key')))) {
+    await env.RESUMES.put(uk(slug, 'edit_key'), generatePassword(20));
+  }
 
   // Add to users:list so existing admin / refresh flows can see them
   users.push({ slug, name, email, createdAt });
   await writeUsersList(env, users);
 
   const { token, expiresAt } = await createSession(env, slug);
-  return _json({ ok: true, token, expiresAt, slug, name, email }, 200, cors);
+  return _json({ ok: true, token, expiresAt, slug, name, email, editKey: (await env.RESUMES.get(uk(slug, 'edit_key'))) || null }, 200, cors);
 }
 
 // POST /api/auth/login  { email, password }
@@ -1325,7 +1330,8 @@ async function handleLogin(request, env, cors) {
   if (hash !== auth.hash) return _json({ error: 'Invalid email or password' }, 401, cors);
 
   const { token, expiresAt } = await createSession(env, slug);
-  return _json({ ok: true, token, expiresAt, slug, name: auth.name, email: auth.email }, 200, cors);
+  const editKey = await env.RESUMES.get(uk(slug, 'edit_key'));
+  return _json({ ok: true, token, expiresAt, slug, name: auth.name, email: auth.email, editKey: editKey || null }, 200, cors);
 }
 
 // POST /api/auth/logout    (Authorization: Bearer <token>)
@@ -1343,12 +1349,16 @@ async function handleMe(request, env, cors) {
   if (!authRaw) return _json({ authenticated: false }, 200, cors);
   let auth;
   try { auth = JSON.parse(authRaw); } catch (e) { return _json({ authenticated: false }, 200, cors); }
+  // Include the user's per-dashboard edit_key so the frontend can store it
+  // and use the existing X-Edit-Key write protocol on the per-user HTML dashboards.
+  const editKey = await env.RESUMES.get(uk(sess.slug, 'edit_key'));
   return _json({
     authenticated: true,
     slug: sess.slug,
     name: auth.name,
     email: auth.email,
-    createdAt: auth.createdAt || null
+    createdAt: auth.createdAt || null,
+    editKey: editKey || null
   }, 200, cors);
 }
 

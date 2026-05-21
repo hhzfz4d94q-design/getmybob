@@ -2697,6 +2697,7 @@ HTML_TEMPLATE = """<!doctype html>
     <button id="resume-btn" class="header-btn" onclick="openResumeModal()">Resume</button>
     <button id="contacts-btn" class="header-btn" onclick="openContactsModal()">LinkedIn Contacts</button>
     <button id="refresh-btn" class="header-btn" onclick="refreshData()">Refresh data</button>
+    <button id="signout-btn" class="header-btn" onclick="signOutDashboard(this)" title="Sign out of getmemyjob">Sign out</button>
   </div>
 </header>
 <div class="stats">
@@ -4460,6 +4461,25 @@ async function parseUploadedResume(btn) {{
     _pendingUploadFile = null;
     document.getElementById('resume-file-input').value = '';
     document.getElementById('dropzone-label').textContent = 'Upload another to replace';
+    // Slice D: after resume upload, auto-launch the wizard so the user captures
+    // their preferences (titles/industries/skills weights, locations, sizes, etc.)
+    try {{
+      setTimeout(function() {{
+        try {{ closeResumeModal(); }} catch(e) {{}}
+        try {{ localStorage.removeItem('gmj_wizard_seen_v2'); }} catch(e) {{}}
+        var startIdx = 0;
+        try {{
+          for (var i = 0; i < WIZ_STEPS.length; i++) {{
+            var act = (WIZ_STEPS[i] && WIZ_STEPS[i].action) || '';
+            if (act === 'open-resume-profile' || act === 'save-profile-chips' ||
+                act === 'save-location-remote') {{ startIdx = i; break; }}
+          }}
+        }} catch(e) {{}}
+        if (typeof wizCurrent !== 'undefined') wizCurrent = startIdx;
+        if (typeof wizShow === 'function') wizShow();
+        if (typeof wizRender === 'function') wizRender();
+      }}, 800);
+    }} catch(e) {{ /* if wizard absent, skip silently */ }}
   }} catch (e) {{
     statusEl.textContent = 'Failed: ' + (e.message || e);
     btn.textContent = orig;

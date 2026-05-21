@@ -9,59 +9,38 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --navy: #5C5CD6; --navy-deep: #4B4BBE;
-    --off-white: #FAFAFC; --ink: #1A1A2E; --muted: #666680;
-    --hairline: #E5E7EE; --lilac-soft: #EEEEF8;
-  }
+  :root { --navy:#5C5CD6; --navy-deep:#4B4BBE; --off-white:#FAFAFC; --ink:#1A1A2E; --muted:#666680; --hairline:#E5E7EE; --lilac-soft:#EEEEF8; }
   * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; }
-  body {
-    font: 15px/1.55 'Inter', -apple-system, system-ui, sans-serif;
-    color: var(--ink); background: var(--off-white);
-    -webkit-font-smoothing: antialiased;
-  }
-  nav.top {
-    background: #fff; border-bottom: 1px solid var(--hairline);
-  }
-  nav.top .row {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 28px; max-width: 1080px; margin: 0 auto;
-  }
-  .logo img { height: 38px; }
-  @media (max-width: 720px) { .logo img { height: 30px; } }
-  .nav-right { display: flex; align-items: center; gap: 14px; font-size: 14px; }
+  html, body { margin:0; padding:0; }
+  body { font: 15px/1.55 'Inter', -apple-system, system-ui, sans-serif; color: var(--ink); background: var(--off-white); -webkit-font-smoothing: antialiased; }
+  nav.top { background:#fff; border-bottom:1px solid var(--hairline); }
+  nav.top .row { display:flex; align-items:center; justify-content:space-between; padding:14px 28px; max-width:1080px; margin:0 auto; }
+  .logo img { height:38px; }
+  @media (max-width:720px) { .logo img { height:30px; } }
+  .nav-right { display:flex; align-items:center; gap:14px; font-size:14px; }
   .nav-right .who { color: var(--muted); }
   .nav-right .who b { color: var(--ink); }
-  .logout-btn {
-    font-size: 13px; color: var(--navy); background: transparent;
-    border: 1px solid var(--navy); border-radius: 6px;
-    padding: 6px 12px; cursor: pointer; font-family: inherit; font-weight: 500;
-  }
-  .logout-btn:hover { background: var(--navy); color: #fff; }
+  .logout-btn { font-size:13px; color:var(--navy); background:transparent; border:1px solid var(--navy); border-radius:6px; padding:6px 12px; cursor:pointer; font-family:inherit; font-weight:500; }
+  .logout-btn:hover { background:var(--navy); color:#fff; }
 
-  .container { max-width: 1080px; margin: 0 auto; padding: 40px 28px; }
-  .welcome-card {
-    background: #fff; border: 1px solid var(--hairline);
-    border-radius: 12px; padding: 32px;
-    box-shadow: 0 4px 24px rgba(60, 60, 120, 0.04);
-  }
-  .welcome-card h1 {
-    margin: 0 0 8px 0; font-size: 28px; font-weight: 700;
-    letter-spacing: -0.01em;
-  }
-  .welcome-card .sub { color: var(--muted); margin: 0 0 24px 0; }
-  .placeholder {
-    background: var(--lilac-soft); border-radius: 8px;
-    padding: 20px; color: var(--ink); font-size: 14px;
-  }
-  .placeholder strong { color: var(--navy-deep); }
+  .container { max-width:780px; margin:0 auto; padding:60px 28px; }
+  .card { background:#fff; border:1px solid var(--hairline); border-radius:12px; padding:36px; box-shadow:0 4px 24px rgba(60,60,120,0.04); }
+  .card h1 { margin:0 0 8px 0; font-size:24px; font-weight:700; letter-spacing:-0.01em; }
+  .card .sub { color:var(--muted); margin:0 0 20px 0; }
+  .spinner { display:inline-block; width:18px; height:18px; border:2px solid var(--lilac-soft); border-top-color:var(--navy); border-radius:50%; animation:spin 0.7s linear infinite; vertical-align:-3px; margin-right:8px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .prepare-box { background:var(--lilac-soft); border-radius:8px; padding:20px; margin-top:16px; }
+  .prepare-box strong { color:var(--navy-deep); }
+  .btn { display:inline-block; padding:10px 16px; font-size:14px; font-weight:600; border:none; border-radius:6px; cursor:pointer; font-family:inherit; text-decoration:none; }
+  .btn.primary { background:var(--navy); color:#fff; }
+  .btn.primary:hover { background:var(--navy-deep); }
+  .btn.ghost { background:transparent; color:var(--navy); border:1px solid var(--navy); }
 </style>
 </head>
 <body>
 <nav class="top">
   <div class="row">
-    <a href="/dashboard.html" class="logo" aria-label="OfficeBeat home">
+    <a href="/landing.html" class="logo" aria-label="OfficeBeat home">
       <img src="officebeat-logo.png" alt="OfficeBeat">
     </a>
     <div class="nav-right">
@@ -72,13 +51,29 @@
 </nav>
 
 <div class="container">
-  <div class="welcome-card">
-    <h1 id="hello">Welcome</h1>
-    <p class="sub" id="emailSub"></p>
-    <div class="placeholder">
-      <strong>Slice A is live.</strong> Auth (signup, login, logout) is working.
-      Next slices will add: <em>Officebeat logo everywhere + wizard Next buttons</em>,
-      <em>per-job notes &amp; reminders</em>, and finally <em>your personalized job feed</em> on this page.
+  <div class="card" id="loadingCard">
+    <h1><span class="spinner"></span>Loading your dashboard…</h1>
+    <p class="sub" id="loadingSub">Looking up your account.</p>
+  </div>
+
+  <div class="card" id="prepareCard" style="display:none;">
+    <h1>Your dashboard is being prepared.</h1>
+    <p class="sub">We're matching jobs to your profile. This usually takes a few minutes after signup.</p>
+    <div class="prepare-box">
+      <strong>What's happening:</strong> a job-matching run is generating your personalized dashboard.
+      Once it's ready, this page will automatically take you there. You can refresh anytime to check.
+    </div>
+    <div style="margin-top:20px;display:flex;gap:10px;">
+      <button class="btn primary" onclick="location.reload()">Refresh now</button>
+      <a class="btn ghost" href="/landing.html">Back to home</a>
+    </div>
+  </div>
+
+  <div class="card" id="errCard" style="display:none;">
+    <h1>Couldn't load your dashboard.</h1>
+    <p class="sub" id="errMsg">Something went wrong.</p>
+    <div style="margin-top:20px;display:flex;gap:10px;">
+      <a class="btn primary" href="/login.html">Sign in again</a>
     </div>
   </div>
 </div>
@@ -94,6 +89,18 @@ function clearSession() {
   localStorage.removeItem('gmj_user_email');
 }
 
+function showErr(msg) {
+  document.getElementById('loadingCard').style.display = 'none';
+  document.getElementById('prepareCard').style.display = 'none';
+  document.getElementById('errCard').style.display = '';
+  document.getElementById('errMsg').textContent = msg;
+}
+
+function showPrepare() {
+  document.getElementById('loadingCard').style.display = 'none';
+  document.getElementById('prepareCard').style.display = '';
+}
+
 (async function init() {
   const tok = localStorage.getItem(TOKEN_KEY);
   if (!tok) { location.replace('/login.html'); return; }
@@ -102,10 +109,26 @@ function clearSession() {
     const j = await r.json();
     if (!j.authenticated) { clearSession(); location.replace('/login.html'); return; }
     document.getElementById('userName').textContent = j.name;
-    document.getElementById('hello').textContent = 'Welcome, ' + j.name.split(' ')[0];
-    document.getElementById('emailSub').textContent = j.email + ' · slug: ' + j.slug;
+
+    // Stash the edit_key so the legacy per-user dashboard can do writes
+    // (the existing dashboards use X-Edit-Key, stored as htj_resume_key_<slug>).
+    if (j.editKey) {
+      try {
+        localStorage.setItem('htj_resume_key_' + j.slug, j.editKey);
+        localStorage.setItem('htj_resume_key', j.editKey);
+      } catch(e) {}
+    }
+
+    // Check if a per-user dashboard HTML exists for this slug
+    document.getElementById('loadingSub').textContent = 'Finding your job feed…';
+    const headR = await fetch('/' + j.slug + '.html', { method: 'HEAD' });
+    if (headR.ok) {
+      location.replace('/' + j.slug + '.html');
+      return;
+    }
+    showPrepare();
   } catch (e) {
-    clearSession(); location.replace('/login.html');
+    showErr(e && e.message ? e.message : String(e));
   }
 })();
 
