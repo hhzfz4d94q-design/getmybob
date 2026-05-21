@@ -49,13 +49,15 @@ export default {
     if (url.pathname === '/resume-versions') return handleVersions(request, env, cors, slug);
     if (url.pathname === '/parse-resume') return handleParseResume(request, env, cors, slug);
     if (url.pathname === '/skills-profile') return handleSkillsProfile(request, env, cors, slug);
+    if (url.pathname === '/regenerate-profile') return handleRegenerateProfile(request, env, cors, slug);
+    if (url.pathname === '/rerank-titles') return handleRerankTitles(request, env, cors, slug);
     if (url.pathname === '/prep') return handlePrep(request, env, cors, slug);
     if (url.pathname === '/tracker') return handleTracker(request, env, cors, slug);
     if (url.pathname === '/draft-followup') return handleDraftFollowup(request, env, cors, slug);
     if (url.pathname === '/interview-prep') return handleInterviewPrep(request, env, cors, slug);
     if (url.pathname === '/generate-digest') return handleGenerateDigest(request, env, cors, slug);
     return new Response(
-      'Endpoints: /prep, /resume, /resume-versions, /parse-resume, /skills-profile, /tracker, /draft-followup, /interview-prep, /generate-digest, /refresh, /admin/users.',
+      'Endpoints: /prep, /resume, /resume-versions, /parse-resume, /skills-profile, /regenerate-profile, /rerank-titles, /tracker, /draft-followup, /interview-prep, /generate-digest, /refresh, /admin/users.',
       { status: 404, headers: cors }
     );
   },
@@ -297,6 +299,55 @@ async function regenerateSkillsProfile(env, slug) {
   if (!resumeJson) return null;
   const activeId = await env.RESUMES.get(uk(slug, 'resume:active'));
 
+  // Read the user's existing size preferences so the AI can bias
+  // targetCompanies toward sizes the user actually wants. New format
+  // is companySizeMix (object with %s); fall back to companySizePreferences
+  // (older array format) for backward compat.
+  let sizeMix = null;
+  let preservedMix = null;
+  let preservedPrefs = null;
+  try {
+    const existingRaw = await env.RESUMES.get(uk(slug, 'skills_profile'));
+    if (existingRaw) {
+      const existing = JSON.parse(existingRaw);
+      if (existing && typeof existing.companySizeMix === 'object' && existing.companySizeMix) {
+        sizeMix = existing.companySizeMix;
+        preservedMix = existing.companySizeMix;
+      }
+      if (Array.isArray(existing.companySizePreferences) && existing.companySizePreferences.length) {
+        preservedPrefs = existing.companySizePreferences;
+        if (!sizeMix) {
+          // Synthesize equal-weight mix from picked prefs
+          const share = Math.floor(100 / existing.companySizePreferences.length);
+          sizeMix = {};
+          existing.companySizePreferences.forEach((k, i, arr) => {
+            sizeMix[k] = (i === arr.length - 1) ? 100 - share * (arr.length - 1) : share;
+          });
+        }
+      }
+    }
+  } catch (e) { /* fall through with defaults */ }
+  if (!sizeMix) sizeMix = { startup: 33, midsize: 33, large: 34 };
+  const _norm = (v) => Math.max(0, Math.min(100, Number(v) || 0));
+  sizeMix = {
+    startup: _norm(sizeMix.startup),
+    midsize: _norm(sizeMix.midsize),
+    large: _norm(sizeMix.large),
+  };
+  const sizeInstruction = (() => {
+    const total = sizeMix.startup + sizeMix.midsize + sizeMix.large || 1;
+    const pct = {
+      startup: Math.round(sizeMix.startup * 100 / total),
+      midsize: Math.round(sizeMix.midsize * 100 / total),
+      large: Math.round(sizeMix.large * 100 / total),
+    };
+    const excluded = ['startup','midsize','large'].filter(k => pct[k] === 0);
+    const excludeLine = excluded.length
+      ? `Do NOT suggest any ${excluded.join(' or ')} employers — the user has explicitly excluded them. `
+      : '';
+    return `IMPORTANT: the user wants their target-company list to mirror this size mix (sums to ~100%): startups ${pct.startup}% / mid-size ${pct.midsize}% / large ${pct.large}%. ${excludeLine}Across the 15-25 targetCompanies you suggest, the proportion of each size category must roughly match those percentages. Size definitions: startup = under 500 employees / typically Series A-C; midsize = 500-10k employees / established but not Fortune 500; large = 10k+ employees / Fortune 500 / public. For startup suggestions prefer "greenhouse"/"lever"/"ashby" atsHint; for large prefer "workday".`;
+  })();
+
   const prompt = `Analyze this resume EXHAUSTIVELY and produce a comprehensive structured skills profile.
 
 CRITICAL: Be thorough, not sparse. Extract EVERY meaningful signal from the resume. If the resume mentions 20 technologies, include 20. If it spans 5 industries, include 5. Better to over-include than to miss things.
@@ -393,7 +444,7 @@ Field guidance (ALL fields lowercase strings):
 - remotePreferred: true if resume signals remote/hybrid preference or recent remote experience.
 
 - salaryFloor: reasonable minimum US base salary given seniority. For c-suite ~350k, vp ~250k, director ~180k, senior 130k.
-- targetCompanies: array of 15-25 specific companies this person would realistically target next. Match seniority + industries + niche specialization. Prefer specialist firms over generic ones. Each entry: {name: string, atsHint: one of "greenhouse"|"lever"|"ashby"|"workday"|"unknown" (best guess at which ATS hosts their careers page), why: one-sentence reason this company fits}. For "workday" entries you MUST also include atsUrl: the full URL to their public Workday careers page (e.g., https://moodys.wd5.myworkdayjobs.com/Careers, https://jpmc.wd1.myworkdayjobs.com/jpmc). For other atsHint values, atsUrl is optional. If you don't know the exact Workday URL, set atsHint to "unknown" instead of guessing. For a structured-credit director, prefer Moody's/S&P Global/Fitch/KBRA/Pimco/Apollo/Ares rather than generic fintech companies. For cybersecurity GRC executives, prefer Vanta/Drata/OneTrust/Wiz/Snyk rather than generic SaaS. Use "workday" for large enterprises (banks, big pharma), "greenhouse"/"lever"/"ashby" for startups under ~$5B, "unknown" if uncertain.
+- targetCompanies: array of 15-25 specific companies this person would realistically target next. ${sizeInstruction} Match seniority + industries + niche specialization. Prefer specialist firms over generic ones. Each entry: {name: string, atsHint: one of "greenhouse"|"lever"|"ashby"|"workday"|"unknown" (best guess at which ATS hosts their careers page), why: one-sentence reason this company fits}. For "workday" entries you MUST also include atsUrl: the full URL to their public Workday careers page (e.g., https://moodys.wd5.myworkdayjobs.com/Careers, https://jpmc.wd1.myworkdayjobs.com/jpmc). For other atsHint values, atsUrl is optional. If you don't know the exact Workday URL, set atsHint to "unknown" instead of guessing. For a structured-credit director, prefer Moody's/S&P Global/Fitch/KBRA/Pimco/Apollo/Ares rather than generic fintech companies. For cybersecurity GRC executives, prefer Vanta/Drata/OneTrust/Wiz/Snyk rather than generic SaaS. Use "workday" for large enterprises (banks, big pharma), "greenhouse"/"lever"/"ashby" for startups under ~$5B, "unknown" if uncertain.
 - preferredLocations: array of locations (cities, regions, or "Remote") the person prefers. Extract from resume signals like current location, past locations, and any stated preferences. Examples: ["New York City", "San Francisco", "Remote (US)"]. If unsure include both their current city and "Remote (US)" as fallbacks.
 - remotePreference: one of "remote-only" | "hybrid" | "onsite" | "any". Default to "any" if no signal. Use "remote-only" if resume shows recent fully-remote roles or explicit remote preference. Use "hybrid" if mixed signals or current employer is hybrid. Use "onsite" only if all recent roles are onsite and no remote signal.
 
@@ -421,6 +472,9 @@ ${resumeJson}`;
     // This ensures a banking-GRC profile always gets NIST CSF, COSO, FFIEC etc. even if the AI omits them.
     augmentProfileWithStandards(parsed);
     const profile = Object.assign({}, parsed, { resumeId: activeId, generatedAt: new Date().toISOString(), user: slug });
+    // Preserve the user's wizard-set size preferences across regen
+    if (preservedMix) profile.companySizeMix = preservedMix;
+    if (preservedPrefs) profile.companySizePreferences = preservedPrefs;
     await env.RESUMES.put(uk(slug, 'skills_profile'), JSON.stringify(profile));
     return profile;
   } catch (e) { return null; }
@@ -443,7 +497,7 @@ async function handleSkillsProfile(request, env, cors, slug) {
       const raw = await env.RESUMES.get(uk(slug, 'skills_profile'));
       const existing = raw ? JSON.parse(raw) : {};
       const updated = Object.assign({}, existing);
-      const SCALAR_FIELDS = new Set(['salaryFloor', 'remotePreferred', 'seniorityLevel', 'primaryRole', 'summary']);
+      const SCALAR_FIELDS = new Set(['salaryFloor', 'remotePreferred', 'seniorityLevel', 'primaryRole', 'summary', 'companySizeMix', 'companySizePreferences', 'dailyTarget', 'recencyWindow', 'defaultSort', 'hideNoSalary', 'negativeTitles']);
       for (const [field, items] of Object.entries(body.patchFields)) {
         if (SCALAR_FIELDS.has(field)) {
           updated[field] = items;
@@ -606,6 +660,28 @@ ${resumeJson}`;
     catch (e) { return Response.json({ summary: text, coverLetter: '', linkedin: '', tailoredResume: null, warning: 'AI did not return valid JSON' }, { headers: cors }); }
     return Response.json(parsed, { headers: cors });
   } catch (e) { return Response.json({ error: 'Worker error', message: String(e) }, { status: 500, headers: cors }); }
+}
+
+
+// --- /regenerate-profile -----------------------------------------------
+// Re-run regenerateSkillsProfile for an existing user without needing them
+// to re-upload their resume. Accepts POST (with X-Edit-Key for self-service)
+// or POST (with X-Admin-Key for cross-user regen by the platform admin).
+async function handleRegenerateProfile(request, env, cors, slug) {
+  if (request.method !== 'POST') return new Response('POST only', { status: 405, headers: cors });
+  if (!env.ANTHROPIC_API_KEY) return Response.json({ error: 'Missing ANTHROPIC_API_KEY secret' }, { status: 500, headers: cors });
+  if (!env.RESUMES) return Response.json({ error: 'RESUMES KV binding missing' }, { status: 500, headers: cors });
+  // Admin override OR per-user edit key
+  const adminKey = request.headers.get('X-Admin-Key') || '';
+  const isAdmin = env.ADMIN_KEY && adminKey === env.ADMIN_KEY;
+  if (!isAdmin && !(await checkEditKey(request, env, slug))) {
+    return Response.json({ error: 'Invalid X-Edit-Key (or use X-Admin-Key)' }, { status: 401, headers: cors });
+  }
+  const resumeJson = await getActiveResume(env, slug);
+  if (!resumeJson) return Response.json({ error: 'No resume stored for ' + slug + ' — nothing to re-parse' }, { status: 404, headers: cors });
+  const profile = await regenerateSkillsProfile(env, slug);
+  if (!profile) return Response.json({ error: 'Regeneration failed (Anthropic API error or JSON parse failure)' }, { status: 502, headers: cors });
+  return Response.json({ status: 'regenerated', profile }, { headers: cors });
 }
 
 // --- users:list helpers -------------------------------------------------
@@ -997,4 +1073,98 @@ async function handleGenerateDigest(request, env, cors, slug) {
     }
   }
   return Response.json({ slug, userName, primaryRole, counts, staleApplications: stale.slice(0, 10) }, { headers: cors });
+}
+
+// =================================================================
+// /rerank-titles  --  AI fit score (0..100) for a batch of job titles
+// using the user's skills_profile. Used by the dashboard to re-rank
+// the keyword-filtered results. Public (no edit key required) so
+// anonymous browser sessions on the dashboard can call it.
+// =================================================================
+async function handleRerankTitles(request, env, cors, slug) {
+  if (request.method !== 'POST') {
+    return new Response('POST only', { status: 405, headers: cors });
+  }
+  if (!env.ANTHROPIC_API_KEY) {
+    return Response.json({ error: 'No ANTHROPIC_API_KEY' }, { status: 500, headers: cors });
+  }
+  let body;
+  try { body = await request.json(); } catch (e) { body = {}; }
+  const items = Array.isArray(body.items) ? body.items.slice(0, 60) : [];
+  if (!items.length) return Response.json({ scores: {} }, { headers: cors });
+
+  const raw = await env.RESUMES.get(uk(slug, 'skills_profile'));
+  if (!raw) return Response.json({ scores: {} }, { headers: cors });
+  let profile;
+  try { profile = JSON.parse(raw); } catch (e) { return Response.json({ scores: {} }, { headers: cors }); }
+
+  const primary = profile.primaryRole || '';
+  const seniority = profile.seniorityLevel || '';
+  const targets = (profile.targetTitles || []).slice(0, 12).join(', ');
+  const industries = (profile.industries || []).slice(0, 8).join(', ');
+  const specialties = (profile.specialties || []).slice(0, 8).join(', ');
+  const summary = (profile.summary || '').slice(0, 800);
+
+  const titleList = items.map((it, i) => `${i + 1}. [${it.fp}] ${it.title}`).join('\n');
+
+  const prompt = `You are scoring how well each job title matches the candidate's actual target. Return ONLY a JSON object mapping each job's fingerprint id to an integer 0..100. No prose, no markdown.
+
+CANDIDATE PROFILE
+- Primary role: ${primary}
+- Seniority: ${seniority}
+- Their explicit target titles: ${targets}
+- Industries: ${industries}
+- Specialties: ${specialties}
+- Summary: ${summary}
+
+SCORING GUIDANCE
+- 90-100: exact target-title match at their seniority in their industry
+- 70-89:  same function family at their level, possibly different industry
+- 50-69:  related function or one level off
+- 30-49:  loose adjacency
+- 0-29:   wrong role family or wrong seniority
+
+JOB TITLES TO SCORE (fingerprints in brackets)
+${titleList}
+
+Return JSON shape: {"<fp>": <int>, "<fp>": <int>, ...}`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': env.ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 2048,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    if (!resp.ok) {
+      return Response.json({ scores: {}, error: 'AI call failed' }, { status: 500, headers: cors });
+    }
+    const aiData = await resp.json();
+    const text = (aiData.content && aiData.content[0] && aiData.content[0].text) || '';
+    // Strip code fences if any
+    const cleaned = text.replace(/^```(?:json)?\s*/, '').replace(/\s*```$/, '').trim();
+    let scores;
+    try { scores = JSON.parse(cleaned); } catch (e) {
+      // Try to find the first {...} block
+      const m = text.match(/\{[\s\S]*\}/);
+      if (m) { try { scores = JSON.parse(m[0]); } catch (ee) { scores = {}; } }
+      else scores = {};
+    }
+    // Coerce values to ints 0..100
+    const out = {};
+    for (const [k, v] of Object.entries(scores || {})) {
+      const n = Math.max(0, Math.min(100, parseInt(v, 10) || 0));
+      out[k] = n;
+    }
+    return Response.json({ scores: out }, { headers: cors });
+  } catch (e) {
+    return Response.json({ scores: {}, error: String(e) }, { status: 500, headers: cors });
+  }
 }
