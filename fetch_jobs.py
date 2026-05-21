@@ -2208,12 +2208,12 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         for tt in (SKILLS_PROFILE.get("targetTitles") or []):
             tt_tokens = set(re.findall(r"[a-z]+", (tt or "").lower())) - _ROLE_STOPWORDS
             if tt_tokens and all(_token_matches(t, title_tokens) for t in tt_tokens):
-                reasons.append(f"matches your target title â{tt}â")
+                reasons.append(f"matches your target title “{tt}”")
                 break
         if not reasons:
             primary = (SKILLS_PROFILE.get("primaryRole") or "")
             if primary:
-                reasons.append(f"matches your role â{primary}â")
+                reasons.append(f"matches your role “{primary}”")
         tcompanies = {c.get("name","").lower() for c in (SKILLS_PROFILE.get("targetCompanies") or [])}
         if company and company.lower() in tcompanies:
             reasons.append(f"{company} is on your target-companies list")
@@ -2221,7 +2221,7 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         ind_overlap = list(_industry_tokens(job_inds) & _industry_tokens(SKILLS_PROFILE.get("industries") or []))
         if ind_overlap:
             reasons.append("industry overlap: " + ", ".join(ind_overlap[:3]))
-        return " â¢ ".join(reasons) if reasons else "passed default gates"
+        return " • ".join(reasons) if reasons else "passed default gates"
 
     cards = []
     for r in rows:
@@ -2273,7 +2273,7 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
             <button class="btn ghost-btn" onclick="prepApplication('{fp}', this)">Prep materials</button>
             <button class="btn track" onclick="cycleStatus('{fp}', this)" data-status-for="{fp}">Mark Applied</button>
             <button class="btn ghost-btn small" onclick="showWhyMatched('{fp}', this)" title="Why was this shown?">Why?</button>
-            <button class="btn ghost-btn small dismiss" onclick="dismissJob('{fp}', this)" title="Not for me â hide and learn">Ã</button>
+            <button class="btn ghost-btn small dismiss" onclick="dismissJob('{fp}', this)" title="Not for me — hide and learn">×</button>
           </div>
         </div>""")
 
@@ -2322,7 +2322,10 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         subtitle=_esc(subtitle),
         has_profile_js=("true" if SKILLS_PROFILE else "false"),
     )
-    with open(output_path, "w") as f:
+    # Some embedded emoji in HTML_TEMPLATE are stored as UTF-16 surrogate
+    # pair literals (\ud83c\udfaf etc). errors='surrogatepass' lets us write
+    # them through as their original 4-byte UTF-8 emoji bytes.
+    with open(output_path, "w", encoding="utf-8", errors="surrogatepass") as f:
         f.write(html)
     print(f"\nDashboard written: {output_path}")
 
@@ -5129,14 +5132,14 @@ function injectContactBadgesOnCards() {{
     const badge = document.createElement('span');
     badge.className = 'contact-badge';
     const hiringCount = matches.filter(_isHiringRoleContact).length;
-    if (hiringCount > 0) {
+    if (hiringCount > 0) {{
       badge.classList.add('hiring');
       badge.title = hiringCount + ' recruiter/HR contact' + (hiringCount === 1 ? '' : 's') + ' + ' + (matches.length - hiringCount) + ' other at ' + company;
       badge.innerHTML = '<span class="ic">🎯</span> ' + hiringCount + ' recruiter' + (hiringCount === 1 ? '' : 's') + (matches.length > hiringCount ? ' (+ ' + (matches.length - hiringCount) + ')' : '');
-    } else {
+    }} else {{
       badge.title = matches.length + ' of your LinkedIn contacts work at ' + company;
       badge.innerHTML = '<span class="ic">🤝</span> ' + matches.length + ' contact' + (matches.length === 1 ? '' : 's');
-    }
+    }}
     badge.addEventListener('click', (e) => {{
       e.stopPropagation();
       const titleEl = card.querySelector('.title a');
