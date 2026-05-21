@@ -2651,7 +2651,6 @@ HTML_TEMPLATE = """<!doctype html>
   <h1>Jobs for {user_name}</h1>
   <div class="sub">{subtitle} · Generated {generated}</div>
   <div class="header-actions">
-    <button class="header-btn" onclick="window.location.href='/?force=1'" title="Sign out and switch to a different dashboard">Switch user</button>
     <button id="prefs-btn" class="header-btn" onclick="replayTour()" title="Re-open the setup wizard to change your locations, remote pref, and company sizes">Preferences</button>
     <button id="regen-btn" class="header-btn" onclick="regenerateFromHeader(this)" title="Re-run the AI matcher to refresh your suggested target companies and skills. Takes 30-60 seconds.">Regenerate matches</button>
     <button id="resume-btn" class="header-btn" onclick="openResumeModal()">Resume</button>
