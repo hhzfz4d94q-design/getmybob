@@ -259,7 +259,7 @@
 
 <header>
   <h1>Jobs for Ishika Arora</h1>
-  <div class="sub">Awaiting resume upload — click Resume to get started · Generated 2026-05-21 16:43</div>
+  <div class="sub">Awaiting resume upload — click Resume to get started · Generated 2026-05-21 16:55</div>
   <div class="header-actions">
     <button class="header-btn" onclick="window.location.href='/?force=1'" title="Sign out and switch to a different dashboard">Switch user</button>
     <button id="prefs-btn" class="header-btn" onclick="replayTour()" title="Re-open the setup wizard to change your locations, remote pref, and company sizes">Preferences</button>
@@ -270,7 +270,7 @@
   </div>
 </header>
 <div class="stats">
-  <div class="stat"><b>15171</b>Total jobs tracked</div>
+  <div class="stat"><b>15200</b>Total jobs tracked</div>
   <div class="stat"><b>432</b>Senior + Remote (last 7d)</div>
   <div class="stat"><b>0</b>Possible ghost jobs (60d+)</div>
   <div class="stat"><b id="shown-counter">0</b>Showing</div>
@@ -565,7 +565,7 @@ try { localStorage.setItem('gmj_last_user', USER_SLUG); } catch (e) {}
 
 const RECENCY_WINDOW_KEY = 'htj_recency_window_' + USER_SLUG;
 let activeWindow = (function() {
-  try { const v = localStorage.getItem(RECENCY_WINDOW_KEY); return v === null ? '0' : v; } catch (e) { return '0'; }
+  try { const v = localStorage.getItem(RECENCY_WINDOW_KEY); return v === null ? '7' : v; } catch (e) { return '7'; }
 })();
 
 // --- Tracker state (localStorage) -----------------------------------------
@@ -1442,19 +1442,11 @@ function _renderClusterBadges() {
 // salary dropdown so jobs the user explicitly excluded are not shown.
 // ==============================================================
 function applySalaryPrefFromProfile(profile) {
-  if (!profile) return;
-  const sel = document.getElementById('salaryFilter');
-  if (!sel) return;
-  if (profile.hideNoSalary) {
-    sel.value = 'listed';
-  } else if (profile.salaryFloor) {
-    const n = parseInt(profile.salaryFloor, 10);
-    const opts = ['250000','200000','150000','100000'];
-    for (const v of opts) {
-      if (n >= parseInt(v, 10)) { sel.value = v; break; }
-    }
-  }
-  if (typeof filter === 'function') filter();
+  // Intentionally a no-op now: auto-applying salaryFloor was hiding most jobs
+  // (most ATS listings have no listed salary, so the gate filtered to 0).
+  // Users opt in by selecting the salary dropdown themselves; their choice
+  // still syncs to profile.salaryFloor via the change handler.
+  return;
 }
 
 // Save salary choice back to profile so it syncs across devices.
@@ -3058,8 +3050,8 @@ const WIZ_STEPS = [
     title: "How recent should jobs be by default?",
     body: '<p style="margin-bottom:14px;">Older listings are often filled or ghost roles. We will default to this window when you load the dashboard — you can always change it with the pills above the job feed.</p>' +
       '<div style="display:flex;flex-direction:column;gap:8px;">' +
-        '<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #d0d4dc;border-radius:8px;cursor:pointer;"><input type="radio" name="wiz-recency" value="0" checked style="cursor:pointer;"> <span><strong>Last 24 hours</strong> &mdash; only show roles posted today</span></label>' +
-        '<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #d0d4dc;border-radius:8px;cursor:pointer;"><input type="radio" name="wiz-recency" value="7" style="cursor:pointer;"> <span><strong>Last 7 days</strong> &mdash; freshest listings, best signal of active hiring</span></label>' +
+        '<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #d0d4dc;border-radius:8px;cursor:pointer;"><input type="radio" name="wiz-recency" value="0" style="cursor:pointer;"> <span><strong>Last 24 hours</strong> &mdash; only show roles posted today</span></label>' +
+        '<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #d0d4dc;border-radius:8px;cursor:pointer;"><input type="radio" name="wiz-recency" value="7" checked style="cursor:pointer;"> <span><strong>Last 7 days</strong> &mdash; freshest listings, best signal of active hiring</span></label>' +
         '<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #d0d4dc;border-radius:8px;cursor:pointer;"><input type="radio" name="wiz-recency" value="14" style="cursor:pointer;"> <span><strong>Last 2 weeks</strong> &mdash; balance freshness with broader pool</span></label>' +
         '<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #d0d4dc;border-radius:8px;cursor:pointer;"><input type="radio" name="wiz-recency" value="30" style="cursor:pointer;"> <span><strong>Last 30 days</strong> &mdash; widest reasonable pool</span></label>' +
         '<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #d0d4dc;border-radius:8px;cursor:pointer;"><input type="radio" name="wiz-recency" value="all" style="cursor:pointer;"> <span><strong>All jobs</strong> &mdash; show everything, sort handles freshness</span></label>' +
