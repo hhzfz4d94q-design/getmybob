@@ -600,9 +600,8 @@ ${rawText}`;
 }
 
 // --- /refresh — trigger GitHub Action ----------------------------------
-async function handleRefresh(request, env, cors) {
-  if (request.method !== 'POST') return new Response('POST only', { status: 405, headers: cors });
-  if (!env.GH_REPO_TOKEN) return Response.json({ error: 'Worker missing GH_REPO_TOKEN secret' }, { status: 500, headers: cors });
+async function triggerRefreshWorkflow(env) {
+  if (!env.GH_REPO_TOKEN) return { ok: false, error: 'GH_REPO_TOKEN missing' };
   const r = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/actions/workflows/${GH_WORKFLOW}/dispatches`, {
     method: 'POST',
     headers: {
@@ -612,9 +611,16 @@ async function handleRefresh(request, env, cors) {
     },
     body: JSON.stringify({ ref: 'main' }),
   });
-  if (r.status === 204) return Response.json({ status: 'triggered' }, { headers: cors });
-  const errText = await r.text();
-  return Response.json({ error: 'GitHub API error', status: r.status, details: errText }, { status: 502, headers: cors });
+  if (r.status === 204) return { ok: true };
+  const errText = await r.text().catch(() => '');
+  return { ok: false, status: r.status, details: errText };
+}
+async function handleRefresh(request, env, cors) {
+  if (request.method !== 'POST') return new Response('POST only', { status: 405, headers: cors });
+  const res = await triggerRefreshWorkflow(env);
+  if (res.ok) return Response.json({ status: 'triggered' }, { headers: cors });
+  if (res.error === 'GH_REPO_TOKEN missing') return Response.json({ error: 'Worker missing GH_REPO_TOKEN secret' }, { status: 500, headers: cors });
+  return Response.json({ error: 'GitHub API error', status: res.status, details: res.details }, { status: 502, headers: cors });
 }
 
 // --- /prep -------------------------------------------------------------
@@ -1307,7 +1313,16 @@ async function handleSignup(request, env, cors) {
   await writeUsersList(env, users);
 
   const { token, expiresAt } = await createSession(env, slug);
-  return _json({ ok: true, token, expiresAt, slug, name, email, editKey: (await env.RESUMES.get(uk(slug, 'edit_key'))) || null }, 200, cors);
+  // Slice D follow-up: kick off the GitHub Action that builds dashboards so
+  // this new user's <slug>.html is generated on the next run instead of
+  // waiting up to 6 hours for the scheduled cron.
+  try {
+    if (typeof triggerRefreshWorkflow === 'function') {
+      // No await — let it run in the background, sign-up returns immediately.
+      triggerRefreshWorkflow(env).catch(() => {});
+    }
+  } catch (e) { /* ignore */ }
+  return _json({ ok: true, token, expiresAt, slug, name, email, editKey: (await env.RESUMES.get(uk(slug, 'edit_key'))) || null, dashboardBuilding: true }, 200, cors);
 }
 
 // POST /api/auth/login  { email, password }

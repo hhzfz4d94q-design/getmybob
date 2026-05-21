@@ -96,9 +96,29 @@ function showErr(msg) {
   document.getElementById('errMsg').textContent = msg;
 }
 
-function showPrepare() {
+function showPrepare(slug) {
   document.getElementById('loadingCard').style.display = 'none';
   document.getElementById('prepareCard').style.display = '';
+  // Auto-poll every 15s for the dashboard to appear, up to ~6 minutes
+  let attempts = 0;
+  const POLL_MS = 15000;
+  const MAX_ATTEMPTS = 25;
+  const statusEl = document.createElement('div');
+  statusEl.style.cssText = 'margin-top:14px;font-size:13px;color:#666;';
+  statusEl.textContent = 'Checking every 15 seconds…';
+  const card = document.getElementById('prepareCard');
+  if (card) card.appendChild(statusEl);
+  const tick = async () => {
+    attempts += 1;
+    statusEl.textContent = 'Checked ' + attempts + ' time' + (attempts === 1 ? '' : 's') + '. Will keep checking…';
+    try {
+      const r = await fetch('/' + slug + '.html?t=' + Date.now(), { method: 'HEAD', cache: 'no-store' });
+      if (r.ok) { location.replace('/' + slug + '.html'); return; }
+    } catch(e) { /* ignore */ }
+    if (attempts < MAX_ATTEMPTS) setTimeout(tick, POLL_MS);
+    else statusEl.textContent = 'Build is taking longer than usual. Try Refresh now in a minute.';
+  };
+  setTimeout(tick, POLL_MS);
 }
 
 (async function init() {
@@ -126,7 +146,7 @@ function showPrepare() {
       location.replace('/' + j.slug + '.html');
       return;
     }
-    showPrepare();
+    showPrepare(j.slug);
   } catch (e) {
     showErr(e && e.message ? e.message : String(e));
   }
