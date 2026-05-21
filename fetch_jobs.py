@@ -3200,6 +3200,7 @@ function sortCards() {{
 function setWindow(btn, w) {{
   activeWindow = String(w);
   try {{ localStorage.setItem(RECENCY_WINDOW_KEY, String(w)); }} catch (e) {{}}
+  try {{ pushPrefToProfile("recencyWindow", String(w)); }} catch (e) {{}}
   // Only toggle time-window pills (don't touch View / Type pills)
   document.querySelectorAll('[data-window]').forEach(p => p.classList.remove('active'));
   if (btn) btn.classList.add('active');
@@ -3284,6 +3285,58 @@ if (window.pdfjsLib) {{
 
 let _pendingUploadFile = null;
 
+// --- Cross-device preference sync ---------------------------------------
+// dailyTarget / recencyWindow / defaultSort live in localStorage for fast UI
+// access, but we also mirror them to skills_profile via patchFields so the
+// user's choices follow them between Chrome / Safari / mobile.
+//
+// On boot we GET /skills-profile and, if any of these fields are present on
+// the server, copy them down into localStorage (server wins on tie). Then
+// every time the user changes one, we POST patchFields to push it up.
+async function hydratePrefsFromProfile() {{
+  try {{
+    const r = await fetch(WORKER_BASE + "/skills-profile" + USER_QS);
+    if (!r.ok) return;
+    const data = await r.json().catch(function() {{ return {{}}; }});
+    const profile = (data && data.profile) || {{}};
+    let touched = false;
+    if (profile && profile.dailyTarget != null) {{
+      const n = parseInt(profile.dailyTarget, 10);
+      if (!isNaN(n) && n > 0 && n < 100) {{
+        try {{ localStorage.setItem(DAILY_TARGET_KEY, String(n)); touched = true; }} catch (e) {{}}
+      }}
+    }}
+    if (profile && typeof profile.recencyWindow === 'string' && profile.recencyWindow) {{
+      try {{
+        localStorage.setItem(RECENCY_WINDOW_KEY, profile.recencyWindow);
+        activeWindow = String(profile.recencyWindow);
+        touched = true;
+      }} catch (e) {{}}
+    }}
+    if (touched) {{
+      try {{ _restoreRecencyWindow(); }} catch (e) {{}}
+      try {{ refreshDailyGoalWidget(); }} catch (e) {{}}
+    }}
+  }} catch (e) {{ /* non-fatal: localStorage still works */ }}
+}}
+
+// Push a single scalar pref up to the user's skills_profile. Best-effort:
+// silently swallow auth/network errors so the local UX is never blocked.
+async function pushPrefToProfile(field, value) {{
+  try {{
+    const editKey = (typeof getEditKey === "function")
+      ? localStorage.getItem("htj_resume_key_" + USER_SLUG) || localStorage.getItem("htj_resume_key")
+      : null;
+    if (!editKey) return;  // not logged in yet; localStorage still works
+    const patch = {{}}; patch[field] = value;
+    await fetch(WORKER_BASE + "/skills-profile" + USER_QS, {{
+      method: "POST",
+      headers: {{ "Content-Type": "application/json", "X-Edit-Key": editKey }},
+      body: JSON.stringify({{ patchFields: patch }})
+    }});
+  }} catch (e) {{ /* non-fatal */ }}
+}}
+
 // On first visit via invite link, the password is in the URL as ?key=XXX.
 // Capture it, store to localStorage, then strip from URL so it isn't visible later.
 (function bootstrapDailyWidget() {{
@@ -3291,6 +3344,9 @@ let _pendingUploadFile = null;
     try {{ refreshDailyGoalWidget(); }} catch (e) {{}}
     try {{ promptPendingApplies(); }} catch (e) {{}}
     try {{ _restoreRecencyWindow(); }} catch (e) {{}}
+    // Pull cross-device prefs from the server; happens async, will re-render
+    // the widget + recency pills once it lands.
+    try {{ hydratePrefsFromProfile(); }} catch (e) {{}}
   }}
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
   else run();
@@ -5356,6 +5412,7 @@ function wizMixOnNum(key) {{
         const val = picked ? picked.value : "7";
         const statusEl = document.getElementById("wiz-recency-status");
         try {{ localStorage.setItem(RECENCY_WINDOW_KEY, val); }} catch (e) {{}}
+        try {{ pushPrefToProfile("recencyWindow", String(val)); }} catch (e) {{}}
         // Also apply immediately if the user is viewing the dashboard
         try {{
           activeWindow = String(val);
@@ -5375,6 +5432,7 @@ function wizMixOnNum(key) {{
         if (isNaN(n) || n < 1) n = 5;
         if (n > 50) n = 50;
         try {{ localStorage.setItem(DAILY_TARGET_KEY, String(n)); }} catch (e) {{}}
+        try {{ pushPrefToProfile("dailyTarget", n); }} catch (e) {{}}
         if (statusEl) {{ statusEl.style.color = "#0a6b3a"; statusEl.textContent = "Saved: " + n + "/day"; }}
         setTimeout(function() {{
           if (window._wizExitAfterSave) {{ window._wizExitAfterSave = false; wizFinish(); }}
