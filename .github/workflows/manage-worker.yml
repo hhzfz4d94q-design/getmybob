@@ -100,17 +100,6 @@ jobs:
           python3 -c "import json; d=json.load(open('/tmp/activate.json')); assert d.get('success'), d; print('Version activated — live now.')"
 
 
-      - name: Dump geetu profile (one-shot diag)
-        if: steps.mode.outputs.value == 'deploy'
-        run: |
-          curl -sS "https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/skills-profile?user=geetu" \
-            -o PROFILE_DUMP.json || echo "{}" > PROFILE_DUMP.json
-          git config user.email "actions-bot@getmemyjob.local"
-          git config user.name "Diag bot"
-          git add PROFILE_DUMP.json
-          git commit -m "diag: profile dump" || echo "no diff"
-          git push || true
-
       - name: Commit dumped source (dump mode only)
         if: steps.mode.outputs.value == 'dump'
         run: |

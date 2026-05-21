@@ -2976,7 +2976,7 @@ const WIZ_STEPS = [
       '<div id="wiz-chip-status" style="font-size:12px;color:#888;margin-bottom:8px;min-height:16px;">Loading your profile…</div>' +
       '<div data-field="targetTitles" class="wiz-chip-section" style="margin-bottom:14px;">' +
         '<div class="wiz-chip-label" style="font-size:11px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:6px;">Target titles <span style="font-weight:400;color:#888;">&mdash; the job titles you actually want (this drives matching the most)</span></div>' +
-        '<div class="wiz-chip-list" data-target="targetTitles" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px;min-height:28px;"></div>' +
+        '<div class="wiz-chip-list" id="wiz-chips-targetTitles" data-target="targetTitles" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px;min-height:28px;"></div>' +
         '<div style="display:flex;gap:6px;">' +
           '<input class="wiz-chip-input" data-target="targetTitles" type="text" placeholder="Add a target title… (Enter)" style="flex:1;padding:6px 10px;border:1px solid #d0d4dc;border-radius:6px;font-size:12.5px;">' +
         '</div>' +
@@ -3211,7 +3211,7 @@ function replayTour() { wizCurrent = 0; wizShow(); }
 
 // --- Wizard inline chip editor (Industries / Keywords / Specialties) -----
 const WIZ_CHIP_FIELDS = ["targetTitles", "industries", "keywords", "specialties"];
-let _wizChipState = { industries: [], keywords: [], specialties: [] };
+let _wizChipState = { targetTitles: [], industries: [], keywords: [], specialties: [] };
 let _wizChipLoaded = false;
 
 function _renderWizChipsFor(field) {
