@@ -1321,6 +1321,103 @@ def _has_positive_theme(title, profile):
     return False
 
 
+# ============================================================
+# F3: Seniority rank — maps a job title and a user's seniorityLevel
+# to a 0..5 rank. Higher = more senior. Used to filter out jobs below
+# the user's level.
+# ============================================================
+def _job_seniority_rank(title):
+    t = (title or "").lower()
+    if re.search(r"\b(ceo|cto|cio|coo|ciso|cpo|cdo|cfo|chief|founder|co-founder)\b", t):
+        return 5
+    if re.search(r"\b(svp|evp|senior vice president|executive vice president|vp|vice president)\b", t):
+        return 4
+    if re.search(r"\b(director|head of|managing director|general manager|gm)\b", t):
+        return 3
+    if re.search(r"\b(principal|staff|senior|sr|lead|architect)\b", t):
+        return 2
+    if re.search(r"\b(manager)\b", t):
+        return 1
+    return 0
+
+
+def _user_min_seniority_rank(profile):
+    if not profile:
+        return 0
+    sl = (profile.get("seniorityLevel") or "").lower()
+    pr = (profile.get("primaryRole") or "").lower()
+    blob = sl + " " + pr
+    if not blob.strip():
+        return 0
+    # Use word-boundary regex (not substring) so "director" doesn't match "cto"
+    def _has(*terms):
+        for t in terms:
+            if re.search(r"\b" + re.escape(t) + r"\b", blob):
+                return True
+        return False
+    if _has("ceo", "cto", "cio", "coo", "ciso", "cpo", "cdo", "cfo", "chief", "founder"):
+        return 4   # one level below their listed (Chief) - show VPs too
+    if _has("vp", "vice president", "svp", "evp"):
+        return 3   # VPs see Director+ ; cuts the Manager/Senior IC noise
+    if _has("director", "head of", "principal", "managing director"):
+        return 2   # Directors see Senior+ titles
+    if _has("senior", "sr", "staff", "lead"):
+        return 1   # Seniors see Manager+
+    return 0
+
+
+# ============================================================
+# F4: Salary filter helpers
+# ============================================================
+def _passes_salary_filter(salary_str, salary_max_parsed, profile):
+    """Return True if this row should pass the salary gate based on user prefs.
+    profile.salaryFloor (number) — hide jobs below this
+    profile.hideNoSalary (bool)  — hide jobs whose salary_range is empty
+    Empty strings/None disable the filter.
+    """
+    if not profile:
+        return True
+    hide_no_sal = bool(profile.get("hideNoSalary"))
+    floor = profile.get("salaryFloor")
+    try:
+        floor_n = int(float(floor)) if floor else 0
+    except (TypeError, ValueError):
+        floor_n = 0
+    has_salary = bool((salary_str or "").strip())
+    if hide_no_sal and not has_salary:
+        return False
+    if floor_n and has_salary and salary_max_parsed and salary_max_parsed < floor_n:
+        return False
+    return True
+
+
+# ============================================================
+# F1: Negative-title filter (server side mirror of user dismissals)
+# ============================================================
+def _matches_negative_title(title, profile):
+    """Return True if the title matches any of the user's negativeTitles
+    (subset-of-tokens match, prefix-aware, same as _matches_user_role)."""
+    if not title or not profile:
+        return False
+    neg = profile.get("negativeTitles") or []
+    if not neg:
+        return False
+    title_l = title.lower()
+    title_tokens = set(re.findall(r"[a-z]+", title_l))
+    if not title_tokens:
+        return False
+    for nt in neg:
+        nt_l = (nt or "").lower().strip()
+        if len(nt_l) < 3:
+            continue
+        nt_tokens = set(re.findall(r"[a-z]+", nt_l)) - _ROLE_STOPWORDS
+        if not nt_tokens:
+            continue
+        if all(_token_matches(t, title_tokens) for t in nt_tokens):
+            return True
+    return False
+
+
 def _normalize_title(title):
     """Lowercase, strip stop words, then concatenate alphanumerics so minor wording
     differences ('Director of Product' vs 'Director, Product') collapse to the same hash."""
@@ -1967,6 +2064,7 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         title = r[2]
         company = (r[1] or "").strip().lower()
         senior_flag = r[10]
+        salary_str = r[13]
         job_inds = (r[15] or "").split(",") if r[15] else []
 
         # Universal hard-exclude: bank back-office, IC engineers, pre-sales
@@ -1975,6 +2073,22 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         # is killed even when Wells is in the user's targetCompanies list.
         if _is_never_relevant(title):
             return False
+
+        # F1: user dismissed similar titles before — hide.
+        if SKILLS_PROFILE and _matches_negative_title(title, SKILLS_PROFILE):
+            return False
+
+        # F3: seniority floor — hide jobs below the user's listed seniority.
+        if SKILLS_PROFILE:
+            min_rank = _user_min_seniority_rank(SKILLS_PROFILE)
+            if min_rank > 0 and _job_seniority_rank(title) < min_rank:
+                return False
+
+        # F4: salary floor + must-list-pay (only when user opted in).
+        if SKILLS_PROFILE:
+            smax = _parse_salary_max(salary_str)
+            if not _passes_salary_filter(salary_str, smax, SKILLS_PROFILE):
+                return False
 
         # Hard-filter by company-size preference when the user has selected
         # only some sizes. If size is unknown (untagged company), let it
@@ -2066,6 +2180,49 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         f"SELECT COUNT(*) FROM jobs WHERE julianday(last_seen) - julianday(first_seen) > {GHOST_DAYS}"
     ).fetchone()[0]
 
+    # F5: cross-company cluster — group by normalized title and stash a
+    # list of *other* companies sharing the same title so the card can
+    # render an "Also at X, Y, Z" badge.
+    _xc_by_norm = {}
+    for r in rows:
+        key = _normalize_title(r[2] or "")
+        if not key: continue
+        cname = (r[1] or "").strip()
+        if not cname: continue
+        _xc_by_norm.setdefault(key, []).append(cname)
+    # Dedup company names per key (preserve first-seen order)
+    for k, lst in list(_xc_by_norm.items()):
+        seen = set(); uniq = []
+        for c in lst:
+            cl = c.lower()
+            if cl in seen: continue
+            seen.add(cl); uniq.append(c)
+        _xc_by_norm[k] = uniq
+
+    # F5: pre-compute "why matched" per row.
+    def _why_matched(r):
+        if not SKILLS_PROFILE: return ""
+        title = r[2] or ""; company = (r[1] or "").strip()
+        title_tokens = set(re.findall(r"[a-z]+", title.lower()))
+        reasons = []
+        for tt in (SKILLS_PROFILE.get("targetTitles") or []):
+            tt_tokens = set(re.findall(r"[a-z]+", (tt or "").lower())) - _ROLE_STOPWORDS
+            if tt_tokens and all(_token_matches(t, title_tokens) for t in tt_tokens):
+                reasons.append(f"matches your target title â{tt}â")
+                break
+        if not reasons:
+            primary = (SKILLS_PROFILE.get("primaryRole") or "")
+            if primary:
+                reasons.append(f"matches your role â{primary}â")
+        tcompanies = {c.get("name","").lower() for c in (SKILLS_PROFILE.get("targetCompanies") or [])}
+        if company and company.lower() in tcompanies:
+            reasons.append(f"{company} is on your target-companies list")
+        job_inds = (r[15] or "").split(",") if r[15] else []
+        ind_overlap = list(_industry_tokens(job_inds) & _industry_tokens(SKILLS_PROFILE.get("industries") or []))
+        if ind_overlap:
+            reasons.append("industry overlap: " + ", ".join(ind_overlap[:3]))
+        return " â¢ ".join(reasons) if reasons else "passed default gates"
+
     cards = []
     for r in rows:
         (fp, company, title, loc, url, posted_at, first_seen, last_seen,
@@ -2092,8 +2249,13 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         salary_html = f'<div class="salary-row"><span class="salary">{_esc(salary)}</span></div>' if salary else ''
 
         _is_recr = 1 if (company or "").strip().lower() in _recruiter_names else 0
+        _why = _why_matched(r)
+        _norm_key = _normalize_title(title or "")
+        _xc_others = [c for c in _xc_by_norm.get(_norm_key, []) if c.lower() != (company or "").lower()]
+        _xc_count = len(_xc_others)
+        _xc_label = ", ".join(_xc_others[:4]) + (f" +{_xc_count - 4} more" if _xc_count > 4 else "")
         cards.append(f"""
-        <div class="card" data-fp="{fp}" data-score="{score}" data-senior="{senior}" data-remote="{remote}" data-employment="{emp}" data-listed-days="{listed_days if listed_days is not None else 9999}" data-salary-max="{salary_max}" data-last-seen="{last_seen or ''}" data-first-seen="{first_seen or ''}" data-recruiter="{_is_recr}">
+        <div class="card" data-fp="{fp}" data-score="{score}" data-senior="{senior}" data-remote="{remote}" data-employment="{emp}" data-listed-days="{listed_days if listed_days is not None else 9999}" data-salary-max="{salary_max}" data-last-seen="{last_seen or ''}" data-first-seen="{first_seen or ''}" data-recruiter="{_is_recr}" data-why="{_esc(_why)}" data-cluster-count="{_xc_count}" data-cluster-companies="{_esc(_xc_label)}" data-title-norm="{_norm_key}">
           <div class="row1">
             <div class="title"><a href="{url}" target="_blank">{_esc(title)}</a></div>
             <div class="score">{score}</div>
@@ -2110,6 +2272,8 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
             <button class="btn primary" onclick="applyAndOpen('{fp}', this, '{url}')">Apply now &rarr;</button>
             <button class="btn ghost-btn" onclick="prepApplication('{fp}', this)">Prep materials</button>
             <button class="btn track" onclick="cycleStatus('{fp}', this)" data-status-for="{fp}">Mark Applied</button>
+            <button class="btn ghost-btn small" onclick="showWhyMatched('{fp}', this)" title="Why was this shown?">Why?</button>
+            <button class="btn ghost-btn small dismiss" onclick="dismissJob('{fp}', this)" title="Not for me â hide and learn">Ã</button>
           </div>
         </div>""")
 
@@ -3471,6 +3635,8 @@ async function hydratePrefsFromProfile() {{
       try {{ _restoreRecencyWindow(); }} catch (e) {{}}
       try {{ refreshDailyGoalWidget(); }} catch (e) {{}}
     }}
+    // F4: apply salaryFloor / hideNoSalary from profile to the dropdown
+    try {{ applySalaryPrefFromProfile(profile); }} catch (e) {{}}
   }} catch (e) {{ /* non-fatal: localStorage still works */ }}
 }}
 
@@ -3491,6 +3657,257 @@ async function pushPrefToProfile(field, value) {{
   }} catch (e) {{ /* non-fatal */ }}
 }}
 
+// ==============================================================
+// F1: Not-for-me dismiss + pattern learning
+// ==============================================================
+const DISMISSED_KEY = 'htj_dismissed_' + USER_SLUG;
+const DISMISSED_SIG_KEY = 'htj_dismissed_signals_' + USER_SLUG;
+
+function _loadDismissedSet() {{
+  try {{ return new Set(JSON.parse(localStorage.getItem(DISMISSED_KEY) || '[]')); }}
+  catch (e) {{ return new Set(); }}
+}}
+function _saveDismissedSet(set) {{
+  try {{ localStorage.setItem(DISMISSED_KEY, JSON.stringify(Array.from(set).slice(-500))); }} catch (e) {{}}
+}}
+function _loadDismissedSignals() {{
+  try {{ return JSON.parse(localStorage.getItem(DISMISSED_SIG_KEY) || '[]'); }}
+  catch (e) {{ return []; }}
+}}
+function _saveDismissedSignals(arr) {{
+  try {{ localStorage.setItem(DISMISSED_SIG_KEY, JSON.stringify(arr.slice(-200))); }} catch (e) {{}}
+}}
+
+function dismissJob(fp, btn) {{
+  const card = btn && btn.closest('.card');
+  if (!card) return;
+  const set = _loadDismissedSet();
+  set.add(fp);
+  _saveDismissedSet(set);
+  const signals = _loadDismissedSignals();
+  signals.push({{
+    fp: fp,
+    title: card.querySelector('.title') ? card.querySelector('.title').innerText.trim() : '',
+    company: card.querySelector('.company') ? card.querySelector('.company').innerText.trim() : '',
+    norm: card.getAttribute('data-title-norm') || '',
+    ts: Date.now()
+  }});
+  _saveDismissedSignals(signals);
+  card.style.transition = 'opacity 200ms';
+  card.style.opacity = '0';
+  setTimeout(function() {{ card.style.display = 'none'; }}, 220);
+  // After every 5 dismissals, scan for patterns the user keeps rejecting.
+  if (signals.length > 0 && signals.length % 5 === 0) {{
+    setTimeout(_suggestBlocklistFromDismissals, 600);
+  }}
+}}
+
+function _suggestBlocklistFromDismissals() {{
+  const signals = _loadDismissedSignals();
+  // Count first-2-word title prefix occurrences
+  const counts = {{}};
+  signals.forEach(function(s) {{
+    const t = (s.title || '').toLowerCase().split(/[\s,\-]+/).filter(Boolean);
+    if (t.length < 2) return;
+    const key = t.slice(0, 2).join(' ');
+    counts[key] = (counts[key] || 0) + 1;
+  }});
+  // Find prefix with >=3 hits that isn't already in negativeTitles
+  const candidates = Object.entries(counts).filter(function(kv) {{ return kv[1] >= 3; }})
+    .sort(function(a, b) {{ return b[1] - a[1]; }});
+  if (!candidates.length) return;
+  const [phrase, count] = candidates[0];
+  if (sessionStorage.getItem('htj_dismissed_offer_' + phrase)) return;
+  sessionStorage.setItem('htj_dismissed_offer_' + phrase, '1');
+  const banner = document.createElement('div');
+  banner.style.cssText = 'position:fixed;bottom:18px;right:18px;background:#fffbe6;border:1px solid #f0c14b;border-radius:8px;padding:14px 16px;max-width:340px;z-index:9999;box-shadow:0 2px 8px rgba(0,0,0,0.18);font-size:13px;';
+  banner.innerHTML = '<strong>Pattern detected:</strong> You\'ve dismissed <strong>' + count + '</strong> jobs starting with \"' + phrase + '\". Want to permanently hide jobs whose title starts with \"' + phrase + '\"?<br><br>' +
+    '<button class="btn primary" style="margin-right:8px;" onclick="_acceptBlocklist(\''+phrase.replace(/\'/g,"\\'")+'\', this)">Yes, hide these</button>' +
+    '<button class="btn ghost-btn" onclick="this.parentElement.remove()">No thanks</button>';
+  document.body.appendChild(banner);
+}}
+
+async function _acceptBlocklist(phrase, btn) {{
+  // Append to user profile.negativeTitles and push via patchFields
+  try {{
+    const r = await fetch(WORKER_BASE + '/skills-profile' + USER_QS);
+    const data = await r.json().catch(function() {{ return {{}}; }});
+    const cur = ((data && data.profile && data.profile.negativeTitles) || []).slice();
+    if (!cur.includes(phrase)) cur.push(phrase);
+    await pushPrefToProfile('negativeTitles', cur);
+    if (btn && btn.parentElement) btn.parentElement.innerHTML = '<em style="color:#0a6b3a;">Saved. \"' + phrase + '\" will be hidden after the next refresh.</em>';
+  }} catch (e) {{ alert('Could not save \u2014 try again.'); }}
+}}
+
+function _hideDismissedCards() {{
+  const set = _loadDismissedSet();
+  if (!set.size) return;
+  document.querySelectorAll('.card[data-fp]').forEach(function(c) {{
+    if (set.has(c.getAttribute('data-fp'))) c.style.display = 'none';
+  }});
+}}
+
+// ==============================================================
+// F5: Why-was-this-shown tooltip + cross-company cluster badge
+// ==============================================================
+function showWhyMatched(fp, btn) {{
+  const card = btn && btn.closest('.card');
+  if (!card) return;
+  const why = card.getAttribute('data-why') || 'No explanation available.';
+  // Toggle existing
+  const existing = card.querySelector('.why-tooltip');
+  if (existing) {{ existing.remove(); return; }}
+  const tip = document.createElement('div');
+  tip.className = 'why-tooltip';
+  tip.style.cssText = 'margin-top:8px;padding:8px 10px;background:#f4f6fb;border-left:3px solid #5C5CD6;border-radius:4px;font-size:12px;color:#444;line-height:1.5;';
+  tip.textContent = 'Matched because: ' + why;
+  card.appendChild(tip);
+}}
+
+function _renderClusterBadges() {{
+  document.querySelectorAll('.card[data-cluster-count]').forEach(function(c) {{
+    const n = parseInt(c.getAttribute('data-cluster-count') || '0', 10);
+    if (n < 1) return;
+    const names = c.getAttribute('data-cluster-companies') || '';
+    if (c.querySelector('.cluster-badge')) return;  // already rendered
+    const badgesRow = c.querySelector('[data-badges]');
+    if (!badgesRow) return;
+    const b = document.createElement('span');
+    b.className = 'b cluster-badge';
+    b.style.cssText = 'background:#eef2ff;color:#3b3f8a;border:1px solid #c7d2fe;';
+    b.title = 'Also hiring this role: ' + names;
+    b.textContent = 'Also at ' + n + ' other employer' + (n === 1 ? '' : 's');
+    badgesRow.appendChild(document.createTextNode(' '));
+    badgesRow.appendChild(b);
+  }});
+}}
+
+// ==============================================================
+// F4: Apply salaryFloor / hideNoSalary from profile into the existing
+// salary dropdown so jobs the user explicitly excluded are not shown.
+// ==============================================================
+function applySalaryPrefFromProfile(profile) {{
+  if (!profile) return;
+  const sel = document.getElementById('salaryFilter');
+  if (!sel) return;
+  if (profile.hideNoSalary) {{
+    sel.value = 'listed';
+  }} else if (profile.salaryFloor) {{
+    const n = parseInt(profile.salaryFloor, 10);
+    const opts = ['250000','200000','150000','100000'];
+    for (const v of opts) {{
+      if (n >= parseInt(v, 10)) {{ sel.value = v; break; }}
+    }}
+  }}
+  if (typeof filter === 'function') filter();
+}}
+
+// Save salary choice back to profile so it syncs across devices.
+(function _hookSalarySync() {{
+  function run() {{
+    const sel = document.getElementById('salaryFilter');
+    if (!sel) return;
+    sel.addEventListener('change', function() {{
+      const v = sel.value;
+      if (v === 'listed') {{
+        pushPrefToProfile('hideNoSalary', true);
+        pushPrefToProfile('salaryFloor', 0);
+      }} else if (v && /^\d+$/.test(v)) {{
+        pushPrefToProfile('hideNoSalary', false);
+        pushPrefToProfile('salaryFloor', parseInt(v, 10));
+      }} else {{
+        pushPrefToProfile('hideNoSalary', false);
+        pushPrefToProfile('salaryFloor', 0);
+      }}
+    }});
+  }}
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
+  else run();
+}})();
+
+// ==============================================================
+// F2: AI re-rank the visible cards (Claude Haiku via Worker /rerank-titles)
+// ==============================================================
+const RERANK_CACHE_KEY = 'htj_ai_rerank_' + USER_SLUG;
+const RERANK_TTL_MS = 24 * 60 * 60 * 1000;
+
+function _loadRerankCache() {{
+  try {{
+    const raw = JSON.parse(localStorage.getItem(RERANK_CACHE_KEY) || '{{}}');
+    const now = Date.now();
+    const out = {{}};
+    for (const [fp, v] of Object.entries(raw)) {{
+      if (v && v.ts && (now - v.ts) < RERANK_TTL_MS) out[fp] = v;
+    }}
+    return out;
+  }} catch (e) {{ return {{}}; }}
+}}
+function _saveRerankCache(cache) {{
+  try {{ localStorage.setItem(RERANK_CACHE_KEY, JSON.stringify(cache)); }} catch (e) {{}}
+}}
+
+async function aiRerankCards() {{
+  // Disabled if user explicitly turned it off
+  if (localStorage.getItem('htj_ai_rerank_off_' + USER_SLUG) === '1') return;
+  const cards = Array.from(document.querySelectorAll('.card[data-fp]'));
+  if (!cards.length) return;
+  const cache = _loadRerankCache();
+  const need = [];
+  cards.forEach(function(c) {{
+    if (c.style.display === 'none') return;
+    const fp = c.getAttribute('data-fp');
+    if (!fp) return;
+    if (cache[fp]) {{ _applyAiScore(c, cache[fp].score); return; }}
+    const titleEl = c.querySelector('.title a, .title');
+    const title = titleEl ? titleEl.innerText.trim() : '';
+    if (title) need.push({{fp: fp, title: title}});
+  }});
+  if (cache && Object.keys(cache).length) {{ _resortByAiScore(); }}
+  if (!need.length) return;
+  // Batch in chunks of 40 to keep prompt size sane
+  const batches = [];
+  for (let i = 0; i < need.length; i += 40) batches.push(need.slice(i, i + 40));
+  for (const batch of batches) {{
+    try {{
+      const r = await fetch(WORKER_BASE + '/rerank-titles' + USER_QS, {{
+        method: 'POST',
+        headers: {{'Content-Type': 'application/json'}},
+        body: JSON.stringify({{items: batch}})
+      }});
+      if (!r.ok) continue;
+      const data = await r.json().catch(function() {{ return {{}}; }});
+      const scores = (data && data.scores) || {{}};
+      for (const [fp, score] of Object.entries(scores)) {{
+        cache[fp] = {{score: score, ts: Date.now()}};
+        const c = document.querySelector('.card[data-fp="' + fp + '"]');
+        if (c) _applyAiScore(c, score);
+      }}
+      _saveRerankCache(cache);
+      _resortByAiScore();
+    }} catch (e) {{ /* network blip, skip batch */ }}
+  }}
+}}
+
+function _applyAiScore(card, score) {{
+  const scoreEl = card.querySelector('.score');
+  if (!scoreEl) return;
+  card.setAttribute('data-ai-score', String(score));
+  scoreEl.textContent = String(score);
+  scoreEl.title = 'AI fit score (' + score + '/100)';
+}}
+
+function _resortByAiScore() {{
+  const grid = document.getElementById('grid');
+  if (!grid) return;
+  const cards = Array.from(grid.querySelectorAll('.card[data-fp]'));
+  cards.sort(function(a, b) {{
+    const sa = parseInt(a.getAttribute('data-ai-score') || a.getAttribute('data-score') || '0', 10);
+    const sb = parseInt(b.getAttribute('data-ai-score') || b.getAttribute('data-score') || '0', 10);
+    return sb - sa;
+  }});
+  cards.forEach(function(c) {{ grid.appendChild(c); }});
+}}
+
 // On first visit via invite link, the password is in the URL as ?key=XXX.
 // Capture it, store to localStorage, then strip from URL so it isn't visible later.
 (function bootstrapDailyWidget() {{
@@ -3501,6 +3918,12 @@ async function pushPrefToProfile(field, value) {{
     // Pull cross-device prefs from the server; happens async, will re-render
     // the widget + recency pills once it lands.
     try {{ hydratePrefsFromProfile(); }} catch (e) {{}}
+    // F1: hide jobs the user has already dismissed in this browser.
+    try {{ _hideDismissedCards(); }} catch (e) {{}}
+    // F5: render cross-company "Also at" badges.
+    try {{ _renderClusterBadges(); }} catch (e) {{}}
+    // F2: AI re-rank the visible cards in the background.
+    try {{ aiRerankCards(); }} catch (e) {{}}
   }}
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
   else run();
