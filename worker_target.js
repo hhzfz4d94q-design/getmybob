@@ -47,6 +47,7 @@ export default {
     if (url.pathname === '/api/auth/logout') return handleLogout(request, env, cors);
     if (url.pathname === '/api/auth/me') return handleMe(request, env, cors);
     if (url.pathname === '/api/auth/change-password') return handleChangePassword(request, env, cors);
+    if (url.pathname === '/api/auth/capacity') return handleCapacity(request, env, cors);
 
     // Determine which user this request operates on.
     // Priority: ?user=slug in URL → "user" field in JSON body → DEFAULT_USER
@@ -1293,6 +1294,13 @@ async function handleSignup(request, env, cors) {
 
   await migrateLegacyIfNeeded(env);
   const users = await bootstrapUsersListIfEmpty(env);
+
+  // Alpha cap: 25 self-serve signups. Admin can still add more via /admin/users.
+  const ALPHA_CAP = parseInt(env.ALPHA_CAP || '25', 10);
+  if (users.length >= ALPHA_CAP) {
+    return _json({ error: `Alpha is full (${ALPHA_CAP}/${ALPHA_CAP} spots taken). Email us at hello@officebeatllc.com to join the waitlist.` }, 403, cors);
+  }
+
   const slug = generateSlug(name, users);
 
   const salt = _b64(_randomBytes(16));
@@ -1461,5 +1469,14 @@ async function handleNotes(request, env, cors, slug) {
   }
 
   return _json({ error: 'GET/POST/DELETE only' }, 405, cors);
+}
+
+
+// GET /api/auth/capacity — public; returns { taken, cap, available }
+async function handleCapacity(request, env, cors) {
+  await migrateLegacyIfNeeded(env);
+  const users = await bootstrapUsersListIfEmpty(env);
+  const cap = parseInt(env.ALPHA_CAP || '25', 10);
+  return _json({ taken: users.length, cap, available: Math.max(0, cap - users.length) }, 200, cors);
 }
 

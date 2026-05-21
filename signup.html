@@ -108,6 +108,7 @@
   <div class="auth-card">
     <h1>Create your account</h1>
     <p class="sub">A curated job search, tailored to your skills. Free during alpha.</p>
+    <div id="capacityBadge" style="display:none;font-size:12px;color:var(--navy);background:#EEEEF8;border:1px solid #DCDCEC;border-radius:6px;padding:6px 10px;margin-bottom:14px;text-align:center;font-weight:500;"></div>
 
     <div id="err" class="err" role="alert"></div>
 
@@ -139,6 +140,26 @@
 <script>
 const WORKER = 'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev';
 const TOKEN_KEY = 'gmj_session_token';
+
+// Show how many alpha spots remain
+(async function showCapacity() {
+  try {
+    const r = await fetch(WORKER + '/api/auth/capacity');
+    const j = await r.json();
+    const el = document.getElementById('capacityBadge');
+    if (!el || typeof j.available !== 'number') return;
+    if (j.available === 0) {
+      el.textContent = '🔒 Alpha is full (' + j.taken + '/' + j.cap + ' spots taken)';
+      el.style.color = '#b91c1c'; el.style.background = '#FEF2F2'; el.style.borderColor = '#FECACA';
+    } else if (j.available <= 5) {
+      el.textContent = '⚡ Only ' + j.available + ' of ' + j.cap + ' alpha spots left';
+      el.style.color = '#b45309'; el.style.background = '#FFFBEB'; el.style.borderColor = '#FDE68A';
+    } else {
+      el.textContent = j.available + ' of ' + j.cap + ' alpha spots available';
+    }
+    el.style.display = 'block';
+  } catch (e) { /* ignore */ }
+})();
 
 (async function checkExisting() {
   const tok = localStorage.getItem(TOKEN_KEY);

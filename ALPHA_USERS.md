@@ -16,6 +16,25 @@ The user registry lives in Cloudflare KV (`users:list`). The admin UI at
 2. **Deploy the latest Worker** (Phase 6). It auto-bootstraps
    `users:list` from any existing `user:*:edit_key` keys on first call.
 
+## Self-serve signup (NEW — Slice A/D)
+
+Anyone can create their own account at
+`https://getmemyjob.officebeatllc.com/signup.html`.
+The signup form shows current capacity (e.g. "3 of 25 alpha spots available").
+
+- Cap: **25 alpha users** (set via the `ALPHA_CAP` Worker secret, default 25).
+- 26th+ signup gets a clear "Alpha is full" message with a waitlist email.
+- Admin can still add users beyond the cap via `/admin.html` (which uses the
+  `/admin/users` endpoint, bypassing the public signup limit).
+- New signups get: auto-generated `edit_key`, immediate dashboard build
+  triggered server-side (background GitHub Action), and a session cookie via
+  Bearer token so they're logged in straight away.
+- The `/api/auth/capacity` endpoint returns `{ taken, cap, available }` and is
+  what the signup page polls.
+
+To change the cap: Cloudflare → Worker → Settings → Variables → add
+`ALPHA_CAP` with the new number (string), redeploy via the manage-worker action.
+
 ## Adding a new alpha user
 
 1. Open `https://getmemyjob.officebeatllc.com/admin.html`.
@@ -42,7 +61,7 @@ In the same admin page:
 ## Cost guardrails
 
 - Set a hard monthly cap at https://console.anthropic.com/settings/billing
-  (recommended: $50/month for 5 alpha users).
+  (recommended: **$150–200/month** for the full 25-alpha cap; ~$10–15 per active user/month based on prep + parse usage).
 - Per Prep Application click: ~$0.10–0.20.
 - Per resume upload: ~$0.10 (parse + skills profile generation).
 - KV / Worker / GitHub Pages: still free tier at this volume.
