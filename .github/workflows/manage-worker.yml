@@ -14,7 +14,7 @@ on:
       mode:
         description: 'dump (read current source) or deploy (push worker_target.js)'
         required: true
-        default: 'dump'
+        default: 'deploy'
         type: choice
         options:
           - dump
@@ -39,7 +39,7 @@ jobs:
       - name: Resolve mode
         id: mode
         run: |
-          M="${{ github.event.inputs.mode || github.event.client_payload.mode || 'dump' }}"
+          M="${{ github.event.inputs.mode || github.event.client_payload.mode || 'deploy' }}"
           echo "value=$M" >> "$GITHUB_OUTPUT"
           echo "Running in mode: $M"
 
