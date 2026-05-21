@@ -2380,6 +2380,9 @@ def _esc(s):
 HTML_TEMPLATE = """<!doctype html>
 <html><head><meta charset="utf-8"><title>Jobs for {user_name}</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="theme-color" content="#5C5CD6">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="icon" type="image/png" sizes="256x256" href="favicon.png">
@@ -2637,6 +2640,7 @@ HTML_TEMPLATE = """<!doctype html>
   <h1>Jobs for {user_name}</h1>
   <div class="sub">{subtitle} · Generated {generated}</div>
   <div class="header-actions">
+    <button class="header-btn" onclick="window.location.href='/?force=1'" title="Sign out and switch to a different dashboard">Switch user</button>
     <button id="prefs-btn" class="header-btn" onclick="replayTour()" title="Re-open the setup wizard to change your locations, remote pref, and company sizes">Preferences</button>
     <button id="regen-btn" class="header-btn" onclick="regenerateFromHeader(this)" title="Re-run the AI matcher to refresh your suggested target companies and skills. Takes 30-60 seconds.">Regenerate matches</button>
     <button id="resume-btn" class="header-btn" onclick="openResumeModal()">Resume</button>
@@ -2933,6 +2937,10 @@ HTML_TEMPLATE = """<!doctype html>
 const WORKER_BASE = 'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev';
 const USER_SLUG = '{user_slug}';
 const USER_QS = '?user=' + encodeURIComponent(USER_SLUG);
+
+// Remember this user as the most-recently-used dashboard so the root URL
+// can auto-redirect them here next time.
+try {{ localStorage.setItem('gmj_last_user', USER_SLUG); }} catch (e) {{}}
 
 const RECENCY_WINDOW_KEY = 'htj_recency_window_' + USER_SLUG;
 let activeWindow = (function() {{

@@ -1,0 +1,6 @@
+# Force fresh fetch on every HTML page — prevents Safari/Chrome from serving
+# stale dashboards after a refresh-jobs run.
+/*.html
+  Cache-Control: no-cache, must-revalidate, max-age=0
+/
+  Cache-Control: no-cache, must-revalidate, max-age=0
