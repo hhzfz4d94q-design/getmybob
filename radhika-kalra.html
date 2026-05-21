@@ -256,7 +256,7 @@
 
 <header>
   <h1>Jobs for Radhika KAlra</h1>
-  <div class="sub">Awaiting resume upload — click Resume to get started · Generated 2026-05-21 15:36</div>
+  <div class="sub">Awaiting resume upload — click Resume to get started · Generated 2026-05-21 15:44</div>
   <div class="header-actions">
     <button id="prefs-btn" class="header-btn" onclick="replayTour()" title="Re-open the setup wizard to change your locations, remote pref, and company sizes">Preferences</button>
     <button id="regen-btn" class="header-btn" onclick="regenerateFromHeader(this)" title="Re-run the AI matcher to refresh your suggested target companies and skills. Takes 30-60 seconds.">Regenerate matches</button>
@@ -266,7 +266,7 @@
   </div>
 </header>
 <div class="stats">
-  <div class="stat"><b>14788</b>Total jobs tracked</div>
+  <div class="stat"><b>14804</b>Total jobs tracked</div>
   <div class="stat"><b>425</b>Senior + Remote (last 7d)</div>
   <div class="stat"><b>0</b>Possible ghost jobs (60d+)</div>
   <div class="stat"><b id="shown-counter">0</b>Showing</div>
@@ -550,6 +550,11 @@
 </div>
 
 <script>
+// === Identity + Worker base — MUST be first; everything below references USER_SLUG ===
+const WORKER_BASE = 'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev';
+const USER_SLUG = 'radhika-kalra';
+const USER_QS = '?user=' + encodeURIComponent(USER_SLUG);
+
 const RECENCY_WINDOW_KEY = 'htj_recency_window_' + USER_SLUG;
 let activeWindow = (function() {
   try { const v = localStorage.getItem(RECENCY_WINDOW_KEY); return v === null ? '0' : v; } catch (e) { return '0'; }
@@ -565,14 +570,6 @@ const STATUS_LABEL = {
   'offer': 'Offer',
   'rejected': 'Rejected'
 };
-
-// Worker base + user-scoped query string. Declared up here because several
-// const URL declarations below reference these — JS const has temporal dead
-// zone and would throw "Cannot access X before initialization" if these were
-// further down the script.
-const WORKER_BASE = 'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev';
-const USER_SLUG = 'radhika-kalra';
-const USER_QS = '?user=' + encodeURIComponent(USER_SLUG);
 
 // Tracker is server-side (Cloudflare KV). We cache it in memory for fast reads;
 // every write goes to the Worker.
