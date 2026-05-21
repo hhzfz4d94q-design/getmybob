@@ -1,11 +1,11 @@
-# Deploying the dashboard to getmyjob.officebeatllc.com
+# Deploying the dashboard to getmemyjob.officebeatllc.com
 
 Total time: about 15 minutes. Cost: **$0/month** (Cloudflare Pages free tier + you already own the domain).
 
 **Architecture:**
 1. **GitHub** stores the project. A scheduled GitHub Action runs the fetcher every 6 hours and commits the updated `dashboard.html`.
 2. **Cloudflare Pages** auto-deploys the dashboard from your GitHub repo whenever new content is pushed.
-3. **IONOS DNS** points `getmyjob.officebeatllc.com` to Cloudflare via a single CNAME record.
+3. **IONOS DNS** points `getmemyjob.officebeatllc.com` to Cloudflare via a single CNAME record.
 
 The "Prep Application" feature stays on Geetanjali's Mac (it needs the AI key, which we don't want to expose publicly). She'll keep using it locally; the hosted dashboard is for browsing fresh jobs from anywhere.
 
@@ -55,7 +55,7 @@ Replace `YOURNAME/healthtech-jobs.git` with the actual URL from GitHub. The firs
 ## Step 3 — Point your subdomain at Cloudflare (5 min)
 
 1. Back in Cloudflare Pages, click your project, then go to **Custom domains** → **Set up a custom domain**.
-2. Enter: `getmyjob.officebeatllc.com`
+2. Enter: `getmemyjob.officebeatllc.com`
 3. Cloudflare shows you a CNAME record to add. Note the **target value** (it'll be `healthtech-jobs.pages.dev` or similar).
 4. **Switch to IONOS:**
    - Log in at **https://my.ionos.com**
@@ -67,7 +67,7 @@ Replace `YOURNAME/healthtech-jobs.git` with the actual URL from GitHub. The firs
    - **TTL:** 1 hour (default is fine)
    - Save.
 5. Back in Cloudflare, the custom domain check will run automatically. It can take anywhere from 1 minute to an hour for DNS to propagate. When it shows "Active", you're done.
-6. Visit **https://getmyjob.officebeatllc.com** in your browser. Cloudflare provisions SSL automatically.
+6. Visit **https://getmemyjob.officebeatllc.com** in your browser. Cloudflare provisions SSL automatically.
 
 ---
 

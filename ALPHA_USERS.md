@@ -1,7 +1,7 @@
 # Alpha users playbook
 
 Multi-user dashboard. Each user has their own resume, skills profile, and
-filtered job list at `https://getmyjob.officebeatllc.com/{slug}.html`.
+filtered job list at `https://getmemyjob.officebeatllc.com/{slug}.html`.
 
 The user registry lives in Cloudflare KV (`users:list`). The admin UI at
 `/admin.html` is the easiest way to manage it.
@@ -18,7 +18,7 @@ The user registry lives in Cloudflare KV (`users:list`). The admin UI at
 
 ## Adding a new alpha user
 
-1. Open `https://getmyjob.officebeatllc.com/admin.html`.
+1. Open `https://getmemyjob.officebeatllc.com/admin.html`.
 2. Enter `ADMIN_KEY` (stored in localStorage so you don't have to redo this).
 3. In **Invite a new user**, type their name and email. Click
    **Create & invite**.
