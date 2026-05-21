@@ -83,9 +83,21 @@ jobs:
             --data-binary @/tmp/upload.body \
             "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/workers/scripts/${WORKER_NAME}/content" \
             -o /tmp/deploy.json
-          echo "=== Cloudflare response ==="
+          echo "=== Upload response ==="
           cat /tmp/deploy.json
-          python3 -c "import json; d=json.load(open('/tmp/deploy.json')); assert d.get('success'), d; print('Deploy successful.')"
+          python3 -c "import json; d=json.load(open('/tmp/deploy.json')); assert d.get('success'), d; print('Upload OK (new version created).')"
+
+          # Cloudflare Workers Versioning: /content creates a new version
+          # but does NOT activate it. We must explicitly deploy it.
+          echo "=== Activating new version ==="
+          curl -sS -H "Authorization: Bearer $CF_TOKEN"             "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/workers/scripts/${WORKER_NAME}/versions?per_page=1"             -o /tmp/versions.json
+          cat /tmp/versions.json
+          VERSION_ID=$(python3 -c "import json; d=json.load(open('/tmp/versions.json')); print(d['result']['items'][0]['id'])")
+          echo "New version_id: $VERSION_ID"
+          curl -sS -X POST             -H "Authorization: Bearer $CF_TOKEN"             -H "Content-Type: application/json"             -d "{\"strategy\":\"percentage\",\"versions\":[{\"version_id\":\"$VERSION_ID\",\"percentage\":100}]}"             "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/workers/scripts/${WORKER_NAME}/deployments"             -o /tmp/activate.json
+          echo "=== Activation response ==="
+          cat /tmp/activate.json
+          python3 -c "import json; d=json.load(open('/tmp/activate.json')); assert d.get('success'), d; print('Version activated — live now.')"
 
       - name: Commit dumped source (dump mode only)
         if: steps.mode.outputs.value == 'dump'
