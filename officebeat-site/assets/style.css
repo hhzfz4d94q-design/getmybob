@@ -635,7 +635,8 @@ footer .legal { font-size: 12px; color: rgba(255,255,255,0.5); display: flex; ju
   left: 0;
   transform: translateX(-30%) translateY(8px);
 }
-.nav-links .dd-2col {
+.nav-links .has-dd:hover .dd-panel.dd-2col,
+.nav-links .has-dd:focus-within .dd-panel.dd-2col {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px 28px;
