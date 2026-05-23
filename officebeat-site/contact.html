@@ -297,12 +297,6 @@
       }
     };
 
-    if (HUBSPOT_FORM_GUID === 'a6df075c-b629-463a-8f68-38b0f653929f') {
-      statusEl.style.color = 'var(--indigo)';
-      statusEl.innerHTML = 'Form not yet wired to HubSpot — set <code>HUBSPOT_FORM_GUID</code> in contact.html.';
-      return;
-    }
-
     submitBtn.disabled = true;
     submitBtn.textContent = 'Sending…';
     statusEl.style.color = 'var(--muted)';
