@@ -625,3 +625,61 @@ footer .legal { font-size: 12px; color: rgba(255,255,255,0.5); display: flex; ju
   border-color: var(--indigo) !important;
   outline: none !important;
 }
+
+/* ============================================================
+   Wide mega-menu — for Verticals dropdown (2 columns)
+   ============================================================ */
+.nav-links .dd-wide {
+  min-width: 560px;
+  padding: 20px 22px;
+  left: 0;
+  transform: translateX(-30%) translateY(8px);
+}
+.nav-links .dd-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 28px;
+}
+.nav-links .dd-col { display: flex; flex-direction: column; gap: 0; }
+.nav-links .dd-pillar {
+  display: block;
+  padding: 10px 12px 14px;
+  border-bottom: 1px solid var(--hairline);
+  margin-bottom: 6px;
+  white-space: normal;
+}
+.nav-links .dd-pillar strong {
+  display: block;
+  font-size: 15.5px;
+  color: var(--indigo);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.nav-links .dd-pillar span.tag {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+  line-height: 1.45;
+  font-weight: 500;
+}
+.nav-links .dd-pillar:hover { background: var(--lilac-soft); color: var(--indigo); }
+.nav-links .dd-col .dd-sublabel {
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 700;
+  margin: 4px 12px 4px;
+}
+@media (max-width: 900px) {
+  .nav-links .dd-wide {
+    min-width: 0;
+    transform: none;
+    padding: 0 0 0 12px;
+  }
+  .nav-links .dd-2col { display: block; }
+  .nav-links .dd-pillar { padding: 6px 8px; margin-bottom: 2px; border-bottom: 0; }
+  .nav-links .dd-pillar strong { font-size: 13px; }
+  .nav-links .dd-pillar span.tag { display: none; }
+}
