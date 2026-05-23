@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AI governance for healthcare — the under-discussed risks — OfficeBeat LLC</title>
+<meta name="description" content="Practitioner notes on the AI risks most likely to surface at healthcare institutions in the next 24 months — shadow AI, vendor AI features, clinical workflow bypass, and bias.">
+<meta name="theme-color" content="#5C5CD6">
+<meta property="og:type" content="website">
+<meta property="og:title" content="AI governance for healthcare — the under-discussed risks — OfficeBeat LLC">
+<meta property="og:description" content="Practitioner notes on the AI risks most likely to surface at healthcare institutions in the next 24 months — shadow AI, vendor AI features, clinical workflow bypass, and bias.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+
+<!-- HubSpot tracking -->
+<script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/51502417.js"></script>
+<!-- Plausible (uncomment after signup at plausible.io and replace domain) -->
+<!-- <script defer data-domain="officebeatllc.com" src="https://plausible.io/js/script.js"></script> -->
+</head>
+<body>
+
+<nav class="top">
+  <div class="row">
+    <a href="index.html" class="logo"><img src="assets/officebeat-logo.png" alt="OfficeBeat LLC"></a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <span class="has-dd"><a href="finance.html">Verticals</a>
+        <div class="dd-panel">
+          <div class="dd-group">By industry</div>
+          <a href="finance.html">Finance &amp; Banking</a>
+          <a href="healthcare.html">Healthcare &amp; Life Sciences</a>
+          <div class="dd-group">Finance practice pages</div>
+          <a href="treasury.html">Treasury Solutions</a>
+          <a href="tprm.html">Third-Party Risk (TPRM)</a>
+          <a href="cyber-risk.html">Cyber Risk</a>
+          <div class="dd-group">Healthcare practice pages</div>
+          <a href="ehr-strategy.html">EHR &amp; SaaS Strategy</a>
+          <a href="ai-program-governance.html">AI Program Governance</a>
+          <a href="digital-transformation.html">Digital Transformation</a>
+        </div>
+      </span>
+      <span class="has-dd"><a href="services.html">Services</a>
+        <div class="dd-panel">
+          <div class="dd-group">Engagements</div>
+          <a href="services.html">All Services</a>
+          <a href="assess.html">Risk Maturity Assessment</a>
+          <div class="dd-group">Process</div>
+          <a href="how-we-work.html">How We Work</a>
+          <a href="pricing.html">Pricing</a>
+          <a href="partners.html">Frameworks &amp; Platforms</a>
+        </div>
+      </span>
+      <a href="insights.html">Insights</a>
+      <span class="has-dd"><a href="about.html">About</a>
+        <div class="dd-panel">
+          <div class="dd-group">Company</div>
+          <a href="about.html">Who we are</a>
+          <a href="amit-arora.html">Amit Arora</a>
+          <a href="geetanjali-arora.html">Geetanjali Arora</a>
+          <div class="dd-group">More</div>
+          <a href="index.html#products">Products</a>
+          <a href="faq.html">FAQ</a>
+          <a href="news.html">News</a>
+          <a href="careers.html">Careers</a>
+          <a href="locations.html">Locations</a>
+        </div>
+      </span>
+      <a href="contact.html" class="nav-cta">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<header class="page-header">
+  <div class="container">
+    <span class="eyebrow-tag on-dark">Insight · Healthcare · AI</span>
+    <h1>AI program governance for healthcare —<br>the under-discussed risks.</h1>
+    <p class="sub">Every board is asking about AI. Most public guidance focuses on model risk. That's not the risk most likely to bite you. Here's what is.</p>
+    
+  </div>
+</header>
+
+<section>
+  <div class="container" style="max-width:760px;">
+    <p style="color:var(--muted);font-size:14px;">May 2026 · 8 minute read · Healthcare · AI</p>
+    <p>Every healthcare board is being asked, in some form: "What's our AI strategy?" Most of the public-domain risk guidance — from regulators, industry bodies, even most consultants — focuses on model risk. Are your models fair, are they accurate, are they validated, do they drift. Model risk is real, and it matters. But it's not the AI risk most likely to surface as a serious issue at a healthcare institution in the next 24 months.</p>
+
+    <h2>Risk 1: Shadow AI use by clinicians and staff</h2>
+    <p>Clinicians are using ChatGPT, Claude, and a dozen other tools — pasted into the browser, on their own devices, with PHI in the prompts. Nearly every healthcare CIO we've worked with in the past year has discovered this is happening; almost none of them have a defensible policy or a viable technical control. The first HIPAA breach attributed to clinician shadow-AI use will be a case study.</p>
+    <p>What to do: at minimum, a policy plus a sanctioned, HIPAA-compliant alternative. Banning without offering an alternative is the policy version of telling clinicians to use paper charts. They will route around you.</p>
+
+    <h2>Risk 2: Vendor AI features bolted onto existing contracts</h2>
+    <p>Your EHR, your scheduling system, your billing platform, your patient-engagement tool — all of them are rolling out AI features. Most of those rollouts are happening under existing contracts, with no separate risk review. Often the AI features depend on data flows that weren't in scope when the original BAA was signed. Many of them route data to third-party model providers that aren't named in your sub-processor inventory.</p>
+    <p>What to do: an AI rider for your BAA template, and a backward audit of existing critical vendors to capture AI feature rollouts that have happened since contract signing.</p>
+
+    <h2>Risk 3: Clinical AI workflows that bypass clinical decision-support governance</h2>
+    <p>Your organization has (probably) mature clinical decision-support governance — committee review, validation, post-deployment monitoring. AI tools are being adopted clinically that don't get routed through that governance because they're framed as "productivity" tools (note generation, prior-auth drafting, patient communication). When one of those tools introduces a clinical error, your existing governance won't have a record of approving its use.</p>
+    <p>What to do: extend clinical-AI governance to cover any AI tool that touches a clinical workflow, regardless of how it's marketed.</p>
+
+    <h2>Risk 4: Algorithmic bias that surfaces in the press, not the audit</h2>
+    <p>Most healthcare AI systems aren't audited for differential performance across patient demographics. The ones that are tend to be tested at deployment and then never again. The first time you find out your scheduling AI is systematically under-prioritizing a protected class is when a journalist or a regulator tells you.</p>
+    <p>What to do: ongoing differential-performance monitoring built into the AI governance cadence, not as a launch-time gate.</p>
+
+    <h2>What model risk people will tell you, that you can probably defer</h2>
+    <p>Formal model validation following SR 11-7-style governance is a heavy lift, and most healthcare organizations aren't ready for it. It's worth getting to, but the four risks above will surface as actual incidents earlier than model-validation gaps will. Sequence accordingly.</p>
+
+    <p style="margin-top:32px;font-style:italic;color:var(--muted);">— Drawn from healthcare AI program reviews across mid-market and enterprise systems in 2025–2026.</p>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="container">
+    <h2>Want to talk about your AI governance posture?</h2>
+    <p>A 60-minute conversation with someone who's done this at Pfizer scale.</p>
+    <div class="cta-row">
+      <a href="contact.html" class="btn on-dark-primary">Talk to a practitioner</a>
+      <a href="mailto:team@officebeatllc.com" class="btn ghost-light">team@officebeatllc.com</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="brand">
+        <img src="assets/officebeat-logo.png" alt="OfficeBeat LLC">
+        <span class="tag">Navigate Complexity, Secure Your Future.</span>
+      </div>
+      <div class="links">
+        <a href="index.html">Home</a>
+        <a href="finance.html">Finance</a>
+        <a href="healthcare.html">Healthcare</a>
+        <a href="services.html">Services</a>
+        <a href="insights.html">Insights</a>
+        <a href="locations.html">Locations</a>
+        <a href="contact.html">Contact</a>
+        <a href="https://getmemyjob.officebeatllc.com/">getmemyjob ↗</a>
+      </div>
+    </div>
+    <div class="legal">
+      <span>© 2026 OfficeBeat LLC. All rights reserved.</span>
+      <span><a href="privacy.html" style="color:inherit;">Privacy</a> · <a href="terms.html" style="color:inherit;">Terms</a> · team@officebeatllc.com · +1 (201) 446-2837 · New York, NY</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/polish.js" defer></script>
+</body>
+</html>

@@ -13,6 +13,33 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/style.css">
+<!-- HubSpot tracking -->
+<script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/51502417.js"></script>
+<!-- Plausible (uncomment after signup at plausible.io and replace domain) -->
+<!-- <script defer data-domain="officebeatllc.com" src="https://plausible.io/js/script.js"></script> -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": "https://officebeatllc.com/about.html#amit-arora",
+      "name": "Amit Arora",
+      "jobTitle": "Founder & CEO, Finance Practice Lead",
+      "worksFor": { "@type": "Organization", "name": "OfficeBeat LLC", "url": "https://officebeatllc.com/" },
+      "description": "35+ years in IT, capital markets, enterprise IT, and Risk Management. Strategic vision and transformational leadership across Commercial Lending, Treasury Solutions, Digital Banking, IT Security, Third-Party Risk Management, and Corporate Strategy."
+    },
+    {
+      "@type": "Person",
+      "@id": "https://officebeatllc.com/about.html#geetanjali-arora",
+      "name": "Geetanjali Arora",
+      "jobTitle": "Healthcare Practice Lead",
+      "worksFor": { "@type": "Organization", "name": "OfficeBeat LLC", "url": "https://officebeatllc.com/" },
+      "description": "23+ years integrating healthcare and technology. Most recently Principal, Digital Transformation at Pfizer. Prior leadership at BioReference Laboratories and SRS Health / Nextech."
+    }
+  ]
+}
+</script>
 </head>
 <body>
 
@@ -21,11 +48,47 @@
     <a href="index.html" class="logo"><img src="assets/officebeat-logo.png" alt="OfficeBeat LLC"></a>
     <div class="nav-links">
       <a href="index.html">Home</a>
-      <a href="finance.html">Finance</a>
-      <a href="healthcare.html">Healthcare</a>
-      <a href="https://getmemyjob.officebeatllc.com/" target="_blank" rel="noopener">getmemyjob ↗</a>
-      <a href="services.html">Services</a>
-      <a href="locations.html">Locations</a>
+      <span class="has-dd"><a href="finance.html">Verticals</a>
+        <div class="dd-panel">
+          <div class="dd-group">By industry</div>
+          <a href="finance.html">Finance &amp; Banking</a>
+          <a href="healthcare.html">Healthcare &amp; Life Sciences</a>
+          <div class="dd-group">Finance practice pages</div>
+          <a href="treasury.html">Treasury Solutions</a>
+          <a href="tprm.html">Third-Party Risk (TPRM)</a>
+          <a href="cyber-risk.html">Cyber Risk</a>
+          <div class="dd-group">Healthcare practice pages</div>
+          <a href="ehr-strategy.html">EHR &amp; SaaS Strategy</a>
+          <a href="ai-program-governance.html">AI Program Governance</a>
+          <a href="digital-transformation.html">Digital Transformation</a>
+        </div>
+      </span>
+      <span class="has-dd"><a href="services.html">Services</a>
+        <div class="dd-panel">
+          <div class="dd-group">Engagements</div>
+          <a href="services.html">All Services</a>
+          <a href="assess.html">Risk Maturity Assessment</a>
+          <div class="dd-group">Process</div>
+          <a href="how-we-work.html">How We Work</a>
+          <a href="pricing.html">Pricing</a>
+          <a href="partners.html">Frameworks &amp; Platforms</a>
+        </div>
+      </span>
+      <a href="insights.html">Insights</a>
+      <span class="has-dd"><a href="about.html">About</a>
+        <div class="dd-panel">
+          <div class="dd-group">Company</div>
+          <a href="about.html">Who we are</a>
+          <a href="amit-arora.html">Amit Arora</a>
+          <a href="geetanjali-arora.html">Geetanjali Arora</a>
+          <div class="dd-group">More</div>
+          <a href="index.html#products">Products</a>
+          <a href="faq.html">FAQ</a>
+          <a href="news.html">News</a>
+          <a href="careers.html">Careers</a>
+          <a href="locations.html">Locations</a>
+        </div>
+      </span>
       <a href="contact.html" class="nav-cta">Contact</a>
     </div>
   </div>
@@ -83,7 +146,7 @@
     <div class="grid-2" style="margin-top:36px;">
       <div class="card" style="padding:32px;">
         <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;">
-          <div class="icon" style="width:60px;height:60px;font-size:22px;background:var(--lilac);">AA</div>
+          <img src="assets/amit-arora.jpg" alt="Amit Arora, Founder &amp; CEO" style="width:64px;height:64px;border-radius:50%;object-fit:cover;flex-shrink:0;">
           <div>
             <h3 style="margin:0;font-size:22px;">Amit Arora</h3>
             <p style="margin:2px 0 0 0;font-size:13.5px;color:var(--muted);font-weight:600;">Founder &amp; CEO · Finance Practice Lead</p>
@@ -91,11 +154,12 @@
         </div>
         <p style="font-size:14.5px;line-height:1.6;">35+ years in IT, capital markets, enterprise IT, and Risk Management. Strategic vision and transformational leadership across <strong>Commercial Lending, Treasury Solutions, Digital Banking, IT Security, Third-Party Risk Management (TPRM), and Corporate Strategy</strong>. Selected clients include IDB Bank, Bank Leumi USA, CLS Bank, CIT Group, Citizens Bank, Macy's, and Verizon.</p>
         <a href="finance.html" class="btn ghost" style="margin-top:14px;">See Finance practice</a>
+        <a href="amit-arora.html" class="btn ghost" style="margin-top:14px;margin-left:8px;">Full bio →</a>
       </div>
 
       <div class="card" style="padding:32px;">
         <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;">
-          <div class="icon" style="width:60px;height:60px;font-size:22px;background:var(--lilac);">GA</div>
+          <img src="assets/geetanjali-arora.jpg" alt="Geetanjali Arora, Healthcare Practice Lead" style="width:64px;height:64px;border-radius:50%;object-fit:cover;flex-shrink:0;">
           <div>
             <h3 style="margin:0;font-size:22px;">Geetanjali Arora</h3>
             <p style="margin:2px 0 0 0;font-size:13.5px;color:var(--muted);font-weight:600;">Healthcare Practice Lead</p>
@@ -103,6 +167,7 @@
         </div>
         <p style="font-size:14.5px;line-height:1.6;">23+ years integrating healthcare and technology. Most recently <strong>Principal, Digital Transformation at Pfizer</strong>. Prior leadership at <strong>BioReference Laboratories</strong> (Sr. Director, Digital Solutions) and <strong>SRS Health / Nextech</strong> (Director, Product Portfolio). Track record: 10M+ D2C visits, 96% client retention, 20% revenue growth, 70% cost reduction.</p>
         <a href="healthcare.html" class="btn ghost" style="margin-top:14px;">See Healthcare practice</a>
+        <a href="geetanjali-arora.html" class="btn ghost" style="margin-top:14px;margin-left:8px;">Full bio →</a>
       </div>
     </div>
   </div>
@@ -168,6 +233,23 @@
   </div>
 </section>
 
+<section>
+  <div class="container">
+    <span class="eyebrow-tag">Beyond consulting</span>
+    <h2>We also build software.</h2>
+    <p class="lead">OfficeBeat is a consultancy first — but the patterns we see across engagements often point at problems software solves better than slides. We incubate focused products under the same roof.</p>
+    <div class="card" style="padding:28px;border-left:4px solid var(--indigo);max-width:760px;">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+        <div class="icon">GJ</div>
+        <span style="display:inline-block;padding:3px 10px;background:var(--indigo);color:var(--white);border-radius:999px;font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;">An OfficeBeat Product</span>
+      </div>
+      <h3 style="font-size:22px;">getmemyjob</h3>
+      <p style="margin-top:8px;font-size:15px;line-height:1.6;">An AI-assisted job-search platform — résumé-to-pipeline matching, application prep, and recruiter-grade tracking. Currently in alpha with a closed group of users.</p>
+      <p style="margin-top:12px;font-weight:600;"><a href="https://getmemyjob.officebeatllc.com/" target="_blank" rel="noopener" style="color:var(--indigo);text-decoration:none;">Visit getmemyjob.officebeatllc.com →</a></p>
+    </div>
+  </div>
+</section>
+
 <section class="cta-section">
   <div class="container">
     <h2>Work with us.</h2>
@@ -195,10 +277,11 @@
     </div>
     <div class="legal">
       <span>© 2026 OfficeBeat LLC. All rights reserved.</span>
-      <span>info@officebeatllc.com · +1 (201) 446-2837 · New York, NY</span>
+      <span>team@officebeatllc.com · +1 (201) 446-2837 · New York, NY</span>
     </div>
   </div>
 </footer>
 
+<script src="assets/polish.js" defer></script>
 </body>
 </html>

@@ -93,6 +93,10 @@
     .scale label .lbl { display: none; }
   }
 </style>
+<!-- HubSpot tracking -->
+<script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/51502417.js"></script>
+<!-- Plausible (uncomment after signup at plausible.io and replace domain) -->
+<!-- <script defer data-domain="officebeatllc.com" src="https://plausible.io/js/script.js"></script> -->
 </head>
 <body>
 
@@ -101,11 +105,47 @@
     <a href="index.html" class="logo"><img src="assets/officebeat-logo.png" alt="OfficeBeat LLC"></a>
     <div class="nav-links">
       <a href="index.html">Home</a>
-      <a href="finance.html">Finance</a>
-      <a href="healthcare.html">Healthcare</a>
-      <a href="https://getmemyjob.officebeatllc.com/" target="_blank" rel="noopener">getmemyjob ↗</a>
-      <a href="services.html">Services</a>
-      <a href="locations.html">Locations</a>
+      <span class="has-dd"><a href="finance.html">Verticals</a>
+        <div class="dd-panel">
+          <div class="dd-group">By industry</div>
+          <a href="finance.html">Finance &amp; Banking</a>
+          <a href="healthcare.html">Healthcare &amp; Life Sciences</a>
+          <div class="dd-group">Finance practice pages</div>
+          <a href="treasury.html">Treasury Solutions</a>
+          <a href="tprm.html">Third-Party Risk (TPRM)</a>
+          <a href="cyber-risk.html">Cyber Risk</a>
+          <div class="dd-group">Healthcare practice pages</div>
+          <a href="ehr-strategy.html">EHR &amp; SaaS Strategy</a>
+          <a href="ai-program-governance.html">AI Program Governance</a>
+          <a href="digital-transformation.html">Digital Transformation</a>
+        </div>
+      </span>
+      <span class="has-dd"><a href="services.html">Services</a>
+        <div class="dd-panel">
+          <div class="dd-group">Engagements</div>
+          <a href="services.html">All Services</a>
+          <a href="assess.html">Risk Maturity Assessment</a>
+          <div class="dd-group">Process</div>
+          <a href="how-we-work.html">How We Work</a>
+          <a href="pricing.html">Pricing</a>
+          <a href="partners.html">Frameworks &amp; Platforms</a>
+        </div>
+      </span>
+      <a href="insights.html">Insights</a>
+      <span class="has-dd"><a href="about.html">About</a>
+        <div class="dd-panel">
+          <div class="dd-group">Company</div>
+          <a href="about.html">Who we are</a>
+          <a href="amit-arora.html">Amit Arora</a>
+          <a href="geetanjali-arora.html">Geetanjali Arora</a>
+          <div class="dd-group">More</div>
+          <a href="index.html#products">Products</a>
+          <a href="faq.html">FAQ</a>
+          <a href="news.html">News</a>
+          <a href="careers.html">Careers</a>
+          <a href="locations.html">Locations</a>
+        </div>
+      </span>
       <a href="contact.html" class="nav-cta">Contact</a>
     </div>
   </div>
@@ -246,7 +286,7 @@
         </div>
       </div>
 
-      <!-- Lead capture (always visible — submits result + name + email to OfficeBeat) -->
+      <!-- Lead capture (always visible — submits result + lead details to HubSpot) -->
       <div class="lead-capture">
         <h3>Where should we send your detailed report?</h3>
         <p>We'll email a personalized 1-page breakdown of your score, the gaps it implies, and three specific next moves. No spam, no sales sequence — just the report.</p>
@@ -257,6 +297,22 @@
         <div class="row">
           <input id="lead-email" type="email" placeholder="Work email" autocomplete="email">
           <input id="lead-role" type="text" placeholder="Your role (e.g. CRO, CISO)" autocomplete="organization-title">
+        </div>
+        <div class="row">
+          <select id="lead-vertical" style="background:rgba(255,255,255,.9);color:var(--ink);">
+            <option value="">Which vertical? (optional)</option>
+            <option>Finance &amp; Banking</option>
+            <option>Healthcare &amp; Life Sciences</option>
+            <option>SaaS / Technology</option>
+            <option>Other</option>
+          </select>
+          <select id="lead-size" style="background:rgba(255,255,255,.9);color:var(--ink);">
+            <option value="">Company size (optional)</option>
+            <option>&lt; $50M revenue</option>
+            <option>$50M–$250M revenue</option>
+            <option>$250M–$1B revenue</option>
+            <option>$1B+ revenue</option>
+          </select>
         </div>
         <div class="actions">
           <button class="btn" id="submit-assess" type="button">Get my report →</button>
@@ -298,7 +354,7 @@
     </div>
     <div class="legal">
       <span>© 2026 OfficeBeat LLC. All rights reserved.</span>
-      <span>info@officebeatllc.com · +1 (201) 446-2837 · New York, NY</span>
+      <span>team@officebeatllc.com · +1 (201) 446-2837 · New York, NY</span>
     </div>
   </div>
 </footer>
@@ -349,24 +405,49 @@
     const role = document.getElementById('lead-role').value.trim();
     if (!email) { alert('Please add an email so we can send your report.'); return; }
 
-    // Build mailto with the responses
-    const subject = encodeURIComponent('Risk Maturity Assessment — ' + (name || 'Inquiry') + ' (Score: ' + score + '/50)');
-    const lines = [
-      'Name: ' + name,
-      'Email: ' + email,
-      'Company: ' + company,
-      'Role: ' + role,
-      '',
-      'Score: ' + score + ' / 50',
-      'Band: ' + bandFor(score).label,
-      '',
-      'Responses:',
-    ];
-    for (let i = 1; i <= 10; i++) lines.push('  Q' + i + ': ' + answers['q' + i] + '/5');
-    lines.push('', '— Submitted via officebeatllc.com/assess');
-    const body = encodeURIComponent(lines.join('\n'));
-    // Fire mailto in background
-    setTimeout(() => { window.location.href = 'mailto:info@officebeatllc.com?subject=' + subject + '&body=' + body; }, 100);
+    // Submit lead + score to HubSpot
+    // Uses the SAME form GUID as contact.html — submissions tagged by pageUri
+    const HUBSPOT_PORTAL_ID = '51502417';
+    const HUBSPOT_FORM_GUID = 'a6df075c-b629-463a-8f68-38b0f653929f'; // ← paste GUID from HubSpot here
+    const [firstname, ...rest] = (name || 'Unknown').split(/\s+/);
+    const lastname = rest.join(' ') || '—';
+    const responsesText = Array.from({length: 10}, (_, i) => 'Q' + (i+1) + ': ' + answers['q' + (i+1)] + '/5').join(' · ');
+    const vertical = (document.getElementById('lead-vertical') || {}).value || '';
+    const sizeBand = (document.getElementById('lead-size') || {}).value || '';
+    const messageWithContext =
+      '[Risk Maturity Assessment] Score: ' + score + '/50 — Band: ' + bandFor(score).label + '\n' +
+      (vertical ? 'Vertical: ' + vertical + '\n' : '') +
+      (sizeBand ? 'Company size: ' + sizeBand + '\n' : '') +
+      'Responses: ' + responsesText;
+    const hutk = (document.cookie.match(/hubspotutk=([^;]+)/) || [])[1];
+    const payload = {
+      fields: [
+        { objectTypeId: '0-1', name: 'firstname', value: firstname },
+        { objectTypeId: '0-1', name: 'lastname',  value: lastname },
+        { objectTypeId: '0-1', name: 'email',     value: email },
+        { objectTypeId: '0-1', name: 'company',   value: company },
+        { objectTypeId: '0-1', name: 'jobtitle',  value: role },
+        { objectTypeId: '0-1', name: 'message',   value: messageWithContext }
+      ],
+      context: {
+        pageUri: window.location.href,
+        pageName: 'Risk Maturity Assessment',
+        ...(hutk ? { hutk } : {})
+      },
+      legalConsentOptions: {
+        consent: {
+          consentToProcess: true,
+          text: 'I agree to allow OfficeBeat LLC to store and process my personal data for the purpose of responding to my inquiry.'
+        }
+      }
+    };
+    if (HUBSPOT_FORM_GUID !== 'a6df075c-b629-463a-8f68-38b0f653929f') {
+      fetch('https://api.hsforms.com/submissions/v3/integration/submit/' + HUBSPOT_PORTAL_ID + '/' + HUBSPOT_FORM_GUID, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      }).catch(err => console.error('HubSpot submit failed:', err));
+    }
 
     // Show result on screen
     const b = bandFor(score);
@@ -388,5 +469,6 @@
   });
 </script>
 
+<script src="assets/polish.js" defer></script>
 </body>
 </html>

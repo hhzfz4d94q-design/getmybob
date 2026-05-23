@@ -13,6 +13,22 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/style.css">
+<!-- HubSpot tracking -->
+<script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/51502417.js"></script>
+<!-- Plausible (uncomment after signup at plausible.io and replace domain) -->
+<!-- <script defer data-domain="officebeatllc.com" src="https://plausible.io/js/script.js"></script> -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "name": "Finance & Banking Risk Advisory",
+  "provider": { "@type": "Organization", "name": "OfficeBeat LLC", "url": "https://officebeatllc.com/" },
+  "areaServed": { "@type": "Country", "name": "United States" },
+  "serviceType": "Enterprise Risk Management for Financial Services",
+  "description": "Enterprise risk, GRC, credit, cyber, TPRM, and digital banking modernization. 35+ years across capital markets, commercial lending, treasury, and Third-Party Risk Management.",
+  "url": "https://officebeatllc.com/finance.html"
+}
+</script>
 </head>
 <body>
 
@@ -21,11 +37,47 @@
     <a href="index.html" class="logo"><img src="assets/officebeat-logo.png" alt="OfficeBeat LLC"></a>
     <div class="nav-links">
       <a href="index.html">Home</a>
-      <a href="finance.html" class="active">Finance</a>
-      <a href="healthcare.html">Healthcare</a>
-      <a href="https://getmemyjob.officebeatllc.com/" target="_blank" rel="noopener">getmemyjob ↗</a>
-      <a href="services.html">Services</a>
-      <a href="locations.html">Locations</a>
+      <span class="has-dd"><a href="finance.html">Verticals</a>
+        <div class="dd-panel">
+          <div class="dd-group">By industry</div>
+          <a href="finance.html">Finance &amp; Banking</a>
+          <a href="healthcare.html">Healthcare &amp; Life Sciences</a>
+          <div class="dd-group">Finance practice pages</div>
+          <a href="treasury.html">Treasury Solutions</a>
+          <a href="tprm.html">Third-Party Risk (TPRM)</a>
+          <a href="cyber-risk.html">Cyber Risk</a>
+          <div class="dd-group">Healthcare practice pages</div>
+          <a href="ehr-strategy.html">EHR &amp; SaaS Strategy</a>
+          <a href="ai-program-governance.html">AI Program Governance</a>
+          <a href="digital-transformation.html">Digital Transformation</a>
+        </div>
+      </span>
+      <span class="has-dd"><a href="services.html">Services</a>
+        <div class="dd-panel">
+          <div class="dd-group">Engagements</div>
+          <a href="services.html">All Services</a>
+          <a href="assess.html">Risk Maturity Assessment</a>
+          <div class="dd-group">Process</div>
+          <a href="how-we-work.html">How We Work</a>
+          <a href="pricing.html">Pricing</a>
+          <a href="partners.html">Frameworks &amp; Platforms</a>
+        </div>
+      </span>
+      <a href="insights.html">Insights</a>
+      <span class="has-dd"><a href="about.html">About</a>
+        <div class="dd-panel">
+          <div class="dd-group">Company</div>
+          <a href="about.html">Who we are</a>
+          <a href="amit-arora.html">Amit Arora</a>
+          <a href="geetanjali-arora.html">Geetanjali Arora</a>
+          <div class="dd-group">More</div>
+          <a href="index.html#products">Products</a>
+          <a href="faq.html">FAQ</a>
+          <a href="news.html">News</a>
+          <a href="careers.html">Careers</a>
+          <a href="locations.html">Locations</a>
+        </div>
+      </span>
       <a href="contact.html" class="nav-cta">Contact</a>
     </div>
   </div>
@@ -167,11 +219,14 @@
             <h3>Commercial lending</h3>
             <p>Origination platform diligence, workflow modernization, underwriting workbench design, and risk-aware product launches across small-business through middle-market.</p>
           </div>
-          <div class="card">
+          <a href="treasury.html" style="text-decoration:none;color:inherit;">
+          <div class="card" style="border-left:4px solid var(--indigo);">
             <div class="icon">TS</div>
-            <h3>Treasury solutions</h3>
-            <p>Treasury services digital strategy, cash management modernization, payments rails diligence, FX &amp; liquidity risk frameworks, and treasury operations risk &amp; controls.</p>
+            <h3>Treasury Solutions</h3>
+            <p>Treasury services digital strategy, cash management modernization, payments rails diligence (ACH, RTP, FedNow, SWIFT), FX &amp; liquidity risk frameworks, and treasury operations risk &amp; controls.</p>
+            <p style="margin-top:10px;font-weight:600;color:var(--indigo);">Explore Treasury Solutions →</p>
           </div>
+          </a>
           <div class="card">
             <div class="icon">DB</div>
             <h3>Digital banking transformation</h3>
@@ -411,7 +466,7 @@
     <p>Whether you're prepping for an exam, modernizing a core platform, or building ERM for the first time — start with a 60-minute consultation.</p>
     <div class="cta-row">
       <a href="contact.html" class="btn on-dark-primary">Schedule a consultation</a>
-      <a href="mailto:info@officebeatllc.com" class="btn ghost-light">info@officebeatllc.com</a>
+      <a href="mailto:team@officebeatllc.com" class="btn ghost-light">team@officebeatllc.com</a>
     </div>
   </div>
 </section>
@@ -435,7 +490,7 @@
     </div>
     <div class="legal">
       <span>© 2026 OfficeBeat LLC. All rights reserved.</span>
-      <span>info@officebeatllc.com · +1 (201) 446-2837 · New York, NY</span>
+      <span>team@officebeatllc.com · +1 (201) 446-2837 · New York, NY</span>
     </div>
   </div>
 </footer>
@@ -452,5 +507,6 @@
   })();
 </script>
 
+<script src="assets/polish.js" defer></script>
 </body>
 </html>

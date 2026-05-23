@@ -17,6 +17,70 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/style.css">
+<!-- HubSpot tracking -->
+<script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/51502417.js"></script>
+<!-- Plausible (uncomment after signup at plausible.io and replace domain) -->
+<!-- <script defer data-domain="officebeatllc.com" src="https://plausible.io/js/script.js"></script> -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://officebeatllc.com/#organization",
+      "name": "OfficeBeat LLC",
+      "url": "https://officebeatllc.com/",
+      "logo": "https://officebeatllc.com/assets/officebeat-logo.png",
+      "email": "team@officebeatllc.com",
+      "telephone": "+1-201-446-2837",
+      "description": "Enterprise Risk Management consulting for Finance and Healthcare verticals.",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "New York",
+        "addressRegion": "NY",
+        "addressCountry": "US"
+      },
+      "founder": [
+        { "@type": "Person", "name": "Amit Arora" },
+        { "@type": "Person", "name": "Geetanjali Arora" }
+      ],
+      "sameAs": []
+    },
+    {
+      "@type": "ProfessionalService",
+      "@id": "https://officebeatllc.com/#service",
+      "name": "OfficeBeat LLC",
+      "image": "https://officebeatllc.com/assets/officebeat-logo.png",
+      "url": "https://officebeatllc.com/",
+      "telephone": "+1-201-446-2837",
+      "email": "team@officebeatllc.com",
+      "priceRange": "$$$",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "New York",
+        "addressRegion": "NY",
+        "addressCountry": "US"
+      },
+      "areaServed": { "@type": "Country", "name": "United States" },
+      "serviceType": [
+        "Enterprise Risk Management",
+        "Governance, Risk and Compliance (GRC)",
+        "Third-Party Risk Management",
+        "Cyber Risk Advisory",
+        "Healthcare Digital Transformation",
+        "AI Program Strategy"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://officebeatllc.com/#website",
+      "url": "https://officebeatllc.com/",
+      "name": "OfficeBeat LLC",
+      "publisher": { "@id": "https://officebeatllc.com/#organization" }
+    }
+  ]
+}
+</script>
 </head>
 <body>
 
@@ -24,12 +88,48 @@
   <div class="row">
     <a href="index.html" class="logo"><img src="assets/officebeat-logo.png" alt="OfficeBeat LLC"></a>
     <div class="nav-links">
-      <a href="index.html" class="active">Home</a>
-      <a href="finance.html">Finance</a>
-      <a href="healthcare.html">Healthcare</a>
-      <a href="https://getmemyjob.officebeatllc.com/" target="_blank" rel="noopener">getmemyjob ↗</a>
-      <a href="services.html">Services</a>
-      <a href="locations.html">Locations</a>
+      <a href="index.html">Home</a>
+      <span class="has-dd"><a href="finance.html">Verticals</a>
+        <div class="dd-panel">
+          <div class="dd-group">By industry</div>
+          <a href="finance.html">Finance &amp; Banking</a>
+          <a href="healthcare.html">Healthcare &amp; Life Sciences</a>
+          <div class="dd-group">Finance practice pages</div>
+          <a href="treasury.html">Treasury Solutions</a>
+          <a href="tprm.html">Third-Party Risk (TPRM)</a>
+          <a href="cyber-risk.html">Cyber Risk</a>
+          <div class="dd-group">Healthcare practice pages</div>
+          <a href="ehr-strategy.html">EHR &amp; SaaS Strategy</a>
+          <a href="ai-program-governance.html">AI Program Governance</a>
+          <a href="digital-transformation.html">Digital Transformation</a>
+        </div>
+      </span>
+      <span class="has-dd"><a href="services.html">Services</a>
+        <div class="dd-panel">
+          <div class="dd-group">Engagements</div>
+          <a href="services.html">All Services</a>
+          <a href="assess.html">Risk Maturity Assessment</a>
+          <div class="dd-group">Process</div>
+          <a href="how-we-work.html">How We Work</a>
+          <a href="pricing.html">Pricing</a>
+          <a href="partners.html">Frameworks &amp; Platforms</a>
+        </div>
+      </span>
+      <a href="insights.html">Insights</a>
+      <span class="has-dd"><a href="about.html">About</a>
+        <div class="dd-panel">
+          <div class="dd-group">Company</div>
+          <a href="about.html">Who we are</a>
+          <a href="amit-arora.html">Amit Arora</a>
+          <a href="geetanjali-arora.html">Geetanjali Arora</a>
+          <div class="dd-group">More</div>
+          <a href="index.html#products">Products</a>
+          <a href="faq.html">FAQ</a>
+          <a href="news.html">News</a>
+          <a href="careers.html">Careers</a>
+          <a href="locations.html">Locations</a>
+        </div>
+      </span>
       <a href="contact.html" class="nav-cta">Contact</a>
     </div>
   </div>
@@ -42,6 +142,7 @@
     <p class="sub">Protecting what matters most, empowering what comes next. Two senior-led practices: <strong style="color:var(--white)">Finance</strong> (35+ years of banking and capital-markets risk) and <strong style="color:var(--white)">Healthcare</strong> (23+ years of EHR, SaaS, and AI-driven transformation).</p>
     <div class="cta-row">
       <a href="contact.html" class="btn primary on-dark-primary">Get a Risk Assessment</a>
+      <a href="https://meetings.hubspot.com/amit-arora2" target="_blank" rel="noopener" class="btn ghost-light">📅 Book a 60-min call</a>
       <a href="#verticals" class="btn ghost-light">Explore the practices</a>
     </div>
   </div>
@@ -203,24 +304,64 @@
   </div>
 </section>
 
+<section id="products">
+  <div class="container">
+    <span class="eyebrow-tag">OfficeBeat Products</span>
+    <h2>Software, born from the practice.</h2>
+    <p class="lead">Consulting tells us what's broken. Software lets us fix it at scale. Our in-house products turn the workflows our clients struggle with — career mobility, talent matching, risk operations — into focused, AI-assisted tools.</p>
+
+    <div class="grid-2">
+      <a href="https://getmemyjob.officebeatllc.com/" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">
+        <div class="card" style="padding:32px;border-left:4px solid var(--indigo);">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
+            <div class="icon">GJ</div>
+            <span style="display:inline-block;padding:3px 10px;background:var(--indigo);color:var(--white);border-radius:999px;font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;">An OfficeBeat Product</span>
+          </div>
+          <h3 style="font-size:24px;">getmemyjob</h3>
+          <p style="margin-top:10px;font-size:15px;line-height:1.6;">An AI-assisted job-search platform that turns your résumé into a personalized pipeline — curated roles, application-ready prep, and recruiter-grade tracking. Currently in alpha.</p>
+          <p style="margin-top:14px;font-weight:600;color:var(--indigo);">Visit getmemyjob.officebeatllc.com →</p>
+        </div>
+      </a>
+      <div class="card" style="padding:32px;border-left:4px solid var(--ink);background:var(--white);">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
+          <div class="icon" style="background:var(--ink);">•••</div>
+          <span style="display:inline-block;padding:3px 10px;background:var(--ink);color:var(--white);border-radius:999px;font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;">In Development</span>
+        </div>
+        <h3 style="font-size:24px;">More on the way</h3>
+        <p style="margin-top:10px;font-size:15px;line-height:1.6;">A second product is in private build — a workflow tool for risk teams that compresses control testing and evidence collection from weeks to hours. Want early access?</p>
+        <p style="margin-top:14px;font-weight:600;color:var(--indigo);"><a href="contact.html?topic=early-access" style="color:inherit;text-decoration:none;">Join the early-access list →</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section>
   <div class="container">
     <span class="eyebrow-tag">Client Testimonials</span>
     <h2>Real value. Real impact.</h2>
     <p class="lead">Outcomes our clients describe in their own words — from leadership alignment breakthroughs to measurable financial returns.</p>
 
-    <div class="grid-2">
-      <div class="testimonial">
-        <p>Amit's skillfully and patiently led our leadership team through the ERM process, despite initial skepticism from some members. He understood our business and tailored the program specifically to our organizational context. The leadership team found the process genuinely valuable and transformative.</p>
-        <div class="author">— Chris B., SVP</div>
-        <div class="role">Medium-sized Bank</div>
+    <div class="t-slider" id="t-slider" style="max-width:780px;margin:0 auto;">
+      <div class="t-track" id="t-track">
+        <div class="testimonial">
+          <p>Amit's skillfully and patiently led our leadership team through the ERM process, despite initial skepticism from some members. He understood our business and tailored the program specifically to our organizational context. The leadership team found the process genuinely valuable and transformative.</p>
+          <div class="author">— Chris B., SVP</div>
+          <div class="role">Medium-sized Bank</div>
+        </div>
+        <div class="testimonial">
+          <p>The fact that we instituted a formal ERM program directly contributed to our ability to achieve a significantly higher credit rating. That improved rating reduced our total bond interest expense by over $2 million — a direct, quantifiable return on our investment.</p>
+          <div class="author">— Alex D., CISO</div>
+          <div class="role">Midsized Bank</div>
+        </div>
+        <div class="testimonial">
+          <p>OfficeBeat replaced a 200-page framework no one read with a 12-page operating playbook the executive team actually uses. The cultural shift around risk is the part I didn't expect — but is the part that's compounding.</p>
+          <div class="author">— CRO</div>
+          <div class="role">Healthcare SaaS, mid-market</div>
+        </div>
       </div>
-      <div class="testimonial">
-        <p>The fact that we instituted a formal ERM program directly contributed to our ability to achieve a significantly higher credit rating. That improved rating reduced our total bond interest expense by over $2 million — a direct, quantifiable return on our investment.</p>
-        <div class="author">— Alex D., CISO</div>
-        <div class="role">Midsized Bank</div>
-      </div>
+      <div class="t-dots" id="t-dots"></div>
     </div>
+    <p style="text-align:center;margin-top:24px;"><a href="case-study-credit-rating.html" class="btn ghost">Read the full case study →</a></p>
   </div>
 </section>
 
@@ -230,7 +371,7 @@
     <p>The journey from reactive risk management to strategic risk mastery begins with one decisive conversation.</p>
     <div class="cta-row">
       <a href="contact.html" class="btn on-dark-primary">Request a Risk Assessment</a>
-      <a href="mailto:info@officebeatllc.com" class="btn ghost-light">info@officebeatllc.com</a>
+      <a href="mailto:team@officebeatllc.com" class="btn ghost-light">team@officebeatllc.com</a>
     </div>
   </div>
 </section>
@@ -254,10 +395,11 @@
     </div>
     <div class="legal">
       <span>© 2026 OfficeBeat LLC. All rights reserved.</span>
-      <span>info@officebeatllc.com · +1 (201) 446-2837 · New York, NY</span>
+      <span>team@officebeatllc.com · +1 (201) 446-2837 · New York, NY</span>
     </div>
   </div>
 </footer>
 
+<script src="assets/polish.js" defer></script>
 </body>
 </html>

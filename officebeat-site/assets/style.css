@@ -505,3 +505,123 @@ footer .legal { font-size: 12px; color: rgba(255,255,255,0.5); display: flex; ju
   footer .row { flex-direction: column; }
   .tab-btn { padding: 12px 14px; font-size: 14px; }
 }
+
+/* ============================================================
+   Polish layer — added 2026-05-22
+   ============================================================ */
+.reveal { opacity: 0; transform: translateY(16px); transition: opacity .6s ease, transform .6s ease; }
+.reveal.in { opacity: 1; transform: translateY(0); }
+.stat .num.counting { font-variant-numeric: tabular-nums; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+}
+
+/* ============================================================
+   Mega-menu nav (pure CSS hover dropdowns)
+   ============================================================ */
+.nav-links { position: relative; }
+.nav-links .has-dd { position: relative; }
+.nav-links .has-dd > a::after {
+  content: " ▾"; font-size: 9px; vertical-align: middle; opacity: 0.7;
+}
+.nav-links .dd-panel {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  background: var(--white);
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.10);
+  padding: 14px 18px;
+  min-width: 240px;
+  display: none;
+  z-index: 100;
+}
+.nav-links .has-dd:hover .dd-panel,
+.nav-links .has-dd:focus-within .dd-panel { display: block; }
+.nav-links .dd-panel a {
+  display: block;
+  padding: 6px 10px;
+  font-size: 14px;
+  color: var(--ink);
+  white-space: nowrap;
+  border-radius: 6px;
+  margin: 1px 0;
+}
+.nav-links .dd-panel a:hover { background: var(--lilac-soft); color: var(--indigo); }
+.nav-links .dd-panel .dd-group {
+  font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--muted); font-weight: 700; margin: 8px 10px 4px;
+}
+.nav-links .dd-panel .dd-group:first-child { margin-top: 0; }
+@media (max-width: 900px) {
+  .nav-links .has-dd > a::after { display: none; }
+  .nav-links .dd-panel {
+    position: static;
+    transform: none;
+    box-shadow: none;
+    border: 0;
+    padding: 0 0 0 12px;
+    min-width: 0;
+    display: block;
+  }
+  .nav-links .dd-panel a { font-size: 13px; padding: 4px 8px; }
+  .nav-links .dd-panel .dd-group { margin: 4px 0 2px; font-size: 10px; }
+}
+
+/* Frameworks / trust strip */
+.trust-strip { background: var(--off-white); padding: 28px 0; border-top: 1px solid var(--hairline); border-bottom: 1px solid var(--hairline); }
+.trust-strip .container { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px 20px; }
+.trust-strip .label { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 700; margin-right: 8px; }
+.trust-strip .pill {
+  display: inline-block; padding: 6px 14px; border: 1px solid var(--hairline);
+  border-radius: 999px; font-size: 12.5px; font-weight: 600; color: var(--ink);
+  background: var(--white);
+}
+
+/* Testimonial slider */
+.t-slider { position: relative; overflow: hidden; border-radius: 14px; }
+.t-track { display: flex; transition: transform 0.5s ease; }
+.t-track > .testimonial { min-width: 100%; box-sizing: border-box; margin: 0; }
+.t-dots { display: flex; gap: 8px; justify-content: center; margin-top: 18px; }
+.t-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--hairline); border: 0; cursor: pointer; padding: 0; }
+.t-dot.active { background: var(--indigo); }
+
+/* HubSpot embedded-form overrides (for future direct hsForms.create embeds) */
+.hbspt-form .hs-button,
+.hbspt-form input[type="submit"] {
+  background: var(--indigo) !important;
+  color: var(--white) !important;
+  border: 0 !important;
+  border-radius: 8px !important;
+  padding: 12px 22px !important;
+  font-family: Inter, system-ui, sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 14.5px !important;
+  letter-spacing: 0.02em !important;
+  cursor: pointer !important;
+  transition: background 0.15s ease !important;
+}
+.hbspt-form .hs-button:hover,
+.hbspt-form input[type="submit"]:hover { background: var(--indigo-deep) !important; }
+.hbspt-form label, .hbspt-form .hs-form-field > label {
+  font-family: Inter, system-ui, sans-serif !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  color: var(--ink) !important;
+}
+.hbspt-form input[type="text"], .hbspt-form input[type="email"],
+.hbspt-form input[type="tel"], .hbspt-form select, .hbspt-form textarea {
+  border: 1px solid var(--hairline) !important;
+  border-radius: 8px !important;
+  padding: 10px 12px !important;
+  font-family: Inter, system-ui, sans-serif !important;
+  font-size: 14.5px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+.hbspt-form input:focus, .hbspt-form select:focus, .hbspt-form textarea:focus {
+  border-color: var(--indigo) !important;
+  outline: none !important;
+}
