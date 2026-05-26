@@ -2949,6 +2949,28 @@ HTML_TEMPLATE = """<!doctype html>
   </span>
 </div>
 <div id="contacts-priority-indicator" style="margin: 0 0 12px 0; min-height: 18px;"></div>
+
+<!-- Daily focus panel (E6 / 2026-05-26): pin the top-N where N = dailyTarget -->
+<div id="focus-panel" style="margin: 0 0 16px 0; padding:14px 16px; background:linear-gradient(135deg,#eef0ff 0%,#fef8e8 100%); border:1px solid #d0d4dc; border-radius:10px; display:none;">
+  <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+    <div style="font-size:15px; font-weight:700; color:#22223b;">
+      🎯 Today’s targets: apply to <span id="focus-n">5</span>
+    </div>
+    <div style="font-size:13px; color:#444;">
+      <strong id="focus-applied">0</strong> of <span id="focus-n-2">5</span> done today
+      <span id="focus-progress-bar" style="display:inline-block;width:120px;height:6px;background:#dcdfe6;border-radius:3px;margin-left:8px;overflow:hidden;vertical-align:middle;">
+        <span id="focus-progress-fill" style="display:block;height:100%;width:0%;background:#5C5CD6;border-radius:3px;transition:width 0.3s;"></span>
+      </span>
+    </div>
+  </div>
+  <div style="font-size:12px;color:#666; margin-top:6px;">
+    These are your highest-fit roles to apply to right now. Done one? Mark it applied on the card. Skip if it’s not a fit.
+  </div>
+  <div id="focus-list" style="margin-top:10px; display:flex; flex-direction:column; gap:6px; font-size:13.5px;">
+    <!-- populated by JS -->
+  </div>
+</div>
+
 <div class="grid" id="grid">
 {cards}
 </div>
@@ -5963,6 +5985,116 @@ function refreshDailyGoalWidget() {{
     }}
   }} catch (e) {{ /* swallow */ }}
 }}
+
+// === Daily Focus Panel (E6 / 2026-05-26) =========================
+// Shows top-N highest-scoring cards as the "apply today" picks. N = the user's
+// dailyTarget. Updates as the user marks jobs applied via the existing tracker.
+function refreshFocusPanel() {{
+  const panel = document.getElementById("focus-panel");
+  if (!panel) return;
+  const N = (typeof loadDailyApplyTarget === "function") ? loadDailyApplyTarget() : 5;
+  const grid = document.getElementById("grid");
+  if (!grid) return;
+  // Get all visible cards (after filter), sorted by score desc.
+  // The grid already sorts by data-score so the first N cards in DOM
+  // that aren't already applied today are our picks.
+  const today = new Date().toISOString().slice(0,10);
+  const tracker = (typeof getTracker === "function") ? getTracker() : {{}};
+  const cards = Array.from(grid.querySelectorAll(".card")).filter(function(c) {{
+    // Exclude cards already applied/saved today (let user see fresh picks)
+    const fp = c.getAttribute("data-fp");
+    const rec = tracker[fp];
+    if (!rec) return true;
+    const when = (rec.statusChangedAt || rec.appliedAt || rec.updatedAt || "").slice(0,10);
+    const st = rec.status || "";
+    if (st === "rejected" || st === "skipped") return false;
+    if (st && when === today) return false; // applied or saved today — counts toward goal
+    return true;
+  }});
+
+  const picks = cards.slice(0, N);
+
+  // Update header counts
+  const ne = document.getElementById("focus-n");
+  const ne2 = document.getElementById("focus-n-2");
+  if (ne) ne.textContent = N;
+  if (ne2) ne2.textContent = N;
+
+  // Applied-today counter (reuses the streak widget calc style)
+  let appliedToday = 0;
+  Object.values(tracker || {{}}).forEach(function(r) {{
+    if (!r) return;
+    const st = r.status || "";
+    if (!st || st === "rejected" || st === "skipped") return;
+    const when = (r.statusChangedAt || r.appliedAt || r.updatedAt || r.created_at || "").slice(0,10);
+    if (when === today) appliedToday += 1;
+  }});
+  const ae = document.getElementById("focus-applied");
+  if (ae) ae.textContent = appliedToday;
+  const fill = document.getElementById("focus-progress-fill");
+  if (fill) fill.style.width = Math.min(100, Math.round(appliedToday * 100 / Math.max(1, N))) + "%";
+
+  // Render the list of picks
+  const list = document.getElementById("focus-list");
+  if (list) {{
+    list.innerHTML = "";
+    picks.forEach(function(c, idx) {{
+      const titleA = c.querySelector(".title a");
+      const compEl = c.querySelector(".company");
+      const score = c.getAttribute("data-score");
+      const fp = c.getAttribute("data-fp");
+      const titleTxt = titleA ? titleA.textContent.trim() : "?";
+      const compTxt = compEl ? compEl.textContent.trim() : "?";
+      const row = document.createElement("div");
+      row.style.cssText = "display:flex; align-items:center; gap:10px; padding:5px 0; border-bottom:1px dashed #d0d4dc;";
+      row.innerHTML =
+        '<span style="display:inline-block;min-width:26px;text-align:center;background:#5C5CD6;color:#fff;border-radius:4px;font-weight:700;font-size:11px;padding:2px 6px;">' + (idx+1) + '</span>' +
+        '<a href="#" data-jump-fp="' + fp + '" style="flex:1; color:#22223b; text-decoration:none; font-weight:600;">' + _esc(titleTxt) + '</a>' +
+        '<span style="color:#666;font-size:12.5px;">' + _esc(compTxt) + '</span>' +
+        '<span style="color:#5C5CD6;font-weight:700;font-size:12px;min-width:30px;text-align:right;">' + score + '</span>';
+      list.appendChild(row);
+    }});
+    // Wire clicks to scroll to the card
+    list.querySelectorAll("[data-jump-fp]").forEach(function(a) {{
+      a.addEventListener("click", function(e) {{
+        e.preventDefault();
+        const fp = a.getAttribute("data-jump-fp");
+        const card = document.querySelector('.card[data-fp="' + fp + '"]');
+        if (card) {{
+          card.scrollIntoView({{ behavior: "smooth", block: "center" }});
+          card.style.boxShadow = "0 0 0 3px #5C5CD6";
+          setTimeout(function() {{ card.style.boxShadow = ""; }}, 2400);
+        }}
+      }});
+    }});
+  }}
+
+  // Add a "TODAY N" badge to each of the top-N cards in the grid for visual scanning
+  Array.from(grid.querySelectorAll(".card .focus-badge")).forEach(function(el) {{ el.remove(); }});
+  picks.forEach(function(c, idx) {{
+    const badge = document.createElement("span");
+    badge.className = "focus-badge";
+    badge.style.cssText = "display:inline-block;background:#5C5CD6;color:#fff;border-radius:4px;padding:2px 7px;font-size:10.5px;font-weight:700;margin-right:6px;vertical-align:middle;";
+    badge.textContent = "TODAY " + (idx+1);
+    const row1 = c.querySelector(".row1");
+    if (row1) row1.insertBefore(badge, row1.firstChild);
+  }});
+
+  panel.style.display = "";
+}}
+
+// Light helper for HTML-escaping used in the panel rows
+function _esc(s) {{
+  return (s || "").replace(/[&<>"]/g, function(c) {{
+    return ({{ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }}[c]);
+  }});
+}}
+
+// Initial render + re-render after tracker updates
+document.addEventListener("DOMContentLoaded", function() {{
+  setTimeout(refreshFocusPanel, 400);
+}});
+
 function wizPickDailyTarget(n) {{
   const input = document.getElementById("wiz-daily-target");
   if (input) input.value = n;
