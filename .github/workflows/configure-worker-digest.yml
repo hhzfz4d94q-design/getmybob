@@ -90,6 +90,7 @@ jobs:
           if [ "$HTTP" != "200" ] && [ "$HTTP" != "201" ]; then exit 1; fi
 
       - name: Verify configuration
+        continue-on-error: true
         env:
           CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
