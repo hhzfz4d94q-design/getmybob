@@ -1557,6 +1557,19 @@ WORKER_BASE_URL = "https://cool-darkness-dce5.tr6jz6v7wg.workers.dev"
 USERS_JSON_PATH = os.path.join(ROOT, "users.json")
 SKILLS_PROFILE = None  # set per user during generate_dashboard
 COMPANY_INDUSTRIES = {}  # company_slug -> list of industries (populated from companies.json)
+def _load_recruiters_by_company():
+    try:
+        with open(os.path.join(ROOT, "recruiters.json"), "r", encoding="utf-8") as f:
+            d = json.load(f)
+        out = {}
+        for k, v in (d.get("companies") or {}).items():
+            if isinstance(k, str):
+                out[k.strip().lower()] = v
+        return out
+    except Exception:
+        return {}
+RECRUITERS_BY_COMPANY = _load_recruiters_by_company()
+
 DEFAULT_INDUSTRIES = ["healthcare", "digital-health"]
 
 
@@ -2530,6 +2543,12 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
             careers_fallback = f'<div class="careers-fallback" style="font-size:11.5px;color:#666;margin-top:6px;">If this listing is removed, browse <a href="{_careers}" target="_blank" rel="noopener" style="color:#5C5CD6;">all jobs at {_esc(company)}</a> on their ATS.</div>'
         else:
             careers_fallback = ''
+        _comp_key = (company or "").strip().lower()
+        _ri = (RECRUITERS_BY_COMPANY.get(_comp_key) or RECRUITERS_BY_COMPANY.get(_comp_key.replace(" ", "")))
+        if _ri and _ri.get("linkedinSearch"):
+            warm_intro_html = f'<a class="btn ghost-btn small warm-intro" href="{_ri["linkedinSearch"]}" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>'
+        else:
+            warm_intro_html = ''
         cards.append(f"""
         <div class="card" data-fp="{fp}" data-score="{score}" data-senior="{senior}" data-remote="{remote}" data-employment="{emp}" data-listed-days="{listed_days if listed_days is not None else 9999}" data-salary-max="{salary_max}" data-last-seen="{last_seen or ''}" data-first-seen="{first_seen or ''}" data-recruiter="{_is_recr}" data-why="{_esc(_why)}" data-cluster-count="{_xc_count}" data-cluster-companies="{_esc(_xc_label)}" data-title-norm="{_norm_key}">
           <div class="row1">
@@ -2548,6 +2567,9 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
             <a class="btn primary" href="{url}" target="_blank" rel="noopener" onclick="applyAndOpen('{fp}', this, '{url}'); return true;">Apply now &rarr;</a>
             <button class="btn ghost-btn" onclick="prepApplication('{fp}', this)">Prep materials</button>
             <button class="btn track" onclick="cycleStatus('{fp}', this)" data-status-for="{fp}">Mark Applied</button>
+            <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('{fp}')" data-fp-followup="{fp}" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
+            <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('{fp}')" data-fp-interview="{fp}" style="display:none;" title="Interview prep">🎯 Interview prep</button>
+            {warm_intro_html}
             <button class="btn ghost-btn small" onclick="showWhyMatched('{fp}', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('{fp}', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -6138,6 +6160,106 @@ function refreshDailyGoalWidget() {{
     }}
   }} catch (e) {{ /* swallow */ }}
 }}
+
+
+// G3 (2026-05-26): Render-time check that shows the "Follow up" and "Interview Prep"
+// buttons on a card based on its tracker status.
+function updateActionButtonsFor(fp) {{
+  try {{
+    const tr = (typeof getTracker === "function" ? getTracker() : {{}})[fp] || {{}};
+    const st = (tr.status || "").toLowerCase();
+    const when = (tr.statusChangedAt || tr.appliedAt || tr.updatedAt || "");
+    const days = when ? Math.floor((Date.now() - new Date(when).getTime()) / 86400000) : 0;
+    const card = document.querySelector('.card[data-fp="' + fp + '"]');
+    if (!card) return;
+    const fbtn = card.querySelector('[data-fp-followup]');
+    const ibtn = card.querySelector('[data-fp-interview]');
+    if (fbtn) fbtn.style.display = (st === "applied" && days >= 7) ? "" : "none";
+    if (ibtn) ibtn.style.display = (st === "phonescreen" || st === "onsite" || st === "interview") ? "" : "none";
+  }} catch(e) {{}}
+}}
+function updateActionButtonsAll() {{
+  document.querySelectorAll('.card[data-fp]').forEach(function(c) {{
+    updateActionButtonsFor(c.getAttribute("data-fp"));
+  }});
+}}
+
+// Hook into the existing tracker plumbing — patch cycleStatus and decorateAllCards
+// so they refresh the buttons after any status change.
+(function patchForActionButtons() {{
+  if (typeof cycleStatus === "function" && !cycleStatus._patchedG3) {{
+    const orig = cycleStatus;
+    window.cycleStatus = async function(fp, btn) {{
+      const r = await orig.apply(this, arguments);
+      try {{ updateActionButtonsFor(fp); }} catch(e) {{}}
+      return r;
+    }};
+    window.cycleStatus._patchedG3 = true;
+  }}
+  if (typeof decorateAllCards === "function" && !decorateAllCards._patchedG3) {{
+    const orig = decorateAllCards;
+    window.decorateAllCards = function() {{
+      const r = orig.apply(this, arguments);
+      try {{ updateActionButtonsAll(); }} catch(e) {{}}
+      return r;
+    }};
+    window.decorateAllCards._patchedG3 = true;
+  }}
+}})();
+
+// Run once at load (deferred so the tracker has hydrated)
+document.addEventListener("DOMContentLoaded", function() {{
+  setTimeout(updateActionButtonsAll, 800);
+}});
+
+// Card-level openers — route to the existing detail-panel + tracker entries
+function openFollowupFromCard(fp) {{
+  // Set the current detail context, then open the followup composer that already exists
+  if (typeof _currentDetailFp !== "undefined") window._currentDetailFp = fp;
+  if (typeof openAppDetail === "function") {{
+    openAppDetail(fp).then(function() {{
+      if (typeof openFollowupDraft === "function") openFollowupDraft();
+    }});
+  }}
+}}
+function openInterviewPrepFromCard(fp) {{
+  if (typeof _currentDetailFp !== "undefined") window._currentDetailFp = fp;
+  if (typeof openAppDetail === "function") {{
+    openAppDetail(fp).then(function() {{
+      if (typeof openInterviewPrep === "function") openInterviewPrep();
+    }});
+  }}
+}}
+
+// G4 (2026-05-26): When the Prep modal opens with a fresh cover-letter result,
+// auto-copy it to the clipboard so user can paste into the Greenhouse textarea.
+(function autoCopyCoverLetter() {{
+  function tryCopy(text) {{
+    if (!text || !navigator.clipboard) return;
+    navigator.clipboard.writeText(text).then(function() {{
+      const banner = document.createElement("div");
+      banner.style.cssText = "position:fixed;top:18px;right:18px;z-index:2147483647;background:#0a6b3a;color:white;padding:8px 12px;border-radius:6px;font-weight:600;font-size:13px;box-shadow:0 4px 14px rgba(0,0,0,0.18);";
+      banner.textContent = "📋 Cover letter copied to clipboard — paste it into the apply form";
+      document.body.appendChild(banner);
+      setTimeout(function() {{ banner.remove(); }}, 6000);
+    }}).catch(function() {{}});
+  }}
+  // Patch prepApplication so after it loads results, we copy.
+  if (typeof prepApplication === "function" && !prepApplication._patchedG4) {{
+    const orig = prepApplication;
+    window.prepApplication = async function() {{
+      const r = await orig.apply(this, arguments);
+      // The original sets document.getElementById('prep-cover').textContent — read from there
+      setTimeout(function() {{
+        const el = document.getElementById("prep-cover") || document.getElementById("prep-coverLetter");
+        if (el && el.textContent) tryCopy(el.textContent);
+      }}, 600);
+      return r;
+    }};
+    window.prepApplication._patchedG4 = true;
+  }}
+}})();
+
 
 // === Daily Focus Panel (E6 / 2026-05-26) =========================
 // Shows top-N highest-scoring cards as the "apply today" picks. N = the user's
