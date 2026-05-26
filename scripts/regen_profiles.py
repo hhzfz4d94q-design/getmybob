@@ -24,22 +24,26 @@ slug_arg = (sys.argv[1] if len(sys.argv) > 1 else "all").strip()
 
 
 def http_get_json(url):
-    req = urllib.request.Request(url, headers={"User-Agent": "getmemyjob-regen/1.0"})
+    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (compatible; getmemyjob-regen/1.0; +https://getmemyjob.officebeatllc.com)"})
     with urllib.request.urlopen(req, timeout=30) as resp:
         return json.loads(resp.read().decode("utf-8", errors="replace"))
 
 
 def http_post_json(url, headers):
-    req = urllib.request.Request(url, method="POST", headers=headers)
+    headers = dict(headers or {})
+    headers.setdefault("User-Agent", "Mozilla/5.0 (compatible; getmemyjob-regen/1.0; +https://getmemyjob.officebeatllc.com)")
+    headers.setdefault("Content-Type", "application/json")
+    req = urllib.request.Request(url, method="POST", headers=headers, data=b"")
     try:
         with urllib.request.urlopen(req, timeout=120) as resp:
             return resp.status, json.loads(resp.read().decode("utf-8", errors="replace"))
     except urllib.error.HTTPError as e:
         body = e.read().decode("utf-8", errors="replace")
+        print(f"  [debug] HTTP {e.code} body[:500]: {body[:500]!r}", flush=True)
         try:
             return e.code, json.loads(body)
         except Exception:
-            return e.code, {"error": body[:300]}
+            return e.code, {"error": body[:300] or f"HTTP {e.code} (empty body)"}
     except (urllib.error.URLError, TimeoutError) as e:
         return 0, {"error": f"{type(e).__name__}: {e}"}
 
