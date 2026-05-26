@@ -6052,11 +6052,15 @@ function refreshFocusPanel() {{
       const compTxt = compEl ? compEl.textContent.trim() : "?";
       const row = document.createElement("div");
       row.style.cssText = "display:flex; align-items:center; gap:10px; padding:5px 0; border-bottom:1px dashed #d0d4dc;";
+      // Pull the actual job apply URL from the card's primary <a>
+      const cardLink = c.querySelector('.title a, a[href][target="_blank"]');
+      const applyUrl = cardLink ? cardLink.href : "#";
       row.innerHTML =
         '<span style="display:inline-block;min-width:26px;text-align:center;background:#5C5CD6;color:#fff;border-radius:4px;font-weight:700;font-size:11px;padding:2px 6px;">' + (idx+1) + '</span>' +
-        '<a href="#" data-jump-fp="' + fp + '" style="flex:1; color:#22223b; text-decoration:none; font-weight:600;">' + _esc(titleTxt) + '</a>' +
+        '<a href="' + applyUrl + '" target="_blank" rel="noopener" style="flex:1; color:#22223b; text-decoration:none; font-weight:600;">' + _esc(titleTxt) + '</a>' +
         '<span style="color:#666;font-size:12.5px;">' + _esc(compTxt) + '</span>' +
-        '<span style="color:#5C5CD6;font-weight:700;font-size:12px;min-width:30px;text-align:right;">' + score + '</span>';
+        '<span style="color:#5C5CD6;font-weight:700;font-size:12px;min-width:30px;text-align:right;">' + score + '</span>' +
+        '<a href="#" data-jump-fp="' + fp + '" title="Jump to card" style="color:#5C5CD6;text-decoration:none;font-size:13px;margin-left:6px;">↓</a>';
       list.appendChild(row);
     }});
     // Wire clicks to scroll to the card
