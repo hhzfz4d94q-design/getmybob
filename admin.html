@@ -53,6 +53,10 @@
 <header>
   <h1>Admin · getmemyjob</h1>
   <div class="sub">Manage alpha users · invite via email · view status</div>
+  <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+    <button class="secondary" onclick="openChangePasswordModal()" style="font-size:13px;padding:6px 12px;">Change admin password</button>
+    <button class="secondary" onclick="signOut()" style="font-size:13px;padding:6px 12px;">Sign out</button>
+  </div>
 </header>
 
 <main id="main" style="display:none;">
@@ -122,6 +126,25 @@
         <button onclick="signInWithKey()" class="secondary" style="font-size:12px;padding:6px 10px;">Sign in with key</button>
       </div>
     </details>
+  </div>
+</div>
+
+<!-- Change admin password modal -->
+<div class="modal-overlay" id="change-pw-modal">
+  <div class="modal">
+    <h3>Change admin password</h3>
+    <p style="font-size:13px;color:#666;">New password must be at least 10 characters. Email defaults to <code>team@officebeatllc.com</code>.</p>
+    <label>Admin email (optional)</label>
+    <input type="email" id="change-pw-email" placeholder="team@officebeatllc.com" autocomplete="off" style="margin-bottom:10px;">
+    <label>New password</label>
+    <input type="password" id="change-pw-new" autocomplete="new-password" minlength="10" style="margin-bottom:10px;">
+    <label>Confirm new password</label>
+    <input type="password" id="change-pw-confirm" autocomplete="new-password" minlength="10" style="margin-bottom:10px;">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;">
+      <button onclick="saveAdminPassword()">Save new password</button>
+      <button class="secondary" onclick="closeChangePasswordModal()">Cancel</button>
+    </div>
+    <div class="status" id="change-pw-status"></div>
   </div>
 </div>
 
@@ -297,6 +320,41 @@ function renderProfile(p) {
 
 function escHtml(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function openChangePasswordModal() {
+  $('change-pw-email').value = '';
+  $('change-pw-new').value = '';
+  $('change-pw-confirm').value = '';
+  $('change-pw-status').textContent = '';
+  $('change-pw-modal').classList.add('show');
+}
+function closeChangePasswordModal() {
+  $('change-pw-modal').classList.remove('show');
+}
+async function saveAdminPassword() {
+  if (!_adminKey) { $('change-pw-status').textContent = 'Sign in first.'; return; }
+  const np = $('change-pw-new').value;
+  const cp = $('change-pw-confirm').value;
+  const ne = ($('change-pw-email').value || '').trim().toLowerCase();
+  if (np.length < 10) { $('change-pw-status').textContent = 'Password must be at least 10 characters.'; return; }
+  if (np !== cp) { $('change-pw-status').textContent = 'Passwords do not match.'; return; }
+  $('change-pw-status').textContent = 'Saving…';
+  try {
+    const body = { newPassword: np };
+    if (ne) body.newEmail = ne;
+    const r = await fetch(WORKER_BASE + '/api/auth/admin-change-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Key': _adminKey },
+      body: JSON.stringify(body),
+    });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok) { $('change-pw-status').textContent = data.error || ('HTTP ' + r.status); return; }
+    $('change-pw-status').textContent = 'Saved. Use the new password next time you sign in.';
+    setTimeout(closeChangePasswordModal, 1500);
+  } catch (e) {
+    $('change-pw-status').textContent = 'Save failed: ' + (e.message || e);
+  }
 }
 
 async function refreshPending() {

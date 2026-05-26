@@ -63,6 +63,7 @@ export default {
     if (url.pathname === '/api/auth/change-password') return handleChangePassword(request, env, cors);
     if (url.pathname === '/api/auth/capacity') return handleCapacity(request, env, cors);
     if (url.pathname === '/api/auth/admin-login') return handleAdminLogin(request, env, cors);
+    if (url.pathname === '/api/auth/admin-change-password') return handleAdminChangePassword(request, env, cors);
 
     // Determine which user this request operates on.
     // Priority: ?user=slug in URL → "user" field in JSON body → DEFAULT_USER
@@ -1604,33 +1605,84 @@ async function handleCapacity(request, env, cors) {
 
 // =====================================================================
 // =====================================================================
+// Loads admin auth from KV (if user rotated password) or falls back to env.
+async function _loadAdminAuth(env) {
+  if (env.RESUMES) {
+    const raw = await env.RESUMES.get('admin:auth');
+    if (raw) {
+      try {
+        const a = JSON.parse(raw);
+        if (a && a.salt && a.hash) {
+          return { email: _normEmail(a.email || env.ADMIN_EMAIL || 'team@officebeatllc.com'), salt: a.salt, hash: a.hash };
+        }
+      } catch (e) {}
+    }
+  }
+  if (env.ADMIN_PASSWORD_HASH && env.ADMIN_PASSWORD_SALT) {
+    return {
+      email: _normEmail(env.ADMIN_EMAIL || 'team@officebeatllc.com'),
+      salt: env.ADMIN_PASSWORD_SALT,
+      hash: env.ADMIN_PASSWORD_HASH,
+    };
+  }
+  return null;
+}
+
 // POST /api/auth/admin-login  { email, password }
 // Returns ADMIN_KEY on success so admin.html can use it as X-Admin-Key.
-// Bootstraps from env: ADMIN_EMAIL (default team@officebeatllc.com),
-// ADMIN_PASSWORD_HASH (PBKDF2-SHA256 256-bit, base64), ADMIN_PASSWORD_SALT (base64).
 async function handleAdminLogin(request, env, cors) {
   if (request.method !== 'POST') return _json({ error: 'POST only' }, 405, cors);
   if (!env.ADMIN_KEY) return _json({ error: 'ADMIN_KEY missing' }, 500, cors);
-  if (!env.ADMIN_PASSWORD_HASH || !env.ADMIN_PASSWORD_SALT) {
-    return _json({ error: 'Admin login not configured. Set ADMIN_PASSWORD_HASH + ADMIN_PASSWORD_SALT secrets.' }, 503, cors);
-  }
+  const stored = await _loadAdminAuth(env);
+  if (!stored) return _json({ error: 'Admin login not configured. Set ADMIN_PASSWORD_HASH + ADMIN_PASSWORD_SALT or POST /api/auth/admin-change-password with X-Admin-Key.' }, 503, cors);
+
   let body;
   try { body = await request.json(); } catch (e) { return _json({ error: 'Bad JSON' }, 400, cors); }
   const email = _normEmail(body.email);
   const password = String(body.password || '');
   if (!email || !password) return _json({ error: 'Email and password required' }, 400, cors);
+  if (email !== stored.email) return _json({ error: 'Invalid email or password' }, 401, cors);
 
-  const adminEmail = _normEmail(env.ADMIN_EMAIL || 'team@officebeatllc.com');
-  if (email !== adminEmail) return _json({ error: 'Invalid email or password' }, 401, cors);
-
-  const hash = await hashPasswordPbkdf2(password, env.ADMIN_PASSWORD_SALT);
-  if (hash !== env.ADMIN_PASSWORD_HASH) {
+  const hash = await hashPasswordPbkdf2(password, stored.salt);
+  if (hash !== stored.hash) {
     return _json({ error: 'Invalid email or password' }, 401, cors);
   }
 
-  // Success — return the admin key so the dashboard can store it and use it
-  // as X-Admin-Key on subsequent /admin/* requests.
-  return _json({ ok: true, adminKey: env.ADMIN_KEY, email: adminEmail }, 200, cors);
+  return _json({ ok: true, adminKey: env.ADMIN_KEY, email: stored.email }, 200, cors);
+}
+
+// POST /api/auth/admin-change-password
+//   { newPassword, newEmail? }  +  either X-Admin-Key header OR  currentPassword in body
+// Writes new salt+hash to KV admin:auth (overrides env going forward).
+async function handleAdminChangePassword(request, env, cors) {
+  if (request.method !== 'POST') return _json({ error: 'POST only' }, 405, cors);
+  if (!env.ADMIN_KEY) return _json({ error: 'ADMIN_KEY missing' }, 500, cors);
+  if (!env.RESUMES) return _json({ error: 'RESUMES KV missing' }, 500, cors);
+
+  let body;
+  try { body = await request.json(); } catch (e) { return _json({ error: 'Bad JSON' }, 400, cors); }
+  const newPassword = String(body.newPassword || '');
+  const newEmail = body.newEmail ? _normEmail(body.newEmail) : null;
+  if (newPassword.length < 10) return _json({ error: 'Password must be at least 10 characters' }, 400, cors);
+  if (newEmail && !_isValidEmail(newEmail)) return _json({ error: 'Invalid newEmail' }, 400, cors);
+
+  const hasKey = request.headers.get('X-Admin-Key') === env.ADMIN_KEY;
+  if (!hasKey) {
+    const stored = await _loadAdminAuth(env);
+    if (!stored) return _json({ error: 'Not authenticated' }, 401, cors);
+    const curHash = await hashPasswordPbkdf2(String(body.currentPassword || ''), stored.salt);
+    if (curHash !== stored.hash) return _json({ error: 'Current password incorrect' }, 401, cors);
+  }
+
+  const prev = await _loadAdminAuth(env);
+  const salt = _b64(_randomBytes(16));
+  const hash = await hashPasswordPbkdf2(newPassword, salt);
+  const finalEmail = newEmail || (prev ? prev.email : _normEmail(env.ADMIN_EMAIL || 'team@officebeatllc.com'));
+  await env.RESUMES.put('admin:auth', JSON.stringify({
+    email: finalEmail, salt, hash,
+    updatedAt: new Date().toISOString(),
+  }));
+  return _json({ ok: true, email: finalEmail }, 200, cors);
 }
 
 // =====================================================================
