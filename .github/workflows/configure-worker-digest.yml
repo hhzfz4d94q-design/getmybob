@@ -1,0 +1,114 @@
+name: Configure Worker (Resend secrets + daily-digest cron)
+
+# One-shot setup: take your RESEND_API_KEY + DIGEST_FROM as inputs, push them
+# to the cool-darkness-dce5 Worker secrets via Cloudflare API, and add the
+# daily 7am-ET cron trigger. Run once after you've signed up for Resend +
+# verified your domain.
+#
+# Why this is a workflow_dispatch (not automated): so the API key isn't
+# committed anywhere. Inputs are NOT persisted; Cloudflare receives them once.
+
+on:
+  workflow_dispatch:
+    inputs:
+      resend_api_key:
+        description: 'Your Resend API key (starts with re_) — get it at resend.com → API Keys'
+        required: true
+      digest_from:
+        description: 'From address — e.g. "getmemyjob <noreply@officebeatllc.com>" (domain must be verified in Resend)'
+        required: true
+        default: 'getmemyjob <noreply@officebeatllc.com>'
+      cron:
+        description: 'Cron expression (UTC). Default 0 11 * * * = 7am ET / 4am PT daily.'
+        required: true
+        default: '0 11 * * *'
+
+env:
+  CF_ACCOUNT_ID: 76598c8a5c8c7abbaed5c4292c363e09
+  WORKER_NAME: cool-darkness-dce5
+
+permissions:
+  contents: read
+
+jobs:
+  configure:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mask inputs
+        run: |
+          echo "::add-mask::${{ github.event.inputs.resend_api_key }}"
+          echo "::add-mask::${{ github.event.inputs.digest_from }}"
+
+      - name: Push RESEND_API_KEY secret to Worker
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          RESEND_KEY: ${{ github.event.inputs.resend_api_key }}
+        run: |
+          set -e
+          PAYLOAD=$(python3 -c "import json,os; print(json.dumps({'name':'RESEND_API_KEY','text':os.environ['RESEND_KEY'],'type':'secret_text'}))")
+          HTTP=$(curl -sS -o /tmp/cf.json -w "%{http_code}" -X PUT \
+            -H "Authorization: Bearer $CF_TOKEN" \
+            -H "Content-Type: application/json" \
+            --data "$PAYLOAD" \
+            "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/workers/scripts/${WORKER_NAME}/secrets")
+          echo "HTTP $HTTP"
+          python3 -c "import json; d=json.load(open('/tmp/cf.json')); print(json.dumps({'success':d.get('success'),'errors':d.get('errors',[]),'messages':d.get('messages',[])}))"
+          if [ "$HTTP" != "200" ] && [ "$HTTP" != "201" ]; then exit 1; fi
+
+      - name: Push DIGEST_FROM secret to Worker
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          DIGEST_FROM: ${{ github.event.inputs.digest_from }}
+        run: |
+          set -e
+          PAYLOAD=$(python3 -c "import json,os; print(json.dumps({'name':'DIGEST_FROM','text':os.environ['DIGEST_FROM'],'type':'secret_text'}))")
+          HTTP=$(curl -sS -o /tmp/cf.json -w "%{http_code}" -X PUT \
+            -H "Authorization: Bearer $CF_TOKEN" \
+            -H "Content-Type: application/json" \
+            --data "$PAYLOAD" \
+            "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/workers/scripts/${WORKER_NAME}/secrets")
+          echo "HTTP $HTTP"
+          python3 -c "import json; d=json.load(open('/tmp/cf.json')); print(json.dumps({'success':d.get('success'),'errors':d.get('errors',[]),'messages':d.get('messages',[])}))"
+          if [ "$HTTP" != "200" ] && [ "$HTTP" != "201" ]; then exit 1; fi
+
+      - name: Set Cron Trigger (replaces any existing schedules)
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CRON: ${{ github.event.inputs.cron }}
+        run: |
+          set -e
+          PAYLOAD=$(python3 -c "import json,os; print(json.dumps([{'cron':os.environ['CRON']}]))")
+          HTTP=$(curl -sS -o /tmp/cf.json -w "%{http_code}" -X PUT \
+            -H "Authorization: Bearer $CF_TOKEN" \
+            -H "Content-Type: application/json" \
+            --data "$PAYLOAD" \
+            "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/workers/scripts/${WORKER_NAME}/schedules")
+          echo "HTTP $HTTP"
+          python3 -c "import json; d=json.load(open('/tmp/cf.json')); print(json.dumps({'success':d.get('success'),'result':d.get('result'),'errors':d.get('errors',[])}))"
+          if [ "$HTTP" != "200" ] && [ "$HTTP" != "201" ]; then exit 1; fi
+
+      - name: Verify configuration
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          echo "=== Current Worker secrets (names only) ==="
+          curl -sS -H "Authorization: Bearer $CF_TOKEN" \
+            "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/workers/scripts/${WORKER_NAME}/secrets" \
+            | python3 -c "import json,sys; d=json.load(sys.stdin); [print(' -', s.get('name')) for s in (d.get('result') or [])]"
+          echo ""
+          echo "=== Current cron schedules ==="
+          curl -sS -H "Authorization: Bearer $CF_TOKEN" \
+            "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/workers/scripts/${WORKER_NAME}/schedules" \
+            | python3 -c "import json,sys; d=json.load(sys.stdin); [print(' -', s.get('cron'), 'created:', s.get('created_on')) for s in (d.get('schedules') or d.get('result') or [])]"
+
+      - name: Send a test digest to verify end-to-end
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          # Hit the /admin/digest-trigger endpoint to send a real digest now.
+          # Requires ADMIN_KEY which is already a Worker secret.
+          # We invoke via the Worker itself (the CF API is unrelated here).
+          echo "Triggering test digest send for geetu…"
+          # The Worker reads ADMIN_KEY from env, not from us — we can't auth here without it.
+          # Skipping the test trigger; user can call it manually with their ADMIN_KEY.
+          echo "Skipped: run 'curl -X POST .../admin/digest-trigger?user=geetu -H X-Admin-Key:...' manually to test."
