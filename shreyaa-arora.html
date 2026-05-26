@@ -1719,6 +1719,29 @@ document.addEventListener('click', function(e) {
   }
 });
 
+// --- Sign out (added 2026-05-26 hotfix: signOutDashboard was referenced but never defined) ---
+async function signOutDashboard(btn) {
+  if (btn) { btn.disabled = true; btn.textContent = 'Signing out…'; }
+  const TOKEN_KEY = 'gmj_session_token';
+  try {
+    const tok = localStorage.getItem(TOKEN_KEY);
+    if (tok) {
+      await fetch(WORKER_BASE + '/api/auth/logout', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + tok }
+      }).catch(function(){});
+    }
+  } catch (e) {}
+  try {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem('htj_resume_key');
+    localStorage.removeItem('htj_resume_key_' + USER_SLUG);
+    localStorage.removeItem('htj_admin_key');
+    localStorage.removeItem('gmj_last_user');
+  } catch (e) {}
+  location.replace('/login.html');
+}
+
 // --- Refresh data (triggers GitHub Action via Cloudflare Worker) --------
 const REFRESH_WORKER_URL = WORKER_BASE + '/refresh';
 

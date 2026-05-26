@@ -2319,6 +2319,29 @@ document.addEventListener('click', function(e) {
   }
 });
 
+// --- Sign out (added 2026-05-26 hotfix: signOutDashboard was referenced but never defined) ---
+async function signOutDashboard(btn) {
+  if (btn) { btn.disabled = true; btn.textContent = 'Signing out…'; }
+  const TOKEN_KEY = 'gmj_session_token';
+  try {
+    const tok = localStorage.getItem(TOKEN_KEY);
+    if (tok) {
+      await fetch(WORKER_BASE + '/api/auth/logout', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + tok }
+      }).catch(function(){});
+    }
+  } catch (e) {}
+  try {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem('htj_resume_key');
+    localStorage.removeItem('htj_resume_key_' + USER_SLUG);
+    localStorage.removeItem('htj_admin_key');
+    localStorage.removeItem('gmj_last_user');
+  } catch (e) {}
+  location.replace('/login.html');
+}
+
 // --- Refresh data (triggers GitHub Action via Cloudflare Worker) --------
 const REFRESH_WORKER_URL = WORKER_BASE + '/refresh';
 
@@ -4056,7 +4079,7 @@ function wizRender() {
             '↻ Reload page &amp; re-check' +
           '</button>' +
           '<button type="button" id="wiz-ext-skip-inline" style="padding:8px 14px;border:1px solid #c0c4cc;background:#fff;color:#444;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;">' +
-            'Skip — I'll fill manually' +
+            'Skip — I\'ll fill manually' +
           '</button>';
         var stat = document.getElementById("wiz-ext-status");
         if (stat && stat.parentNode) stat.parentNode.appendChild(host);
