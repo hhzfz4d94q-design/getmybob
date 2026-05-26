@@ -2201,6 +2201,9 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
     # Load this user's skills profile from the Worker (sets the global used by score_job)
     SKILLS_PROFILE = load_skills_profile(user_slug)
     if SKILLS_PROFILE:
+        _tc = SKILLS_PROFILE.get("targetCompanies", [])
+        print(f"[diag:{user_slug}] loaded profile, targetCompanies len={len(_tc) if isinstance(_tc, list) else type(_tc).__name__}, first={(_tc[0] if (isinstance(_tc, list) and _tc) else None)}", flush=True)
+    if SKILLS_PROFILE:
         print(f"[skills-profile:{user_slug}] {SKILLS_PROFILE.get('primaryRole','?')} "
               f"· {len(SKILLS_PROFILE.get('keywords', []))} keywords", flush=True)
     else:
@@ -6260,6 +6263,50 @@ function openInterviewPrepFromCard(fp) {{
   }}
 }})();
 
+
+
+// G1 (2026-05-26): Guarantee that the grid is rendered in score-DESC order at
+// page load. This is a belt-and-suspenders measure — the Python side already
+// sorts by score, but the freshness boost + tracker reorders + filter() can
+// shuffle the DOM. This runs once on load and after every filter/sort cycle.
+(function ensureScoreSort() {{
+  function sortGrid() {{
+    const grid = document.getElementById("grid");
+    if (!grid) return;
+    const cards = Array.from(grid.querySelectorAll(".card"));
+    if (cards.length < 2) return;
+    cards.sort(function(a, b) {{
+      const sa = parseInt(a.getAttribute("data-score") || "0", 10);
+      const sb = parseInt(b.getAttribute("data-score") || "0", 10);
+      if (sb !== sa) return sb - sa;
+      // Tiebreak: most recent last-seen wins
+      const la = (a.getAttribute("data-last-seen") || "");
+      const lb = (b.getAttribute("data-last-seen") || "");
+      return lb.localeCompare(la);
+    }});
+    // Re-attach in sorted order (using DocumentFragment for perf)
+    const frag = document.createDocumentFragment();
+    cards.forEach(function(c) {{ frag.appendChild(c); }});
+    grid.appendChild(frag);
+  }}
+  document.addEventListener("DOMContentLoaded", function() {{
+    setTimeout(sortGrid, 200);
+  }});
+  // Patch sortCards (the existing UI sort handler) to re-sort the grid afterwards
+  if (typeof sortCards === "function" && !sortCards._patchedG1) {{
+    const orig = sortCards;
+    window.sortCards = function() {{
+      const r = orig.apply(this, arguments);
+      // Only re-sort to score-desc if user didn't pick a different sort
+      const sel = document.getElementById("sortBy");
+      if (!sel || sel.value === "score") {{
+        setTimeout(sortGrid, 50);
+      }}
+      return r;
+    }};
+    window.sortCards._patchedG1 = true;
+  }}
+}})();
 
 // === Daily Focus Panel (E6 / 2026-05-26) =========================
 // Shows top-N highest-scoring cards as the "apply today" picks. N = the user's
