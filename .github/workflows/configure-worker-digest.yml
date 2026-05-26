@@ -105,12 +105,16 @@ jobs:
 
       - name: Send a test digest to verify end-to-end
         env:
-          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          ADMIN_KEY: ${{ secrets.WORKER_ADMIN_KEY }}
         run: |
-          # Hit the /admin/digest-trigger endpoint to send a real digest now.
-          # Requires ADMIN_KEY which is already a Worker secret.
-          # We invoke via the Worker itself (the CF API is unrelated here).
-          echo "Triggering test digest send for geetu…"
-          # The Worker reads ADMIN_KEY from env, not from us — we can't auth here without it.
-          # Skipping the test trigger; user can call it manually with their ADMIN_KEY.
-          echo "Skipped: run 'curl -X POST .../admin/digest-trigger?user=geetu -H X-Admin-Key:...' manually to test."
+          if [ -z "$ADMIN_KEY" ]; then
+            echo "::warning::WORKER_ADMIN_KEY secret not set — skipping test send"
+            exit 0
+          fi
+          echo "Triggering /admin/digest-trigger for geetu (test send)…"
+          HTTP=$(curl -sS -o /tmp/digest.json -w "%{http_code}" -X POST \
+            -H "X-Admin-Key: $ADMIN_KEY" \
+            "https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/admin/digest-trigger?user=geetu")
+          echo "HTTP $HTTP"
+          cat /tmp/digest.json
+          echo ""
