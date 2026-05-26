@@ -490,7 +490,39 @@ ${resumeJson}`;
     // Deterministic augmentation: add standard frameworks/regulations based on profile signals.
     // This ensures a banking-GRC profile always gets NIST CSF, COSO, FFIEC etc. even if the AI omits them.
     augmentProfileWithStandards(parsed);
-    const profile = Object.assign({}, parsed, { resumeId: activeId, generatedAt: new Date().toISOString(), user: slug });
+    // Extract structured contact + biographical fields from the raw resume JSON
+    // (already produced by /parse-resume in shape {personal: {name,phone,email,location,linkedin}, education, experience}).
+    // These power the auto-fill extension and the wizard's "Application profile" step.
+    let _personal = {}, _exp0 = {}, _edu0 = {};
+    try {
+      const _rj = JSON.parse(resumeJson);
+      _personal = _rj.personal || {};
+      _exp0 = (Array.isArray(_rj.experience) && _rj.experience[0]) || {};
+      _edu0 = (Array.isArray(_rj.education) && _rj.education[0]) || {};
+    } catch (e) { /* resumeJson might not be JSON */ }
+    const _extracted = {
+      // Direct contact fields used by Greenhouse/Lever/Ashby/Workday autofill
+      phone: _personal.phone || _personal.phoneNumber || '',
+      email: _personal.email || '',
+      location: _personal.location || _personal.address || '',
+      linkedinUrl: _personal.linkedin || _personal.linkedinUrl || '',
+      githubUrl: _personal.github || _personal.githubUrl || '',
+      websiteUrl: _personal.website || _personal.portfolio || '',
+      // Current role context — defaults from first experience entry
+      currentCompany: _exp0.company || '',
+      currentTitle: _exp0.title || _exp0.role || '',
+      // Education for "where did you study?" fields
+      school: _edu0.school || _edu0.institution || '',
+      degree: _edu0.degree || '',
+      graduationYear: _edu0.year || _edu0.graduationYear || _edu0.endYear || '',
+      // Inferred from resume (defaults reasonable for US-based candidates)
+      workAuthorization: _personal.workAuthorization || 'US Citizen',
+      requiresSponsorship: _personal.requiresSponsorship || 'No',
+      // Full-name fields broken out (some apps want them separately)
+      firstName: (_personal.name || '').split(/\s+/)[0] || '',
+      lastName: (_personal.name || '').split(/\s+/).slice(1).join(' ') || '',
+    };
+    const profile = Object.assign({}, parsed, _extracted, { resumeId: activeId, generatedAt: new Date().toISOString(), user: slug });
     // Preserve the user's wizard-set size preferences across regen
     if (preservedMix) profile.companySizeMix = preservedMix;
     // Preserve wizard-set match weights across regen
@@ -526,7 +558,7 @@ async function handleSkillsProfile(request, env, cors, slug) {
       const raw = await env.RESUMES.get(uk(slug, 'skills_profile'));
       const existing = raw ? JSON.parse(raw) : {};
       const updated = Object.assign({}, existing);
-      const SCALAR_FIELDS = new Set(['salaryFloor', 'remotePreferred', 'seniorityLevel', 'careerStage', 'primaryRole', 'summary', 'companySizeMix', 'companySizePreferences', 'dailyTarget', 'recencyWindow', 'defaultSort', 'hideNoSalary', 'negativeTitles', 'matchWeights', 'phone', 'location', 'linkedinUrl', 'githubUrl', 'websiteUrl', 'workAuthorization', 'requiresSponsorship']);
+      const SCALAR_FIELDS = new Set(['salaryFloor', 'remotePreferred', 'seniorityLevel', 'careerStage', 'primaryRole', 'summary', 'companySizeMix', 'companySizePreferences', 'dailyTarget', 'recencyWindow', 'defaultSort', 'hideNoSalary', 'negativeTitles', 'matchWeights', 'phone', 'email', 'location', 'linkedinUrl', 'githubUrl', 'websiteUrl', 'workAuthorization', 'requiresSponsorship', 'currentCompany', 'currentTitle', 'school', 'degree', 'graduationYear', 'firstName', 'lastName']);
       for (const [field, items] of Object.entries(body.patchFields)) {
         if (SCALAR_FIELDS.has(field)) {
           updated[field] = items;
