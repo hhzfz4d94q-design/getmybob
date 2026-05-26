@@ -6058,6 +6058,17 @@ const WIZ_STEPS = [
   }}
 ];
 
+// Listen for the extension-ready postMessage (fires from content script when extension v0.1.2+ installs).
+try {{
+  window.addEventListener("message", function(ev) {{
+    try {{
+      if (ev && ev.data && ev.data.type === "GMJ_EXTENSION_READY") {{
+        window.__gmj_extension_ready = true;
+      }}
+    }} catch(e) {{}}
+  }});
+}} catch(e) {{}}
+
 let wizCurrent = 0;
 
 function wizShow() {{
@@ -6095,8 +6106,44 @@ function wizRender() {{
   }}
   if (s.action === "verify-extension") {{
     const statusEl = document.getElementById("wiz-ext-status");
+    function _isInstalled() {{
+      try {{
+        if (document.documentElement.getAttribute("data-gmj-installed") === "1") return true;
+        if (window.__gmj_extension_ready) return true;
+      }} catch(e) {{}}
+      return false;
+    }}
+    function _renderControls(failedRecently) {{
+      // Always show: Reload + Skip buttons inline below the status so users can recover.
+      var host = document.getElementById("wiz-ext-extra");
+      if (!host) {{
+        host = document.createElement("div");
+        host.id = "wiz-ext-extra";
+        host.style.cssText = "margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;";
+        host.innerHTML =
+          '<button type="button" id="wiz-ext-reload" style="padding:8px 14px;border:1px solid #5C5CD6;background:#5C5CD6;color:#fff;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;">' +
+            '↻ Reload page &amp; re-check' +
+          '</button>' +
+          '<button type="button" id="wiz-ext-skip-inline" style="padding:8px 14px;border:1px solid #c0c4cc;background:#fff;color:#444;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;">' +
+            'Skip — I\'ll fill manually' +
+          '</button>';
+        var stat = document.getElementById("wiz-ext-status");
+        if (stat && stat.parentNode) stat.parentNode.appendChild(host);
+        var rb = document.getElementById("wiz-ext-reload");
+        if (rb) rb.addEventListener("click", function(){{
+          // Remember we're on this step so the wizard resumes here after reload.
+          try {{ localStorage.setItem("gmj_wizard_resume_at", "verify-extension"); }} catch(e) {{}}
+          location.reload();
+        }});
+        var sb = document.getElementById("wiz-ext-skip-inline");
+        if (sb) sb.addEventListener("click", function(){{
+          try {{ localStorage.removeItem("gmj_wizard_resume_at"); }} catch(e) {{}}
+          if (typeof wizAdvance === "function") wizAdvance();
+        }});
+      }}
+    }}
     function _check() {{
-      const installed = document.documentElement.getAttribute("data-gmj-installed") === "1";
+      const installed = _isInstalled();
       if (installed) {{
         if (statusEl) {{
           statusEl.style.color = "#0a6b3a";
@@ -6104,19 +6151,23 @@ function wizRender() {{
         }}
         const ctaBtn = document.getElementById("wiz-cta");
         if (ctaBtn) ctaBtn.textContent = "Next →";
+        try {{ localStorage.removeItem("gmj_wizard_resume_at"); }} catch(e) {{}}
       }} else {{
         if (statusEl) {{
           statusEl.style.color = "#888";
-          statusEl.innerHTML = '⌛ Not detected yet. Install via the steps above, then click the button below. (Reloading the dashboard after install also works.)';
+          statusEl.innerHTML = '⌛ Not detected yet. Chrome only injects the helper into <strong>newly-loaded</strong> tabs — if you installed while this tab was already open, click <strong>Reload</strong> below.';
         }}
       }}
+      _renderControls(!installed);
     }}
     _check();
-    // Poll every 1.5s in case user installs while still on this step
+    // Listen for the extension-ready event the content script dispatches.
+    document.addEventListener("gmj-extension-ready", function(){{ window.__gmj_extension_ready = true; _check(); }}, {{ once: true }});
+    // Re-check when the user tabs back from chrome://extensions
+    window.addEventListener("focus", _check);
+    // Poll every 1.5s. Don't time out — Geetu may take a minute.
     if (window._wizExtPoll) clearInterval(window._wizExtPoll);
     window._wizExtPoll = setInterval(_check, 1500);
-    // Stop polling when we leave this step
-    setTimeout(function(){{ if (window._wizExtPoll) {{ clearInterval(window._wizExtPoll); window._wizExtPoll = null; }} }}, 60000);
   }}
   if (s.action === "save-app-profile") {{
     // Prefill from existing skills_profile + resume parsed JSON
@@ -6878,14 +6929,18 @@ function wizWtPrefill() {{
         return;
       }}
       if (s.action === "verify-extension") {{
-        const installed = document.documentElement.getAttribute("data-gmj-installed") === "1";
+        const installed = (document.documentElement.getAttribute("data-gmj-installed") === "1") || window.__gmj_extension_ready === true;
         const statusEl = document.getElementById("wiz-ext-status");
         if (installed) {{
           if (statusEl) {{ statusEl.style.color = "#0a6b3a"; statusEl.textContent = "✅ Extension installed. Continuing…"; }}
           if (window._wizExtPoll) {{ clearInterval(window._wizExtPoll); window._wizExtPoll = null; }}
+          try {{ localStorage.removeItem("gmj_wizard_resume_at"); }} catch(e) {{}}
           setTimeout(wizAdvance, 600);
         }} else {{
-          if (statusEl) {{ statusEl.style.color = "#b00"; statusEl.innerHTML = '❌ Not detected. Make sure you’ve clicked “Load unpacked” in chrome://extensions, then come back and click this button again — or click <em>Skip</em> below to continue without it.'; }}
+          if (statusEl) {{
+            statusEl.style.color = "#b00";
+            statusEl.innerHTML = '❌ Not detected. If you just installed the extension, Chrome does not inject it into tabs that were already open — click <strong>Reload page &amp; re-check</strong> below.';
+          }}
         }}
         return;
       }}
@@ -7178,8 +7233,28 @@ function wizWtPrefill() {{
     // questions like company-size preference). Users can skip steps
     // that aren't relevant (resume upload, etc.).
     try {{
-      const seen = localStorage.getItem("gmj_wizard_seen_v2");
-      if (!seen) {{ setTimeout(wizShow, 450); }}
+      // If user clicked "Reload page & re-check" on the verify-extension step,
+      // jump back to that step on reload so the freshly-injected content
+      // script can be detected.
+      const resumeAt = localStorage.getItem("gmj_wizard_resume_at");
+      if (resumeAt) {{
+        let resumeIdx = -1;
+        for (let i = 0; i < WIZ_STEPS.length; i++) {{
+          if ((WIZ_STEPS[i] && WIZ_STEPS[i].action) === resumeAt) {{ resumeIdx = i; break; }}
+        }}
+        if (resumeIdx >= 0) {{
+          wizCurrent = resumeIdx;
+          setTimeout(wizShow, 450);
+          // Don't clear resume marker yet — verify-extension step itself
+          // clears it once the extension is actually detected or user skips.
+        }} else {{
+          const seen = localStorage.getItem("gmj_wizard_seen_v2");
+          if (!seen) {{ setTimeout(wizShow, 450); }}
+        }}
+      }} else {{
+        const seen = localStorage.getItem("gmj_wizard_seen_v2");
+        if (!seen) {{ setTimeout(wizShow, 450); }}
+      }}
     }} catch(e) {{}}
   }}
   if (document.readyState === "loading") {{
