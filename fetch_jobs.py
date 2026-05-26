@@ -2473,6 +2473,11 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         _xc_others = [c for c in _xc_by_norm.get(_norm_key, []) if c.lower() != (company or "").lower()]
         _xc_count = len(_xc_others)
         _xc_label = ", ".join(_xc_others[:4]) + (f" +{_xc_count - 4} more" if _xc_count > 4 else "")
+        _careers = _careers_root(url)
+        if _careers:
+            careers_fallback = f'<div class="careers-fallback" style="font-size:11.5px;color:#666;margin-top:6px;">If this listing is removed, browse <a href="{_careers}" target="_blank" rel="noopener" style="color:#5C5CD6;">all jobs at {_esc(company)}</a> on their ATS.</div>'
+        else:
+            careers_fallback = ''
         cards.append(f"""
         <div class="card" data-fp="{fp}" data-score="{score}" data-senior="{senior}" data-remote="{remote}" data-employment="{emp}" data-listed-days="{listed_days if listed_days is not None else 9999}" data-salary-max="{salary_max}" data-last-seen="{last_seen or ''}" data-first-seen="{first_seen or ''}" data-recruiter="{_is_recr}" data-why="{_esc(_why)}" data-cluster-count="{_xc_count}" data-cluster-companies="{_esc(_xc_label)}" data-title-norm="{_norm_key}">
           <div class="row1">
