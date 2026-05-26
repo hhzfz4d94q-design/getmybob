@@ -269,7 +269,7 @@
 
 <header>
   <h1>Jobs for Ishika Arora</h1>
-  <div class="sub">Awaiting resume upload — click Resume to get started · Generated 2026-05-26 15:26</div>
+  <div class="sub">Awaiting resume upload — click Resume to get started · Generated 2026-05-26 15:38</div>
   <div class="header-actions">
     <button id="prefs-btn" class="header-btn" onclick="replayTour()" title="Re-open the setup wizard to change your locations, remote pref, and company sizes">Preferences</button>
     <button id="regen-btn" class="header-btn" onclick="regenerateFromHeader(this)" title="Re-run the AI matcher to refresh your suggested target companies and skills. Takes 30-60 seconds.">Regenerate matches</button>
@@ -280,8 +280,8 @@
   </div>
 </header>
 <div class="stats">
-  <div class="stat"><b>18325</b>Total jobs tracked</div>
-  <div class="stat"><b>434</b>Senior + Remote (last 7d)</div>
+  <div class="stat"><b>18387</b>Total jobs tracked</div>
+  <div class="stat"><b>435</b>Senior + Remote (last 7d)</div>
   <div class="stat"><b>0</b>Possible ghost jobs (60d+)</div>
   <div class="stat"><b id="shown-counter">0</b>Showing</div>
   <div class="stat goal-stat" id="goal-stat">
@@ -3148,6 +3148,22 @@ const WIZ_STEPS = [
     skipText: "Skip — default Last 7 days"
   },
   {
+    title: "Install the Helper Chrome extension (required)",
+    body: '<p style="margin-bottom:10px;font-size:14px;color:#444;">Without this, you fill 20 fields by hand on every job application. With it, you click Apply → land on the company page → 18 of 25 fields auto-populate in 1 second from your resume. Total time per application: <strong>~60 seconds</strong> instead of ~10 minutes.</p>' +
+      '<div style="background:#f4f5f8;border-radius:8px;padding:12px;margin-bottom:10px;font-size:13px;">' +
+        '<div style="font-weight:700;margin-bottom:6px;">3-step install (one time only):</div>' +
+        '<ol style="margin:0;padding-left:18px;">' +
+          '<li><a href="/extension.zip" download style="color:#5C5CD6;font-weight:700;">⬇ Download getmemyjob-helper.zip</a> and unzip it somewhere you’ll keep (e.g. <code>~/Documents/getmemyjob-helper/</code>).</li>' +
+          '<li>Open <a href="chrome://extensions" target="_blank" style="color:#5C5CD6;font-weight:700;">chrome://extensions</a> in Chrome, toggle <strong>Developer mode</strong> ON (top-right).</li>' +
+          '<li>Click <strong>Load unpacked</strong> and select the unzipped folder.</li>' +
+        '</ol>' +
+      '</div>' +
+      '<div id="wiz-ext-status" style="font-size:13px;font-weight:600;color:#888;margin-top:10px;min-height:20px;display:flex;align-items:center;gap:8px;">Checking for the extension…</div>',
+    cta: "I’ve installed it — check",
+    action: "verify-extension",
+    skipText: "Skip — I’ll fill applications manually"
+  },
+  {
     title: "Application profile (so we can auto-fill apply forms)",
     body: '<p style="margin-bottom:14px;font-size:14px;color:#444;">These fields appear on almost every job application. Save them here once and our Helper extension fills them automatically on Greenhouse / Lever / Ashby / Workday.</p>' +
       '<label style="display:block;font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px;margin-top:10px;">Phone</label>' +
@@ -3225,6 +3241,31 @@ function wizRender() {
       if (locsEl && Array.isArray(p.preferredLocations)) locsEl.value = p.preferredLocations.join(", ");
       if (remoteEl) remoteEl.value = p.remotePreference || (p.remotePreferred ? "remote-only" : "any");
     }).catch(function(){});
+  }
+  if (s.action === "verify-extension") {
+    const statusEl = document.getElementById("wiz-ext-status");
+    function _check() {
+      const installed = document.documentElement.getAttribute("data-gmj-installed") === "1";
+      if (installed) {
+        if (statusEl) {
+          statusEl.style.color = "#0a6b3a";
+          statusEl.innerHTML = '✅ Extension detected. You can move on.';
+        }
+        const ctaBtn = document.getElementById("wiz-cta");
+        if (ctaBtn) ctaBtn.textContent = "Next →";
+      } else {
+        if (statusEl) {
+          statusEl.style.color = "#888";
+          statusEl.innerHTML = '⌛ Not detected yet. Install via the steps above, then click the button below. (Reloading the dashboard after install also works.)';
+        }
+      }
+    }
+    _check();
+    // Poll every 1.5s in case user installs while still on this step
+    if (window._wizExtPoll) clearInterval(window._wizExtPoll);
+    window._wizExtPoll = setInterval(_check, 1500);
+    // Stop polling when we leave this step
+    setTimeout(function(){ if (window._wizExtPoll) { clearInterval(window._wizExtPoll); window._wizExtPoll = null; } }, 60000);
   }
   if (s.action === "save-app-profile") {
     // Prefill from existing skills_profile + resume parsed JSON
@@ -3841,7 +3882,19 @@ function wizWtPrefill() {
         window._wizExpect = "contacts";
         return;
       }
-      if (s.action === "save-app-profile") {
+      if (s.action === "verify-extension") {
+        const installed = document.documentElement.getAttribute("data-gmj-installed") === "1";
+        const statusEl = document.getElementById("wiz-ext-status");
+        if (installed) {
+          if (statusEl) { statusEl.style.color = "#0a6b3a"; statusEl.textContent = "✅ Extension installed. Continuing…"; }
+          if (window._wizExtPoll) { clearInterval(window._wizExtPoll); window._wizExtPoll = null; }
+          setTimeout(wizAdvance, 600);
+        } else {
+          if (statusEl) { statusEl.style.color = "#b00"; statusEl.innerHTML = '❌ Not detected. Make sure you’ve clicked “Load unpacked” in chrome://extensions, then come back and click this button again — or click <em>Skip</em> below to continue without it.'; }
+        }
+        return;
+      }
+            if (s.action === "save-app-profile") {
         const phone = (document.getElementById("wiz-app-phone")||{}).value || "";
         const location = (document.getElementById("wiz-app-location")||{}).value || "";
         const linkedin = (document.getElementById("wiz-app-linkedin")||{}).value || "";
