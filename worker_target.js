@@ -25,6 +25,17 @@ const LEGACY_LEGACY_RESUME = 'default'; // pre-versioning single-resume key
 function uk(slug, suffix) { return `user:${slug}:${suffix}`; }
 
 export default {
+  // G2: Cloudflare scheduled (cron) handler — runs daily at 7am ET (configured
+  // via wrangler.toml or dashboard cron triggers). Emails each user a digest
+  // of their top-5 picks. Set CF cron to "0 11 * * *" (11am UTC = 7am ET).
+  async scheduled(event, env, ctx) {
+    try {
+      await sendDailyDigestToAll(env);
+    } catch (e) {
+      console.error("[digest] scheduled failed:", e && e.message ? e.message : e);
+    }
+  },
+
   async fetch(request, env) {
     const url = new URL(request.url);
     const cors = {
@@ -64,6 +75,7 @@ export default {
     if (url.pathname === '/draft-followup') return handleDraftFollowup(request, env, cors, slug);
     if (url.pathname === '/interview-prep') return handleInterviewPrep(request, env, cors, slug);
     if (url.pathname === '/generate-digest') return handleGenerateDigest(request, env, cors, slug);
+    if (url.pathname === '/admin/digest-trigger') return handleDigestTrigger(request, env, cors);
     if (url.pathname === '/notes') return handleNotes(request, env, cors, slug);
     return new Response(
       'Endpoints: /api/auth/{signup,login,logout,me,change-password}, /prep, /resume, /resume-versions, /parse-resume, /skills-profile, /regenerate-profile, /rerank-titles, /tracker, /draft-followup, /interview-prep, /generate-digest, /refresh, /admin/users, /notes.',
@@ -1520,5 +1532,151 @@ async function handleCapacity(request, env, cors) {
   const users = await bootstrapUsersListIfEmpty(env);
   const cap = parseInt(env.ALPHA_CAP || '25', 10);
   return _json({ taken: users.length, cap, available: Math.max(0, cap - users.length) }, 200, cors);
+}
+
+// =====================================================================
+// G2: Daily digest email functions
+// =====================================================================
+async function sendDailyDigestToAll(env) {
+  if (!env.RESEND_API_KEY || !env.DIGEST_FROM) {
+    console.log("[digest] RESEND_API_KEY or DIGEST_FROM missing — skipping");
+    return { sent: 0, skipped: "missing-secrets" };
+  }
+  const users = await readUsersList(env);
+  let sent = 0;
+  for (const u of users) {
+    if (!u || !u.slug || !u.email) continue;
+    try {
+      const result = await sendDigestForUser(env, u);
+      if (result.ok) sent++;
+    } catch (e) {
+      console.error("[digest]", u.slug, "failed:", e && e.message);
+    }
+  }
+  console.log(`[digest] sent ${sent} of ${users.length}`);
+  return { sent, total: users.length };
+}
+
+async function sendDigestForUser(env, user) {
+  // Pull skills_profile (for primaryRole), tracker (for status counts), and
+  // the per-user HTML to extract top-5 unapplied picks.
+  const slug = user.slug;
+  const profileRaw = await env.RESUMES.get(uk(slug, "skills_profile"));
+  const profile = profileRaw ? JSON.parse(profileRaw) : {};
+  const trackerRaw = await env.RESUMES.get(uk(slug, "tracker"));
+  const tracker = trackerRaw ? JSON.parse(trackerRaw) : {};
+  const userName = user.name || slug;
+  const dailyTarget = Math.max(1, Math.min(50, parseInt(profile.dailyTarget || "5", 10)));
+
+  // Fetch the per-user HTML from getmemyjob.officebeatllc.com to extract top picks
+  const url = `https://getmemyjob.officebeatllc.com/${slug}.html`;
+  let html = "";
+  try {
+    const r = await fetch(url, { headers: { 'Accept': 'text/html' } });
+    if (r.ok) html = await r.text();
+  } catch (e) { /* swallow */ }
+  if (!html) {
+    console.log(`[digest] ${slug} — could not fetch dashboard`);
+    return { ok: false, reason: "no-html" };
+  }
+
+  // Extract first N cards by score, skipping any whose fp is in tracker as applied/saved-today
+  const today = new Date().toISOString().slice(0, 10);
+  const cardRx = /<div class="card"[^>]*data-fp="([^"]+)"[^>]*data-score="(\d+)"[^>]*data-listed-days="(\d+)"[^>]*>[\s\S]*?<div class="title"><a href="([^"]+)"[^>]*>([^<]+)<\/a>[\s\S]*?<span class="company">([^<]+)<\/span>/g;
+  const picks = [];
+  let m;
+  while ((m = cardRx.exec(html)) !== null) {
+    const [, fp, score, days, applyUrl, title, company] = m;
+    const rec = tracker[fp];
+    if (rec && rec.status && rec.statusChangedAt) {
+      const day = (rec.statusChangedAt || "").slice(0, 10);
+      if (day === today || rec.status === "applied" || rec.status === "phonescreen" || rec.status === "onsite" || rec.status === "offer") continue;
+    }
+    picks.push({ fp, score: parseInt(score, 10), days: parseInt(days, 10), applyUrl, title: title.trim(), company: company.trim() });
+    if (picks.length >= dailyTarget) break;
+  }
+  picks.sort((a, b) => b.score - a.score);
+
+  if (!picks.length) {
+    console.log(`[digest] ${slug} — no picks to send`);
+    return { ok: false, reason: "no-picks" };
+  }
+
+  const subject = `🎯 ${dailyTarget} job picks for you today, ${userName.split(" ")[0]}`;
+  const cards = picks.map((p, i) => `
+    <tr>
+      <td style="padding:10px 12px;border-bottom:1px solid #e5e5ea;vertical-align:top;">
+        <div style="display:flex;align-items:start;gap:8px;">
+          <span style="display:inline-block;min-width:24px;text-align:center;background:#5C5CD6;color:#fff;border-radius:4px;font-weight:700;font-size:11px;padding:2px 4px;line-height:1.6;">${i+1}</span>
+          <div style="flex:1;">
+            <a href="${p.applyUrl}" style="color:#22223b;text-decoration:none;font-weight:600;font-size:14.5px;">${esc(p.title)}</a>
+            <div style="font-size:12.5px;color:#666;margin-top:2px;">${esc(p.company)} · ${p.days}d listed · score ${p.score}</div>
+          </div>
+          <a href="${p.applyUrl}" style="background:#5C5CD6;color:white;text-decoration:none;padding:6px 10px;border-radius:5px;font-size:12px;font-weight:600;white-space:nowrap;">Apply →</a>
+        </div>
+      </td>
+    </tr>
+  `).join("");
+
+  const dashUrl = `https://getmemyjob.officebeatllc.com/${slug}.html`;
+  const body = `<!doctype html><html><body style="font-family:-apple-system,sans-serif;background:#f4f5f8;padding:0;margin:0;">
+    <div style="max-width:600px;margin:0 auto;background:white;border-radius:12px;overflow:hidden;margin-top:20px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+      <div style="padding:20px 20px 12px;background:linear-gradient(135deg,#eef0ff 0%,#fef8e8 100%);">
+        <div style="font-size:22px;font-weight:700;color:#22223b;">🎯 Your ${dailyTarget} picks for today</div>
+        <div style="font-size:13px;color:#555;margin-top:4px;">Hand-picked from your getmemyjob feed — score-sorted, freshest first. Apply to all ${dailyTarget} = day's goal hit.</div>
+      </div>
+      <table style="width:100%;border-collapse:collapse;">${cards}</table>
+      <div style="padding:14px 20px;background:#fafbfc;border-top:1px solid #e5e5ea;font-size:12.5px;color:#666;">
+        <a href="${dashUrl}" style="color:#5C5CD6;font-weight:600;">Open full dashboard →</a> ·
+        <span style="color:#999;">If a job won't open, browse the company's careers page from your dashboard for a working link.</span>
+      </div>
+    </div>
+  </body></html>`;
+
+  return await sendEmailViaResend(env, user.email, subject, body);
+
+  function esc(s) {
+    return String(s || "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  }
+}
+
+async function sendEmailViaResend(env, toEmail, subject, htmlBody) {
+  const r = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${env.RESEND_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from: env.DIGEST_FROM,
+      to: [toEmail],
+      subject,
+      html: htmlBody,
+    }),
+  });
+  if (!r.ok) {
+    const err = await r.text().catch(() => "");
+    return { ok: false, status: r.status, error: err.slice(0, 200) };
+  }
+  return { ok: true };
+}
+
+async function handleDigestTrigger(request, env, cors) {
+  const url = new URL(request.url);
+  const adminKey = request.headers.get("X-Admin-Key") || "";
+  if (!env.ADMIN_KEY || adminKey !== env.ADMIN_KEY) {
+    return Response.json({ error: "Unauthorized" }, { status: 401, headers: cors });
+  }
+  const slug = url.searchParams.get("user");
+  if (slug && slug !== "all") {
+    const users = await readUsersList(env);
+    const user = users.find(u => u.slug === slug);
+    if (!user) return Response.json({ error: "User not found" }, { status: 404, headers: cors });
+    if (!user.email) return Response.json({ error: "User has no email" }, { status: 400, headers: cors });
+    const result = await sendDigestForUser(env, user);
+    return Response.json(result, { headers: cors });
+  }
+  const result = await sendDailyDigestToAll(env);
+  return Response.json(result, { headers: cors });
 }
 
