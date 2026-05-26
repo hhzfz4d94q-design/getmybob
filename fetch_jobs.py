@@ -2252,11 +2252,9 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         if SKILLS_PROFILE and _matches_negative_title(title, SKILLS_PROFILE):
             return False
 
-        # F3: seniority floor — hide jobs below the user's listed seniority.
-        if SKILLS_PROFILE:
-            min_rank = _user_min_seniority_rank(SKILLS_PROFILE)
-            if min_rank > 0 and _job_seniority_rank(title) < min_rank:
-                return False
+        # F3 (disabled 2026-05-26): seniority floor turned off so users see
+        # more roles. Score still rewards seniority-stage matches via the
+        # E1 +6 bonus and the existing title-strength logic.
 
         # F4: salary floor + must-list-pay (only when user opted in).
         if SKILLS_PROFILE:
@@ -2272,19 +2270,17 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
             if sz is not None and sz not in size_prefs:
                 return False
 
-        # Strict per-user title gate. The title must match one of the
-        # user's own targetTitles (or primaryRole). Replaces the old global
-        # theme list which leaked words like "product" / "strategist" /
-        # "ai" / "compliance" to every user regardless of their resume.
-        if SKILLS_PROFILE:
-            if not _matches_user_role(title, SKILLS_PROFILE):
-                return False
-        else:
-            # No profile loaded (extremely rare - awaiting upload). Fall
-            # back to legacy broad-theme gate so the dashboard is not
-            # completely empty.
+        # Title gate (2026-05-26 max-volume mode): the only hard cuts are
+        # _is_never_relevant + _is_irrelevant_title + negativeKeywords. The
+        # per-user title-match has become a SCORE INPUT, not a drop, so
+        # users see the full pool of plausibly-relevant roles ordered by
+        # fit. Goal per Amit: maximize volume so users apply faster.
+        if not SKILLS_PROFILE:
+            # No profile — fall back to the legacy broad-theme gate so the
+            # dashboard is not literally empty.
             if not _has_positive_theme(title, None):
                 return False
+        # else: pass through — score_job decides ranking.
 
         # Target-company override: user explicitly named this employer, so
         # waive the industry-overlap check below. The title gate above
