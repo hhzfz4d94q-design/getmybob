@@ -1,0 +1,123 @@
+name: Configure Admin Login (email + password)
+
+# Sets ADMIN_EMAIL + ADMIN_PASSWORD_HASH + ADMIN_PASSWORD_SALT on the
+# cool-darkness-dce5 Worker so admin.html can sign in with email/password
+# instead of pasting ADMIN_KEY. Trigger via workflow_dispatch or
+# repository_dispatch (event_type: configure-admin-login,
+# client_payload: { admin_email, admin_password }).
+
+on:
+  workflow_dispatch:
+    inputs:
+      admin_email:
+        description: 'Admin email (default team@officebeatllc.com)'
+        required: true
+        default: 'team@officebeatllc.com'
+      admin_password:
+        description: 'Admin password (min 10 chars; never logged)'
+        required: true
+  repository_dispatch:
+    types: [configure-admin-login]
+
+env:
+  CF_ACCOUNT_ID: 76598c8a5c8c7abbaed5c4292c363e09
+  WORKER_NAME: cool-darkness-dce5
+  PBKDF2_ITERATIONS: '210000'
+
+permissions:
+  contents: read
+
+jobs:
+  configure:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mask inputs
+        run: |
+          echo "::add-mask::${{ github.event.inputs.admin_email || github.event.client_payload.admin_email }}"
+          echo "::add-mask::${{ github.event.inputs.admin_password || github.event.client_payload.admin_password }}"
+
+      - name: Compute PBKDF2 hash + salt
+        id: hash
+        env:
+          ADMIN_PASSWORD: ${{ github.event.inputs.admin_password || github.event.client_payload.admin_password }}
+        run: |
+          set -e
+          python3 - << 'PY'
+          import os, json, hashlib, base64, secrets
+          pw = os.environ['ADMIN_PASSWORD']
+          if len(pw) < 10:
+              raise SystemExit('Password must be at least 10 characters')
+          salt = secrets.token_bytes(16)
+          dk = hashlib.pbkdf2_hmac('sha256', pw.encode('utf-8'), salt, 210000, dklen=32)
+          out = {
+            'salt_b64': base64.b64encode(salt).decode('ascii'),
+            'hash_b64': base64.b64encode(dk).decode('ascii'),
+          }
+          json.dump(out, open('/tmp/hash.json','w'))
+          PY
+          SALT=$(python3 -c "import json;print(json.load(open('/tmp/hash.json'))['salt_b64'])")
+          HASH=$(python3 -c "import json;print(json.load(open('/tmp/hash.json'))['hash_b64'])")
+          echo "::add-mask::$SALT"
+          echo "::add-mask::$HASH"
+          echo "salt=$SALT" >> "$GITHUB_OUTPUT"
+          echo "hash=$HASH" >> "$GITHUB_OUTPUT"
+
+      - name: Push ADMIN_EMAIL secret
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          ADMIN_EMAIL: ${{ github.event.inputs.admin_email || github.event.client_payload.admin_email }}
+        run: |
+          set -e
+          PAYLOAD=$(python3 -c "import json,os;print(json.dumps({'name':'ADMIN_EMAIL','text':os.environ['ADMIN_EMAIL'],'type':'secret_text'}))")
+          HTTP=$(curl -sS -o /tmp/cf.json -w "%{http_code}" -X PUT \
+            -H "Authorization: Bearer $CF_TOKEN" \
+            -H "Content-Type: application/json" \
+            --data "$PAYLOAD" \
+            "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/workers/scripts/${WORKER_NAME}/secrets")
+          echo "HTTP $HTTP"
+          python3 -c "import json,sys;d=json.load(open('/tmp/cf.json'));print(json.dumps({'success':d.get('success'),'errors':d.get('errors',[])}));sys.exit(0 if d.get('success') else 1)"
+
+      - name: Push ADMIN_PASSWORD_HASH secret
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          HASH: ${{ steps.hash.outputs.hash }}
+        run: |
+          set -e
+          PAYLOAD=$(python3 -c "import json,os;print(json.dumps({'name':'ADMIN_PASSWORD_HASH','text':os.environ['HASH'],'type':'secret_text'}))")
+          HTTP=$(curl -sS -o /tmp/cf.json -w "%{http_code}" -X PUT \
+            -H "Authorization: Bearer $CF_TOKEN" \
+            -H "Content-Type: application/json" \
+            --data "$PAYLOAD" \
+            "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/workers/scripts/${WORKER_NAME}/secrets")
+          echo "HTTP $HTTP"
+          python3 -c "import json,sys;d=json.load(open('/tmp/cf.json'));print(json.dumps({'success':d.get('success'),'errors':d.get('errors',[])}));sys.exit(0 if d.get('success') else 1)"
+
+      - name: Push ADMIN_PASSWORD_SALT secret
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          SALT: ${{ steps.hash.outputs.salt }}
+        run: |
+          set -e
+          PAYLOAD=$(python3 -c "import json,os;print(json.dumps({'name':'ADMIN_PASSWORD_SALT','text':os.environ['SALT'],'type':'secret_text'}))")
+          HTTP=$(curl -sS -o /tmp/cf.json -w "%{http_code}" -X PUT \
+            -H "Authorization: Bearer $CF_TOKEN" \
+            -H "Content-Type: application/json" \
+            --data "$PAYLOAD" \
+            "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/workers/scripts/${WORKER_NAME}/secrets")
+          echo "HTTP $HTTP"
+          python3 -c "import json,sys;d=json.load(open('/tmp/cf.json'));print(json.dumps({'success':d.get('success'),'errors':d.get('errors',[])}));sys.exit(0 if d.get('success') else 1)"
+
+      - name: Verify admin-login works
+        continue-on-error: true
+        env:
+          ADMIN_EMAIL: ${{ github.event.inputs.admin_email || github.event.client_payload.admin_email }}
+          ADMIN_PASSWORD: ${{ github.event.inputs.admin_password || github.event.client_payload.admin_password }}
+        run: |
+          sleep 8
+          PAYLOAD=$(python3 -c "import json,os;print(json.dumps({'email':os.environ['ADMIN_EMAIL'],'password':os.environ['ADMIN_PASSWORD']}))")
+          HTTP=$(curl -sS -o /tmp/verify.json -w "%{http_code}" -X POST \
+            -H "Content-Type: application/json" \
+            --data "$PAYLOAD" \
+            "https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/api/auth/admin-login")
+          echo "Verify HTTP $HTTP"
+          python3 -c "import json;d=json.load(open('/tmp/verify.json'));print(json.dumps({'ok':d.get('ok'),'has_key':bool(d.get('adminKey')),'error':d.get('error')}))"

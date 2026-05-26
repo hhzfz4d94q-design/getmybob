@@ -75,6 +75,20 @@
     <div class="status" id="create-status"></div>
   </div>
 
+  <div class="card" id="pending-card" style="border:2px solid #f0a500;background:#fffbe6;">
+    <h2 style="color:#b58300;">Pending approvals <span id="pending-badge" style="display:none;background:#f0a500;color:white;font-size:13px;padding:2px 10px;border-radius:10px;margin-left:8px;">0</span></h2>
+    <p style="font-size:13px;color:#7a5a00;margin-top:-4px;">New self-serve signups appear here. Approve to provision their dashboard.</p>
+    <table id="pending-table">
+      <thead><tr>
+        <th>Name</th><th>Email</th><th>Signed up</th><th>Profile</th><th></th>
+      </tr></thead>
+      <tbody id="pending-tbody">
+        <tr><td colspan="5" style="color:#888;padding:12px;">Loading…</td></tr>
+      </tbody>
+    </table>
+    <div class="status" id="pending-status"></div>
+  </div>
+
   <div class="card">
     <h2>Existing users</h2>
     <table id="users-table">
@@ -94,10 +108,20 @@
 <div class="modal-overlay show" id="login-modal">
   <div class="modal">
     <h3>Admin sign in</h3>
-    <p>Enter the <code>ADMIN_KEY</code> you set as a Cloudflare Worker secret. It will be stored in this browser only.</p>
-    <input type="password" id="admin-key-input" placeholder="ADMIN_KEY" autocomplete="off" style="margin-bottom:10px;">
+    <p>Sign in with your admin email and password.</p>
+    <label>Email</label>
+    <input type="email" id="admin-email-input" placeholder="team@officebeatllc.com" autocomplete="username" style="margin-bottom:10px;">
+    <label>Password</label>
+    <input type="password" id="admin-password-input" placeholder="••••••••" autocomplete="current-password" style="margin-bottom:10px;">
     <button onclick="signIn()">Sign in</button>
     <div class="status error" id="login-status"></div>
+    <details style="margin-top:14px;font-size:12px;color:#666;">
+      <summary style="cursor:pointer;">Have an ADMIN_KEY instead?</summary>
+      <div style="margin-top:8px;">
+        <input type="password" id="admin-key-input" placeholder="paste ADMIN_KEY" autocomplete="off" style="margin-bottom:6px;">
+        <button onclick="signInWithKey()" class="secondary" style="font-size:12px;padding:6px 10px;">Sign in with key</button>
+      </div>
+    </details>
   </div>
 </div>
 
@@ -158,12 +182,38 @@ let _currentInvite = null;
 function $(id) { return document.getElementById(id); }
 
 async function signIn() {
-  const key = $('admin-key-input').value.trim();
-  if (!key) { $('login-status').textContent = 'Please enter the admin key.'; return; }
-  $('login-status').textContent = 'Verifying…';
+  const email = ($('admin-email-input').value || '').trim().toLowerCase();
+  const password = $('admin-password-input').value || '';
+  if (!email || !password) { $('login-status').textContent = 'Email and password required.'; return; }
+  $('login-status').textContent = 'Signing in…';
+  try {
+    const r = await fetch(WORKER_BASE + '/api/auth/admin-login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+    const data = await r.json().catch(() => ({}));
+    if (r.status === 401) { $('login-status').textContent = 'Invalid email or password.'; return; }
+    if (r.status === 503) { $('login-status').textContent = data.error || 'Admin login not configured. Use the ADMIN_KEY fallback below.'; return; }
+    if (!r.ok) { $('login-status').textContent = data.error || ('Sign-in failed: HTTP ' + r.status); return; }
+    if (!data.adminKey) { $('login-status').textContent = 'Sign-in failed: no key returned.'; return; }
+    await _activateAdminKey(data.adminKey);
+  } catch (e) {
+    $('login-status').textContent = 'Sign-in failed: ' + (e.message || e);
+  }
+}
+
+async function signInWithKey() {
+  const key = ($('admin-key-input').value || '').trim();
+  if (!key) { $('login-status').textContent = 'Please paste the ADMIN_KEY.'; return; }
+  $('login-status').textContent = 'Verifying key…';
+  await _activateAdminKey(key);
+}
+
+async function _activateAdminKey(key) {
   try {
     const r = await fetch(WORKER_BASE + '/admin/users', { headers: { 'X-Admin-Key': key } });
-    if (r.status === 401) { $('login-status').textContent = 'Invalid key.'; return; }
+    if (r.status === 401) { $('login-status').textContent = 'Invalid admin key.'; return; }
     if (!r.ok) { $('login-status').textContent = 'Sign-in failed: HTTP ' + r.status; return; }
     _adminKey = key;
     localStorage.setItem('htj_admin_key', key);
@@ -171,6 +221,7 @@ async function signIn() {
     $('main').style.display = 'block';
     const data = await r.json();
     renderUsers(data.users || []);
+    refreshPending();
   } catch (e) {
     $('login-status').textContent = 'Sign-in failed: ' + (e.message || e);
   }
@@ -180,7 +231,9 @@ function signOut() {
   _adminKey = null;
   localStorage.removeItem('htj_admin_key');
   $('main').style.display = 'none';
-  $('admin-key-input').value = '';
+  var ake=$('admin-key-input'); if (ake) ake.value='';
+  var aee=$('admin-email-input'); if (aee) aee.value='';
+  var ape=$('admin-password-input'); if (ape) ape.value='';
   $('login-status').textContent = '';
   $('login-modal').classList.add('show');
 }
@@ -244,6 +297,99 @@ function renderProfile(p) {
 
 function escHtml(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+async function refreshPending() {
+  if (!_adminKey) return;
+  const tbody = $('pending-tbody');
+  const badge = $('pending-badge');
+  try {
+    const r = await fetch(WORKER_BASE + '/admin/pending-users', { headers: { 'X-Admin-Key': _adminKey } });
+    if (!r.ok) {
+      tbody.innerHTML = '<tr><td colspan="5" style="color:#a00;padding:12px;">Failed to load: HTTP ' + r.status + '</td></tr>';
+      return;
+    }
+    const data = await r.json();
+    const list = data.users || [];
+    if (list.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" style="color:#888;padding:12px;">Nobody waiting — you\'re all caught up.</td></tr>';
+      badge.style.display = 'none';
+      return;
+    }
+    badge.textContent = list.length;
+    badge.style.display = 'inline-block';
+    tbody.innerHTML = list.map(u => {
+      const when = u.createdAt ? new Date(u.createdAt).toLocaleString() : '—';
+      const profile = u.hasResume ? (u.primaryRole || 'Resume uploaded') : '<span style="color:#a00;">No resume yet</span>';
+      return '<tr>' +
+        '<td>' + escHtml(u.name) + '</td>' +
+        '<td>' + escHtml(u.email) + '</td>' +
+        '<td>' + escHtml(when) + '</td>' +
+        '<td>' + profile + '</td>' +
+        '<td style="white-space:nowrap;">' +
+          '<button onclick="approveUser(\'' + u.slug + '\')" style="background:#22a06b;margin-right:6px;">Approve</button>' +
+          '<button class="secondary" onclick="rejectUser(\'' + u.slug + '\', \'' + escHtml(u.name).replace(/\\/g,"\\\\").replace(/'/g,"\\'") + '\')">Reject</button>' +
+        '</td>' +
+      '</tr>';
+    }).join('');
+  } catch (e) {
+    tbody.innerHTML = '<tr><td colspan="5" style="color:#a00;padding:12px;">Error: ' + escHtml(e.message || e) + '</td></tr>';
+  }
+}
+
+async function approveUser(slug) {
+  if (!_adminKey) return;
+  $('pending-status').textContent = 'Approving ' + slug + '…';
+  try {
+    const r = await fetch(WORKER_BASE + '/admin/approve-user', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Key': _adminKey },
+      body: JSON.stringify({ slug }),
+    });
+    if (!r.ok) {
+      const data = await r.json().catch(() => ({}));
+      $('pending-status').textContent = 'Approve failed: ' + (data.error || ('HTTP ' + r.status));
+      return;
+    }
+    $('pending-status').textContent = 'Approved. Dashboard build kicked off — they\'ll get an email shortly.';
+    refreshPending();
+    refreshUsers();
+  } catch (e) {
+    $('pending-status').textContent = 'Approve failed: ' + (e.message || e);
+  }
+}
+
+async function rejectUser(slug, name) {
+  if (!_adminKey) return;
+  if (!confirm('Reject ' + (name || slug) + '? They will not be able to log in.')) return;
+  $('pending-status').textContent = 'Rejecting…';
+  try {
+    const r = await fetch(WORKER_BASE + '/admin/reject-user', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Key': _adminKey },
+      body: JSON.stringify({ slug }),
+    });
+    if (!r.ok) {
+      const data = await r.json().catch(() => ({}));
+      $('pending-status').textContent = 'Reject failed: ' + (data.error || ('HTTP ' + r.status));
+      return;
+    }
+    $('pending-status').textContent = 'Rejected.';
+    refreshPending();
+    refreshUsers();
+  } catch (e) {
+    $('pending-status').textContent = 'Reject failed: ' + (e.message || e);
+  }
+}
+
+async function refreshUsers() {
+  if (!_adminKey) return;
+  try {
+    const r = await fetch(WORKER_BASE + '/admin/users', { headers: { 'X-Admin-Key': _adminKey } });
+    if (!r.ok) return;
+    const data = await r.json();
+    renderUsers(data.users || []);
+  } catch (e) {}
 }
 
 function renderUsers(users) {
@@ -462,10 +608,14 @@ async function deleteUser(slug) {
 window.addEventListener('DOMContentLoaded', async () => {
   const cached = localStorage.getItem('htj_admin_key');
   if (cached) {
-    $('admin-key-input').value = cached;
-    await signIn();
+    await _activateAdminKey(cached);
   }
-  $('admin-key-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') signIn(); });
+  const pwd = $('admin-password-input');
+  if (pwd) pwd.addEventListener('keydown', (e) => { if (e.key === 'Enter') signIn(); });
+  const eml = $('admin-email-input');
+  if (eml) eml.addEventListener('keydown', (e) => { if (e.key === 'Enter') { const p = $('admin-password-input'); if (p) p.focus(); } });
+  const keyIn = $('admin-key-input');
+  if (keyIn) keyIn.addEventListener('keydown', (e) => { if (e.key === 'Enter') signInWithKey(); });
 });
 </script>
 </body></html>

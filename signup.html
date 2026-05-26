@@ -111,6 +111,12 @@
     <div id="capacityBadge" style="display:none;font-size:12px;color:var(--navy);background:#EEEEF8;border:1px solid #DCDCEC;border-radius:6px;padding:6px 10px;margin-bottom:14px;text-align:center;font-weight:500;"></div>
 
     <div id="err" class="err" role="alert"></div>
+    <div id="pending-card" style="display:none;background:#FFFBE6;border:1.5px solid #F0A500;border-radius:8px;padding:18px;margin-bottom:14px;">
+      <div style="font-size:32px;line-height:1;margin-bottom:8px;">&#x2713;</div>
+      <h2 style="margin:0 0 8px 0;font-size:18px;color:#7A5A00;">You're on the list</h2>
+      <p style="margin:0 0 6px 0;font-size:14px;color:#7A5A00;">Thanks, <strong id="pending-name">there</strong>! Your account is pending admin approval.</p>
+      <p style="margin:0;font-size:13px;color:#7A5A00;">We'll email <strong id="pending-email"></strong> as soon as you're in — usually within a few hours. You can close this tab.</p>
+    </div>
 
     <form id="signupForm" autocomplete="on">
       <div class="form-row">
@@ -203,6 +209,17 @@ form.addEventListener('submit', async (e) => {
     localStorage.setItem('gmj_user_slug', j.slug);
     localStorage.setItem('gmj_user_name', j.name);
     localStorage.setItem('gmj_user_email', j.email);
+    if (j.pending || j.status === 'pending') {
+      // Pending admin approval — show the pending state on this page
+      // rather than bouncing to dashboard.html (which would just show the
+      // pending message after a refresh).
+      document.getElementById('pending-name').textContent = (j.name || '').split(' ')[0] || 'there';
+      document.getElementById('pending-email').textContent = j.email || email;
+      document.getElementById('signupForm').style.display = 'none';
+      document.getElementById('pending-card').style.display = 'block';
+      const cap = document.getElementById('capacityBadge'); if (cap) cap.style.display = 'none';
+      return;
+    }
     location.replace('/dashboard.html');
   } catch (err) {
     showErr('Could not reach the server. If you just deployed the Worker, give it ~30 seconds and retry. (' + (err && err.message ? err.message : err) + ')');

@@ -47,6 +47,9 @@ export default {
 
     // Admin endpoints (provision / list / delete users)
     if (url.pathname === '/admin/users') return handleAdminUsers(request, env, cors);
+    if (url.pathname === '/admin/pending-users') return handleAdminPendingUsers(request, env, cors);
+    if (url.pathname === '/admin/approve-user') return handleAdminApproveUser(request, env, cors);
+    if (url.pathname === '/admin/reject-user') return handleAdminRejectUser(request, env, cors);
     // Public read-only user list (used by fetch_jobs.py to generate dashboards)
     if (url.pathname === '/users') return handlePublicUsers(request, env, cors);
 
@@ -59,6 +62,7 @@ export default {
     if (url.pathname === '/api/auth/me') return handleMe(request, env, cors);
     if (url.pathname === '/api/auth/change-password') return handleChangePassword(request, env, cors);
     if (url.pathname === '/api/auth/capacity') return handleCapacity(request, env, cors);
+    if (url.pathname === '/api/auth/admin-login') return handleAdminLogin(request, env, cors);
 
     // Determine which user this request operates on.
     // Priority: ?user=slug in URL → "user" field in JSON body → DEFAULT_USER
@@ -796,6 +800,24 @@ async function bootstrapUsersListIfEmpty(env) {
   return users;
 }
 
+async function migrateUserStatusIfNeeded(env) {
+  // One-shot migration: any pre-2026-05-26 user without an explicit
+  // status:'pending'|'approved'|'rejected' KV value is backfilled to
+  // 'approved' (they were created before the approval gate existed).
+  if (!env.RESUMES) return;
+  const flag = await env.RESUMES.get('migration:user_status:v1');
+  if (flag) return;
+  const users = await readUsersList(env);
+  for (const u of users) {
+    if (!u || !u.slug) continue;
+    const cur = await env.RESUMES.get(uk(u.slug, 'status'));
+    if (!cur) {
+      await env.RESUMES.put(uk(u.slug, 'status'), 'approved');
+    }
+  }
+  await env.RESUMES.put('migration:user_status:v1', '1');
+}
+
 function generateSlug(name, existing) {
   const base = (name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 20);
   let slug = base || ('user' + Date.now().toString().slice(-6));
@@ -1347,6 +1369,7 @@ async function handleSignup(request, env, cors) {
   if (existing) return _json({ error: 'An account with that email already exists. Try logging in.' }, 409, cors);
 
   await migrateLegacyIfNeeded(env);
+  await migrateUserStatusIfNeeded(env);
   const users = await bootstrapUsersListIfEmpty(env);
 
   // Alpha cap: 25 self-serve signups. Admin can still add more via /admin/users.
@@ -1370,21 +1393,47 @@ async function handleSignup(request, env, cors) {
     await env.RESUMES.put(uk(slug, 'edit_key'), generatePassword(20));
   }
 
+  // APPROVAL GATE (2026-05-26): new signups go to status=pending. Admin
+  // approves via /admin/approve-user before the user can log in or build a
+  // dashboard. Existing users (backfilled) are status=approved.
+  await env.RESUMES.put(uk(slug, 'status'), 'pending');
+  await env.RESUMES.put(uk(slug, 'createdAt'), createdAt);
+
   // Add to users:list so existing admin / refresh flows can see them
-  users.push({ slug, name, email, createdAt });
+  users.push({ slug, name, email, createdAt, status: 'pending' });
   await writeUsersList(env, users);
 
-  const { token, expiresAt } = await createSession(env, slug);
-  // Slice D follow-up: kick off the GitHub Action that builds dashboards so
-  // this new user's <slug>.html is generated on the next run instead of
-  // waiting up to 6 hours for the scheduled cron.
+  // Notify admin via Resend so they can approve quickly.
+  // Best-effort — failure here doesn't block signup.
   try {
-    if (typeof triggerRefreshWorkflow === 'function') {
-      // No await — let it run in the background, sign-up returns immediately.
-      triggerRefreshWorkflow(env).catch(() => {});
+    if (env.RESEND_API_KEY && env.DIGEST_FROM) {
+      const adminEmail = env.ADMIN_NOTIFY_TO || 'team@officebeatllc.com';
+      await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + env.RESEND_API_KEY, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          from: env.DIGEST_FROM,
+          to: [adminEmail],
+          subject: `New getmemyjob signup: ${name} (${email})`,
+          html: `<p><strong>${name}</strong> &lt;${email}&gt; signed up just now.</p>` +
+                `<p>Slug: <code>${slug}</code> · Status: pending</p>` +
+                `<p><a href="https://getmemyjob.officebeatllc.com/admin.html" style="background:#5C5CD6;color:white;text-decoration:none;padding:8px 14px;border-radius:6px;font-weight:600;">Review &amp; approve</a></p>`,
+        }),
+      }).catch(() => {});
     }
-  } catch (e) { /* ignore */ }
-  return _json({ ok: true, token, expiresAt, slug, name, email, editKey: (await env.RESUMES.get(uk(slug, 'edit_key'))) || null, dashboardBuilding: true }, 200, cors);
+  } catch (e) { /* swallow */ }
+
+  // We still issue a session token so the user can land on a "pending" page,
+  // but the existing dashboard router (/api/auth/me) will tell them their
+  // status. We do NOT trigger refresh-jobs until approved.
+  const { token, expiresAt } = await createSession(env, slug);
+  return _json({
+    ok: true, token, expiresAt, slug, name, email,
+    editKey: (await env.RESUMES.get(uk(slug, 'edit_key'))) || null,
+    status: 'pending',
+    pending: true,
+    message: 'Your account is pending approval. We\'ll email you when it\'s ready.'
+  }, 200, cors);
 }
 
 // POST /api/auth/login  { email, password }
@@ -1406,6 +1455,22 @@ async function handleLogin(request, env, cors) {
   const hash = await hashPasswordPbkdf2(password, auth.salt);
   if (hash !== auth.hash) return _json({ error: 'Invalid email or password' }, 401, cors);
 
+  // APPROVAL GATE: reject login if not yet approved by admin
+  const status = await env.RESUMES.get(uk(slug, 'status'));
+  if (status === 'pending') {
+    return _json({
+      error: 'Your account is pending approval. We\'ll email you when it\'s ready.',
+      status: 'pending',
+      pending: true,
+    }, 403, cors);
+  }
+  if (status === 'rejected') {
+    return _json({
+      error: 'Your account application was not approved. Contact hello@officebeatllc.com if you think this is a mistake.',
+      status: 'rejected',
+    }, 403, cors);
+  }
+
   const { token, expiresAt } = await createSession(env, slug);
   const editKey = await env.RESUMES.get(uk(slug, 'edit_key'));
   return _json({ ok: true, token, expiresAt, slug, name: auth.name, email: auth.email, editKey: editKey || null }, 200, cors);
@@ -1421,7 +1486,8 @@ async function handleLogout(request, env, cors) {
 // GET /api/auth/me         (Authorization: Bearer <token>)
 async function handleMe(request, env, cors) {
   const sess = await sessionFromRequest(request, env);
-  if (!sess) return _json({ authenticated: false }, 200, cors);
+  if (!sess) const status = await env.RESUMES.get(uk(sess.slug, 'status')) || 'approved';
+  return _json({ authenticated: false }, 200, cors);
   const authRaw = await env.RESUMES.get(uk(sess.slug, 'auth'));
   if (!authRaw) return _json({ authenticated: false }, 200, cors);
   let auth;
@@ -1435,7 +1501,8 @@ async function handleMe(request, env, cors) {
     name: auth.name,
     email: auth.email,
     createdAt: auth.createdAt || null,
-    editKey: editKey || null
+    editKey: editKey || null,
+    status: status
   }, 200, cors);
 }
 
@@ -1535,6 +1602,148 @@ async function handleCapacity(request, env, cors) {
 }
 
 // =====================================================================
+// =====================================================================
+// POST /api/auth/admin-login  { email, password }
+// Returns ADMIN_KEY on success so admin.html can use it as X-Admin-Key.
+// Bootstraps from env: ADMIN_EMAIL (default team@officebeatllc.com),
+// ADMIN_PASSWORD_HASH (PBKDF2-SHA256 256-bit, base64), ADMIN_PASSWORD_SALT (base64).
+async function handleAdminLogin(request, env, cors) {
+  if (request.method !== 'POST') return _json({ error: 'POST only' }, 405, cors);
+  if (!env.ADMIN_KEY) return _json({ error: 'ADMIN_KEY missing' }, 500, cors);
+  if (!env.ADMIN_PASSWORD_HASH || !env.ADMIN_PASSWORD_SALT) {
+    return _json({ error: 'Admin login not configured. Set ADMIN_PASSWORD_HASH + ADMIN_PASSWORD_SALT secrets.' }, 503, cors);
+  }
+  let body;
+  try { body = await request.json(); } catch (e) { return _json({ error: 'Bad JSON' }, 400, cors); }
+  const email = _normEmail(body.email);
+  const password = String(body.password || '');
+  if (!email || !password) return _json({ error: 'Email and password required' }, 400, cors);
+
+  const adminEmail = _normEmail(env.ADMIN_EMAIL || 'team@officebeatllc.com');
+  if (email !== adminEmail) return _json({ error: 'Invalid email or password' }, 401, cors);
+
+  const hash = await hashPasswordPbkdf2(password, env.ADMIN_PASSWORD_SALT);
+  if (hash !== env.ADMIN_PASSWORD_HASH) {
+    return _json({ error: 'Invalid email or password' }, 401, cors);
+  }
+
+  // Success — return the admin key so the dashboard can store it and use it
+  // as X-Admin-Key on subsequent /admin/* requests.
+  return _json({ ok: true, adminKey: env.ADMIN_KEY, email: adminEmail }, 200, cors);
+}
+
+// =====================================================================
+// Admin approval workflow (2026-05-26)
+// =====================================================================
+async function handleAdminPendingUsers(request, env, cors) {
+  if (request.method !== 'GET') return _json({ error: 'GET only' }, 405, cors);
+  if (!env.ADMIN_KEY) return _json({ error: 'ADMIN_KEY missing' }, 500, cors);
+  if (request.headers.get('X-Admin-Key') !== env.ADMIN_KEY) {
+    return _json({ error: 'Invalid X-Admin-Key' }, 401, cors);
+  }
+  await migrateUserStatusIfNeeded(env);
+  const users = await readUsersList(env);
+  const enriched = [];
+  for (const u of users) {
+    if (!u || !u.slug) continue;
+    const status = await env.RESUMES.get(uk(u.slug, 'status'));
+    if (status === 'pending') {
+      const resumeActive = await env.RESUMES.get(uk(u.slug, 'resume:active'));
+      const profileRaw = await env.RESUMES.get(uk(u.slug, 'skills_profile'));
+      let primaryRole = '';
+      try { primaryRole = (JSON.parse(profileRaw || '{}').primaryRole) || ''; } catch (e) {}
+      enriched.push({
+        slug: u.slug,
+        name: u.name,
+        email: u.email,
+        createdAt: u.createdAt,
+        primaryRole,
+        hasResume: !!resumeActive,
+        status: 'pending',
+      });
+    }
+  }
+  return _json({ pendingUsers: enriched, count: enriched.length }, 200, cors);
+}
+
+async function handleAdminApproveUser(request, env, cors) {
+  if (request.method !== 'POST') return _json({ error: 'POST only' }, 405, cors);
+  if (!env.ADMIN_KEY) return _json({ error: 'ADMIN_KEY missing' }, 500, cors);
+  if (request.headers.get('X-Admin-Key') !== env.ADMIN_KEY) {
+    return _json({ error: 'Invalid X-Admin-Key' }, 401, cors);
+  }
+  const url = new URL(request.url);
+  const slug = url.searchParams.get('user');
+  if (!slug) return _json({ error: 'Missing user= param' }, 400, cors);
+  const current = await env.RESUMES.get(uk(slug, 'status'));
+  if (!current) return _json({ error: 'User not found' }, 404, cors);
+
+  await env.RESUMES.put(uk(slug, 'status'), 'approved');
+  await env.RESUMES.put(uk(slug, 'approvedAt'), new Date().toISOString());
+
+  // Update status in users:list
+  const users = await readUsersList(env);
+  for (const u of users) {
+    if (u.slug === slug) { u.status = 'approved'; break; }
+  }
+  await writeUsersList(env, users);
+
+  // Trigger refresh-jobs so this user's dashboard gets built now
+  try { if (typeof triggerRefreshWorkflow === 'function') triggerRefreshWorkflow(env).catch(() => {}); } catch (e) {}
+
+  // Email the user that their account is approved
+  try {
+    const authRaw = await env.RESUMES.get(uk(slug, 'auth'));
+    const auth = authRaw ? JSON.parse(authRaw) : null;
+    const userEmail = auth?.email;
+    if (userEmail && env.RESEND_API_KEY && env.DIGEST_FROM) {
+      const dashUrl = `https://getmemyjob.officebeatllc.com/${slug}.html`;
+      await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + env.RESEND_API_KEY, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          from: env.DIGEST_FROM,
+          to: [userEmail],
+          subject: 'Your getmemyjob account is approved 🎯',
+          html: `<p>Hi ${auth?.name || ''},</p>` +
+                `<p>You're in. Your personal job-search dashboard is being built and will be ready in ~3 minutes at ` +
+                `<a href="${dashUrl}">${dashUrl}</a>.</p>` +
+                `<p>Sign in at <a href="https://getmemyjob.officebeatllc.com/login.html">getmemyjob.officebeatllc.com</a>.</p>` +
+                `<p>— Amit</p>`,
+        }),
+      }).catch(() => {});
+    }
+  } catch (e) { /* swallow */ }
+
+  return _json({ ok: true, slug, status: 'approved' }, 200, cors);
+}
+
+async function handleAdminRejectUser(request, env, cors) {
+  if (request.method !== 'POST') return _json({ error: 'POST only' }, 405, cors);
+  if (!env.ADMIN_KEY) return _json({ error: 'ADMIN_KEY missing' }, 500, cors);
+  if (request.headers.get('X-Admin-Key') !== env.ADMIN_KEY) {
+    return _json({ error: 'Invalid X-Admin-Key' }, 401, cors);
+  }
+  const url = new URL(request.url);
+  const slug = url.searchParams.get('user');
+  if (!slug) return _json({ error: 'Missing user= param' }, 400, cors);
+  const current = await env.RESUMES.get(uk(slug, 'status'));
+  if (!current) return _json({ error: 'User not found' }, 404, cors);
+
+  await env.RESUMES.put(uk(slug, 'status'), 'rejected');
+  await env.RESUMES.put(uk(slug, 'rejectedAt'), new Date().toISOString());
+
+  // Update status in users:list
+  const users = await readUsersList(env);
+  for (const u of users) {
+    if (u.slug === slug) { u.status = 'rejected'; break; }
+  }
+  await writeUsersList(env, users);
+
+  return _json({ ok: true, slug, status: 'rejected' }, 200, cors);
+}
+
+
 // G2: Daily digest email functions
 // =====================================================================
 async function sendDailyDigestToAll(env) {

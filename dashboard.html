@@ -69,6 +69,29 @@
     </div>
   </div>
 
+  <div class="card" id="pendingCard" style="display:none;">
+    <h1>You're on the list.</h1>
+    <p class="sub">Your account is pending admin approval.</p>
+    <div class="prepare-box">
+      <strong>What happens next:</strong> we manually approve every alpha user so we can match you well. You'll get an email at the address you signed up with the moment you're in — usually within a few hours.
+    </div>
+    <div style="margin-top:20px;display:flex;gap:10px;">
+      <a class="btn primary" href="/landing.html">Back to home</a>
+      <button class="btn ghost" id="pendingSignOut">Sign out</button>
+    </div>
+  </div>
+
+  <div class="card" id="rejectedCard" style="display:none;">
+    <h1>Account not approved.</h1>
+    <p class="sub">Your alpha application wasn't approved.</p>
+    <div class="prepare-box">
+      If you think this is a mistake, please email <a href="mailto:hello@officebeatllc.com">hello@officebeatllc.com</a> and we'll take another look.
+    </div>
+    <div style="margin-top:20px;">
+      <button class="btn ghost" id="rejectedSignOut">Sign out</button>
+    </div>
+  </div>
+
   <div class="card" id="errCard" style="display:none;">
     <h1>Couldn't load your dashboard.</h1>
     <p class="sub" id="errMsg">Something went wrong.</p>
@@ -130,6 +153,18 @@ function showPrepare(slug) {
     if (!j.authenticated) { clearSession(); location.replace('/login.html'); return; }
     document.getElementById('userName').textContent = j.name;
 
+    // Approval gate
+    if (j.status === 'pending') {
+      document.getElementById('loadingCard').style.display = 'none';
+      document.getElementById('pendingCard').style.display = '';
+      return;
+    }
+    if (j.status === 'rejected') {
+      document.getElementById('loadingCard').style.display = 'none';
+      document.getElementById('rejectedCard').style.display = '';
+      return;
+    }
+
     // Stash the edit_key so the legacy per-user dashboard can do writes
     // (the existing dashboards use X-Edit-Key, stored as htj_resume_key_<slug>).
     if (j.editKey) {
@@ -152,6 +187,21 @@ function showPrepare(slug) {
   }
 })();
 
+async function _signOutAndGo() {
+  const tok = localStorage.getItem(TOKEN_KEY);
+  try {
+    if (tok) await fetch(WORKER + '/api/auth/logout', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + tok }
+    });
+  } catch (e) { /* ignore */ }
+  clearSession();
+  location.replace('/login.html');
+}
+['pendingSignOut','rejectedSignOut'].forEach(id => {
+  const b = document.getElementById(id);
+  if (b) b.addEventListener('click', _signOutAndGo);
+});
 document.getElementById('logoutBtn').addEventListener('click', async () => {
   const tok = localStorage.getItem(TOKEN_KEY);
   try {
