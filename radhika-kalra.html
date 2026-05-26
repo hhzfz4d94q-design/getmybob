@@ -269,7 +269,7 @@
 
 <header>
   <h1>Jobs for Radhika KAlra</h1>
-  <div class="sub">Awaiting resume upload — click Resume to get started · Generated 2026-05-26 14:51</div>
+  <div class="sub">Awaiting resume upload — click Resume to get started · Generated 2026-05-26 15:26</div>
   <div class="header-actions">
     <button id="prefs-btn" class="header-btn" onclick="replayTour()" title="Re-open the setup wizard to change your locations, remote pref, and company sizes">Preferences</button>
     <button id="regen-btn" class="header-btn" onclick="regenerateFromHeader(this)" title="Re-run the AI matcher to refresh your suggested target companies and skills. Takes 30-60 seconds.">Regenerate matches</button>
@@ -280,7 +280,7 @@
   </div>
 </header>
 <div class="stats">
-  <div class="stat"><b>18216</b>Total jobs tracked</div>
+  <div class="stat"><b>18325</b>Total jobs tracked</div>
   <div class="stat"><b>434</b>Senior + Remote (last 7d)</div>
   <div class="stat"><b>0</b>Possible ghost jobs (60d+)</div>
   <div class="stat"><b id="shown-counter">0</b>Showing</div>
@@ -3148,6 +3148,34 @@ const WIZ_STEPS = [
     skipText: "Skip — default Last 7 days"
   },
   {
+    title: "Application profile (so we can auto-fill apply forms)",
+    body: '<p style="margin-bottom:14px;font-size:14px;color:#444;">These fields appear on almost every job application. Save them here once and our Helper extension fills them automatically on Greenhouse / Lever / Ashby / Workday.</p>' +
+      '<label style="display:block;font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px;margin-top:10px;">Phone</label>' +
+      '<input id="wiz-app-phone" type="tel" placeholder="(555) 123-4567" style="width:100%;padding:7px 9px;border:1px solid #d0d4dc;border-radius:6px;font-size:13.5px;box-sizing:border-box;">' +
+      '<label style="display:block;font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px;margin-top:10px;">City, State</label>' +
+      '<input id="wiz-app-location" type="text" placeholder="e.g. Allendale, NJ" style="width:100%;padding:7px 9px;border:1px solid #d0d4dc;border-radius:6px;font-size:13.5px;box-sizing:border-box;">' +
+      '<label style="display:block;font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px;margin-top:10px;">LinkedIn URL</label>' +
+      '<input id="wiz-app-linkedin" type="url" placeholder="https://www.linkedin.com/in/your-name" style="width:100%;padding:7px 9px;border:1px solid #d0d4dc;border-radius:6px;font-size:13.5px;box-sizing:border-box;">' +
+      '<label style="display:block;font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px;margin-top:10px;">Work authorization</label>' +
+      '<select id="wiz-app-workauth" style="width:100%;padding:7px 9px;border:1px solid #d0d4dc;border-radius:6px;font-size:13.5px;background:white;">' +
+        '<option value="US Citizen">US Citizen</option>' +
+        '<option value="Green Card">Green Card / Permanent Resident</option>' +
+        '<option value="H1B Visa">H1B Visa</option>' +
+        '<option value="OPT">OPT / STEM OPT</option>' +
+        '<option value="TN Visa">TN Visa</option>' +
+        '<option value="Other">Other</option>' +
+      '</select>' +
+      '<label style="display:block;font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px;margin-top:10px;">Will you need visa sponsorship now or in the future?</label>' +
+      '<select id="wiz-app-sponsor" style="width:100%;padding:7px 9px;border:1px solid #d0d4dc;border-radius:6px;font-size:13.5px;background:white;">' +
+        '<option value="No">No</option>' +
+        '<option value="Yes">Yes</option>' +
+      '</select>' +
+      '<div id="wiz-app-status" style="font-size:12px;color:#888;margin-top:10px;min-height:16px;"></div>',
+    cta: "Save profile &rarr;",
+    action: "save-app-profile",
+    skipText: "Skip — I’ll fill manually"
+  },
+  {
     title: "Add your LinkedIn network (optional)",
     body: "<p>Upload your LinkedIn connections (one CSV) and the job feed will show <strong>&#x1f91d; N contacts</strong> badges on companies where you have warm intros.</p><p>It's a 30-second optional step. You can also do this later.</p>",
     cta: "Add LinkedIn contacts &rarr;",
@@ -3196,6 +3224,22 @@ function wizRender() {
       const remoteEl = document.getElementById("wiz-remote");
       if (locsEl && Array.isArray(p.preferredLocations)) locsEl.value = p.preferredLocations.join(", ");
       if (remoteEl) remoteEl.value = p.remotePreference || (p.remotePreferred ? "remote-only" : "any");
+    }).catch(function(){});
+  }
+  if (s.action === "save-app-profile") {
+    // Prefill from existing skills_profile + resume parsed JSON
+    fetch(PROFILE_WORKER_URL).then(function(r){return r.json();}).then(function(d){
+      const p = (d && d.profile) || {};
+      const ph = document.getElementById("wiz-app-phone");
+      const loc = document.getElementById("wiz-app-location");
+      const li = document.getElementById("wiz-app-linkedin");
+      const wa = document.getElementById("wiz-app-workauth");
+      const sp = document.getElementById("wiz-app-sponsor");
+      if (ph) ph.value = p.phone || "";
+      if (loc) loc.value = p.location || (Array.isArray(p.preferredLocations) ? p.preferredLocations[0] || "" : "");
+      if (li) li.value = p.linkedinUrl || "";
+      if (wa && p.workAuthorization) wa.value = p.workAuthorization;
+      if (sp && p.requiresSponsorship) sp.value = p.requiresSponsorship === true || p.requiresSponsorship === "Yes" ? "Yes" : "No";
     }).catch(function(){});
   }
   let dots = "";
@@ -3797,7 +3841,37 @@ function wizWtPrefill() {
         window._wizExpect = "contacts";
         return;
       }
-      if (s.action === "save-location-remote") {
+      if (s.action === "save-app-profile") {
+        const phone = (document.getElementById("wiz-app-phone")||{}).value || "";
+        const location = (document.getElementById("wiz-app-location")||{}).value || "";
+        const linkedin = (document.getElementById("wiz-app-linkedin")||{}).value || "";
+        const wauth = (document.getElementById("wiz-app-workauth")||{}).value || "US Citizen";
+        const sponsor = (document.getElementById("wiz-app-sponsor")||{}).value || "No";
+        const statusEl = document.getElementById("wiz-app-status");
+        const editKey = (typeof getEditKey === "function") ? getEditKey() : (localStorage.getItem("htj_resume_key_" + USER_SLUG) || localStorage.getItem("htj_resume_key"));
+        if (!editKey) { if (statusEl) statusEl.textContent = "No edit key — continuing without save."; setTimeout(wizAdvance, 800); return; }
+        if (statusEl) statusEl.textContent = "Saving…";
+        const ctaBtn = document.getElementById("wiz-cta");
+        if (ctaBtn) ctaBtn.disabled = true;
+        fetch(PROFILE_WORKER_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "X-Edit-Key": editKey },
+          body: JSON.stringify({ patchFields: { phone: phone, location: location, linkedinUrl: linkedin, workAuthorization: wauth, requiresSponsorship: sponsor } })
+        })
+          .then(function(r){ return r.json(); })
+          .then(function(d){
+            if (ctaBtn) ctaBtn.disabled = false;
+            if (statusEl) statusEl.textContent = "Saved ✓";
+            setTimeout(wizAdvance, 400);
+          })
+          .catch(function(){
+            if (ctaBtn) ctaBtn.disabled = false;
+            if (statusEl) statusEl.textContent = "Network error — continuing.";
+            setTimeout(wizAdvance, 800);
+          });
+        return;
+      }
+            if (s.action === "save-location-remote") {
         const locsInput = document.getElementById("wiz-locs");
         const remoteSel = document.getElementById("wiz-remote");
         const statusEl = document.getElementById("wiz-locs-status");
