@@ -1700,6 +1700,123 @@ def _careers_root(url):
     return None
 
 
+# --- Role-family classification (2026-05-26) ----------------------------
+# Drops jobs where the title's role family fundamentally mismatches the user's.
+# Examples this catches:
+#   - Amit (risk/GRC) sees "Capco .NET Engineer" → engineering ≠ risk → drop
+#   - Geetu (product) sees "UltaHost COO" → operations-coo ≠ product → drop
+#   - Either sees "Sales Rep" → sales ≠ their family → drop
+# Note: when role-family is ambiguous we DO NOT drop — we prefer over-include.
+
+ROLE_FAMILIES = {
+    "engineering": ["software engineer", "backend engineer", "frontend engineer", "full stack",
+                    "fullstack", "full-stack", ".net developer", ".net engineer", "java developer",
+                    "python developer", "ruby developer", "go developer", "rust developer",
+                    "ios developer", "android developer", "mobile engineer", "devops engineer",
+                    "site reliability", "platform engineer", "data engineer", "ml engineer",
+                    "ai engineer", "infrastructure engineer", "security engineer", "principal engineer",
+                    "staff engineer", "senior engineer", "lead engineer", "software developer"],
+    "qa": ["quality assurance", "qa lead", "qa manager", "qa engineer", "test lead",
+           "test manager", "test engineer", "sdet", "automation engineer"],
+    "sales-rep": ["sales rep", "sales representative", "sdr", "bdr", "account executive",
+                  "sales executive", "account manager", "sales manager", "sales director",
+                  "sales engineer", "field sales"],
+    "marketing-ic": ["marketing manager", "marketing coordinator", "demand generation",
+                     "content marketer", "growth marketer", "performance marketer", "email marketer",
+                     "seo manager", "ppc manager", "social media manager"],
+    "design": ["ux designer", "ui designer", "graphic designer", "product designer", "visual designer",
+               "brand designer", "interaction designer", "designer"],
+    "operations-coo": ["chief operating officer", "coo", "general manager", "head of operations",
+                       "vp operations", "operations executive"],
+    "clinical": ["nurse", "physician", "doctor", "rn ", "nurse practitioner", "clinical specialist",
+                 "medical director", "medical officer"],
+    "recruiting-hr": ["recruiter", "talent acquisition", "talent partner", "people partner",
+                      "hr business partner", "head of people"],
+    "finance-ic": ["financial analyst", "accountant", "controller", "treasurer", "tax manager",
+                   "fp&a analyst", "fp&a manager"],
+    "legal-ic": ["paralegal", "associate counsel", "legal counsel"],
+    "customer-success": ["customer success manager", "csm", "customer experience manager",
+                          "cx manager", "customer support"],
+    "data-analyst": ["data analyst", "business analyst", "research analyst"],
+    # Below families are KEPT for our personas — listing them so user_fam detection works.
+    "product": ["product manager", "product director", "vp product", "head of product",
+                "chief product", "vp of product", "principal product manager", "product strategy",
+                "product growth", "product operations"],
+    "risk-grc": ["risk manager", "risk director", "vp risk", "head of risk", "chief risk",
+                 "compliance", "audit", "governance", "grc", "credit risk", "operational risk",
+                 "regulatory", "ciso", "cyber risk", "information security"],
+    "digital-transformation": ["digital transformation", "transformation lead", "digital strategy",
+                                "innovation", "chief digital"],
+}
+
+# Families an exec might pivot INTO without being a literal title match.
+# When user_fam is in the "open" set, allow any family.
+OPEN_USER_FAMS = {"digital-transformation"}
+
+# When job_fam is None (ambiguous), we never drop on family.
+# When user_fam is None (ambiguous), we never drop on family.
+INCOMPATIBLE_PAIRS = set()
+# Engineering doesn't fit risk-grc / product / digital-transformation users
+for u in ("risk-grc", "product", "digital-transformation", "marketing-ic", "sales-rep", "legal-ic"):
+    for j in ("engineering", "qa", "clinical", "design"):
+        INCOMPATIBLE_PAIRS.add((u, j))
+# COO doesn't fit risk-grc / product / engineering / data-analyst users (executives but wrong family)
+for u in ("risk-grc", "product", "engineering", "data-analyst", "marketing-ic"):
+    INCOMPATIBLE_PAIRS.add((u, "operations-coo"))
+# Engineering users shouldn't see risk-grc / sales / clinical
+for u_fam, j_fams in [("engineering", ["sales-rep", "clinical", "marketing-ic"])]:
+    for j in j_fams:
+        INCOMPATIBLE_PAIRS.add((u_fam, j))
+# Product users shouldn't see sales-rep / engineering / qa
+for u_fam, j_fams in [("product", ["sales-rep", "engineering", "qa", "clinical"])]:
+    for j in j_fams:
+        INCOMPATIBLE_PAIRS.add((u_fam, j))
+
+def _detect_role_family(title):
+    """Return the role family of a job title, or None if ambiguous."""
+    if not title:
+        return None
+    t = title.lower()
+    # Check most-specific first to avoid e.g. "manager" matching too broadly
+    # Order: operations-coo first so "chief operating officer" doesn't get
+    # accidentally matched as something else.
+    for fam in ("operations-coo", "engineering", "qa", "sales-rep", "marketing-ic",
+                "design", "clinical", "recruiting-hr", "finance-ic", "legal-ic",
+                "customer-success", "data-analyst", "risk-grc", "product",
+                "digital-transformation"):
+        for term in ROLE_FAMILIES.get(fam, []):
+            if term in t:
+                return fam
+    return None
+
+def _user_role_family(profile):
+    """Detect the user's role family from primaryRole + targetTitles."""
+    if not profile:
+        return None
+    primary = (profile.get("primaryRole") or "").lower()
+    for fam, terms in ROLE_FAMILIES.items():
+        for term in terms:
+            if term in primary:
+                return fam
+    # Fallback to top 5 targetTitles
+    for tt in (profile.get("targetTitles") or [])[:5]:
+        tl = (tt or "").lower()
+        for fam, terms in ROLE_FAMILIES.items():
+            if any(term in tl for term in terms):
+                return fam
+    return None
+
+def _is_role_family_mismatch(title, profile):
+    """True if job's role family is FUNDAMENTALLY incompatible with the user's."""
+    u = _user_role_family(profile)
+    if not u or u in OPEN_USER_FAMS:
+        return False
+    j = _detect_role_family(title)
+    if not j:
+        return False
+    return (u, j) in INCOMPATIBLE_PAIRS
+
+
 def score_job(job):
     """0-100 score. Higher = more relevant + more likely 'real'.
     Uses the AI-extracted skills profile when available; falls back to hardcoded keywords.
@@ -2363,6 +2480,12 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         # override so e.g. "Branch Banking Regional Executive" at Wells Fargo
         # is killed even when Wells is in the user's targetCompanies list.
         if _is_never_relevant(title):
+            return False
+
+        # ROLE-FAMILY MISMATCH (2026-05-26): hard-drop jobs whose role family
+        # is fundamentally incompatible with the user's primary role.
+        # e.g. .NET Engineer for a risk-GRC exec, or COO for a product exec.
+        if _is_role_family_mismatch(title, SKILLS_PROFILE):
             return False
 
         # F1: user dismissed similar titles before — hide.

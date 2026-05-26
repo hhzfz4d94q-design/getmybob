@@ -100,6 +100,52 @@ check(f"Brand title doesn't break 80 ({s_brand} <= 80)", s_brand <= 80)
 mod.SKILLS_PROFILE = prev
 
 
+# --- Role-family mismatch filter (2026-05-26) ---
+print("\nTesting role-family mismatch filter:")
+
+amit_profile = {
+    "primaryRole": "Principal / Head of Cyber GRC, Enterprise Risk Management",
+    "targetTitles": ["head of risk", "vp risk", "director of grc", "chief risk officer"],
+}
+geetu_profile = {
+    "primaryRole": "Senior Director / VP of Digital Transformation & Product Strategy",
+    "targetTitles": ["vp product management", "head of product", "director of product"],
+}
+
+# Amit (risk-grc) — engineering, COO, and clinical roles must mismatch
+check("Amit: '.NET Engineer' is family-mismatch (drop)",
+      mod._is_role_family_mismatch("Senior .NET Engineer", amit_profile))
+check("Amit: 'Software Engineer' is family-mismatch",
+      mod._is_role_family_mismatch("Software Engineer III", amit_profile))
+check("Amit: 'Chief Operating Officer' is family-mismatch",
+      mod._is_role_family_mismatch("Chief Operating Officer", amit_profile))
+check("Amit: 'QA Lead' is family-mismatch",
+      mod._is_role_family_mismatch("QA Lead - Banking", amit_profile))
+check("Amit: 'Risk Director' is NOT a mismatch (same family)",
+      not mod._is_role_family_mismatch("Risk Director, Capital Markets", amit_profile))
+check("Amit: 'VP Compliance' is NOT a mismatch",
+      not mod._is_role_family_mismatch("VP Compliance", amit_profile))
+
+# Geetu (product/digital-transformation = OPEN_USER_FAMS) — should allow most things
+# BUT operations-coo, engineering should still be filtered for product persona
+geetu_strict = {"primaryRole": "VP of Product Management", "targetTitles": ["vp product"]}
+check("Geetu (product): 'COO' is family-mismatch",
+      mod._is_role_family_mismatch("Chief Operating Officer", geetu_strict))
+check("Geetu (product): 'Software Engineer' is family-mismatch",
+      mod._is_role_family_mismatch("Senior Software Engineer", geetu_strict))
+check("Geetu (product): 'Sales Rep' is family-mismatch",
+      mod._is_role_family_mismatch("Senior Sales Representative", geetu_strict))
+check("Geetu (product): 'VP Product' is NOT a mismatch",
+      not mod._is_role_family_mismatch("VP, Product Management", geetu_strict))
+check("Geetu (product): 'Director of Product' is NOT a mismatch",
+      not mod._is_role_family_mismatch("Director of Product Strategy", geetu_strict))
+
+# Ambiguous titles should NOT be dropped (over-include)
+check("Ambiguous 'Senior Lead' is NOT dropped (no clear family signal)",
+      not mod._is_role_family_mismatch("Senior Lead", amit_profile))
+check("Ambiguous 'Strategist' is NOT dropped",
+      not mod._is_role_family_mismatch("Senior Strategist", amit_profile))
+
 # --- HTML_TEMPLATE.format_map() with defaulting dict (catches Slice B/C/E brace bugs) ---
 print("\nTesting HTML_TEMPLATE format_map (regression: single { in JS literal):")
 import re
