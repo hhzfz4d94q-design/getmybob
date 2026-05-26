@@ -1,0 +1,59 @@
+name: Profile diagnostic
+on:
+  workflow_dispatch: {}
+  repository_dispatch:
+    types: [profile-diag]
+permissions:
+  contents: write
+jobs:
+  diag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pull profiles
+        run: |
+          mkdir -p reports
+          OUT=reports/profile_snapshot.md
+          {
+            echo "# Profile snapshot — $(date -u +'%Y-%m-%dT%H:%MZ')"
+            for slug in geetu amit-arora; do
+              echo ""
+              echo "## $slug"
+              echo ""
+              echo '```json'
+              curl -sS "https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/skills-profile?user=$slug" \
+                | python3 -c "
+import json,sys
+d = json.load(sys.stdin)
+p = d.get('profile') or {}
+report = {
+  'targetCompanies_count': len(p.get('targetCompanies') or []),
+  'targetCompanies_first3': (p.get('targetCompanies') or [])[:3],
+  'primaryRole': p.get('primaryRole','')[:120],
+  'industries_count': len(p.get('industries') or []),
+  'careerStage': p.get('careerStage'),
+  'phone': p.get('phone',''),
+  'linkedinUrl': p.get('linkedinUrl',''),
+  'workAuthorization': p.get('workAuthorization',''),
+}
+print(json.dumps(report, indent=2))" || true
+              echo '```'
+            done
+          } > "$OUT"
+          cat "$OUT"
+      - name: Commit
+        run: |
+          git config user.email "actions-bot@getmemyjob.local"
+          git config user.name  "Profile-diag workflow"
+          # Delete stale filter_debug files
+          rm -f reports/filter_debug_*.md 2>/dev/null || true
+          git add reports/
+          if ! git diff --staged --quiet; then
+            git commit -m "profile diagnostic + clean stale filter_debug"
+            for i in 1 2 3; do
+              if git push; then exit 0; fi
+              git fetch origin main
+              git rebase origin/main || git rebase --abort
+              sleep 3
+            done
+          fi
