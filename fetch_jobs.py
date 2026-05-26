@@ -1678,8 +1678,10 @@ def score_job(job):
         # Each component contributes up to (weight * 0.5) bonus points, so all
         # three combined max out at +50 on top of the 50 base = 100 from signals.
 
-        # TITLE component: any targetTitles substring match = full credit,
-        # otherwise fall back to seniorityTitles match at 40% credit.
+        # TITLE component (tuned 2026-05-26 for hire-faster): full credit for
+        # exact targetTitle substring; partial 0.15 for seniorityTitles-only
+        # (a "VP" / "Director" match alone shouldn't reach the top). Title
+        # component is also widened to 0.75x weight so it dominates.
         target_titles = profile.get("targetTitles", []) or []
         title_strength = 0.0
         for t in target_titles:
@@ -1689,8 +1691,8 @@ def score_job(job):
         if title_strength == 0.0:
             sen_titles = profile.get("seniorityTitles", []) or SENIOR_TITLE_TERMS
             if any(t in title for t in sen_titles):
-                title_strength = 0.4
-        s += int(title_strength * w_t * 0.5)
+                title_strength = 0.15
+        s += int(title_strength * w_t * 0.75)
 
         # INDUSTRY component: cap at 3 hits = full credit
         ind_hits = sum(1 for i in profile.get("industries", []) if i and i in blob)
@@ -1704,6 +1706,12 @@ def score_job(job):
         kw_hits = sum(1 for k in skl_terms if k and k in blob)
         skl_strength = min(kw_hits / 8.0, 1.0)
         s += int(skl_strength * w_s * 0.5)
+
+        # Penalty (2026-05-26): if NEITHER the title matched a targetTitle
+        # NOR did keywords/specialties land any hits in the blob, this is a
+        # genuinely-uncertain match. Push it down so real fits win the top.
+        if title_strength == 0.0 and kw_hits == 0 and ind_hits == 0:
+            s -= 18
     else:
         # Legacy path — used when Worker is unreachable
         if is_senior(job):
@@ -2152,8 +2160,8 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         if h <= 168: return 4   # last week — small bump
         return 0
 
-    # Re-sort: effective_score = score + fresh_bonus; tiebreak on most-recent last_seen
-    rows = sorted(rows, key=lambda r: (-(int(r[11] or 0) + _fresh_bonus(r[6])), r[7] or ""), reverse=False)
+    # Re-sort: effective_score = score + fresh_bonus DESC; tiebreak on most-recent last_seen DESC.
+    rows = sorted(rows, key=lambda r: (int(r[11] or 0) + _fresh_bonus(r[6]), r[7] or ""), reverse=True)
     # No profile → no jobs. User must upload resume first to see anything.
     if not SKILLS_PROFILE:
         rows = []
