@@ -2153,6 +2153,24 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         LIMIT 20000
     """).fetchall()
 
+    # PER-USER RE-SCORING (2026-05-26): score_job runs at scrape time with
+    # SKILLS_PROFILE=None, so all the per-user title/keyword/stage logic in
+    # score_job is dead during the scrape. To make per-user scoring actually
+    # bite, re-run score_job for each row HERE with the now-loaded user
+    # profile, and replace the DB score with the user-specific one.
+    if SKILLS_PROFILE:
+        _rescored = []
+        for r in rows:
+            _job = {
+                "title": r[2] or "",
+                "description": r[12] or "",
+            }
+            new_score = score_job(_job)
+            _row = list(r)
+            _row[11] = new_score
+            _rescored.append(tuple(_row))
+        rows = _rescored
+
     # E5: Freshness boost — re-rank so jobs first-seen in the last 48h surface
     # above stale ones at similar score. This is the "get people jobs FASTER"
     # lever — today's posts at the top, 3-week-olds at the bottom.
