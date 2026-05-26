@@ -1094,6 +1094,72 @@ SINGLE_WORD_FILTERS = [
 ]
 
 
+# --- E1: Career-stage detection from job title --------------------------
+TITLE_STAGE_INTERN = ["intern", "internship", "co-op", "coop"]
+TITLE_STAGE_NEWGRAD = ["new grad", "new-grad", "new graduate", "entry level", "entry-level", "graduate program", "graduate trainee", "rotational program", "analyst program"]
+TITLE_STAGE_EARLY = ["associate", "analyst", "junior", "jr.", "engineer i", "engineer ii", "developer i", " i,", " ii,"]
+TITLE_STAGE_MID = ["senior associate", "senior analyst", "senior consultant", "sr. ", "senior ", "mid-level", "mid level", "engineer iii", "lead engineer"]
+TITLE_STAGE_SENIOR_IC = ["principal", "staff", "senior staff", "director,", "director of", "director ", "head of", "senior director", "sr. director", "sr director"]
+TITLE_STAGE_EXEC = ["vp,", "vp of", "vice president", "vice-president", "svp", "evp", "chief ", "cto", "cfo", "cio", "ceo", "coo", "chro", "ciso", "general manager,", "president,", "president of"]
+
+STAGE_ORDER = {"internship": 0, "new-grad": 1, "early-career": 2, "mid-career": 3, "senior": 4, "executive": 5}
+
+def detect_title_stage(title):
+    """Return the strongest seniority signal in the title, or None if ambiguous.
+    Checked from most-specific to least so 'Senior Director' is read as senior, not mid."""
+    if not title:
+        return None
+    t = " " + title.lower() + " "
+    if any(s in t for s in TITLE_STAGE_INTERN):
+        return "internship"
+    if any(s in t for s in TITLE_STAGE_NEWGRAD):
+        return "new-grad"
+    if any(s in t for s in TITLE_STAGE_EXEC):
+        return "executive"
+    if any(s in t for s in TITLE_STAGE_SENIOR_IC):
+        return "senior"
+    if any(s in t for s in TITLE_STAGE_MID):
+        return "mid-career"
+    if any(s in t for s in TITLE_STAGE_EARLY):
+        return "early-career"
+    return None  # untagged — neutral
+
+def stage_compatible(user_stage, job_stage):
+    """A job is compatible if it's within 1 step of the user's stage on either side.
+    user_stage and job_stage are strings; missing values default to compatible (don't drop on no-signal)."""
+    if not user_stage or not job_stage:
+        return True
+    u = STAGE_ORDER.get(user_stage)
+    j = STAGE_ORDER.get(job_stage)
+    if u is None or j is None:
+        return True
+    return abs(u - j) <= 1
+
+# --- E4: Recruiter / staffing-agency listing detection ------------------
+def _load_recruiting_firms_set():
+    try:
+        with open(os.path.join(ROOT, "companies.json"), "r", encoding="utf-8") as f:
+            d = json.load(f)
+        firms = d.get("_recruiting_firms", []) or []
+        return {f.strip().lower() for f in firms if isinstance(f, str) and f.strip()}
+    except Exception:
+        return set()
+
+RECRUITING_FIRMS_SET = _load_recruiting_firms_set()
+RECRUITER_BLURBS = [
+    "our client", "our fortune 500 client", "leading financial services client",
+    "our client is", "fortune 500 client", "confidential client",
+    "global investment bank client", "our banking client", "our healthcare client",
+    "we are partnering with", "on behalf of our client",
+]
+
+def is_recruiter_listing(job):
+    name = (job.get("company_name") or "").strip().lower()
+    if name in RECRUITING_FIRMS_SET:
+        return True
+    desc = (job.get("description") or "").lower()
+    return any(b in desc for b in RECRUITER_BLURBS)
+
 def _is_irrelevant_title(title):
     t = (title or "").lower()
     if any(term in t for term in IRRELEVANT_TITLE_TERMS):
@@ -1556,8 +1622,20 @@ def score_job(job):
     if _is_irrelevant_title(job["title"]):
         return 0
 
+    # E4: drop recruiter / staffing-agency listings — they are usually
+    # generic "send your resume to our client" posts, not real openings.
+    if is_recruiter_listing(job):
+        return 0
+
     profile = SKILLS_PROFILE
     if profile:
+        # E1: drop jobs whose title-seniority is incompatible with the user's
+        # career stage (gap > 1 step on the stage ladder). No-signal titles
+        # are left alone so we don't over-filter.
+        _user_stage = profile.get("careerStage")
+        _job_stage = detect_title_stage(job["title"]) if _user_stage else None
+        if _user_stage and _job_stage and not stage_compatible(_user_stage, _job_stage):
+            return 0
         # AI-driven negative keywords — disqualify on title match
         neg = profile.get("negativeKeywords", [])
         if any(n and n in title for n in neg):
@@ -1624,6 +1702,13 @@ def score_job(job):
     # Empty / very short description = suspicious
     if len(job["description"]) < 200:
         s -= 10
+
+    # E1: tiny boost when title-stage exactly matches user career stage
+    if profile:
+        _us = profile.get("careerStage")
+        _js = detect_title_stage(job["title"])
+        if _us and _js and _us == _js:
+            s += 6
 
     return max(0, min(100, s))
 
@@ -2022,6 +2107,31 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         ORDER BY score DESC, last_seen DESC
         LIMIT 20000
     """).fetchall()
+
+    # E5: Freshness boost — re-rank so jobs first-seen in the last 48h surface
+    # above stale ones at similar score. This is the "get people jobs FASTER"
+    # lever — today's posts at the top, 3-week-olds at the bottom.
+    def _hours_old(ts):
+        if not ts:
+            return 9999
+        try:
+            from datetime import datetime as _dt, timezone as _tz
+            dt = _dt.fromisoformat(ts.replace("Z", "+00:00"))
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=_tz.utc)
+            now = _dt.now(_tz.utc)
+            return max(0, (now - dt).total_seconds() / 3600.0)
+        except Exception:
+            return 9999
+
+    def _fresh_bonus(first_seen):
+        h = _hours_old(first_seen)
+        if h <= 48: return 10   # last 2 days — meaningful bump
+        if h <= 168: return 4   # last week — small bump
+        return 0
+
+    # Re-sort: effective_score = score + fresh_bonus; tiebreak on most-recent last_seen
+    rows = sorted(rows, key=lambda r: (-(int(r[11] or 0) + _fresh_bonus(r[6])), r[7] or ""), reverse=False)
     # No profile → no jobs. User must upload resume first to see anything.
     if not SKILLS_PROFILE:
         rows = []

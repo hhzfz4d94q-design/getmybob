@@ -865,6 +865,358 @@
         "credit-risk",
         "small-business-finance"
       ]
+    },
+    {
+      "slug": "auditboard",
+      "industries": [
+        "grc",
+        "risk",
+        "compliance",
+        "audit",
+        "saas"
+      ]
+    },
+    {
+      "slug": "logicgate",
+      "industries": [
+        "grc",
+        "risk",
+        "compliance",
+        "saas"
+      ]
+    },
+    {
+      "slug": "diligent",
+      "industries": [
+        "grc",
+        "governance",
+        "risk",
+        "compliance",
+        "audit"
+      ]
+    },
+    {
+      "slug": "sprinto",
+      "industries": [
+        "grc",
+        "soc2",
+        "compliance",
+        "saas"
+      ]
+    },
+    {
+      "slug": "tugboatlogic",
+      "industries": [
+        "grc",
+        "compliance",
+        "saas"
+      ]
+    },
+    {
+      "slug": "alloy",
+      "industries": [
+        "fintech",
+        "kyc",
+        "identity",
+        "fraud",
+        "risk"
+      ]
+    },
+    {
+      "slug": "middesk",
+      "industries": [
+        "fintech",
+        "kyb",
+        "identity",
+        "compliance"
+      ]
+    },
+    {
+      "slug": "persona",
+      "industries": [
+        "identity",
+        "kyc",
+        "fraud",
+        "compliance",
+        "fintech"
+      ]
+    },
+    {
+      "slug": "socure",
+      "industries": [
+        "identity",
+        "kyc",
+        "fraud",
+        "compliance",
+        "fintech"
+      ]
+    },
+    {
+      "slug": "sardine",
+      "industries": [
+        "fraud",
+        "fintech",
+        "aml",
+        "kyc",
+        "compliance"
+      ]
+    },
+    {
+      "slug": "atbay",
+      "industries": [
+        "cyber-insurance",
+        "cybersecurity",
+        "risk",
+        "insurtech"
+      ]
+    },
+    {
+      "slug": "coalitioninc",
+      "industries": [
+        "cyber-insurance",
+        "cybersecurity",
+        "risk",
+        "insurtech"
+      ]
+    },
+    {
+      "slug": "resilience",
+      "industries": [
+        "cyber-insurance",
+        "cybersecurity",
+        "risk",
+        "insurtech"
+      ]
+    },
+    {
+      "slug": "corvusinsurance",
+      "industries": [
+        "cyber-insurance",
+        "cybersecurity",
+        "risk",
+        "insurtech"
+      ]
+    },
+    {
+      "slug": "ramp",
+      "industries": [
+        "fintech",
+        "spend-management",
+        "saas",
+        "b2b"
+      ]
+    },
+    {
+      "slug": "lithic",
+      "industries": [
+        "fintech",
+        "payments",
+        "card-issuing",
+        "b2b"
+      ]
+    },
+    {
+      "slug": "moderntreasury",
+      "industries": [
+        "fintech",
+        "payments",
+        "treasury",
+        "b2b"
+      ]
+    },
+    {
+      "slug": "column",
+      "industries": [
+        "fintech",
+        "banking",
+        "infra"
+      ]
+    },
+    {
+      "slug": "pipehq",
+      "industries": [
+        "fintech",
+        "revenue-financing",
+        "b2b"
+      ]
+    },
+    {
+      "slug": "treasury-prime",
+      "industries": [
+        "fintech",
+        "banking",
+        "baas",
+        "b2b"
+      ]
+    },
+    {
+      "slug": "unit",
+      "industries": [
+        "fintech",
+        "banking",
+        "baas",
+        "b2b"
+      ]
+    },
+    {
+      "slug": "increase",
+      "industries": [
+        "fintech",
+        "payments",
+        "ach",
+        "infra"
+      ]
+    },
+    {
+      "slug": "springhealth",
+      "industries": [
+        "digital-health",
+        "mental-health",
+        "behavioral-health"
+      ]
+    },
+    {
+      "slug": "rohealth",
+      "industries": [
+        "digital-health",
+        "telehealth",
+        "consumer-health"
+      ]
+    },
+    {
+      "slug": "forgehealth",
+      "industries": [
+        "digital-health",
+        "value-based-care"
+      ]
+    },
+    {
+      "slug": "maven",
+      "industries": [
+        "digital-health",
+        "womens-health",
+        "fertility"
+      ]
+    },
+    {
+      "slug": "westmonroe",
+      "industries": [
+        "consulting",
+        "tech-strategy",
+        "digital-transformation"
+      ]
+    },
+    {
+      "slug": "capco",
+      "industries": [
+        "consulting",
+        "banking",
+        "fintech",
+        "risk",
+        "transformation"
+      ]
+    },
+    {
+      "slug": "siapartners",
+      "industries": [
+        "consulting",
+        "transformation",
+        "risk",
+        "strategy"
+      ]
+    },
+    {
+      "slug": "riveronconsulting",
+      "industries": [
+        "consulting",
+        "finance",
+        "transformation",
+        "restructuring"
+      ]
+    },
+    {
+      "slug": "watershed",
+      "industries": [
+        "climate",
+        "esg",
+        "carbon-accounting",
+        "saas"
+      ]
+    },
+    {
+      "slug": "persefoni",
+      "industries": [
+        "climate",
+        "esg",
+        "carbon-accounting",
+        "saas"
+      ]
+    },
+    {
+      "slug": "vercel",
+      "industries": [
+        "developer-tools",
+        "infrastructure",
+        "saas"
+      ]
+    },
+    {
+      "slug": "planetscale",
+      "industries": [
+        "developer-tools",
+        "database",
+        "infrastructure"
+      ]
+    },
+    {
+      "slug": "supabase",
+      "industries": [
+        "developer-tools",
+        "database",
+        "infrastructure"
+      ]
+    },
+    {
+      "slug": "pineconeio",
+      "industries": [
+        "developer-tools",
+        "vector-database",
+        "ai",
+        "infrastructure"
+      ]
+    },
+    {
+      "slug": "modal",
+      "industries": [
+        "developer-tools",
+        "ai",
+        "infrastructure"
+      ]
+    },
+    {
+      "slug": "replicate",
+      "industries": [
+        "developer-tools",
+        "ai",
+        "infrastructure"
+      ]
+    },
+    {
+      "slug": "huggingface",
+      "industries": [
+        "ai",
+        "ml",
+        "developer-tools",
+        "open-source"
+      ]
+    },
+    {
+      "slug": "anthropic",
+      "industries": [
+        "ai",
+        "research",
+        "safety"
+      ]
     }
   ],
   "lever": [
@@ -895,7 +1247,32 @@
     "noom",
     "calm",
     "verily",
-    "neuralink"
+    "neuralink",
+    {
+      "slug": "ledger",
+      "industries": [
+        "fintech",
+        "crypto",
+        "wallets",
+        "security"
+      ]
+    },
+    {
+      "slug": "smartcat",
+      "industries": [
+        "saas",
+        "translation",
+        "developer-tools"
+      ]
+    },
+    {
+      "slug": "instabase",
+      "industries": [
+        "ai",
+        "document-ai",
+        "saas"
+      ]
+    }
   ],
   "ashby": [
     "Graphitehq",
