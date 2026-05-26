@@ -43,7 +43,17 @@ jobs:
           done
           if ! git diff --staged --quiet; then
             git commit -m "auto: refresh dashboard $(date -u +'%Y-%m-%dT%H:%MZ')"
-            git push
+            # Rebase any new commits that landed on main while we were running
+            # (fix for "push rejected non-fast-forward" race).
+            for i in 1 2 3; do
+              if git push; then exit 0; fi
+              echo "push attempt $i failed, rebasing and retrying..."
+              git fetch origin main
+              git rebase origin/main || git rebase --abort || true
+              sleep 3
+            done
+            echo "::error::Could not push after 3 attempts"
+            exit 1
           else
             echo "No changes to commit"
           fi
