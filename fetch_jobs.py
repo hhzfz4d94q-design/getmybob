@@ -6100,7 +6100,7 @@ function wizWtPrefill() {{
         if (ctaBtn) ctaBtn.disabled = true;
         fetch(PROFILE_WORKER_URL, {{
           method: "POST",
-          headers: Object.assign({{ "Content-Type": "application/json" }}, authHeader),
+          headers: {{ "Content-Type": "application/json", "X-Edit-Key": editKey }},
           body: JSON.stringify({{ patchFields: {{ preferredLocations: locs, remotePreference: remotePref }} }})
         }})
           .then(function(r){{ return r.json().then(function(d){{ return {{ ok: r.ok, status: r.status, data: d }}; }}); }})
@@ -6144,7 +6144,7 @@ function wizWtPrefill() {{
         if (ctaBtn) ctaBtn.disabled = true;
         fetch(PROFILE_WORKER_URL, {{
           method: "POST",
-          headers: Object.assign({{ "Content-Type": "application/json" }}, authHeader),
+          headers: {{ "Content-Type": "application/json", "X-Edit-Key": editKey }},
           body: JSON.stringify({{ patchFields: {{ matchWeights: {{ titles: t, industries: i, skills: k }} }} }})
         }}).then(function(r){{return r.json();}}).then(function(d){{
           if (ctaBtn) ctaBtn.disabled = false;
@@ -6352,66 +6352,73 @@ function wizWtPrefill() {{
   }}
 }})();
 
-// Slice B: explicit Next button — advances without doing the step's save action
-(function setupWizNextBtn() {
-  function wire() {
+// Slice B: explicit Next button — delegates to the step's CTA so user input
+// is saved before advancing. (Earlier this just called wizAdvance, which meant
+// Next silently dropped preferences on the save-* steps.)
+(function setupWizNextBtn() {{
+  function wire() {{
     const btn = document.getElementById("wiz-next");
     if (!btn || btn._wired) return;
     btn._wired = true;
-    btn.addEventListener("click", function() {
-      try {
+    btn.addEventListener("click", function() {{
+      try {{
         if (typeof wizCurrent !== "undefined" && typeof WIZ_STEPS !== "undefined" &&
-            wizCurrent >= WIZ_STEPS.length - 1) {
+            wizCurrent >= WIZ_STEPS.length - 1) {{
           // Last step — Next acts like Finish/Close
-          if (typeof wizFinish === "function") { wizFinish(); }
-          else if (typeof wizHide === "function") { wizHide(); }
+          if (typeof wizFinish === "function") {{ wizFinish(); }}
+          else if (typeof wizHide === "function") {{ wizHide(); }}
           return;
-        }
-        if (typeof wizAdvance === "function") { wizAdvance(); }
-      } catch(e) { console.warn("wiz-next error", e); }
-    });
-  }
-  if (document.readyState === "loading") {
+        }}
+        // Delegate to the CTA so the step's save handler runs first; on
+        // open-resume / open-contacts / next-only steps the CTA already just
+        // advances or opens a modal, so this is safe for every step.
+        const cta = document.getElementById("wiz-cta");
+        if (cta && !cta.disabled) {{ cta.click(); return; }}
+        if (typeof wizAdvance === "function") {{ wizAdvance(); }}
+      }} catch(e) {{ console.warn("wiz-next error", e); }}
+    }});
+  }}
+  if (document.readyState === "loading") {{
     document.addEventListener("DOMContentLoaded", wire);
-  } else { wire(); }
-})();
+  }} else {{ wire(); }}
+}})();
 
 // Slice B: enhance wizRender to manage the always-visible Back + Next buttons
-(function enhanceWizRender() {
+(function enhanceWizRender() {{
   if (typeof wizRender !== "function") return;
   const _orig = wizRender;
-  window.wizRender = function() {
+  window.wizRender = function() {{
     _orig.apply(this, arguments);
     const back = document.getElementById("wiz-back");
     const next = document.getElementById("wiz-next");
-    if (back) {
+    if (back) {{
       back.style.display = "";
       back.disabled = (typeof wizCurrent !== "undefined" && wizCurrent === 0);
       back.style.opacity = back.disabled ? "0.4" : "";
       back.style.cursor = back.disabled ? "not-allowed" : "pointer";
-    }
-    if (next && typeof wizCurrent !== "undefined" && typeof WIZ_STEPS !== "undefined") {
+    }}
+    if (next && typeof wizCurrent !== "undefined" && typeof WIZ_STEPS !== "undefined") {{
       // Hide Next on the very last step — the primary CTA there is "Finish".
       const isLast = wizCurrent >= WIZ_STEPS.length - 1;
       next.style.display = isLast ? "none" : "";
-    }
-  };
-})();
+    }}
+  }};
+}})();
 
 // ============================================================
 // Slice C — Notes & follow-up reminders (injected client-side)
 // Adds a "Notes" button to every job card + a Reminders panel at the top.
 // Notes are persisted via /notes endpoint on the Worker (X-Edit-Key auth).
 // ============================================================
-(function notesAndReminders() {
+(function notesAndReminders() {{
   if (window.__slice_c_loaded) return; window.__slice_c_loaded = true;
   const NOTES_URL = WORKER_BASE + "/notes" + USER_QS;
-  let _notes = {};
+  let _notes = {{}};
 
-  function _todayISO() { return new Date().toISOString().slice(0,10); }
-  function _esc(s) { return (s||"").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+  function _todayISO() {{ return new Date().toISOString().slice(0,10); }}
+  function _esc(s) {{ return (s||"").replace(/[&<>"]/g, c => ({{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}}[c])); }}
 
-  function bucketReminder(dateStr) {
+  function bucketReminder(dateStr) {{
     if (!dateStr) return null;
     const t = _todayISO();
     if (dateStr < t) return "overdue";
@@ -6420,78 +6427,78 @@ function wizWtPrefill() {{
     const days = Math.round((d - tn) / 86400000);
     if (days <= 7) return "upcoming";
     return "later";
-  }
+  }}
 
-  function loadNotes() {
-    return fetch(NOTES_URL).then(r => r.json()).then(d => {
-      _notes = (d && d.notes) || {};
+  function loadNotes() {{
+    return fetch(NOTES_URL).then(r => r.json()).then(d => {{
+      _notes = (d && d.notes) || {{}};
       renderReminders();
       decorateAllCards();
-    }).catch(()=>{});
-  }
+    }}).catch(()=>{{}});
+  }}
 
-  function getEditKeyHere() {
-    try {
+  function getEditKeyHere() {{
+    try {{
       return localStorage.getItem("htj_resume_key_" + USER_SLUG) ||
              localStorage.getItem("htj_resume_key") || "";
-    } catch(e) { return ""; }
-  }
-  function getAdminKeyHere() {
-    try { return localStorage.getItem("htj_admin_key") || ""; } catch(e) { return ""; }
-  }
-  function getSessionTokenHere() {
-    try { return localStorage.getItem("gmj_session_token") || ""; } catch(e) { return ""; }
-  }
-  function notesAuthHeaders() {
-    const h = { 'Content-Type': 'application/json' };
+    }} catch(e) {{ return ""; }}
+  }}
+  function getAdminKeyHere() {{
+    try {{ return localStorage.getItem("htj_admin_key") || ""; }} catch(e) {{ return ""; }}
+  }}
+  function getSessionTokenHere() {{
+    try {{ return localStorage.getItem("gmj_session_token") || ""; }} catch(e) {{ return ""; }}
+  }}
+  function notesAuthHeaders() {{
+    const h = {{ 'Content-Type': 'application/json' }};
     const ek = getEditKeyHere();   if (ek) h['X-Edit-Key'] = ek;
     const ak = getAdminKeyHere();  if (ak) h['X-Admin-Key'] = ak;
     const st = getSessionTokenHere(); if (st) h['Authorization'] = 'Bearer ' + st;
     return h;
-  }
+  }}
 
-  function saveNote(fp, fields) {
+  function saveNote(fp, fields) {{
     const card = document.querySelector('.card[data-fp="'+fp+'"]');
-    const body = Object.assign({ fp: fp }, fields);
-    if (card) {
+    const body = Object.assign({{ fp: fp }}, fields);
+    if (card) {{
       const titleA = card.querySelector('.title a');
       const compEl = card.querySelector('.company');
-      if (titleA && !body.jobTitle) { body.jobTitle = titleA.textContent.trim(); body.jobUrl = titleA.href || ''; }
+      if (titleA && !body.jobTitle) {{ body.jobTitle = titleA.textContent.trim(); body.jobUrl = titleA.href || ''; }}
       if (compEl && !body.company) body.company = compEl.textContent.trim();
-    }
-    return fetch(NOTES_URL, {
+    }}
+    return fetch(NOTES_URL, {{
       method: 'POST',
       headers: notesAuthHeaders(),
       body: JSON.stringify(body)
-    }).then(r => r.json()).then(d => {
+    }}).then(r => r.json()).then(d => {{
       if (d && d.notes) _notes = d.notes;
       renderReminders(); decorateAllCards();
       return d;
-    });
-  }
+    }});
+  }}
 
-  function deleteNote(fp) {
-    return fetch(NOTES_URL + "&fp=" + encodeURIComponent(fp), {
+  function deleteNote(fp) {{
+    return fetch(NOTES_URL + "&fp=" + encodeURIComponent(fp), {{
       method: 'DELETE',
       headers: notesAuthHeaders()
-    }).then(r => r.json()).then(d => {
+    }}).then(r => r.json()).then(d => {{
       if (_notes[fp]) delete _notes[fp];
       renderReminders(); decorateAllCards();
       return d;
-    });
-  }
+    }});
+  }}
 
-  function decorateAllCards() {
+  function decorateAllCards() {{
     document.querySelectorAll('.card[data-fp]').forEach(decorateCard);
-  }
+  }}
 
-  function decorateCard(card) {
+  function decorateCard(card) {{
     const fp = card.getAttribute('data-fp');
     const actions = card.querySelector('.actions');
     if (!actions) return;
     let btn = actions.querySelector('.btn-notes');
     const hasNote = !!_notes[fp];
-    const note = _notes[fp] || {};
+    const note = _notes[fp] || {{}};
     const bucket = bucketReminder(note.reminderDate);
     const label = hasNote
       ? (bucket === 'overdue' ? '📌 Overdue note'
@@ -6503,26 +6510,26 @@ function wizWtPrefill() {{
                 : bucket === 'today'   ? '#b45309'
                 : hasNote              ? '#5C5CD6'
                 : '';
-    if (!btn) {
+    if (!btn) {{
       btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'btn ghost-btn small btn-notes';
-      btn.addEventListener('click', function() { toggleEditor(card, fp); });
+      btn.addEventListener('click', function() {{ toggleEditor(card, fp); }});
       // Insert before the dismiss × if present, otherwise append
       const dismiss = actions.querySelector('.dismiss');
       if (dismiss) actions.insertBefore(btn, dismiss);
       else actions.appendChild(btn);
-    }
+    }}
     btn.textContent = label;
     btn.style.color = color || '';
     btn.style.borderColor = color || '';
     btn.style.fontWeight = hasNote ? '600' : '';
-  }
+  }}
 
-  function toggleEditor(card, fp) {
+  function toggleEditor(card, fp) {{
     let panel = card.querySelector('.notes-panel');
-    if (panel) { panel.remove(); return; }
-    const note = _notes[fp] || {};
+    if (panel) {{ panel.remove(); return; }}
+    const note = _notes[fp] || {{}};
     panel = document.createElement('div');
     panel.className = 'notes-panel';
     panel.style.cssText = 'margin-top:10px;padding:12px;background:#F8F8FC;border:1px solid #E5E7EE;border-radius:6px;';
@@ -6542,44 +6549,44 @@ function wizWtPrefill() {{
     card.appendChild(panel);
     const statusEl = panel.querySelector('.np-status');
     panel.querySelector('.np-close').addEventListener('click', () => panel.remove());
-    panel.querySelector('.np-save').addEventListener('click', () => {
+    panel.querySelector('.np-save').addEventListener('click', () => {{
       statusEl.textContent = 'Saving…';
       const text = panel.querySelector('.np-text').value;
       const reminderDate = panel.querySelector('.np-date').value || null;
-      saveNote(fp, { text: text, reminderDate: reminderDate })
-        .then(d => {
-          if (d && d.ok) { statusEl.style.color='#0a6b3a'; statusEl.textContent='Saved.'; setTimeout(()=>panel.remove(), 600); }
-          else { statusEl.style.color='#b91c1c'; statusEl.textContent = (d && d.error) || 'Save failed.'; }
-        })
-        .catch(e => { statusEl.style.color='#b91c1c'; statusEl.textContent = 'Network error.'; });
-    });
+      saveNote(fp, {{ text: text, reminderDate: reminderDate }})
+        .then(d => {{
+          if (d && d.ok) {{ statusEl.style.color='#0a6b3a'; statusEl.textContent='Saved.'; setTimeout(()=>panel.remove(), 600); }}
+          else {{ statusEl.style.color='#b91c1c'; statusEl.textContent = (d && d.error) || 'Save failed.'; }}
+        }})
+        .catch(e => {{ statusEl.style.color='#b91c1c'; statusEl.textContent = 'Network error.'; }});
+    }});
     const delBtn = panel.querySelector('.np-del');
-    if (delBtn) delBtn.addEventListener('click', () => {
+    if (delBtn) delBtn.addEventListener('click', () => {{
       if (!confirm('Delete this note?')) return;
       statusEl.textContent = 'Deleting…';
       deleteNote(fp).then(() => panel.remove());
-    });
+    }});
     panel.querySelector('.np-text').focus();
-  }
+  }}
 
-  function renderReminders() {
+  function renderReminders() {{
     let panel = document.getElementById('reminders-panel');
-    if (!panel) {
+    if (!panel) {{
       panel = document.createElement('div');
       panel.id = 'reminders-panel';
       panel.style.cssText = 'background:#fff;border:1px solid #E5E7EE;border-radius:8px;padding:14px 18px;margin:14px 0;';
       const filters = document.querySelector('.filters');
       if (filters && filters.parentNode) filters.parentNode.insertBefore(panel, filters);
       else document.body.insertBefore(panel, document.body.firstChild);
-    }
+    }}
     const all = Object.entries(_notes);
     const withDates = all.filter(([fp, n]) => !!n.reminderDate);
     const overdue = withDates.filter(([_, n]) => bucketReminder(n.reminderDate) === 'overdue');
     const today   = withDates.filter(([_, n]) => bucketReminder(n.reminderDate) === 'today');
     const upcoming= withDates.filter(([_, n]) => bucketReminder(n.reminderDate) === 'upcoming');
-    if (withDates.length === 0 && all.length === 0) { panel.style.display = 'none'; return; }
+    if (withDates.length === 0 && all.length === 0) {{ panel.style.display = 'none'; return; }}
     panel.style.display = '';
-    function pill(label, items, color) {
+    function pill(label, items, color) {{
       if (!items.length) return '';
       const list = items.slice(0, 5).map(([fp, n]) =>
         '<a href="#" data-jump="'+fp+'" style="color:'+color+';text-decoration:none;border-bottom:1px dotted '+color+';margin-right:10px;">' +
@@ -6588,7 +6595,7 @@ function wizWtPrefill() {{
         '</a>'
       ).join('');
       return '<div style="margin-bottom:6px;"><strong style="color:'+color+';">'+label+' ('+items.length+'):</strong> ' + list + '</div>';
-    }
+    }}
     panel.innerHTML =
       '<div style="font-size:11px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:8px;">📌 Follow-ups</div>' +
       pill('Overdue',  overdue,  '#b91c1c') +
@@ -6597,31 +6604,31 @@ function wizWtPrefill() {{
       (withDates.length === 0
         ? '<div style="color:#888;font-size:13px;">You have '+all.length+' note'+(all.length===1?'':'s')+' but no reminder dates set.</div>'
         : '');
-    panel.querySelectorAll('a[data-jump]').forEach(a => {
-      a.addEventListener('click', function(e) {
+    panel.querySelectorAll('a[data-jump]').forEach(a => {{
+      a.addEventListener('click', function(e) {{
         e.preventDefault();
         const fp = a.getAttribute('data-jump');
         const card = document.querySelector('.card[data-fp="'+fp+'"]');
-        if (card) {
-          card.scrollIntoView({behavior:'smooth', block:'center'});
+        if (card) {{
+          card.scrollIntoView({{behavior:'smooth', block:'center'}});
           const orig = card.style.boxShadow;
           card.style.boxShadow = '0 0 0 3px #5C5CD6';
-          setTimeout(() => { card.style.boxShadow = orig; }, 1500);
-        }
-      });
-    });
-  }
+          setTimeout(() => {{ card.style.boxShadow = orig; }}, 1500);
+        }}
+      }});
+    }});
+  }}
 
   // Re-decorate when the job grid is re-filtered or re-rendered
   const _origFilter = window.filter;
-  if (typeof _origFilter === 'function') {
-    window.filter = function() { const r = _origFilter.apply(this, arguments); setTimeout(decorateAllCards, 0); return r; };
-  }
+  if (typeof _origFilter === 'function') {{
+    window.filter = function() {{ const r = _origFilter.apply(this, arguments); setTimeout(decorateAllCards, 0); return r; }};
+  }}
 
-  if (document.readyState === 'loading') {
+  if (document.readyState === 'loading') {{
     document.addEventListener('DOMContentLoaded', loadNotes);
-  } else { loadNotes(); }
-})();
+  }} else {{ loadNotes(); }}
+}})();
 </script>
 </body></html>"""
 
