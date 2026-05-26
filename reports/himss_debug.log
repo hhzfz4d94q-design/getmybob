@@ -188,3 +188,8 @@ https://jobmine.himss.org/jobs/: HTTPError: HTTP Error 403: Forbidden
 https://careers.himss.org/jobs/rss: URLError: <urlopen error [Errno -2] Name or service not known>
 https://careers.himss.org/jobs/: URLError: <urlopen error [Errno -2] Name or service not known>
 all HIMSS endpoints failed
+https://jobmine.himss.org/jobs/rss: HTTPError: HTTP Error 403: Forbidden
+https://jobmine.himss.org/jobs/: HTTPError: HTTP Error 403: Forbidden
+https://careers.himss.org/jobs/rss: URLError: <urlopen error [Errno -2] Name or service not known>
+https://careers.himss.org/jobs/: URLError: <urlopen error [Errno -2] Name or service not known>
+all HIMSS endpoints failed
