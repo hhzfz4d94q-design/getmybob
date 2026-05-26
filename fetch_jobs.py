@@ -3116,6 +3116,7 @@ HTML_TEMPLATE = """<!doctype html>
     <button id="resume-btn" class="header-btn" onclick="openResumeModal()">Resume</button>
     <button id="contacts-btn" class="header-btn" onclick="openContactsModal()">LinkedIn Contacts</button>
     <button id="refresh-btn" class="header-btn" onclick="refreshData()">Refresh data</button>
+    <a id="account-btn" class="header-btn" href="/account.html" title="Change your password">Account</a>
     <button id="signout-btn" class="header-btn" onclick="signOutDashboard(this)" title="Sign out of getmemyjob">Sign out</button>
   </div>
 </header>
