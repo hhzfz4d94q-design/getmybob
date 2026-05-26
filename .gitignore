@@ -22,3 +22,10 @@ sample_dashboard.html
 
 # JSDOM was installed locally for parse-checking the dashboard JS; never commit it.
 node_modules/
+
+# Local scratch files parked here from the Cowork working folder — not source code, stay local
+EMAIL_DIGEST_SETUP.md
+fetch_jobs_PATCHED.py
+getmemyjob-helper-README.md
+getmemyjob-helper.zip
+getmemyjob-helper-firefox.zip
