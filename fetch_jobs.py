@@ -1635,6 +1635,43 @@ def load_users():
     return [{"slug": "geetu", "name": "Geetanjali Arora"}]
 
 
+def _careers_root(url):
+    """Derive the careers landing page for a job's ATS from its full URL.
+    Returns a URL pointing to all jobs at that company on that ATS, or None.
+    Used in the dashboard card as a fallback link in case the specific job
+    listing has been removed."""
+    if not url:
+        return None
+    try:
+        from urllib.parse import urlparse
+        p = urlparse(url)
+        host = (p.netloc or "").lower()
+        path = (p.path or "/")
+        if "myworkdayjobs.com" in host:
+            parts = [seg for seg in path.split("/") if seg]
+            if parts:
+                return f"https://{host}/{parts[0]}"
+            return f"https://{host}/"
+        if "boards.greenhouse.io" in host or "job-boards.greenhouse.io" in host:
+            parts = [seg for seg in path.split("/") if seg]
+            if parts:
+                return f"https://{host}/{parts[0]}"
+            return f"https://{host}/"
+        if "jobs.lever.co" in host:
+            parts = [seg for seg in path.split("/") if seg]
+            if parts:
+                return f"https://{host}/{parts[0]}"
+            return f"https://{host}/"
+        if "jobs.ashbyhq.com" in host:
+            parts = [seg for seg in path.split("/") if seg]
+            if parts:
+                return f"https://{host}/{parts[0]}"
+            return f"https://{host}/"
+    except Exception:
+        return None
+    return None
+
+
 def score_job(job):
     """0-100 score. Higher = more relevant + more likely 'real'.
     Uses the AI-extracted skills profile when available; falls back to hardcoded keywords.
