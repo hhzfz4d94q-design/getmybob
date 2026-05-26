@@ -104,6 +104,28 @@ jobs:
             "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/workers/scripts/${WORKER_NAME}/schedules" \
             | python3 -c "import json,sys; d=json.load(sys.stdin); [print(' -', s.get('cron'), 'created:', s.get('created_on')) for s in (d.get('schedules') or d.get('result') or [])]"
 
+      - name: Diagnose — show user registry + raw digest response
+        env:
+          ADMIN_KEY: ${{ secrets.WORKER_ADMIN_KEY }}
+        run: |
+          echo "=== /users (public) ==="
+          curl -sS "https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/users" | python3 -m json.tool || true
+          echo ""
+          echo "=== /admin/digest-trigger?user=geetu (verbose) ==="
+          if [ -z "$ADMIN_KEY" ]; then
+            echo "::warning::WORKER_ADMIN_KEY missing — cannot test"
+            exit 0
+          fi
+          curl -isS -X POST \
+            -H "X-Admin-Key: $ADMIN_KEY" \
+            "https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/admin/digest-trigger?user=geetu" || true
+          echo ""
+          echo ""
+          echo "=== /admin/digest-trigger?user=amit-arora (also verbose) ==="
+          curl -isS -X POST \
+            -H "X-Admin-Key: $ADMIN_KEY" \
+            "https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/admin/digest-trigger?user=amit-arora" || true
+
       - name: Send a test digest to verify end-to-end
         env:
           ADMIN_KEY: ${{ secrets.WORKER_ADMIN_KEY }}
