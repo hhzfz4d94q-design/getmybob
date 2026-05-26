@@ -1319,14 +1319,15 @@ def _token_matches(needle, haystack_tokens):
 
 
 def _matches_user_role(title, profile):
-    """Strict per-user title gate. The title must contain ALL non-stopword
-    tokens of at least one of the user's targetTitles (in any order,
-    matched via prefix-aware comparison). Falls back to primaryRole.
+    """Relaxed per-user title gate. The title passes if ANY of:
+      a) all tokens of one of the user's targetTitles match the title, OR
+      b) primaryRole tokens match the title with a seniority indicator, OR
+      c) the title contains at least one keyword/specialty/industry/regulation/
+         framework/technology term from the user's profile.
 
-    Replaces the old global POSITIVE_TITLE_THEMES gate which leaked common
-    words ('product', 'strategist', 'ai', 'compliance') to every user
-    regardless of their resume. If a real job is being filtered out, the
-    user should add the missing targetTitle in the wizard chip editor.
+    Goal: maximize volume of plausibly-relevant roles. We trust the LATER
+    scoring + sort to push best fits to the top, rather than hard-dropping
+    here. Users get hired by APPLYING — that needs many candidate jobs.
     """
     if not title or not profile:
         return False
@@ -1335,6 +1336,7 @@ def _matches_user_role(title, profile):
     if not title_tokens:
         return False
 
+    # (a) Exact targetTitle token match
     for tt in (profile.get("targetTitles") or []):
         tt_l = (tt or "").lower().strip()
         if len(tt_l) < 3:
@@ -1345,7 +1347,7 @@ def _matches_user_role(title, profile):
         if all(_token_matches(t, title_tokens) for t in tt_tokens):
             return True
 
-    # Fallback to primaryRole tokens + seniority indicator
+    # (b) primaryRole tokens + seniority signal
     primary = (profile.get("primaryRole") or "").lower()
     primary_tokens = set(re.findall(r"[a-z]+", primary)) - _ROLE_STOPWORDS
     if primary_tokens and all(_token_matches(t, title_tokens) for t in primary_tokens):
@@ -1353,9 +1355,28 @@ def _matches_user_role(title, profile):
             "vp", "vice", "president", "director", "head", "chief",
             "principal", "staff", "senior", "sr", "lead", "executive",
             "ceo", "coo", "cto", "cio", "ciso", "cpo", "cdo",
+            "manager", "associate", "analyst",
         }
         if seniority_indicators & title_tokens:
             return True
+
+    # (c) Loose match — title contains any single keyword/specialty/etc.
+    # This is the "get jobs faster, maximize volume" lever per Amit 2026-05-26.
+    for field in ("keywords", "specialties", "regulations", "frameworks",
+                  "technologies", "certifications"):
+        for term in profile.get(field, []) or []:
+            if not term:
+                continue
+            term_l = (term or "").lower().strip()
+            if len(term_l) < 3:
+                continue
+            # Multi-word: substring match; single-word: word-boundary match.
+            if " " in term_l or "-" in term_l:
+                if term_l in title_l:
+                    return True
+            else:
+                if re.search(r"\b" + re.escape(term_l) + r"\b", title_l):
+                    return True
 
     return False
 
@@ -1421,14 +1442,19 @@ def _user_min_seniority_rank(profile):
             if re.search(r"\b" + re.escape(t) + r"\b", blob):
                 return True
         return False
+    # Loosened (2026-05-26): each level returns one less than before, so a
+    # VP sees Manager-level roles too, a Director sees Manager+, a Senior
+    # sees ICs without title prefix. The goal is volume — landing a job
+    # beats landing the PERFECT job 6 months from now. Final scoring still
+    # ranks the best fits to the top.
     if _has("ceo", "cto", "cio", "coo", "ciso", "cpo", "cdo", "cfo", "chief", "founder"):
-        return 4   # one level below their listed (Chief) - show VPs too
+        return 3   # Chiefs still see Director+ as proper fits
     if _has("vp", "vice president", "svp", "evp"):
-        return 3   # VPs see Director+ ; cuts the Manager/Senior IC noise
+        return 2   # VPs see Senior IC + Manager
     if _has("director", "head of", "principal", "managing director"):
-        return 2   # Directors see Senior+ titles
+        return 1   # Directors see Manager+
     if _has("senior", "sr", "staff", "lead"):
-        return 1   # Seniors see Manager+
+        return 0   # Seniors see everything (rank 0 = no floor)
     return 0
 
 
@@ -1629,13 +1655,9 @@ def score_job(job):
 
     profile = SKILLS_PROFILE
     if profile:
-        # E1: drop jobs whose title-seniority is incompatible with the user's
-        # career stage (gap > 1 step on the stage ladder). No-signal titles
-        # are left alone so we don't over-filter.
-        _user_stage = profile.get("careerStage")
-        _job_stage = detect_title_stage(job["title"]) if _user_stage else None
-        if _user_stage and _job_stage and not stage_compatible(_user_stage, _job_stage):
-            return 0
+        # E1 (relaxed): stage filter removed — we no longer drop jobs by
+        # seniority gap. Stage influence is only via the +6 score bonus at
+        # the end of score_job for an exact-stage match.
         # AI-driven negative keywords — disqualify on title match
         neg = profile.get("negativeKeywords", [])
         if any(n and n in title for n in neg):
