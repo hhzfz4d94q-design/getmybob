@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>getmemyjob Helper</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; width: 320px; padding: 14px; color: #22223b; margin: 0; }
+    h1 { font-size: 14px; margin: 0 0 4px 0; }
+    p { font-size: 12px; color: #555; margin: 6px 0; line-height: 1.4; }
+    label { display: block; font-size: 11px; font-weight: 600; color: #666; text-transform: uppercase; letter-spacing: 0.3px; margin: 10px 0 4px; }
+    input { width: 100%; padding: 7px 9px; border: 1px solid #d0d4dc; border-radius: 6px; font-size: 13px; box-sizing: border-box; }
+    button { width: 100%; padding: 8px 12px; border: 0; background: #5C5CD6; color: #fff; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+    button.ghost { background: #fff; color: #5C5CD6; border: 1px solid #5C5CD6; }
+    .ok { color: #0a6b3a; }
+    .err { color: #b00; }
+    .status { padding: 8px 10px; background: #f4f5f8; border-radius: 6px; font-size: 12px; margin-top: 10px; }
+    .row { display: flex; gap: 6px; align-items: center; }
+    .badge { background: #5C5CD6; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; }
+    .field-list { font-size: 11px; color: #555; margin-top: 6px; line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <h1>🎯 getmemyjob Helper</h1>
+  <p>Auto-fills Greenhouse / Lever / Ashby / Workday application forms from your getmemyjob profile.</p>
+
+  <div id="signed-out" style="display:none;">
+    <label for="slug">Your slug (from invite URL)</label>
+    <input id="slug" type="text" placeholder="e.g. geetu" autocomplete="off">
+
+    <label for="key">Edit key (the <code>?key=...</code> from your invite URL)</label>
+    <input id="key" type="text" placeholder="your edit key" autocomplete="off">
+
+    <button id="signin-btn">Sign in</button>
+    <div id="signin-status" class="status" style="display:none;"></div>
+  </div>
+
+  <div id="signed-in" style="display:none;">
+    <div class="status">
+      <div class="row"><span class="badge">SIGNED IN</span> <strong id="user-name">—</strong></div>
+      <div class="field-list" id="profile-summary">Loading profile…</div>
+    </div>
+
+    <button id="refresh-btn" class="ghost">Refresh profile</button>
+    <button id="signout-btn" class="ghost">Sign out</button>
+
+    <p style="margin-top:12px; font-size:11px; color:#666;">
+      When you visit an apply page on Greenhouse, Lever, Ashby, or Workday, this extension auto-fills your standard fields. You always review and submit.
+    </p>
+  </div>
+</body>
+<script src="popup.js"></script>
+</html>
