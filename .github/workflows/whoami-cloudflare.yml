@@ -1,0 +1,50 @@
+name: Lookup Cloudflare account email
+
+on:
+  workflow_dispatch: {}
+  repository_dispatch:
+    types: [whoami-cloudflare]
+
+permissions:
+  contents: write
+
+jobs:
+  lookup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Query /user
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          mkdir -p reports
+          OUT=reports/cloudflare_whoami.md
+          {
+            echo "# Cloudflare account whoami — $(date -u +'%Y-%m-%dT%H:%MZ')"
+            echo ""
+            echo "## /user (account holder)"
+            echo ""
+            echo '```json'
+            curl -sS -H "Authorization: Bearer $CF_TOKEN" \
+              "https://api.cloudflare.com/client/v4/user" \
+              | python3 -m json.tool 2>/dev/null || true
+            echo '```'
+            echo ""
+            echo "## /accounts (visible accounts)"
+            echo ""
+            echo '```json'
+            curl -sS -H "Authorization: Bearer $CF_TOKEN" \
+              "https://api.cloudflare.com/client/v4/accounts?per_page=10" \
+              | python3 -m json.tool 2>/dev/null || true
+            echo '```'
+          } > "$OUT"
+          cat "$OUT"
+      - name: Commit
+        run: |
+          git config user.email "actions-bot@getmemyjob.local"
+          git config user.name  "Whoami workflow"
+          git add reports/cloudflare_whoami.md
+          if ! git diff --staged --quiet; then
+            git commit -m "auto: cloudflare whoami"
+            git push
+          fi
