@@ -99,5 +99,24 @@ check(f"Real fit scores higher than brand-noise ({s_good} > {s_brand})", s_good 
 check(f"Brand title doesn't break 80 ({s_brand} <= 80)", s_brand <= 80)
 mod.SKILLS_PROFILE = prev
 
+
+# --- HTML_TEMPLATE.format_map() with defaulting dict (catches Slice B/C/E brace bugs) ---
+print("\nTesting HTML_TEMPLATE format_map (regression: single { in JS literal):")
+import re
+fj_src = open(os.path.join(ROOT, "fetch_jobs.py")).read()
+m = re.search(r"^HTML_TEMPLATE\s*=\s*r?\"\"\"", fj_src, re.MULTILINE)
+if m:
+    end = fj_src.find('"""', m.end())
+    template = fj_src[m.end():end]
+    class _D(dict):
+        def __missing__(self, k): return "<" + k + ">"
+    try:
+        rendered = template.format_map(_D())
+        check(f"HTML_TEMPLATE.format_map() renders cleanly ({len(rendered):,} chars)", True)
+    except Exception as e:
+        check("HTML_TEMPLATE.format_map() renders cleanly", False, f"{type(e).__name__}: {str(e)[:200]}")
+else:
+    check("HTML_TEMPLATE anchor found", False)
+
 print(f"\n{PASS} passed, {FAIL} failed")
 sys.exit(0 if FAIL == 0 else 1)

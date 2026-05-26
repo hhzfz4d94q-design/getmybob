@@ -5819,7 +5819,7 @@ const WIZ_STEPS = [
         '<div style="margin-top:8px;padding:10px;background:#fff;border:1px solid #d0d4dc;border-radius:6px;">' +
           '<p style="margin:0 0 8px 0;"><strong>Firefox:</strong> <a href="/extension-firefox.zip" download style="color:#5C5CD6;font-weight:600;">⬇ Download Firefox build</a>, then in Firefox open <code>about:debugging</code> → This Firefox → Load Temporary Add-on, pick the manifest.json inside the unzipped folder.</p>' +
           '<p style="margin:0 0 8px 0;"><strong>Safari, iPhone/iPad, or any other browser:</strong> drag this link to your <strong>bookmarks bar</strong>:' +
-            ' <a href="javascript:(function(){var s=document.createElement(&apos;script&apos;);s.src=&apos;https://getmemyjob.officebeatllc.com/bookmarklet.js?t=&apos;+Date.now();document.body.appendChild(s);})();" ' +
+            ' <a href="javascript:(function(){{var s=document.createElement(&apos;script&apos;);s.src=&apos;https://getmemyjob.officebeatllc.com/bookmarklet.js?t=&apos;+Date.now();document.body.appendChild(s);}})();" ' +
             'style="display:inline-block;margin-left:6px;padding:4px 10px;background:#5C5CD6;color:#fff;border-radius:4px;text-decoration:none;font-weight:700;">📌 getmemyjob Helper</a></p>' +
           '<p style="margin:0;font-size:11.5px;color:#777;">Bookmarklet works in any browser including iOS Safari — drag the purple button above into your bookmarks bar, then on any Greenhouse/Lever/Ashby/Workday apply page click it once to auto-fill.</p>' +
         '</div>' +
