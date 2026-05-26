@@ -17,11 +17,27 @@
   body { font: 14px -apple-system, system-ui, sans-serif; margin: 0; background: #f7f7f8; color: #222; }
   header { background: #5C5CD6; color: white; padding: 18px 28px; position: relative; }
   header h1 { margin: 0; font-size: 20px; }
-  header .sub { opacity: .85; font-size: 13px; margin-top: 4px; }
+  header .sub { opacity: .85; font-size: 13px; margin-top: 4px; max-width: calc(100% - 360px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .header-actions { position: absolute; right: 28px; top: 50%; transform: translateY(-50%); display: flex; gap: 8px; }
   .header-btn { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; }
   .header-btn:hover { background: rgba(255,255,255,0.25); }
   .header-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  /* "More" dropdown menu in header */
+  .header-more-wrap { position: relative; display: inline-block; }
+  .header-more-menu {
+    display: none; position: absolute; right: 0; top: calc(100% + 6px);
+    min-width: 230px; background: white; border: 1px solid #ddd; border-radius: 8px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.18); z-index: 1000; overflow: hidden;
+  }
+  .header-more-wrap.open .header-more-menu { display: flex; flex-direction: column; }
+  .header-more-menu a, .header-more-menu button {
+    padding: 11px 14px; color: #333 !important; background: transparent; border: none;
+    text-align: left; font-size: 13.5px; font-weight: 500; cursor: pointer;
+    text-decoration: none; border-bottom: 1px solid #f0f0f0; font-family: inherit;
+    width: 100%; display: block;
+  }
+  .header-more-menu a:last-child, .header-more-menu button:last-child { border-bottom: none; }
+  .header-more-menu a:hover, .header-more-menu button:hover { background: #f5f5f7; }
   .stats { display: flex; gap: 24px; padding: 14px 28px; background: white; border-bottom: 1px solid #e5e5ea; }
   .stat { font-size: 13px; }
   .stat b { font-size: 22px; display: block; color: #5C5CD6; }
@@ -159,7 +175,7 @@
   @media (max-width: 640px) {
     header { padding: 14px 16px; }
     header h1 { font-size: 18px; }
-    header .sub { font-size: 12px; }
+    header .sub { font-size: 12px; max-width: none; white-space: normal; overflow: visible; }
     .header-actions { position: static; transform: none; margin-top: 12px; flex-wrap: wrap; gap: 6px; }
     .header-btn { padding: 8px 12px; font-size: 12.5px; flex: 0 0 auto; }
     .wiz-help-btn { width: 30px; height: 30px; font-size: 13px; }
@@ -223,7 +239,7 @@
 
 <header>
   <h1>Jobs for Shreyaa Arora</h1>
-  <div class="sub">Awaiting resume upload — click Resume to get started · Generated 2026-05-18 12:53</div>
+  <div class="sub" title="Awaiting resume upload — click Resume to get started · Generated 2026-05-18 12:53">Awaiting resume upload — click Resume to get started · Generated 2026-05-18 12:53</div>
   <div class="header-actions">
     <button class="wiz-help-btn" onclick="replayTour()" title="Replay setup tour">?</button>
     <button id="resume-btn" class="header-btn" onclick="openResumeModal()">Resume</button>
@@ -1680,6 +1696,29 @@ async function saveResume(btn) {
 if (document.readyState !== 'loading') _wireResumeDropzone();
 else document.addEventListener('DOMContentLoaded', _wireResumeDropzone);
 
+// --- Header "More" menu toggle (added 2026-05-26 with header redesign) ----
+function toggleHeaderMore(btn) {
+  const wrap = btn.closest('.header-more-wrap');
+  if (!wrap) return;
+  const willOpen = !wrap.classList.contains('open');
+  document.querySelectorAll('.header-more-wrap.open').forEach(w => w.classList.remove('open'));
+  if (willOpen) {
+    wrap.classList.add('open');
+    btn.setAttribute('aria-expanded', 'true');
+  } else {
+    btn.setAttribute('aria-expanded', 'false');
+  }
+}
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.header-more-wrap')) {
+    document.querySelectorAll('.header-more-wrap.open').forEach(function(w) {
+      w.classList.remove('open');
+      const b = w.querySelector('button[aria-haspopup]');
+      if (b) b.setAttribute('aria-expanded', 'false');
+    });
+  }
+});
+
 // --- Refresh data (triggers GitHub Action via Cloudflare Worker) --------
 const REFRESH_WORKER_URL = WORKER_BASE + '/refresh';
 
@@ -1722,7 +1761,24 @@ async function refreshData() {
 const PREP_WORKER_URL = WORKER_BASE + '/prep' + USER_QS;
 
 async function prepApplication(fp, btn) {
-  const card = btn.closest('.card');
+  // === DIAGNOSTIC WRAPPER (2026-05-26): surfaces silent failures with visible error ===
+  function _prepFail(msg) {
+    console.error('[prepApplication]', msg);
+    const _s = document.getElementById('prep-status');
+    const _m = document.getElementById('prep-modal');
+    if (_s && _m) {
+      _s.className = 'prep-status error';
+      _s.textContent = msg;
+      _s.style.display = 'block';
+      _m.classList.add('show');
+    } else {
+      alert('Prep materials failed: ' + msg);
+    }
+  }
+  console.log('[prepApplication] click', { fp });
+  const card = btn && btn.closest && btn.closest('.card');
+  if (!card) { _prepFail('clicked button is not inside a .card element'); return; }
+
   const titleEl = card.querySelector('.title a');
   const jobTitle = (titleEl?.textContent || '').trim();
   const company = (card.querySelector('.company')?.textContent || '').trim();
@@ -1733,6 +1789,10 @@ async function prepApplication(fp, btn) {
   const statusEl = document.getElementById('prep-status');
   const outputEl = document.getElementById('prep-output');
   const titleH = document.getElementById('prep-modal-title');
+  if (!modal || !statusEl || !outputEl || !titleH) {
+    _prepFail('modal elements missing: modal=' + !!modal + ' status=' + !!statusEl + ' output=' + !!outputEl + ' titleH=' + !!titleH);
+    return;
+  }
 
   titleH.textContent = `Materials for ${jobTitle} @ ${company}`;
   statusEl.className = 'prep-status';

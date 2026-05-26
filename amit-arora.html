@@ -20,11 +20,27 @@
   body { font: 14px -apple-system, system-ui, sans-serif; margin: 0; background: #f7f7f8; color: #222; }
   header { background: #5C5CD6; color: white; padding: 18px 28px; position: relative; }
   header h1 { margin: 0; font-size: 20px; }
-  header .sub { opacity: .85; font-size: 13px; margin-top: 4px; }
+  header .sub { opacity: .85; font-size: 13px; margin-top: 4px; max-width: calc(100% - 360px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .header-actions { position: absolute; right: 28px; top: 50%; transform: translateY(-50%); display: flex; gap: 8px; }
   .header-btn { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; }
   .header-btn:hover { background: rgba(255,255,255,0.25); }
   .header-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  /* "More" dropdown menu in header */
+  .header-more-wrap { position: relative; display: inline-block; }
+  .header-more-menu {
+    display: none; position: absolute; right: 0; top: calc(100% + 6px);
+    min-width: 230px; background: white; border: 1px solid #ddd; border-radius: 8px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.18); z-index: 1000; overflow: hidden;
+  }
+  .header-more-wrap.open .header-more-menu { display: flex; flex-direction: column; }
+  .header-more-menu a, .header-more-menu button {
+    padding: 11px 14px; color: #333 !important; background: transparent; border: none;
+    text-align: left; font-size: 13.5px; font-weight: 500; cursor: pointer;
+    text-decoration: none; border-bottom: 1px solid #f0f0f0; font-family: inherit;
+    width: 100%; display: block;
+  }
+  .header-more-menu a:last-child, .header-more-menu button:last-child { border-bottom: none; }
+  .header-more-menu a:hover, .header-more-menu button:hover { background: #f5f5f7; }
   .stats { display: flex; gap: 24px; padding: 14px 28px; background: white; border-bottom: 1px solid #e5e5ea; }
   .stat { font-size: 13px; }
   .goal-stat { background: linear-gradient(135deg, #f8f4ff 0%, #eef0ff 100%) !important; }
@@ -180,7 +196,7 @@
   @media (max-width: 640px) {
     header { padding: 14px 16px; }
     header h1 { font-size: 18px; }
-    header .sub { font-size: 12px; }
+    header .sub { font-size: 12px; max-width: none; white-space: normal; overflow: visible; }
     .header-actions { position: static; transform: none; margin-top: 12px; flex-wrap: wrap; gap: 6px; }
     .header-btn { padding: 8px 12px; font-size: 12.5px; flex: 0 0 auto; }
     .wiz-help-btn { width: 30px; height: 30px; font-size: 13px; }
@@ -269,15 +285,25 @@
 
 <header>
   <h1>Jobs for Amit Arora</h1>
-  <div class="sub">C-suite / VP-level transformational executive specializing in GRC, digital banking, capital markets technology, and enterprise IT strategy · Remote · Generated 2026-05-26 21:14</div>
+  <div class="sub" title="C-suite / VP-level transformational executive specializing in GRC, digital banking, capital markets technology, and enterprise IT strategy · Remote · Generated 2026-05-26 21:14">C-suite / VP-level transformational executive specializing in GRC, digital banking, capital markets technology, and enterprise IT strategy · Remote · Generated 2026-05-26 21:14</div>
   <div class="header-actions">
-    <button id="prefs-btn" class="header-btn" onclick="replayTour()" title="Re-open the setup wizard to change your locations, remote pref, and company sizes">Preferences</button>
-    <button id="regen-btn" class="header-btn" onclick="regenerateFromHeader(this)" title="Re-run the AI matcher to refresh your suggested target companies and skills. Takes 30-60 seconds.">Regenerate matches</button>
-    <button id="resume-btn" class="header-btn" onclick="openResumeModal()">Resume</button>
-    <button id="contacts-btn" class="header-btn" onclick="openContactsModal()">LinkedIn Contacts</button>
-    <button id="refresh-btn" class="header-btn" onclick="refreshData()">Refresh data</button>
-    <a id="account-btn" class="header-btn" href="/account.html" title="Change your password">Account</a>
-    <button id="signout-btn" class="header-btn" onclick="signOutDashboard(this)" title="Sign out of getmemyjob">Sign out</button>
+    <button id="refresh-btn" class="header-btn" onclick="refreshData()" title="Pull fresh job listings from all sources. Takes 2-3 minutes.">⟳ Find new jobs</button>
+    <div class="header-more-wrap">
+      <button id="account-btn" class="header-btn" onclick="toggleHeaderMore(this)" aria-haspopup="true" aria-expanded="false">Account ⌄</button>
+      <div class="header-more-menu" role="menu">
+        <a href="/account.html">Change password</a>
+        <button id="signout-btn" onclick="signOutDashboard(this)">Sign out</button>
+      </div>
+    </div>
+    <div class="header-more-wrap">
+      <button class="header-btn" onclick="toggleHeaderMore(this)" aria-haspopup="true" aria-expanded="false">More ⋯</button>
+      <div class="header-more-menu" role="menu">
+        <button id="regen-btn" onclick="regenerateFromHeader(this)" title="Re-run the AI matcher to refresh target companies + skills. Takes 30-60 seconds.">Re-match my profile (slower)</button>
+        <button id="resume-btn" onclick="openResumeModal()">Resume</button>
+        <button id="contacts-btn" onclick="openContactsModal()">LinkedIn Contacts</button>
+        <button id="prefs-btn" onclick="replayTour()" title="Re-open the setup wizard">Preferences</button>
+      </div>
+    </div>
   </div>
 </header>
 <div class="stats">
@@ -395,7 +421,7 @@
             <button class="btn track" onclick="cycleStatus('963fbad90e1d7f54', this)" data-status-for="963fbad90e1d7f54">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('963fbad90e1d7f54')" data-fp-followup="963fbad90e1d7f54" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('963fbad90e1d7f54')" data-fp-interview="963fbad90e1d7f54" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('963fbad90e1d7f54', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('963fbad90e1d7f54', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -421,7 +447,7 @@
             <button class="btn track" onclick="cycleStatus('9d2f3d25ec75b50f', this)" data-status-for="9d2f3d25ec75b50f">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('9d2f3d25ec75b50f')" data-fp-followup="9d2f3d25ec75b50f" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('9d2f3d25ec75b50f')" data-fp-interview="9d2f3d25ec75b50f" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('9d2f3d25ec75b50f', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('9d2f3d25ec75b50f', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -447,7 +473,7 @@
             <button class="btn track" onclick="cycleStatus('ce2c363b8c1263fd', this)" data-status-for="ce2c363b8c1263fd">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('ce2c363b8c1263fd')" data-fp-followup="ce2c363b8c1263fd" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('ce2c363b8c1263fd')" data-fp-interview="ce2c363b8c1263fd" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('ce2c363b8c1263fd', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('ce2c363b8c1263fd', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -473,7 +499,7 @@
             <button class="btn track" onclick="cycleStatus('2cc5985b4408305e', this)" data-status-for="2cc5985b4408305e">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('2cc5985b4408305e')" data-fp-followup="2cc5985b4408305e" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('2cc5985b4408305e')" data-fp-interview="2cc5985b4408305e" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('2cc5985b4408305e', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('2cc5985b4408305e', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -499,7 +525,7 @@
             <button class="btn track" onclick="cycleStatus('dee3176d2ca9f3a5', this)" data-status-for="dee3176d2ca9f3a5">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('dee3176d2ca9f3a5')" data-fp-followup="dee3176d2ca9f3a5" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('dee3176d2ca9f3a5')" data-fp-interview="dee3176d2ca9f3a5" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('dee3176d2ca9f3a5', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('dee3176d2ca9f3a5', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -525,7 +551,7 @@
             <button class="btn track" onclick="cycleStatus('c891784ee3bceb5d', this)" data-status-for="c891784ee3bceb5d">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('c891784ee3bceb5d')" data-fp-followup="c891784ee3bceb5d" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('c891784ee3bceb5d')" data-fp-interview="c891784ee3bceb5d" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('c891784ee3bceb5d', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('c891784ee3bceb5d', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -551,7 +577,7 @@
             <button class="btn track" onclick="cycleStatus('bc96728f32f4e589', this)" data-status-for="bc96728f32f4e589">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('bc96728f32f4e589')" data-fp-followup="bc96728f32f4e589" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('bc96728f32f4e589')" data-fp-interview="bc96728f32f4e589" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('bc96728f32f4e589', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('bc96728f32f4e589', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -577,7 +603,7 @@
             <button class="btn track" onclick="cycleStatus('022697f1387e3212', this)" data-status-for="022697f1387e3212">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('022697f1387e3212')" data-fp-followup="022697f1387e3212" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('022697f1387e3212')" data-fp-interview="022697f1387e3212" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('022697f1387e3212', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('022697f1387e3212', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -603,7 +629,7 @@
             <button class="btn track" onclick="cycleStatus('04ed803496d95f21', this)" data-status-for="04ed803496d95f21">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('04ed803496d95f21')" data-fp-followup="04ed803496d95f21" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('04ed803496d95f21')" data-fp-interview="04ed803496d95f21" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=%22Alloy%22%20%22KYC%22%20OR%20%22identity%22%20recruiter%20OR%20talent&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=%22Alloy%22%20%22KYC%22%20OR%20%22identity%22%20recruiter%20OR%20talent" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('04ed803496d95f21', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('04ed803496d95f21', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -629,7 +655,7 @@
             <button class="btn track" onclick="cycleStatus('a00fe62e6e0f9ab3', this)" data-status-for="a00fe62e6e0f9ab3">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('a00fe62e6e0f9ab3')" data-fp-followup="a00fe62e6e0f9ab3" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('a00fe62e6e0f9ab3')" data-fp-interview="a00fe62e6e0f9ab3" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=%22Mercury%22%20fintech%20recruiter%20OR%20talent&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=%22Mercury%22%20fintech%20recruiter%20OR%20talent" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('a00fe62e6e0f9ab3', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('a00fe62e6e0f9ab3', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -681,7 +707,7 @@
             <button class="btn track" onclick="cycleStatus('cdb3bd710cb63064', this)" data-status-for="cdb3bd710cb63064">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('cdb3bd710cb63064')" data-fp-followup="cdb3bd710cb63064" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('cdb3bd710cb63064')" data-fp-interview="cdb3bd710cb63064" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('cdb3bd710cb63064', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('cdb3bd710cb63064', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -733,7 +759,7 @@
             <button class="btn track" onclick="cycleStatus('ffbe1ca6397360de', this)" data-status-for="ffbe1ca6397360de">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('ffbe1ca6397360de')" data-fp-followup="ffbe1ca6397360de" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('ffbe1ca6397360de')" data-fp-interview="ffbe1ca6397360de" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=%22Mercury%22%20fintech%20recruiter%20OR%20talent&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=%22Mercury%22%20fintech%20recruiter%20OR%20talent" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('ffbe1ca6397360de', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('ffbe1ca6397360de', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -759,7 +785,7 @@
             <button class="btn track" onclick="cycleStatus('41528d2fc56ce1b4', this)" data-status-for="41528d2fc56ce1b4">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('41528d2fc56ce1b4')" data-fp-followup="41528d2fc56ce1b4" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('41528d2fc56ce1b4')" data-fp-interview="41528d2fc56ce1b4" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('41528d2fc56ce1b4', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('41528d2fc56ce1b4', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -811,7 +837,7 @@
             <button class="btn track" onclick="cycleStatus('09d08215710ed6e4', this)" data-status-for="09d08215710ed6e4">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('09d08215710ed6e4')" data-fp-followup="09d08215710ed6e4" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('09d08215710ed6e4')" data-fp-interview="09d08215710ed6e4" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=%22Mercury%22%20fintech%20recruiter%20OR%20talent&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=%22Mercury%22%20fintech%20recruiter%20OR%20talent" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('09d08215710ed6e4', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('09d08215710ed6e4', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -889,7 +915,7 @@
             <button class="btn track" onclick="cycleStatus('9312895cc6859248', this)" data-status-for="9312895cc6859248">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('9312895cc6859248')" data-fp-followup="9312895cc6859248" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('9312895cc6859248')" data-fp-interview="9312895cc6859248" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('9312895cc6859248', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('9312895cc6859248', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -941,7 +967,7 @@
             <button class="btn track" onclick="cycleStatus('85d1c6024f64b781', this)" data-status-for="85d1c6024f64b781">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('85d1c6024f64b781')" data-fp-followup="85d1c6024f64b781" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('85d1c6024f64b781')" data-fp-interview="85d1c6024f64b781" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('85d1c6024f64b781', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('85d1c6024f64b781', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -967,7 +993,7 @@
             <button class="btn track" onclick="cycleStatus('1d4abb094d1bbd90', this)" data-status-for="1d4abb094d1bbd90">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('1d4abb094d1bbd90')" data-fp-followup="1d4abb094d1bbd90" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('1d4abb094d1bbd90')" data-fp-interview="1d4abb094d1bbd90" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Marqeta%20recruiter%20OR%20talent&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Marqeta%20recruiter%20OR%20talent" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('1d4abb094d1bbd90', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('1d4abb094d1bbd90', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -1045,7 +1071,7 @@
             <button class="btn track" onclick="cycleStatus('e7c4b684c5c394dc', this)" data-status-for="e7c4b684c5c394dc">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('e7c4b684c5c394dc')" data-fp-followup="e7c4b684c5c394dc" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('e7c4b684c5c394dc')" data-fp-interview="e7c4b684c5c394dc" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('e7c4b684c5c394dc', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('e7c4b684c5c394dc', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -1227,7 +1253,7 @@
             <button class="btn track" onclick="cycleStatus('60091a74546ea778', this)" data-status-for="60091a74546ea778">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('60091a74546ea778')" data-fp-followup="60091a74546ea778" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('60091a74546ea778')" data-fp-interview="60091a74546ea778" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('60091a74546ea778', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('60091a74546ea778', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -1279,7 +1305,7 @@
             <button class="btn track" onclick="cycleStatus('883f6cac1188b750', this)" data-status-for="883f6cac1188b750">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('883f6cac1188b750')" data-fp-followup="883f6cac1188b750" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('883f6cac1188b750')" data-fp-interview="883f6cac1188b750" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=%22Mercury%22%20fintech%20recruiter%20OR%20talent&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=%22Mercury%22%20fintech%20recruiter%20OR%20talent" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('883f6cac1188b750', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('883f6cac1188b750', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -1305,7 +1331,7 @@
             <button class="btn track" onclick="cycleStatus('b6a5877ee4c5b955', this)" data-status-for="b6a5877ee4c5b955">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('b6a5877ee4c5b955')" data-fp-followup="b6a5877ee4c5b955" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('b6a5877ee4c5b955')" data-fp-interview="b6a5877ee4c5b955" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=%22Mercury%22%20fintech%20recruiter%20OR%20talent&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=%22Mercury%22%20fintech%20recruiter%20OR%20talent" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('b6a5877ee4c5b955', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('b6a5877ee4c5b955', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -1513,7 +1539,7 @@
             <button class="btn track" onclick="cycleStatus('55de979d40c33946', this)" data-status-for="55de979d40c33946">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('55de979d40c33946')" data-fp-followup="55de979d40c33946" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('55de979d40c33946')" data-fp-interview="55de979d40c33946" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('55de979d40c33946', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('55de979d40c33946', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -1539,7 +1565,7 @@
             <button class="btn track" onclick="cycleStatus('62dde4814df5283d', this)" data-status-for="62dde4814df5283d">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('62dde4814df5283d')" data-fp-followup="62dde4814df5283d" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('62dde4814df5283d')" data-fp-interview="62dde4814df5283d" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('62dde4814df5283d', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('62dde4814df5283d', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -1565,7 +1591,7 @@
             <button class="btn track" onclick="cycleStatus('a0b6a3225e3fab15', this)" data-status-for="a0b6a3225e3fab15">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('a0b6a3225e3fab15')" data-fp-followup="a0b6a3225e3fab15" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('a0b6a3225e3fab15')" data-fp-interview="a0b6a3225e3fab15" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Marqeta%20recruiter%20OR%20talent&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Marqeta%20recruiter%20OR%20talent" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('a0b6a3225e3fab15', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('a0b6a3225e3fab15', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -1643,7 +1669,7 @@
             <button class="btn track" onclick="cycleStatus('42739a5490760e84', this)" data-status-for="42739a5490760e84">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('42739a5490760e84')" data-fp-followup="42739a5490760e84" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('42739a5490760e84')" data-fp-interview="42739a5490760e84" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=%22Mercury%22%20fintech%20recruiter%20OR%20talent&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=%22Mercury%22%20fintech%20recruiter%20OR%20talent" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('42739a5490760e84', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('42739a5490760e84', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -2033,7 +2059,7 @@
             <button class="btn track" onclick="cycleStatus('2e4af89510ad3da6', this)" data-status-for="2e4af89510ad3da6">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('2e4af89510ad3da6')" data-fp-followup="2e4af89510ad3da6" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('2e4af89510ad3da6')" data-fp-interview="2e4af89510ad3da6" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('2e4af89510ad3da6', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('2e4af89510ad3da6', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -2059,7 +2085,7 @@
             <button class="btn track" onclick="cycleStatus('9bddb995062fc235', this)" data-status-for="9bddb995062fc235">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('9bddb995062fc235')" data-fp-followup="9bddb995062fc235" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('9bddb995062fc235')" data-fp-interview="9bddb995062fc235" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('9bddb995062fc235', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('9bddb995062fc235', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -2085,7 +2111,7 @@
             <button class="btn track" onclick="cycleStatus('56a9e3cb4fd8f8b2', this)" data-status-for="56a9e3cb4fd8f8b2">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('56a9e3cb4fd8f8b2')" data-fp-followup="56a9e3cb4fd8f8b2" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('56a9e3cb4fd8f8b2')" data-fp-interview="56a9e3cb4fd8f8b2" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('56a9e3cb4fd8f8b2', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('56a9e3cb4fd8f8b2', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -2111,7 +2137,7 @@
             <button class="btn track" onclick="cycleStatus('50250b01a32b30b9', this)" data-status-for="50250b01a32b30b9">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('50250b01a32b30b9')" data-fp-followup="50250b01a32b30b9" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('50250b01a32b30b9')" data-fp-interview="50250b01a32b30b9" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('50250b01a32b30b9', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('50250b01a32b30b9', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -2137,7 +2163,7 @@
             <button class="btn track" onclick="cycleStatus('0bc472025a57813c', this)" data-status-for="0bc472025a57813c">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('0bc472025a57813c')" data-fp-followup="0bc472025a57813c" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('0bc472025a57813c')" data-fp-interview="0bc472025a57813c" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('0bc472025a57813c', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('0bc472025a57813c', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -2163,7 +2189,7 @@
             <button class="btn track" onclick="cycleStatus('84ee055e0508f65f', this)" data-status-for="84ee055e0508f65f">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('84ee055e0508f65f')" data-fp-followup="84ee055e0508f65f" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('84ee055e0508f65f')" data-fp-interview="84ee055e0508f65f" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('84ee055e0508f65f', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('84ee055e0508f65f', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -2189,7 +2215,7 @@
             <button class="btn track" onclick="cycleStatus('acf0f21842e863fa', this)" data-status-for="acf0f21842e863fa">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('acf0f21842e863fa')" data-fp-followup="acf0f21842e863fa" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('acf0f21842e863fa')" data-fp-interview="acf0f21842e863fa" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('acf0f21842e863fa', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('acf0f21842e863fa', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -2215,7 +2241,7 @@
             <button class="btn track" onclick="cycleStatus('d450d797ca08604e', this)" data-status-for="d450d797ca08604e">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('d450d797ca08604e')" data-fp-followup="d450d797ca08604e" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('d450d797ca08604e')" data-fp-interview="d450d797ca08604e" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=%22Alloy%22%20%22KYC%22%20OR%20%22identity%22%20recruiter%20OR%20talent&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=%22Alloy%22%20%22KYC%22%20OR%20%22identity%22%20recruiter%20OR%20talent" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('d450d797ca08604e', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('d450d797ca08604e', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -2241,7 +2267,7 @@
             <button class="btn track" onclick="cycleStatus('dbee94ca694c01af', this)" data-status-for="dbee94ca694c01af">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('dbee94ca694c01af')" data-fp-followup="dbee94ca694c01af" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('dbee94ca694c01af')" data-fp-interview="dbee94ca694c01af" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=%22Alloy%22%20%22KYC%22%20OR%20%22identity%22%20recruiter%20OR%20talent&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=%22Alloy%22%20%22KYC%22%20OR%20%22identity%22%20recruiter%20OR%20talent" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('dbee94ca694c01af', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('dbee94ca694c01af', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -2345,7 +2371,7 @@
             <button class="btn track" onclick="cycleStatus('d8dd6b51670ca67c', this)" data-status-for="d8dd6b51670ca67c">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('d8dd6b51670ca67c')" data-fp-followup="d8dd6b51670ca67c" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('d8dd6b51670ca67c')" data-fp-interview="d8dd6b51670ca67c" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('d8dd6b51670ca67c', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('d8dd6b51670ca67c', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -2371,7 +2397,7 @@
             <button class="btn track" onclick="cycleStatus('eb8d0438f9c40012', this)" data-status-for="eb8d0438f9c40012">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('eb8d0438f9c40012')" data-fp-followup="eb8d0438f9c40012" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('eb8d0438f9c40012')" data-fp-interview="eb8d0438f9c40012" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('eb8d0438f9c40012', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('eb8d0438f9c40012', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -2631,7 +2657,7 @@
             <button class="btn track" onclick="cycleStatus('412adf7730b223ad', this)" data-status-for="412adf7730b223ad">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('412adf7730b223ad')" data-fp-followup="412adf7730b223ad" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('412adf7730b223ad')" data-fp-interview="412adf7730b223ad" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('412adf7730b223ad', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('412adf7730b223ad', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -2735,7 +2761,7 @@
             <button class="btn track" onclick="cycleStatus('c1dfe63c1bf0d946', this)" data-status-for="c1dfe63c1bf0d946">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('c1dfe63c1bf0d946')" data-fp-followup="c1dfe63c1bf0d946" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('c1dfe63c1bf0d946')" data-fp-interview="c1dfe63c1bf0d946" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Marqeta%20recruiter%20OR%20talent&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Marqeta%20recruiter%20OR%20talent" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('c1dfe63c1bf0d946', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('c1dfe63c1bf0d946', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -2969,7 +2995,7 @@
             <button class="btn track" onclick="cycleStatus('26084b22f65605ac', this)" data-status-for="26084b22f65605ac">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('26084b22f65605ac')" data-fp-followup="26084b22f65605ac" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('26084b22f65605ac')" data-fp-interview="26084b22f65605ac" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('26084b22f65605ac', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('26084b22f65605ac', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -3515,7 +3541,7 @@
             <button class="btn track" onclick="cycleStatus('1eee74d615eb4006', this)" data-status-for="1eee74d615eb4006">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('1eee74d615eb4006')" data-fp-followup="1eee74d615eb4006" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('1eee74d615eb4006')" data-fp-interview="1eee74d615eb4006" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('1eee74d615eb4006', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('1eee74d615eb4006', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -3541,7 +3567,7 @@
             <button class="btn track" onclick="cycleStatus('048bf1c7b1b98a8a', this)" data-status-for="048bf1c7b1b98a8a">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('048bf1c7b1b98a8a')" data-fp-followup="048bf1c7b1b98a8a" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('048bf1c7b1b98a8a')" data-fp-interview="048bf1c7b1b98a8a" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('048bf1c7b1b98a8a', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('048bf1c7b1b98a8a', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -3567,7 +3593,7 @@
             <button class="btn track" onclick="cycleStatus('607af4c2b4227a7c', this)" data-status-for="607af4c2b4227a7c">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('607af4c2b4227a7c')" data-fp-followup="607af4c2b4227a7c" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('607af4c2b4227a7c')" data-fp-interview="607af4c2b4227a7c" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('607af4c2b4227a7c', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('607af4c2b4227a7c', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -3593,7 +3619,7 @@
             <button class="btn track" onclick="cycleStatus('2741371ab480b13e', this)" data-status-for="2741371ab480b13e">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('2741371ab480b13e')" data-fp-followup="2741371ab480b13e" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('2741371ab480b13e')" data-fp-interview="2741371ab480b13e" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('2741371ab480b13e', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('2741371ab480b13e', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -3619,7 +3645,7 @@
             <button class="btn track" onclick="cycleStatus('7480f88a60e1fb25', this)" data-status-for="7480f88a60e1fb25">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('7480f88a60e1fb25')" data-fp-followup="7480f88a60e1fb25" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('7480f88a60e1fb25')" data-fp-interview="7480f88a60e1fb25" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('7480f88a60e1fb25', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('7480f88a60e1fb25', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -3645,7 +3671,7 @@
             <button class="btn track" onclick="cycleStatus('0ff9efe80356eb75', this)" data-status-for="0ff9efe80356eb75">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('0ff9efe80356eb75')" data-fp-followup="0ff9efe80356eb75" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('0ff9efe80356eb75')" data-fp-interview="0ff9efe80356eb75" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('0ff9efe80356eb75', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('0ff9efe80356eb75', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -3671,7 +3697,7 @@
             <button class="btn track" onclick="cycleStatus('5247c484b424b3e0', this)" data-status-for="5247c484b424b3e0">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('5247c484b424b3e0')" data-fp-followup="5247c484b424b3e0" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('5247c484b424b3e0')" data-fp-interview="5247c484b424b3e0" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('5247c484b424b3e0', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('5247c484b424b3e0', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -3827,7 +3853,7 @@
             <button class="btn track" onclick="cycleStatus('786904e922286f1f', this)" data-status-for="786904e922286f1f">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('786904e922286f1f')" data-fp-followup="786904e922286f1f" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('786904e922286f1f')" data-fp-interview="786904e922286f1f" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Marqeta%20recruiter%20OR%20talent&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Marqeta%20recruiter%20OR%20talent" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('786904e922286f1f', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('786904e922286f1f', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -4789,7 +4815,7 @@
             <button class="btn track" onclick="cycleStatus('d2208d78b0c42b6a', this)" data-status-for="d2208d78b0c42b6a">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('d2208d78b0c42b6a')" data-fp-followup="d2208d78b0c42b6a" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('d2208d78b0c42b6a')" data-fp-interview="d2208d78b0c42b6a" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=OneTrust%20recruiter%20OR%20talent&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=OneTrust%20recruiter%20OR%20talent" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('d2208d78b0c42b6a', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('d2208d78b0c42b6a', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -5777,7 +5803,7 @@
             <button class="btn track" onclick="cycleStatus('4082de01236ebf5e', this)" data-status-for="4082de01236ebf5e">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('4082de01236ebf5e')" data-fp-followup="4082de01236ebf5e" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('4082de01236ebf5e')" data-fp-interview="4082de01236ebf5e" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=OneTrust%20recruiter%20OR%20talent&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=OneTrust%20recruiter%20OR%20talent" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('4082de01236ebf5e', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('4082de01236ebf5e', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -5803,7 +5829,7 @@
             <button class="btn track" onclick="cycleStatus('5360ad21ff57b031', this)" data-status-for="5360ad21ff57b031">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('5360ad21ff57b031')" data-fp-followup="5360ad21ff57b031" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('5360ad21ff57b031')" data-fp-interview="5360ad21ff57b031" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=OneTrust%20recruiter%20OR%20talent&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=OneTrust%20recruiter%20OR%20talent" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('5360ad21ff57b031', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('5360ad21ff57b031', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -6349,7 +6375,7 @@
             <button class="btn track" onclick="cycleStatus('82be057bf060a356', this)" data-status-for="82be057bf060a356">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('82be057bf060a356')" data-fp-followup="82be057bf060a356" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('82be057bf060a356')" data-fp-interview="82be057bf060a356" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=OneTrust%20recruiter%20OR%20talent&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=OneTrust%20recruiter%20OR%20talent" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('82be057bf060a356', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('82be057bf060a356', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -6505,7 +6531,7 @@
             <button class="btn track" onclick="cycleStatus('073d98f352b74dd9', this)" data-status-for="073d98f352b74dd9">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('073d98f352b74dd9')" data-fp-followup="073d98f352b74dd9" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('073d98f352b74dd9')" data-fp-interview="073d98f352b74dd9" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Marqeta%20recruiter%20OR%20talent&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Marqeta%20recruiter%20OR%20talent" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('073d98f352b74dd9', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('073d98f352b74dd9', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -7545,7 +7571,7 @@
             <button class="btn track" onclick="cycleStatus('2f902fa801da13d2', this)" data-status-for="2f902fa801da13d2">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('2f902fa801da13d2')" data-fp-followup="2f902fa801da13d2" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('2f902fa801da13d2')" data-fp-interview="2f902fa801da13d2" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=OneTrust%20recruiter%20OR%20talent&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=OneTrust%20recruiter%20OR%20talent" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('2f902fa801da13d2', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('2f902fa801da13d2', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -8507,7 +8533,7 @@
             <button class="btn track" onclick="cycleStatus('57cbcf0ea1c9be40', this)" data-status-for="57cbcf0ea1c9be40">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('57cbcf0ea1c9be40')" data-fp-followup="57cbcf0ea1c9be40" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('57cbcf0ea1c9be40')" data-fp-interview="57cbcf0ea1c9be40" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=OneTrust%20recruiter%20OR%20talent&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=OneTrust%20recruiter%20OR%20talent" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('57cbcf0ea1c9be40', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('57cbcf0ea1c9be40', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -12381,7 +12407,7 @@
             <button class="btn track" onclick="cycleStatus('b19bc3773c9e6120', this)" data-status-for="b19bc3773c9e6120">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('b19bc3773c9e6120')" data-fp-followup="b19bc3773c9e6120" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('b19bc3773c9e6120')" data-fp-interview="b19bc3773c9e6120" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('b19bc3773c9e6120', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('b19bc3773c9e6120', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -12407,7 +12433,7 @@
             <button class="btn track" onclick="cycleStatus('e63b704e67a937f6', this)" data-status-for="e63b704e67a937f6">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('e63b704e67a937f6')" data-fp-followup="e63b704e67a937f6" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('e63b704e67a937f6')" data-fp-interview="e63b704e67a937f6" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('e63b704e67a937f6', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('e63b704e67a937f6', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -12433,7 +12459,7 @@
             <button class="btn track" onclick="cycleStatus('f80eabe59558ece4', this)" data-status-for="f80eabe59558ece4">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('f80eabe59558ece4')" data-fp-followup="f80eabe59558ece4" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('f80eabe59558ece4')" data-fp-interview="f80eabe59558ece4" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('f80eabe59558ece4', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('f80eabe59558ece4', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -12459,7 +12485,7 @@
             <button class="btn track" onclick="cycleStatus('320b1bd100b1f5f3', this)" data-status-for="320b1bd100b1f5f3">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('320b1bd100b1f5f3')" data-fp-followup="320b1bd100b1f5f3" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('320b1bd100b1f5f3')" data-fp-interview="320b1bd100b1f5f3" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('320b1bd100b1f5f3', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('320b1bd100b1f5f3', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -12485,7 +12511,7 @@
             <button class="btn track" onclick="cycleStatus('d9ca69c959ad5d46', this)" data-status-for="d9ca69c959ad5d46">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('d9ca69c959ad5d46')" data-fp-followup="d9ca69c959ad5d46" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('d9ca69c959ad5d46')" data-fp-interview="d9ca69c959ad5d46" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('d9ca69c959ad5d46', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('d9ca69c959ad5d46', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -12511,7 +12537,7 @@
             <button class="btn track" onclick="cycleStatus('e4e6f5f9f5a1be82', this)" data-status-for="e4e6f5f9f5a1be82">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('e4e6f5f9f5a1be82')" data-fp-followup="e4e6f5f9f5a1be82" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('e4e6f5f9f5a1be82')" data-fp-interview="e4e6f5f9f5a1be82" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('e4e6f5f9f5a1be82', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('e4e6f5f9f5a1be82', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -12537,7 +12563,7 @@
             <button class="btn track" onclick="cycleStatus('5306235a50bb40d9', this)" data-status-for="5306235a50bb40d9">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('5306235a50bb40d9')" data-fp-followup="5306235a50bb40d9" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('5306235a50bb40d9')" data-fp-interview="5306235a50bb40d9" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('5306235a50bb40d9', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('5306235a50bb40d9', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -12563,7 +12589,7 @@
             <button class="btn track" onclick="cycleStatus('1b093cd9c7a1851f', this)" data-status-for="1b093cd9c7a1851f">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('1b093cd9c7a1851f')" data-fp-followup="1b093cd9c7a1851f" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('1b093cd9c7a1851f')" data-fp-interview="1b093cd9c7a1851f" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('1b093cd9c7a1851f', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('1b093cd9c7a1851f', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -12589,7 +12615,7 @@
             <button class="btn track" onclick="cycleStatus('6f2a6080cb047a9f', this)" data-status-for="6f2a6080cb047a9f">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('6f2a6080cb047a9f')" data-fp-followup="6f2a6080cb047a9f" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('6f2a6080cb047a9f')" data-fp-interview="6f2a6080cb047a9f" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('6f2a6080cb047a9f', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('6f2a6080cb047a9f', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -12615,7 +12641,7 @@
             <button class="btn track" onclick="cycleStatus('d002b7fe0cfa4da6', this)" data-status-for="d002b7fe0cfa4da6">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('d002b7fe0cfa4da6')" data-fp-followup="d002b7fe0cfa4da6" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('d002b7fe0cfa4da6')" data-fp-interview="d002b7fe0cfa4da6" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('d002b7fe0cfa4da6', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('d002b7fe0cfa4da6', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -12641,7 +12667,7 @@
             <button class="btn track" onclick="cycleStatus('922351acfb77ad52', this)" data-status-for="922351acfb77ad52">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('922351acfb77ad52')" data-fp-followup="922351acfb77ad52" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('922351acfb77ad52')" data-fp-interview="922351acfb77ad52" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('922351acfb77ad52', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('922351acfb77ad52', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -12667,7 +12693,7 @@
             <button class="btn track" onclick="cycleStatus('574861dbfee27fc1', this)" data-status-for="574861dbfee27fc1">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('574861dbfee27fc1')" data-fp-followup="574861dbfee27fc1" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('574861dbfee27fc1')" data-fp-interview="574861dbfee27fc1" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('574861dbfee27fc1', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('574861dbfee27fc1', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -12693,7 +12719,7 @@
             <button class="btn track" onclick="cycleStatus('fc5eaf756d6768c4', this)" data-status-for="fc5eaf756d6768c4">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('fc5eaf756d6768c4')" data-fp-followup="fc5eaf756d6768c4" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('fc5eaf756d6768c4')" data-fp-interview="fc5eaf756d6768c4" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('fc5eaf756d6768c4', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('fc5eaf756d6768c4', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -12719,7 +12745,7 @@
             <button class="btn track" onclick="cycleStatus('f885b9fbcc81b8c1', this)" data-status-for="f885b9fbcc81b8c1">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('f885b9fbcc81b8c1')" data-fp-followup="f885b9fbcc81b8c1" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('f885b9fbcc81b8c1')" data-fp-interview="f885b9fbcc81b8c1" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('f885b9fbcc81b8c1', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('f885b9fbcc81b8c1', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -12745,7 +12771,7 @@
             <button class="btn track" onclick="cycleStatus('cac685af21aaa6c4', this)" data-status-for="cac685af21aaa6c4">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('cac685af21aaa6c4')" data-fp-followup="cac685af21aaa6c4" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('cac685af21aaa6c4')" data-fp-interview="cac685af21aaa6c4" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('cac685af21aaa6c4', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('cac685af21aaa6c4', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -12771,7 +12797,7 @@
             <button class="btn track" onclick="cycleStatus('568362e9523df66c', this)" data-status-for="568362e9523df66c">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('568362e9523df66c')" data-fp-followup="568362e9523df66c" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('568362e9523df66c')" data-fp-interview="568362e9523df66c" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('568362e9523df66c', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('568362e9523df66c', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -12797,7 +12823,7 @@
             <button class="btn track" onclick="cycleStatus('fe90c3a013191e58', this)" data-status-for="fe90c3a013191e58">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('fe90c3a013191e58')" data-fp-followup="fe90c3a013191e58" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('fe90c3a013191e58')" data-fp-interview="fe90c3a013191e58" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('fe90c3a013191e58', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('fe90c3a013191e58', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -12823,7 +12849,7 @@
             <button class="btn track" onclick="cycleStatus('2dafdfb744184bbd', this)" data-status-for="2dafdfb744184bbd">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('2dafdfb744184bbd')" data-fp-followup="2dafdfb744184bbd" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('2dafdfb744184bbd')" data-fp-interview="2dafdfb744184bbd" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('2dafdfb744184bbd', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('2dafdfb744184bbd', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -12849,7 +12875,7 @@
             <button class="btn track" onclick="cycleStatus('821097a3f4eaba90', this)" data-status-for="821097a3f4eaba90">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('821097a3f4eaba90')" data-fp-followup="821097a3f4eaba90" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('821097a3f4eaba90')" data-fp-interview="821097a3f4eaba90" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('821097a3f4eaba90', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('821097a3f4eaba90', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -12875,7 +12901,7 @@
             <button class="btn track" onclick="cycleStatus('e6f06375af3831b2', this)" data-status-for="e6f06375af3831b2">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('e6f06375af3831b2')" data-fp-followup="e6f06375af3831b2" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('e6f06375af3831b2')" data-fp-interview="e6f06375af3831b2" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('e6f06375af3831b2', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('e6f06375af3831b2', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -12901,7 +12927,7 @@
             <button class="btn track" onclick="cycleStatus('223baebec32dcfcc', this)" data-status-for="223baebec32dcfcc">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('223baebec32dcfcc')" data-fp-followup="223baebec32dcfcc" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('223baebec32dcfcc')" data-fp-interview="223baebec32dcfcc" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('223baebec32dcfcc', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('223baebec32dcfcc', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -12927,7 +12953,7 @@
             <button class="btn track" onclick="cycleStatus('963f62ecc0835193', this)" data-status-for="963f62ecc0835193">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('963f62ecc0835193')" data-fp-followup="963f62ecc0835193" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('963f62ecc0835193')" data-fp-interview="963f62ecc0835193" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('963f62ecc0835193', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('963f62ecc0835193', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -12953,7 +12979,7 @@
             <button class="btn track" onclick="cycleStatus('d7e8858295780858', this)" data-status-for="d7e8858295780858">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('d7e8858295780858')" data-fp-followup="d7e8858295780858" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('d7e8858295780858')" data-fp-interview="d7e8858295780858" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('d7e8858295780858', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('d7e8858295780858', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -12979,7 +13005,7 @@
             <button class="btn track" onclick="cycleStatus('b9dd7ae6df9edbf3', this)" data-status-for="b9dd7ae6df9edbf3">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('b9dd7ae6df9edbf3')" data-fp-followup="b9dd7ae6df9edbf3" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('b9dd7ae6df9edbf3')" data-fp-interview="b9dd7ae6df9edbf3" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('b9dd7ae6df9edbf3', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('b9dd7ae6df9edbf3', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -13005,7 +13031,7 @@
             <button class="btn track" onclick="cycleStatus('8262ee262f62483d', this)" data-status-for="8262ee262f62483d">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('8262ee262f62483d')" data-fp-followup="8262ee262f62483d" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('8262ee262f62483d')" data-fp-interview="8262ee262f62483d" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('8262ee262f62483d', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('8262ee262f62483d', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -13031,7 +13057,7 @@
             <button class="btn track" onclick="cycleStatus('b1bab471fccafd74', this)" data-status-for="b1bab471fccafd74">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('b1bab471fccafd74')" data-fp-followup="b1bab471fccafd74" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('b1bab471fccafd74')" data-fp-interview="b1bab471fccafd74" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('b1bab471fccafd74', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('b1bab471fccafd74', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -13057,7 +13083,7 @@
             <button class="btn track" onclick="cycleStatus('1eaca1a1e11005b8', this)" data-status-for="1eaca1a1e11005b8">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('1eaca1a1e11005b8')" data-fp-followup="1eaca1a1e11005b8" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('1eaca1a1e11005b8')" data-fp-interview="1eaca1a1e11005b8" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('1eaca1a1e11005b8', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('1eaca1a1e11005b8', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -13083,7 +13109,7 @@
             <button class="btn track" onclick="cycleStatus('e4b4c256bd388a89', this)" data-status-for="e4b4c256bd388a89">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('e4b4c256bd388a89')" data-fp-followup="e4b4c256bd388a89" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('e4b4c256bd388a89')" data-fp-interview="e4b4c256bd388a89" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('e4b4c256bd388a89', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('e4b4c256bd388a89', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -13109,7 +13135,7 @@
             <button class="btn track" onclick="cycleStatus('7f0b26b1806b68e4', this)" data-status-for="7f0b26b1806b68e4">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('7f0b26b1806b68e4')" data-fp-followup="7f0b26b1806b68e4" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('7f0b26b1806b68e4')" data-fp-interview="7f0b26b1806b68e4" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('7f0b26b1806b68e4', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('7f0b26b1806b68e4', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -13135,7 +13161,7 @@
             <button class="btn track" onclick="cycleStatus('1291ff5a573f4371', this)" data-status-for="1291ff5a573f4371">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('1291ff5a573f4371')" data-fp-followup="1291ff5a573f4371" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('1291ff5a573f4371')" data-fp-interview="1291ff5a573f4371" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('1291ff5a573f4371', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('1291ff5a573f4371', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -13161,7 +13187,7 @@
             <button class="btn track" onclick="cycleStatus('1182f42e57af7188', this)" data-status-for="1182f42e57af7188">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('1182f42e57af7188')" data-fp-followup="1182f42e57af7188" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('1182f42e57af7188')" data-fp-interview="1182f42e57af7188" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('1182f42e57af7188', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('1182f42e57af7188', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -13187,7 +13213,7 @@
             <button class="btn track" onclick="cycleStatus('fa564a152bb01c93', this)" data-status-for="fa564a152bb01c93">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('fa564a152bb01c93')" data-fp-followup="fa564a152bb01c93" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('fa564a152bb01c93')" data-fp-interview="fa564a152bb01c93" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('fa564a152bb01c93', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('fa564a152bb01c93', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -13213,7 +13239,7 @@
             <button class="btn track" onclick="cycleStatus('06526863102d4aa8', this)" data-status-for="06526863102d4aa8">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('06526863102d4aa8')" data-fp-followup="06526863102d4aa8" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('06526863102d4aa8')" data-fp-interview="06526863102d4aa8" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('06526863102d4aa8', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('06526863102d4aa8', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -13239,7 +13265,7 @@
             <button class="btn track" onclick="cycleStatus('ffb7ee75b948290d', this)" data-status-for="ffb7ee75b948290d">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('ffb7ee75b948290d')" data-fp-followup="ffb7ee75b948290d" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('ffb7ee75b948290d')" data-fp-interview="ffb7ee75b948290d" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('ffb7ee75b948290d', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('ffb7ee75b948290d', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -13265,7 +13291,7 @@
             <button class="btn track" onclick="cycleStatus('24d896dfcac5150d', this)" data-status-for="24d896dfcac5150d">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('24d896dfcac5150d')" data-fp-followup="24d896dfcac5150d" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('24d896dfcac5150d')" data-fp-interview="24d896dfcac5150d" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('24d896dfcac5150d', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('24d896dfcac5150d', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -13291,7 +13317,7 @@
             <button class="btn track" onclick="cycleStatus('fdd601e47e66dcd8', this)" data-status-for="fdd601e47e66dcd8">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('fdd601e47e66dcd8')" data-fp-followup="fdd601e47e66dcd8" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('fdd601e47e66dcd8')" data-fp-interview="fdd601e47e66dcd8" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('fdd601e47e66dcd8', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('fdd601e47e66dcd8', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -13317,7 +13343,7 @@
             <button class="btn track" onclick="cycleStatus('e27ebc4823df3afc', this)" data-status-for="e27ebc4823df3afc">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('e27ebc4823df3afc')" data-fp-followup="e27ebc4823df3afc" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('e27ebc4823df3afc')" data-fp-interview="e27ebc4823df3afc" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('e27ebc4823df3afc', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('e27ebc4823df3afc', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -13473,7 +13499,7 @@
             <button class="btn track" onclick="cycleStatus('72085d1f9d291791', this)" data-status-for="72085d1f9d291791">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('72085d1f9d291791')" data-fp-followup="72085d1f9d291791" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('72085d1f9d291791')" data-fp-interview="72085d1f9d291791" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=Capco%20recruiter%20OR%20talent%20%22Financial%20Services%22" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('72085d1f9d291791', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('72085d1f9d291791', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -16177,7 +16203,7 @@
             <button class="btn track" onclick="cycleStatus('f6fee5634d56cd1f', this)" data-status-for="f6fee5634d56cd1f">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('f6fee5634d56cd1f')" data-fp-followup="f6fee5634d56cd1f" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('f6fee5634d56cd1f')" data-fp-interview="f6fee5634d56cd1f" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=OneTrust%20recruiter%20OR%20talent&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=OneTrust%20recruiter%20OR%20talent" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('f6fee5634d56cd1f', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('f6fee5634d56cd1f', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -21611,7 +21637,7 @@
             <button class="btn track" onclick="cycleStatus('310bd7b01e6b9eec', this)" data-status-for="310bd7b01e6b9eec">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('310bd7b01e6b9eec')" data-fp-followup="310bd7b01e6b9eec" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('310bd7b01e6b9eec')" data-fp-interview="310bd7b01e6b9eec" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=OneTrust%20recruiter%20OR%20talent&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=OneTrust%20recruiter%20OR%20talent" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('310bd7b01e6b9eec', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('310bd7b01e6b9eec', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -21637,7 +21663,7 @@
             <button class="btn track" onclick="cycleStatus('47ee2d4d79e505a8', this)" data-status-for="47ee2d4d79e505a8">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('47ee2d4d79e505a8')" data-fp-followup="47ee2d4d79e505a8" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('47ee2d4d79e505a8')" data-fp-interview="47ee2d4d79e505a8" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=OneTrust%20recruiter%20OR%20talent&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=OneTrust%20recruiter%20OR%20talent" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('47ee2d4d79e505a8', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('47ee2d4d79e505a8', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -21663,7 +21689,7 @@
             <button class="btn track" onclick="cycleStatus('f7559ff1575639f7', this)" data-status-for="f7559ff1575639f7">Mark Applied</button>
             <button class="btn ghost-btn small followup" onclick="openFollowupFromCard('f7559ff1575639f7')" data-fp-followup="f7559ff1575639f7" style="display:none;" title="Draft a follow-up email">📨 Follow up</button>
             <button class="btn ghost-btn small interview" onclick="openInterviewPrepFromCard('f7559ff1575639f7')" data-fp-interview="f7559ff1575639f7" style="display:none;" title="Interview prep">🎯 Interview prep</button>
-            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=OneTrust%20recruiter%20OR%20talent&network=%5B%22F%22%2C%22S%22%5D" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
+            <a class="btn ghost-btn small warm-intro" href="https://www.linkedin.com/search/results/people/?keywords=OneTrust%20recruiter%20OR%20talent" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>
             <button class="btn ghost-btn small" onclick="showWhyMatched('f7559ff1575639f7', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('f7559ff1575639f7', this)" title="Not for me — hide and learn">×</button>
           </div>
@@ -28269,6 +28295,29 @@ async function saveResume(btn) {
 if (document.readyState !== 'loading') _wireResumeDropzone();
 else document.addEventListener('DOMContentLoaded', _wireResumeDropzone);
 
+// --- Header "More" menu toggle (added 2026-05-26 with header redesign) ----
+function toggleHeaderMore(btn) {
+  const wrap = btn.closest('.header-more-wrap');
+  if (!wrap) return;
+  const willOpen = !wrap.classList.contains('open');
+  document.querySelectorAll('.header-more-wrap.open').forEach(w => w.classList.remove('open'));
+  if (willOpen) {
+    wrap.classList.add('open');
+    btn.setAttribute('aria-expanded', 'true');
+  } else {
+    btn.setAttribute('aria-expanded', 'false');
+  }
+}
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.header-more-wrap')) {
+    document.querySelectorAll('.header-more-wrap.open').forEach(function(w) {
+      w.classList.remove('open');
+      const b = w.querySelector('button[aria-haspopup]');
+      if (b) b.setAttribute('aria-expanded', 'false');
+    });
+  }
+});
+
 // --- Refresh data (triggers GitHub Action via Cloudflare Worker) --------
 const REFRESH_WORKER_URL = WORKER_BASE + '/refresh';
 
@@ -28311,7 +28360,24 @@ async function refreshData() {
 const PREP_WORKER_URL = WORKER_BASE + '/prep' + USER_QS;
 
 async function prepApplication(fp, btn) {
-  const card = btn.closest('.card');
+  // === DIAGNOSTIC WRAPPER (2026-05-26): surfaces silent failures with visible error ===
+  function _prepFail(msg) {
+    console.error('[prepApplication]', msg);
+    const _s = document.getElementById('prep-status');
+    const _m = document.getElementById('prep-modal');
+    if (_s && _m) {
+      _s.className = 'prep-status error';
+      _s.textContent = msg;
+      _s.style.display = 'block';
+      _m.classList.add('show');
+    } else {
+      alert('Prep materials failed: ' + msg);
+    }
+  }
+  console.log('[prepApplication] click', { fp });
+  const card = btn && btn.closest && btn.closest('.card');
+  if (!card) { _prepFail('clicked button is not inside a .card element'); return; }
+
   const titleEl = card.querySelector('.title a');
   const jobTitle = (titleEl?.textContent || '').trim();
   const company = (card.querySelector('.company')?.textContent || '').trim();
@@ -28322,6 +28388,10 @@ async function prepApplication(fp, btn) {
   const statusEl = document.getElementById('prep-status');
   const outputEl = document.getElementById('prep-output');
   const titleH = document.getElementById('prep-modal-title');
+  if (!modal || !statusEl || !outputEl || !titleH) {
+    _prepFail('modal elements missing: modal=' + !!modal + ' status=' + !!statusEl + ' output=' + !!outputEl + ' titleH=' + !!titleH);
+    return;
+  }
 
   titleH.textContent = `Materials for ${jobTitle} @ ${company}`;
   statusEl.className = 'prep-status';
