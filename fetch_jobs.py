@@ -1709,15 +1709,19 @@ def _careers_root(url):
 # Note: when role-family is ambiguous we DO NOT drop — we prefer over-include.
 
 ROLE_FAMILIES = {
-    "engineering": ["software engineer", "backend engineer", "frontend engineer", "full stack",
-                    "fullstack", "full-stack", ".net developer", ".net engineer", "java developer",
-                    "python developer", "ruby developer", "go developer", "rust developer",
-                    "ios developer", "android developer", "mobile engineer", "devops engineer",
-                    "site reliability", "platform engineer", "data engineer", "ml engineer",
-                    "ai engineer", "infrastructure engineer", "security engineer", "principal engineer",
-                    "staff engineer", "senior engineer", "lead engineer", "software developer"],
+    "engineering": ["software engineer", "software development engineer", "sde ",
+                    "swe ", "backend engineer", "frontend engineer", "full stack",
+                    "fullstack", "full-stack", ".net developer", ".net engineer",
+                    "java developer", "python developer", "ruby developer", "go developer",
+                    "rust developer", "ios developer", "android developer",
+                    "mobile engineer", "devops engineer", "site reliability",
+                    "platform engineer", "data engineer", "ml engineer", "ai engineer",
+                    "infrastructure engineer", "security engineer", "principal engineer",
+                    "staff engineer", "senior engineer", "lead engineer", "software developer",
+                    "react developer", "vue developer", "angular developer", "engineering manager"],
     "qa": ["quality assurance", "qa lead", "qa manager", "qa engineer", "test lead",
-           "test manager", "test engineer", "sdet", "automation engineer"],
+           "test manager", "test engineer", "sdet", "automation engineer",
+           "software development engineer in test", "test automation"],
     "sales-rep": ["sales rep", "sales representative", "sdr", "bdr", "account executive",
                   "sales executive", "account manager", "sales manager", "sales director",
                   "sales engineer", "field sales"],
@@ -1741,7 +1745,8 @@ ROLE_FAMILIES = {
     # Below families are KEPT for our personas — listing them so user_fam detection works.
     "product": ["product manager", "product director", "vp product", "head of product",
                 "chief product", "vp of product", "principal product manager", "product strategy",
-                "product growth", "product operations"],
+                "product growth", "product operations", "product executive", "product leader",
+                "product owner", "product lead"],
     "risk-grc": ["risk manager", "risk director", "vp risk", "head of risk", "chief risk",
                  "compliance", "audit", "governance", "grc", "credit risk", "operational risk",
                  "regulatory", "ciso", "cyber risk", "information security"],
@@ -1751,7 +1756,7 @@ ROLE_FAMILIES = {
 
 # Families an exec might pivot INTO without being a literal title match.
 # When user_fam is in the "open" set, allow any family.
-OPEN_USER_FAMS = {"digital-transformation"}
+OPEN_USER_FAMS = set()  # no families are "open" — every recognized family enforces incompatibility
 
 # When job_fam is None (ambiguous), we never drop on family.
 # When user_fam is None (ambiguous), we never drop on family.
@@ -1771,39 +1776,60 @@ for u_fam, j_fams in [("engineering", ["sales-rep", "clinical", "marketing-ic"])
 for u_fam, j_fams in [("product", ["sales-rep", "engineering", "qa", "clinical"])]:
     for j in j_fams:
         INCOMPATIBLE_PAIRS.add((u_fam, j))
+# Digital-transformation users behave like product execs — same drop set
+for j in ("engineering", "qa", "sales-rep", "operations-coo", "clinical", "design"):
+    INCOMPATIBLE_PAIRS.add(("digital-transformation", j))
 
 def _detect_role_family(title):
-    """Return the role family of a job title, or None if ambiguous."""
+    """Return the role family of a job title, or None if ambiguous.
+    Short tokens (≤4 chars) use word-boundary matching so 'coo' doesn't match
+    'coord' / 'cool' etc."""
     if not title:
         return None
-    t = title.lower()
-    # Check most-specific first to avoid e.g. "manager" matching too broadly
-    # Order: operations-coo first so "chief operating officer" doesn't get
-    # accidentally matched as something else.
+    t = " " + title.lower() + " "
     for fam in ("operations-coo", "engineering", "qa", "sales-rep", "marketing-ic",
                 "design", "clinical", "recruiting-hr", "finance-ic", "legal-ic",
                 "customer-success", "data-analyst", "risk-grc", "product",
                 "digital-transformation"):
         for term in ROLE_FAMILIES.get(fam, []):
-            if term in t:
-                return fam
+            tl = term.lower()
+            if len(tl) <= 4 and " " not in tl:
+                # word-boundary check for short single-token terms
+                if re.search(r"(?<![a-z])" + re.escape(tl) + r"(?![a-z])", t):
+                    return fam
+            else:
+                if tl in t:
+                    return fam
     return None
 
 def _user_role_family(profile):
-    """Detect the user's role family from primaryRole + targetTitles."""
+    """Detect the user's role family from primaryRole + targetTitles.
+    Order: most-specific PROFESSIONS first so digital-transformation doesn't
+    win over product/risk/etc. when the user's role mentions both."""
     if not profile:
         return None
-    primary = (profile.get("primaryRole") or "").lower()
-    for fam, terms in ROLE_FAMILIES.items():
-        for term in terms:
-            if term in primary:
-                return fam
+    primary = " " + (profile.get("primaryRole") or "").lower() + " "
+    # Search order favors specific role families over digital-transformation
+    for fam in ("risk-grc", "product", "engineering", "qa", "sales-rep",
+                "marketing-ic", "design", "operations-coo", "clinical",
+                "recruiting-hr", "finance-ic", "legal-ic", "customer-success",
+                "data-analyst", "digital-transformation"):
+        for term in ROLE_FAMILIES.get(fam, []):
+            tl = term.lower()
+            if len(tl) <= 4 and " " not in tl:
+                if re.search(r"(?<![a-z])" + re.escape(tl) + r"(?![a-z])", primary):
+                    return fam
+            else:
+                if tl in primary:
+                    return fam
     # Fallback to top 5 targetTitles
     for tt in (profile.get("targetTitles") or [])[:5]:
-        tl = (tt or "").lower()
-        for fam, terms in ROLE_FAMILIES.items():
-            if any(term in tl for term in terms):
-                return fam
+        tl = " " + (tt or "").lower() + " "
+        for fam in ("risk-grc", "product", "engineering", "operations-coo",
+                    "qa", "design", "digital-transformation"):
+            for term in ROLE_FAMILIES.get(fam, []):
+                if term.lower() in tl:
+                    return fam
     return None
 
 def _is_role_family_mismatch(title, profile):
