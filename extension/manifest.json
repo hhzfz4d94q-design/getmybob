@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "getmemyjob Helper",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Auto-fills job applications on Greenhouse, Lever, Ashby, and Workday using your getmemyjob profile.",
   "icons": {
     "16": "icons/icon16.png",
@@ -16,16 +16,22 @@
       "48": "icons/icon48.png"
     }
   },
-  "permissions": ["storage", "activeTab", "scripting"],
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
   "host_permissions": [
     "https://*.greenhouse.io/*",
-    "https://job-boards.greenhouse.io/*",
-    "https://boards.greenhouse.io/*",
-    "https://jobs.lever.co/*",
-    "https://jobs.ashbyhq.com/*",
     "https://*.myworkdayjobs.com/*",
+    "https://boards.greenhouse.io/*",
     "https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/*",
-    "https://getmemyjob.officebeatllc.com/*"
+    "https://getmemyjob.officebeatllc.com/*",
+    "https://getmemyjob.pages.dev/*",
+    "https://getmyjob.officebeatllc.com/*",
+    "https://job-boards.greenhouse.io/*",
+    "https://jobs.ashbyhq.com/*",
+    "https://jobs.lever.co/*"
   ],
   "content_scripts": [
     {
@@ -34,23 +40,52 @@
         "https://job-boards.greenhouse.io/*",
         "https://boards.greenhouse.io/*"
       ],
-      "js": ["content_scripts/common.js", "content_scripts/greenhouse.js"],
+      "js": [
+        "content_scripts/common.js",
+        "content_scripts/greenhouse.js"
+      ],
       "run_at": "document_idle"
     },
     {
-      "matches": ["https://jobs.lever.co/*"],
-      "js": ["content_scripts/common.js", "content_scripts/lever.js"],
+      "matches": [
+        "https://jobs.lever.co/*"
+      ],
+      "js": [
+        "content_scripts/common.js",
+        "content_scripts/lever.js"
+      ],
       "run_at": "document_idle"
     },
     {
-      "matches": ["https://jobs.ashbyhq.com/*"],
-      "js": ["content_scripts/common.js", "content_scripts/ashby.js"],
+      "matches": [
+        "https://jobs.ashbyhq.com/*"
+      ],
+      "js": [
+        "content_scripts/common.js",
+        "content_scripts/ashby.js"
+      ],
       "run_at": "document_idle"
     },
     {
-      "matches": ["https://*.myworkdayjobs.com/*"],
-      "js": ["content_scripts/common.js", "content_scripts/workday.js"],
+      "matches": [
+        "https://*.myworkdayjobs.com/*"
+      ],
+      "js": [
+        "content_scripts/common.js",
+        "content_scripts/workday.js"
+      ],
       "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://getmemyjob.officebeatllc.com/*",
+        "https://getmyjob.officebeatllc.com/*",
+        "https://getmemyjob.pages.dev/*"
+      ],
+      "js": [
+        "content_scripts/getmemyjob_marker.js"
+      ],
+      "run_at": "document_start"
     }
   ],
   "background": {
