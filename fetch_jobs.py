@@ -1106,21 +1106,36 @@ STAGE_ORDER = {"internship": 0, "new-grad": 1, "early-career": 2, "mid-career": 
 
 def detect_title_stage(title):
     """Return the strongest seniority signal in the title, or None if ambiguous.
-    Checked from most-specific to least so 'Senior Director' is read as senior, not mid."""
+    Uses word-boundary matching so short tokens like 'cto' don't match 'director'.
+    Checked from most-specific to least so 'Senior Director' is read as senior."""
     if not title:
         return None
     t = " " + title.lower() + " "
-    if any(s in t for s in TITLE_STAGE_INTERN):
+    def _hit(patterns):
+        for p in patterns:
+            if not p:
+                continue
+            p = p.strip()  # patterns like "senior " were authored with trailing space; strip for boundary regex
+            if not p:
+                continue
+            try:
+                if re.search(r"(?<![a-z])" + re.escape(p) + r"(?![a-z])", t):
+                    return True
+            except re.error:
+                if p in t:
+                    return True
+        return False
+    if _hit(TITLE_STAGE_INTERN):
         return "internship"
-    if any(s in t for s in TITLE_STAGE_NEWGRAD):
+    if _hit(TITLE_STAGE_NEWGRAD):
         return "new-grad"
-    if any(s in t for s in TITLE_STAGE_EXEC):
+    if _hit(TITLE_STAGE_EXEC):
         return "executive"
-    if any(s in t for s in TITLE_STAGE_SENIOR_IC):
+    if _hit(TITLE_STAGE_SENIOR_IC):
         return "senior"
-    if any(s in t for s in TITLE_STAGE_MID):
+    if _hit(TITLE_STAGE_MID):
         return "mid-career"
-    if any(s in t for s in TITLE_STAGE_EARLY):
+    if _hit(TITLE_STAGE_EARLY):
         return "early-career"
     return None  # untagged — neutral
 
@@ -2530,12 +2545,13 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
           <div class="badges" data-badges>{badge_html}</div>
           <div class="desc">{_esc(_strip_html(desc)[:300])}…</div>
           <div class="actions">
-            <button class="btn primary" onclick="applyAndOpen('{fp}', this, '{url}')">Apply now &rarr;</button>
+            <a class="btn primary" href="{url}" target="_blank" rel="noopener" onclick="applyAndOpen('{fp}', this, '{url}'); return true;">Apply now &rarr;</a>
             <button class="btn ghost-btn" onclick="prepApplication('{fp}', this)">Prep materials</button>
             <button class="btn track" onclick="cycleStatus('{fp}', this)" data-status-for="{fp}">Mark Applied</button>
             <button class="btn ghost-btn small" onclick="showWhyMatched('{fp}', this)" title="Why was this shown?">Why?</button>
             <button class="btn ghost-btn small dismiss" onclick="dismissJob('{fp}', this)" title="Not for me — hide and learn">×</button>
           </div>
+          {careers_fallback}
         </div>""")
 
     # Derive a subtitle from the user's AI skills profile (industry-aware).
