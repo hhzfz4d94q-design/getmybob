@@ -2161,11 +2161,19 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
     if SKILLS_PROFILE:
         _rescored = []
         for r in rows:
+            # Build a job dict with every field score_job touches: title,
+            # description, location, company_name. Defensive: r[*] may be None.
             _job = {
-                "title": r[2] or "",
-                "description": r[12] or "",
+                "title":        r[2]  or "",
+                "location":     r[3]  or "",
+                "description":  r[12] or "",
+                "company_name": r[1]  or "",
+                "salary_range": r[13] or "",
             }
-            new_score = score_job(_job)
+            try:
+                new_score = score_job(_job)
+            except Exception:
+                new_score = r[11] or 0  # fall back to DB score on any error
             _row = list(r)
             _row[11] = new_score
             _rescored.append(tuple(_row))
