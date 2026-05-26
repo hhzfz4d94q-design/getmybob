@@ -269,7 +269,7 @@
 
 <header>
   <h1>Jobs for Radhika KAlra</h1>
-  <div class="sub">Awaiting resume upload — click Resume to get started · Generated 2026-05-26 13:19</div>
+  <div class="sub">Awaiting resume upload — click Resume to get started · Generated 2026-05-26 13:49</div>
   <div class="header-actions">
     <button id="prefs-btn" class="header-btn" onclick="replayTour()" title="Re-open the setup wizard to change your locations, remote pref, and company sizes">Preferences</button>
     <button id="regen-btn" class="header-btn" onclick="regenerateFromHeader(this)" title="Re-run the AI matcher to refresh your suggested target companies and skills. Takes 30-60 seconds.">Regenerate matches</button>
@@ -280,7 +280,7 @@
   </div>
 </header>
 <div class="stats">
-  <div class="stat"><b>17992</b>Total jobs tracked</div>
+  <div class="stat"><b>18054</b>Total jobs tracked</div>
   <div class="stat"><b>431</b>Senior + Remote (last 7d)</div>
   <div class="stat"><b>0</b>Possible ghost jobs (60d+)</div>
   <div class="stat"><b id="shown-counter">0</b>Showing</div>
@@ -3106,9 +3106,9 @@ const WIZ_STEPS = [
     title: "How should we weight your match score?",
     body: '<p style="margin-bottom:14px;">Tell us how much each signal should count when we score jobs. Drag a slider; the other two adjust so the total stays at 100. <strong>Default is title-heavy</strong> because exact title matches are the strongest predictor.</p>' +
       '<div style="display:flex;flex-direction:column;gap:14px;">' +
-      '<div>' +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +'<span><strong>Job title</strong> <span style="color:#888;font-weight:normal;">&mdash; how closely the title matches your target titles</span></span>' +'<span style="display:flex;align-items:center;gap:4px;"><input id="wiz-wt-titles-num" type="number" min="0" max="100" value="50" oninput="wizWtOnNum('titles')" style="width:54px;padding:4px 6px;border:1px solid #d0d4dc;border-radius:4px;text-align:right;font-size:13px;">%</span>' +'</div>' +'<input type="range" id="wiz-wt-titles" min="0" max="100" value="50" oninput="wizWtOnSlide('titles')" style="width:100%;">' +'</div>' +
-      '<div>' +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +'<span><strong>Industry</strong> <span style="color:#888;font-weight:normal;">&mdash; sector overlap (e.g. healthcare-it, banking, fintech)</span></span>' +'<span style="display:flex;align-items:center;gap:4px;"><input id="wiz-wt-industries-num" type="number" min="0" max="100" value="25" oninput="wizWtOnNum('industries')" style="width:54px;padding:4px 6px;border:1px solid #d0d4dc;border-radius:4px;text-align:right;font-size:13px;">%</span>' +'</div>' +'<input type="range" id="wiz-wt-industries" min="0" max="100" value="25" oninput="wizWtOnSlide('industries')" style="width:100%;">' +'</div>' +
-      '<div>' +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +'<span><strong>Skills &amp; keywords</strong> <span style="color:#888;font-weight:normal;">&mdash; specific skills, tools, frameworks, regulations</span></span>' +'<span style="display:flex;align-items:center;gap:4px;"><input id="wiz-wt-skills-num" type="number" min="0" max="100" value="25" oninput="wizWtOnNum('skills')" style="width:54px;padding:4px 6px;border:1px solid #d0d4dc;border-radius:4px;text-align:right;font-size:13px;">%</span>' +'</div>' +'<input type="range" id="wiz-wt-skills" min="0" max="100" value="25" oninput="wizWtOnSlide('skills')" style="width:100%;">' +'</div>' +
+      '<div>' +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +'<span><strong>Job title</strong> <span style="color:#888;font-weight:normal;">&mdash; how closely the title matches your target titles</span></span>' +'<span style="display:flex;align-items:center;gap:4px;"><input id="wiz-wt-titles-num" type="number" min="0" max="100" value="50" oninput="wizWtOnNum(&apos;titles&apos;)" style="width:54px;padding:4px 6px;border:1px solid #d0d4dc;border-radius:4px;text-align:right;font-size:13px;">%</span>' +'</div>' +'<input type="range" id="wiz-wt-titles" min="0" max="100" value="50" oninput="wizWtOnSlide(&apos;titles&apos;)" style="width:100%;">' +'</div>' +
+      '<div>' +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +'<span><strong>Industry</strong> <span style="color:#888;font-weight:normal;">&mdash; sector overlap (e.g. healthcare-it, banking, fintech)</span></span>' +'<span style="display:flex;align-items:center;gap:4px;"><input id="wiz-wt-industries-num" type="number" min="0" max="100" value="25" oninput="wizWtOnNum(&apos;industries&apos;)" style="width:54px;padding:4px 6px;border:1px solid #d0d4dc;border-radius:4px;text-align:right;font-size:13px;">%</span>' +'</div>' +'<input type="range" id="wiz-wt-industries" min="0" max="100" value="25" oninput="wizWtOnSlide(&apos;industries&apos;)" style="width:100%;">' +'</div>' +
+      '<div>' +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +'<span><strong>Skills &amp; keywords</strong> <span style="color:#888;font-weight:normal;">&mdash; specific skills, tools, frameworks, regulations</span></span>' +'<span style="display:flex;align-items:center;gap:4px;"><input id="wiz-wt-skills-num" type="number" min="0" max="100" value="25" oninput="wizWtOnNum(&apos;skills&apos;)" style="width:54px;padding:4px 6px;border:1px solid #d0d4dc;border-radius:4px;text-align:right;font-size:13px;">%</span>' +'</div>' +'<input type="range" id="wiz-wt-skills" min="0" max="100" value="25" oninput="wizWtOnSlide(&apos;skills&apos;)" style="width:100%;">' +'</div>' +
       '</div>' +
       '<div style="display:flex;justify-content:space-between;font-size:12px;color:#888;margin-top:10px;min-height:18px;">' +
       '<span>Total: <strong id="wiz-wt-sum-val">100</strong>%</span>' +
