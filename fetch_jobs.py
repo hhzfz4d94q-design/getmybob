@@ -1725,9 +1725,15 @@ ROLE_FAMILIES = {
     "sales-rep": ["sales rep", "sales representative", "sdr", "bdr", "account executive",
                   "sales executive", "account manager", "sales manager", "sales director",
                   "sales engineer", "field sales"],
-    "marketing-ic": ["marketing manager", "marketing coordinator", "demand generation",
-                     "content marketer", "growth marketer", "performance marketer", "email marketer",
-                     "seo manager", "ppc manager", "social media manager"],
+    "marketing-ic": ["marketing manager", "marketing coordinator", "marketing director",
+                     "marketing lead", "marketing analyst", "marketing specialist",
+                     "vp marketing", "head of marketing", "chief marketing", "cmo",
+                     "director of marketing", "director, marketing",
+                     "demand generation", "content marketer", "growth marketer",
+                     "performance marketer", "email marketer", "seo manager",
+                     "ppc manager", "social media manager", "brand manager",
+                     "brand director", "director of brand", "head of brand",
+                     "vp brand", "brand strategy", "director, brand"],
     "design": ["ux designer", "ui designer", "graphic designer", "product designer", "visual designer",
                "brand designer", "interaction designer", "designer"],
     "operations-coo": ["chief operating officer", "coo", "general manager", "head of operations",
@@ -1772,12 +1778,12 @@ for u in ("risk-grc", "product", "engineering", "data-analyst", "marketing-ic"):
 for u_fam, j_fams in [("engineering", ["sales-rep", "clinical", "marketing-ic"])]:
     for j in j_fams:
         INCOMPATIBLE_PAIRS.add((u_fam, j))
-# Product users shouldn't see sales-rep / engineering / qa
-for u_fam, j_fams in [("product", ["sales-rep", "engineering", "qa", "clinical"])]:
+# Product users shouldn't see sales-rep / engineering / qa / clinical / marketing
+for u_fam, j_fams in [("product", ["sales-rep", "engineering", "qa", "clinical", "marketing-ic"])]:
     for j in j_fams:
         INCOMPATIBLE_PAIRS.add((u_fam, j))
 # Digital-transformation users behave like product execs — same drop set
-for j in ("engineering", "qa", "sales-rep", "operations-coo", "clinical", "design"):
+for j in ("engineering", "qa", "sales-rep", "operations-coo", "clinical", "design", "marketing-ic"):
     INCOMPATIBLE_PAIRS.add(("digital-transformation", j))
 
 def _detect_role_family(title):
