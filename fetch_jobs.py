@@ -1678,20 +1678,35 @@ def score_job(job):
         # Each component contributes up to (weight * 0.5) bonus points, so all
         # three combined max out at +50 on top of the 50 base = 100 from signals.
 
-        # TITLE component (tuned 2026-05-26 for hire-faster): full credit for
-        # exact targetTitle substring; partial 0.15 for seniorityTitles-only
-        # (a "VP" / "Director" match alone shouldn't reach the top). Title
-        # component is also widened to 0.75x weight so it dominates.
+        # TITLE component (re-tuned 2026-05-26): require multi-token match
+        # for full credit so generic single words ("director", "lead") don't
+        # grant 37 free points to every Director-titled role. Specifically:
+        # - targetTitle with ≥2 meaningful tokens (after stopwords): all must
+        #   appear in the job title as whole tokens → strength 1.0
+        # - 2-token partial match (one missing) → strength 0.5
+        # - seniorityTitles-only match → 0.10 (fallback safety net)
         target_titles = profile.get("targetTitles", []) or []
+        title_tokens = set(re.findall(r"[a-z]+", title))
         title_strength = 0.0
+        partial = 0.0
+        _STOP = {"of","the","a","an","and","or","for","to","at","in","on","with","by","as","is"}
         for t in target_titles:
-            if t and t in title:
+            if not t: continue
+            tt_tokens = [x for x in re.findall(r"[a-z]+", t.lower()) if x not in _STOP and len(x) > 1]
+            if len(tt_tokens) < 2:
+                continue  # ignore generic single-word targets like "director"
+            matched = sum(1 for tk in tt_tokens if tk in title_tokens)
+            if matched == len(tt_tokens):
                 title_strength = 1.0
                 break
+            elif matched >= len(tt_tokens) - 1 and len(tt_tokens) >= 3:
+                partial = max(partial, 0.5)
+        if title_strength == 0.0 and partial > 0:
+            title_strength = partial
         if title_strength == 0.0:
             sen_titles = profile.get("seniorityTitles", []) or SENIOR_TITLE_TERMS
-            if any(t in title for t in sen_titles):
-                title_strength = 0.15
+            if any(t in title for t in sen_titles if t and len(t) > 1):
+                title_strength = 0.10
         s += int(title_strength * w_t * 0.75)
 
         # INDUSTRY component: cap at 3 hits = full credit
