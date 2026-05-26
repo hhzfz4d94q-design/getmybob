@@ -15,13 +15,15 @@ on:
         description: 'Your Resend API key (starts with re_) — get it at resend.com → API Keys'
         required: true
       digest_from:
-        description: 'From address — e.g. "getmemyjob <noreply@officebeatllc.com>" (domain must be verified in Resend)'
+        description: 'From address — e.g. "getmemyjob <team@officebeatllc.com>" (domain must be verified in Resend)'
         required: true
-        default: 'getmemyjob <noreply@officebeatllc.com>'
+        default: 'getmemyjob <team@officebeatllc.com>'
       cron:
         description: 'Cron expression (UTC). Default 0 11 * * * = 7am ET / 4am PT daily.'
         required: true
         default: '0 11 * * *'
+  repository_dispatch:
+    types: [configure-worker-digest]
 
 env:
   CF_ACCOUNT_ID: 76598c8a5c8c7abbaed5c4292c363e09
@@ -36,13 +38,13 @@ jobs:
     steps:
       - name: Mask inputs
         run: |
-          echo "::add-mask::${{ github.event.inputs.resend_api_key }}"
-          echo "::add-mask::${{ github.event.inputs.digest_from }}"
+          echo "::add-mask::${{ github.event.inputs.resend_api_key || github.event.client_payload.resend_api_key }}"
+          echo "::add-mask::${{ github.event.inputs.digest_from || github.event.client_payload.digest_from }}"
 
       - name: Push RESEND_API_KEY secret to Worker
         env:
           CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          RESEND_KEY: ${{ github.event.inputs.resend_api_key }}
+          RESEND_KEY: ${{ github.event.inputs.resend_api_key || github.event.client_payload.resend_api_key }}
         run: |
           set -e
           PAYLOAD=$(python3 -c "import json,os; print(json.dumps({'name':'RESEND_API_KEY','text':os.environ['RESEND_KEY'],'type':'secret_text'}))")
@@ -58,7 +60,7 @@ jobs:
       - name: Push DIGEST_FROM secret to Worker
         env:
           CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          DIGEST_FROM: ${{ github.event.inputs.digest_from }}
+          DIGEST_FROM: ${{ github.event.inputs.digest_from || github.event.client_payload.digest_from }}
         run: |
           set -e
           PAYLOAD=$(python3 -c "import json,os; print(json.dumps({'name':'DIGEST_FROM','text':os.environ['DIGEST_FROM'],'type':'secret_text'}))")
@@ -74,7 +76,7 @@ jobs:
       - name: Set Cron Trigger (replaces any existing schedules)
         env:
           CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CRON: ${{ github.event.inputs.cron }}
+          CRON: ${{ github.event.inputs.cron || github.event.client_payload.cron || '0 11 * * *' }}
         run: |
           set -e
           PAYLOAD=$(python3 -c "import json,os; print(json.dumps([{'cron':os.environ['CRON']}]))")
