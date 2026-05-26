@@ -1,0 +1,138 @@
+name: Site smoke test
+
+# Pings every key page on getmemyjob.officebeatllc.com and officebeatllc.com
+# from a GitHub-hosted runner (which can reach anywhere). Fails the run if
+# anything is broken — GitHub then emails the workflow author automatically.
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Daily at 13:00 UTC = 9am Eastern / 6am Pacific
+    - cron: '0 13 * * *'
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Smoke-test both sites + Worker
+        shell: bash
+        run: |
+          set +e
+          mkdir -p /tmp/sst
+          FAIL=0
+          REPORT=/tmp/sst/report.md
+
+          check () {
+            # check <url> <regex-of-expected-content> <label>
+            local url="$1" needle="$2" label="$3"
+            local body=/tmp/sst/body.html
+            local status
+            status=$(curl -s -o "$body" -w "%{http_code}" --max-time 20 -L "$url")
+            local marker="✅" notes="HTTP $status"
+            if [ "$status" != "200" ]; then
+              marker="❌"
+              FAIL=$((FAIL + 1))
+            elif [ -n "$needle" ] && ! grep -qi -E "$needle" "$body"; then
+              marker="⚠️"
+              notes="HTTP 200 but missing expected text: \`$needle\`"
+              FAIL=$((FAIL + 1))
+            fi
+            echo "| $marker | $label | \`$url\` | $notes |" >> "$REPORT"
+          }
+
+          check_asset () {
+            # check_asset <url> <label>  -- just verifies 200, no body check
+            local url="$1" label="$2"
+            local status
+            status=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 -L "$url")
+            local marker="✅"
+            if [ "$status" != "200" ]; then
+              marker="❌"
+              FAIL=$((FAIL + 1))
+            fi
+            echo "| $marker | $label | \`$url\` | HTTP $status |" >> "$REPORT"
+          }
+
+          # ====== Header ======
+          {
+            echo "# Site smoke test — $(date -u '+%Y-%m-%d %H:%M UTC')"
+            echo ""
+            echo "## getmemyjob (job board)"
+            echo ""
+            echo "| Status | Page | URL | Notes |"
+            echo "|---|---|---|---|"
+          } > "$REPORT"
+
+          # ====== getmemyjob — primary custom domain ======
+          BASE="https://getmemyjob.officebeatllc.com"
+          check "$BASE/"               "officebeat|getmemyjob"  "landing (/)"
+          check "$BASE/landing.html"   "officebeat|getmemyjob"  "landing.html"
+          check "$BASE/login.html"     "login|sign in"          "login.html"
+          check "$BASE/signup.html"    "sign ?up"               "signup.html"
+          check "$BASE/admin.html"     "admin"                  "admin.html"
+          check "$BASE/dashboard.html" "dashboard|job"          "dashboard.html"
+          check "$BASE/account.html"   "account|profile"        "account.html"
+          check "$BASE/about.html"     "about"                  "about.html"
+          check_asset "$BASE/favicon.png"  "favicon.png"
+          check_asset "$BASE/og-card.png"  "og-card.png"
+
+          # Legacy subdomain (per memory, should still serve via CF Pages)
+          check "https://getmyjob.officebeatllc.com/" \
+                "officebeat|getmemyjob" "legacy getmyjob subdomain"
+
+          # Cloudflare Pages fallback
+          check "https://getmemyjob.pages.dev/" \
+                "officebeat|getmemyjob" "pages.dev fallback"
+
+          # Worker — only accepts POST so a 404/405 is healthy; reachability is what matters
+          WURL="https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/"
+          WS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 "$WURL")
+          WMARK="✅"
+          WNOTES="HTTP $WS — Worker reachable (method/path restrictions OK)"
+          # 000 = no response; 521/522/523 = CF can't reach origin
+          case "$WS" in
+            000|521|522|523)
+              WMARK="❌"
+              WNOTES="HTTP $WS — Worker unreachable"
+              FAIL=$((FAIL + 1))
+              ;;
+          esac
+          echo "| $WMARK | Worker (AI prep) | \`$WURL\` | $WNOTES |" >> "$REPORT"
+
+          # ====== officebeatllc.com ======
+          {
+            echo ""
+            echo "## officebeatllc.com (consulting site)"
+            echo ""
+            echo "| Status | Page | URL | Notes |"
+            echo "|---|---|---|---|"
+          } >> "$REPORT"
+
+          BASE="https://officebeatllc.com"
+          check "$BASE/"                "officebeat"    "landing (/)"
+          check "$BASE/finance.html"    "finance"       "finance"
+          check "$BASE/healthcare.html" "health"        "healthcare"
+          check "$BASE/about.html"      "about"         "about"
+          check "$BASE/contact.html"    "contact"       "contact"
+          check "$BASE/services.html"   "service"       "services"
+          check "$BASE/locations.html"  "location"      "locations"
+          check "$BASE/assess.html"     "assess"        "assess (lead magnet)"
+          check "$BASE/insights.html"   "insight"       "insights"
+          check "$BASE/careers.html"    "career"        "careers"
+          check "$BASE/sitemap.xml"     "urlset|<loc>"  "sitemap.xml"
+          check_asset "$BASE/assets/style.css"            "style.css"
+          check_asset "$BASE/assets/officebeat-logo.png"  "officebeat-logo.png"
+
+          # ====== Output ======
+          echo "" >> "$REPORT"
+          echo "**Total failures: $FAIL**" >> "$REPORT"
+
+          # Print to logs and to the workflow summary
+          cat "$REPORT"
+          cat "$REPORT" >> "$GITHUB_STEP_SUMMARY"
+
+          if [ "$FAIL" -gt 0 ]; then
+            echo "::error::$FAIL smoke-test check(s) failed — see the step summary on this run"
+            exit 1
+          fi
