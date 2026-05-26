@@ -1746,7 +1746,11 @@ ROLE_FAMILIES = {
                    "fp&a analyst", "fp&a manager"],
     "legal-ic": ["paralegal", "associate counsel", "legal counsel"],
     "customer-success": ["customer success manager", "csm", "customer experience manager",
-                          "cx manager", "customer support"],
+                          "cx manager", "customer support", "client support",
+                          "client services", "client delivery", "client success",
+                          "client experience", "client partner", "account success",
+                          "professional services manager", "implementation specialist",
+                          "implementation analyst", "delivery manager"],
     "data-analyst": ["data analyst", "business analyst", "research analyst"],
     # Below families are KEPT for our personas — listing them so user_fam detection works.
     "product": ["product manager", "product director", "vp product", "head of product",
@@ -1778,12 +1782,12 @@ for u in ("risk-grc", "product", "engineering", "data-analyst", "marketing-ic"):
 for u_fam, j_fams in [("engineering", ["sales-rep", "clinical", "marketing-ic"])]:
     for j in j_fams:
         INCOMPATIBLE_PAIRS.add((u_fam, j))
-# Product users shouldn't see sales-rep / engineering / qa / clinical / marketing
-for u_fam, j_fams in [("product", ["sales-rep", "engineering", "qa", "clinical", "marketing-ic"])]:
+# Product users shouldn't see sales-rep / engineering / qa / clinical / marketing / customer-success
+for u_fam, j_fams in [("product", ["sales-rep", "engineering", "qa", "clinical", "marketing-ic", "customer-success", "recruiting-hr", "finance-ic", "legal-ic"])]:
     for j in j_fams:
         INCOMPATIBLE_PAIRS.add((u_fam, j))
 # Digital-transformation users behave like product execs — same drop set
-for j in ("engineering", "qa", "sales-rep", "operations-coo", "clinical", "design", "marketing-ic"):
+for j in ("engineering", "qa", "sales-rep", "operations-coo", "clinical", "design", "marketing-ic", "customer-success", "recruiting-hr", "finance-ic", "legal-ic"):
     INCOMPATIBLE_PAIRS.add(("digital-transformation", j))
 
 def _detect_role_family(title):
