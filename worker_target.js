@@ -1486,8 +1486,7 @@ async function handleLogout(request, env, cors) {
 // GET /api/auth/me         (Authorization: Bearer <token>)
 async function handleMe(request, env, cors) {
   const sess = await sessionFromRequest(request, env);
-  if (!sess) const status = await env.RESUMES.get(uk(sess.slug, 'status')) || 'approved';
-  return _json({ authenticated: false }, 200, cors);
+  if (!sess) return _json({ authenticated: false }, 200, cors);
   const authRaw = await env.RESUMES.get(uk(sess.slug, 'auth'));
   if (!authRaw) return _json({ authenticated: false }, 200, cors);
   let auth;
@@ -1495,6 +1494,8 @@ async function handleMe(request, env, cors) {
   // Include the user's per-dashboard edit_key so the frontend can store it
   // and use the existing X-Edit-Key write protocol on the per-user HTML dashboards.
   const editKey = await env.RESUMES.get(uk(sess.slug, 'edit_key'));
+  // Approval gate status — undefined means pre-approval-era user; treat as approved.
+  const status = (await env.RESUMES.get(uk(sess.slug, 'status'))) || 'approved';
   return _json({
     authenticated: true,
     slug: sess.slug,
@@ -1502,7 +1503,7 @@ async function handleMe(request, env, cors) {
     email: auth.email,
     createdAt: auth.createdAt || null,
     editKey: editKey || null,
-    status: status
+    status: status,
   }, 200, cors);
 }
 
