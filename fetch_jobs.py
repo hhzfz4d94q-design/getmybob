@@ -2811,6 +2811,9 @@ WIZARD_V3_BLOCK = r"""
     #wiz3-rail { display:none; }
     #wiz3-foot { padding:10px 14px; }
     #wiz3-head { padding:14px 18px; }
+    /* Let the whole main section scroll on mobile so footer (Continue) is reachable */
+    #wiz3-main { overflow-y:auto; -webkit-overflow-scrolling:touch; }
+    #wiz3-body { overflow:visible; flex:0 0 auto; }
   }
   @media (max-width:1024px) {
     body { overflow-x:hidden; }  /* dashboard isn't fully responsive yet; stop awkward sideways scroll */
