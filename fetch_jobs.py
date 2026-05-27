@@ -5869,7 +5869,7 @@ async function showWarmIntroModal(fp, connections) {{
       + '  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">'
       + '    <div style="font-size:12px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.4px;">Email</div>'
       + '    <div style="display:flex;gap:6px;">'
-      + '      <button class="copy-text-btn" data-copy-payload="' + escHtml("Subject: " + subj + "\n\n" + body).replace(/"/g, '&quot;') + '" style="padding:4px 10px;font-size:11px;background:white;color:#5C5CD6;border:1px solid #5C5CD6;border-radius:4px;cursor:pointer;">Copy</button>'
+      + '      <button class="copy-text-btn" data-copy-payload="' + escHtml("Subject: " + subj + "\\n\\n" + body).replace(/"/g, '&quot;') + '" style="padding:4px 10px;font-size:11px;background:white;color:#5C5CD6;border:1px solid #5C5CD6;border-radius:4px;cursor:pointer;">Copy</button>'
       + '      <a href="' + mailtoUrl + '" style="padding:4px 10px;font-size:11px;background:#5C5CD6;color:white;border:none;border-radius:4px;cursor:pointer;text-decoration:none;">Open in mail app</a>'
       + '    </div>'
       + '  </div>'
@@ -8636,14 +8636,14 @@ function _showCompaniesDiffModal(proposed, diff, headers, btn, origText) {{
 const _HIDDEN_REASON_LABELS = {{
   irrelevant_title: 'Title is in the global blocklist (junior / IC / sales-rep / etc.)',
   never_relevant: 'Universal hard-exclude (back-office, IC engineers, pre-sales)',
-  role_family_mismatch: 'Role family doesn\'t match your primary-role family',
+  role_family_mismatch: 'Role family doesn\\'t match your primary-role family',
   negative_keyword: 'Blocked by your "things to never show me" list (word: %d)',
   salary_floor: 'Salary missing or below your floor',
   company_size: 'Company size %d is excluded by your size-mix preference',
-  industry_mismatch: 'Industry doesn\'t overlap with your 5 picks, and company isn\'t on your targetCompanies allowlist',
+  industry_mismatch: 'Industry doesn\\'t overlap with your 5 picks, and company isn\\'t on your targetCompanies allowlist',
   location: 'Location/remote preference mismatch (your pref: %d)',
   ghost: 'Job is stale (listed for %d) — possible ghost listing',
-  dedup_or_truncated: 'Survived filters but didn't make the top-50 cut (broaden bullseye for more) or was deduped across locations',
+  dedup_or_truncated: 'Survived filters but didn\\'t make the top-50 cut (broaden bullseye for more) or was deduped across locations',
 }};
 
 function _hiddenReasonText(r) {{
@@ -8675,7 +8675,7 @@ function showWhyHiddenModal() {{
   m.innerHTML = ''
     + '<div style="background:white;border-radius:12px;max-width:820px;width:100%;max-height:84vh;display:flex;flex-direction:column;box-shadow:0 20px 50px rgba(0,0,0,0.3);">'
     + '  <div style="padding:18px 22px;border-bottom:1px solid #e6e8eb;display:flex;justify-content:space-between;align-items:center;">'
-    + '    <h2 style="margin:0;font-size:18px;color:#1a1a2e;">Why isn\'t [company or title] in my feed?</h2>'
+    + '    <h2 style="margin:0;font-size:18px;color:#1a1a2e;">Why isn\\'t [company or title] in my feed?</h2>'
     + '    <button class="modal-close-btn" data-modal-id="why-hidden-modal" style="background:none;border:none;cursor:pointer;font-size:22px;color:#888;">×</button>'
     + '  </div>'
     + '  <div style="padding:14px 22px;border-bottom:1px solid #f0f1f5;">'
@@ -8683,7 +8683,7 @@ function showWhyHiddenModal() {{
     + '    <div style="font-size:12px;color:#888;margin-top:6px;">' + (_hiddenJobs ? _hiddenJobs.length : 0) + ' hidden jobs indexed (top 2000 by score). Searches name + title.</div>'
     + '  </div>'
     + '  <div id="why-hidden-results" style="padding:8px 22px 18px;overflow-y:auto;flex:1;">'
-    + '    <div style="color:#888;font-size:13px;font-style:italic;padding:10px 0;">Type a company or title above to see what\'s hidden and why.</div>'
+    + '    <div style="color:#888;font-size:13px;font-style:italic;padding:10px 0;">Type a company or title above to see what\\'s hidden and why.</div>'
     + '  </div>'
     + '</div>';
   document.body.appendChild(m);
@@ -8692,7 +8692,7 @@ function showWhyHiddenModal() {{
   const renderResults = (q) => {{
     const ql = (q || '').toLowerCase().trim();
     if (!ql) {{
-      out.innerHTML = '<div style="color:#888;font-size:13px;font-style:italic;padding:10px 0;">Type a company or title above to see what\'s hidden and why.</div>';
+      out.innerHTML = '<div style="color:#888;font-size:13px;font-style:italic;padding:10px 0;">Type a company or title above to see what\\'s hidden and why.</div>';
       return;
     }}
     if (!_hiddenJobs || !_hiddenJobs.length) {{
