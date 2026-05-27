@@ -285,7 +285,7 @@
 
 <header>
   <h1>Jobs for Ishika Arora</h1>
-  <div class="sub" title="Awaiting resume upload — click Resume to get started · Generated 2026-05-27 01:34">Awaiting resume upload — click Resume to get started · Generated 2026-05-27 01:34</div>
+  <div class="sub" title="Awaiting resume upload — click Resume to get started · Generated 2026-05-27 01:43">Awaiting resume upload — click Resume to get started · Generated 2026-05-27 01:43</div>
   <div class="header-actions">
     <button id="refresh-btn" class="header-btn" onclick="refreshData()" title="Pull fresh job listings from all sources. Takes 2-3 minutes.">⟳ Find new jobs</button>
     <div class="header-more-wrap">
@@ -307,7 +307,7 @@
   </div>
 </header>
 <div class="stats">
-  <div class="stat"><b>19598</b>Total jobs tracked</div>
+  <div class="stat"><b>19600</b>Total jobs tracked</div>
   <div class="stat"><b>424</b>Senior + Remote (last 7d)</div>
   <div class="stat"><b>2400</b>Possible ghost jobs (60d+)</div>
   <div class="stat"><b id="shown-counter">0</b>Showing</div>
@@ -4866,7 +4866,7 @@ function wizWtPrefill() {
     <section id="wiz3-main" style="position:relative;">
       <button id="wiz3-close" type="button" aria-label="Close wizard">&times;</button>
       <header id="wiz3-head">
-        <div class="wiz3-step-no" id="wiz3-step-no">Step 1 of 12</div>
+        <div class="wiz3-step-no" id="wiz3-step-no">Step 1 of 14</div>
         <h2 id="wiz3-h2">Welcome</h2>
         <p class="wiz3-sub" id="wiz3-sub"></p>
       </header>
@@ -4953,6 +4953,75 @@ function wizWtPrefill() {
     el.textContent = text;
   }
 
+  // ---- Bullseye picker (used by pick-titles / pick-industries / pick-skills) ----
+  // Renders a chip-based picker with a cap. Each chip is removable.
+  // Input/Add button are disabled when at cap. Counter goes red over cap.
+  // Exposes body.__bullseyeValues() returning the current array.
+  function renderBullseye(body, opts) {
+    const max = opts.max;
+    let items = (opts.current || []).map(x => String(x).toLowerCase().trim()).filter(Boolean);
+    // Dedupe preserving order
+    const seen = new Set(); items = items.filter(x => { if (seen.has(x)) return false; seen.add(x); return true; });
+
+    body.innerHTML = ''
+      + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">'
+      +   '<div style="font-size:13px;color:#555;">Pick <b>up to ' + max + '</b></div>'
+      +   '<div class="bullseye-count" style="font-size:13px;font-weight:600;">0 / ' + max + '</div>'
+      + '</div>'
+      + '<div class="bullseye-chips" style="display:flex;flex-wrap:wrap;gap:6px;min-height:36px;padding:10px;border:1px solid #e0e2ed;border-radius:8px;background:#fafbff;"></div>'
+      + '<div style="display:flex;gap:6px;margin-top:10px;">'
+      +   '<input type="text" class="bullseye-input" placeholder="' + (opts.placeholder || 'Add an item…') + '" style="flex:1;padding:8px 10px;border:1px solid #d0d4dc;border-radius:6px;font-size:13px;">'
+      +   '<button type="button" class="bullseye-add wiz3-btn wiz3-btn-ghost" style="padding:6px 14px;">+ Add</button>'
+      + '</div>'
+      + (opts.hint ? '<div style="font-size:12px;color:#888;margin-top:8px;">' + opts.hint + '</div>' : '');
+
+    const chipsEl   = body.querySelector('.bullseye-chips');
+    const inputEl   = body.querySelector('.bullseye-input');
+    const addBtn    = body.querySelector('.bullseye-add');
+    const counterEl = body.querySelector('.bullseye-count');
+
+    function refresh() {
+      chipsEl.innerHTML = '';
+      if (!items.length) {
+        const empty = document.createElement('div');
+        empty.style.cssText = 'color:#999;font-size:12.5px;font-style:italic;padding:2px;';
+        empty.textContent = '(no picks yet — add some below)';
+        chipsEl.appendChild(empty);
+      }
+      items.forEach((item, idx) => {
+        const chip = document.createElement('span');
+        chip.style.cssText = 'display:inline-flex;align-items:center;gap:5px;padding:5px 10px;background:#EEEEF8;color:#4B4BBE;border:1px solid #c8cde6;border-radius:14px;font-size:12.5px;';
+        const txt = document.createElement('span');
+        txt.textContent = item;
+        chip.appendChild(txt);
+        const x = document.createElement('button');
+        x.type = 'button';
+        x.textContent = '×';
+        x.setAttribute('aria-label', 'Remove');
+        x.style.cssText = 'background:none;border:none;cursor:pointer;color:#7c7cd1;font-size:16px;line-height:1;padding:0;margin-left:2px;';
+        x.addEventListener('click', () => { items.splice(idx, 1); refresh(); });
+        chip.appendChild(x);
+        chipsEl.appendChild(chip);
+      });
+      counterEl.textContent = items.length + ' / ' + max;
+      counterEl.style.color = items.length > max ? '#B91C1C' : (items.length === max ? '#666' : '#5C5CD6');
+      const atCap = items.length >= max;
+      inputEl.disabled = atCap;
+      addBtn.disabled = atCap;
+      inputEl.style.opacity = atCap ? '0.5' : '1';
+    }
+    function tryAdd() {
+      const v = (inputEl.value || '').trim().toLowerCase();
+      if (!v || items.length >= max || items.includes(v)) { inputEl.value = ''; return; }
+      items.push(v); inputEl.value = ''; refresh();
+    }
+    addBtn.addEventListener('click', tryAdd);
+    inputEl.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); tryAdd(); } });
+    refresh();
+    body.__bullseyeValues = () => items.slice();
+    body.__bullseyeMax = max;
+  }
+
   // ---- Step definitions ----
   // Contract: { key, title, subtitle, optional, render(body, state, ctx),
   //             validate(state) -> "" or err, save(state) -> Promise, isComplete(state) }
@@ -5000,27 +5069,69 @@ function wizWtPrefill() {
       },
     },
     {
-      key: "review-profile",
-      title: "Review your skills profile",
-      subtitle: "Edit any chips that don't reflect what you actually want to do.",
-      optional: true,
-      render(body) {
-        body.innerHTML =
-          '<p>The AI extracted titles, industries, skills, and target companies from your resume. Open the Profile tab to review and tweak.</p>' +
-          '<button type="button" class="wiz3-btn wiz3-btn-ghost" id="wiz3-open-profile">Open Profile editor</button>' +
-          '<p style="font-size:12px;color:#888;margin-top:12px;">Add or remove chips so the job matcher knows what you want. Come back here when you\'re done.</p>';
-        const btn = body.querySelector("#wiz3-open-profile");
-        if (btn) btn.addEventListener("click", () => {
-          try { if (typeof openResumeModal === "function") openResumeModal(); } catch (e) {}
-          setTimeout(() => {
-            const tabs = document.querySelectorAll(".tab-btn");
-            for (let i = 0; i < tabs.length; i++) {
-              if (tabs[i].textContent.toLowerCase().indexOf("profile") !== -1) { tabs[i].click(); break; }
-            }
-          }, 300);
+      key: "pick-titles",
+      title: "Pick your 5 target job titles",
+      subtitle: "The matcher will look for these exact titles. Be specific — 5 sharp picks beat 30 vague ones.",
+      async render(body) {
+        const p = await getProfile();
+        renderBullseye(body, {
+          max: 5,
+          current: p.targetTitles || [],
+          placeholder: "e.g. vp of product management",
+          hint: "Lowercase, multi-word titles match best (e.g. \"vp grc\" not just \"vp\"). The AI pre-filled suggestions from your resume — trim to the 5 you actually want.",
         });
       },
-      save() { return Promise.resolve(); },
+      async save(st, ctx) {
+        const items = (ctx.body.__bullseyeValues || (() => []))();
+        if (items.length > 5) { setMsg(ctx.body, "err", "Pick at most 5 titles — currently " + items.length); throw new Error("over cap"); }
+        if (items.length === 0) { setMsg(ctx.body, "err", "Pick at least 1 title."); throw new Error("empty"); }
+        await patchProfile({ targetTitles: items });
+        st.data.targetTitles = items;
+      },
+    },
+    {
+      key: "pick-industries",
+      title: "Pick your 5 industries",
+      subtitle: "Industries you want your NEXT job to be in — not every industry you've ever touched.",
+      async render(body) {
+        const p = await getProfile();
+        renderBullseye(body, {
+          max: 5,
+          current: p.industries || [],
+          placeholder: "e.g. healthcare technology",
+          hint: "Tight industry choice = less noise. 5 well-chosen industries kill 80% of irrelevant matches.",
+        });
+      },
+      async save(st, ctx) {
+        const items = (ctx.body.__bullseyeValues || (() => []))();
+        if (items.length > 5) { setMsg(ctx.body, "err", "Pick at most 5 industries — currently " + items.length); throw new Error("over cap"); }
+        if (items.length === 0) { setMsg(ctx.body, "err", "Pick at least 1 industry."); throw new Error("empty"); }
+        await patchProfile({ industries: items });
+        st.data.industries = items;
+      },
+    },
+    {
+      key: "pick-skills",
+      title: "Pick up to 25 skills",
+      subtitle: "Distinct, signal-dense terms. Skip generic words like \"leadership\" or \"team player\".",
+      async render(body) {
+        const p = await getProfile();
+        // Combine keywords + technologies + frameworks — they all feed the same scoring axis
+        const merged = [].concat(p.keywords || [], p.technologies || [], p.frameworks || []);
+        renderBullseye(body, {
+          max: 25,
+          current: merged,
+          placeholder: "e.g. digital transformation",
+          hint: "These boost a job's score when found in its title or description. Tech names, methodologies, outcome areas — specific over generic.",
+        });
+      },
+      async save(st, ctx) {
+        const items = (ctx.body.__bullseyeValues || (() => []))();
+        if (items.length > 25) { setMsg(ctx.body, "err", "Pick at most 25 skills — currently " + items.length); throw new Error("over cap"); }
+        // Skills go entirely into keywords; technologies/frameworks emptied so cap is enforced
+        await patchProfile({ keywords: items, technologies: [], frameworks: [] });
+        st.data.skills = items;
+      },
     },
     {
       key: "locations-remote",
