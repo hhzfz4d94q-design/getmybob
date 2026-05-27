@@ -105,6 +105,83 @@ def main():
             except Exception as e:
                 all_ok &= expect("/regenerate-companies parses", False, str(e))
 
+    # ─── NEW: negative-path tests (no key, bad key) ───────────────────
+    # The wizard 401 bug we just fixed would have been caught by these.
+    print()
+    print("Negative-path / auth tests:")
+
+    # /skills-profile POST with no key → 401
+    s, t = req(f"/skills-profile?user={TEST_SLUG}", method="POST", body={"patchFields": {"targetTitles": ["test"]}})
+    all_ok &= expect("POST /skills-profile without key returns 401", s == 401, f"status {s}")
+
+    # /skills-profile POST with bad key → 401 (and body should mention X-Edit-Key)
+    s, t = req(f"/skills-profile?user={TEST_SLUG}", method="POST",
+               headers={"X-Edit-Key": "definitely-not-valid-key"}, body={"patchFields": {}})
+    all_ok &= expect("POST /skills-profile with bad key returns 401", s == 401, f"status {s}")
+    all_ok &= expect("  401 body mentions 'X-Edit-Key' (so wizard can match-and-friendly-ize)",
+                     "X-Edit-Key" in t or "edit" in t.lower() or "auth" in t.lower(),
+                     f"body: {t[:120]}")
+
+    # /regenerate-companies POST with no key → 401
+    s, t = req(f"/regenerate-companies?user={TEST_SLUG}", method="POST", body={"dry_run": True})
+    all_ok &= expect("POST /regenerate-companies without key returns 401", s == 401, f"status {s}")
+
+    # ─── NEW: shape contracts for endpoints the wizard / dashboard depend on ──
+    print()
+    print("Shape contracts (admin-key authed):")
+    if ADMIN_KEY:
+        # /tracker GET — must return { tracker: {...} }
+        s, t = req(f"/tracker?user={TEST_SLUG}", headers={"X-Admin-Key": ADMIN_KEY})
+        all_ok &= expect("GET /tracker returns 200", s == 200, f"status {s}")
+        try:
+            d = json.loads(t)
+            all_ok &= expect("  has 'tracker' object", isinstance(d.get("tracker"), dict))
+        except Exception as e:
+            all_ok &= expect("/tracker parses", False, str(e))
+
+        # /suggest-refinements — POST, returns suggestions or insufficient_data
+        s, t = req(f"/suggest-refinements?user={TEST_SLUG}", method="POST",
+                   headers={"X-Admin-Key": ADMIN_KEY}, body={}, timeout=60)
+        all_ok &= expect("POST /suggest-refinements returns 200", s == 200, f"status {s}")
+        try:
+            d = json.loads(t)
+            # Either {status:'insufficient_data', suggestions:[]} or {suggestions:[...]} — both have 'suggestions'
+            all_ok &= expect("  has 'suggestions' array", isinstance(d.get("suggestions"), list),
+                             f"got keys {list(d.keys())}")
+        except Exception as e:
+            all_ok &= expect("/suggest-refinements parses", False, str(e))
+
+        # /draft-warm-intro — POST with bad shape → 400 (not 500)
+        s, t = req(f"/draft-warm-intro?user={TEST_SLUG}", method="POST",
+                   headers={"X-Admin-Key": ADMIN_KEY}, body={"job": {}})  # missing 'connection'
+        all_ok &= expect("POST /draft-warm-intro with bad shape returns 400 (not 500)",
+                         s == 400, f"status {s} body: {t[:80]}")
+
+        # /draft-warm-intro — happy shape returns LinkedIn DM + email
+        s, t = req(f"/draft-warm-intro?user={TEST_SLUG}", method="POST",
+                   headers={"X-Admin-Key": ADMIN_KEY}, body={
+                       "job": {"title": "Director of Risk", "company": "Stripe",
+                               "url": "https://example.com", "desc": "Lead risk eng team."},
+                       "connection": {"first": "Alex", "last": "Lee",
+                                      "position": "VP Risk", "company": "Stripe"}
+                   }, timeout=60)
+        all_ok &= expect("POST /draft-warm-intro happy path returns 200", s == 200, f"status {s} body: {t[:80]}")
+        try:
+            d = json.loads(t)
+            # Worker returns the AI text; shape is roughly {linkedin: "...", email: {subject, body}}
+            has_content = any(k in d for k in ("linkedin", "email", "text", "draft", "messages"))
+            all_ok &= expect("  has a draft field (linkedin/email/text/draft/messages)", has_content,
+                             f"got keys {list(d.keys())}")
+        except Exception as e:
+            all_ok &= expect("/draft-warm-intro parses", False, str(e))
+
+        # /regenerate-profile (dry_run) — admin-only safety check
+        s, t = req(f"/regenerate-profile?user={TEST_SLUG}", method="POST",
+                   headers={"X-Admin-Key": ADMIN_KEY}, body={"dry_run": True}, timeout=90)
+        # 200 or 400 (no resume to regenerate from) both acceptable; reject 500
+        all_ok &= expect("POST /regenerate-profile not a 500", s != 500,
+                         f"status {s} body: {t[:80]}")
+
     print(f"\n{'✓ ALL PASS' if all_ok else '✗ FAILURES'}")
     return 0 if all_ok else 1
 
