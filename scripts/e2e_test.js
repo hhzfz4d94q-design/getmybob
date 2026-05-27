@@ -100,11 +100,52 @@ async function testUser(browser, slug) {
     record(slug, `function ${f.n}() defined`, f.t === 'function', `got ${f.t}`);
   }
 
-  // ── 4. Header buttons visible ──
+  // ── 4. Top-level header buttons visible ──
   console.log('  ── Header buttons ──');
-  for (const sel of ['#refresh-btn','#account-btn','#regen-btn','#regen-companies-btn','#why-hidden-btn','#resume-btn','#contacts-btn','#prefs-btn']) {
-    await assertVisible(page, sel, slug, `${sel} visible`);
+  // These are visible by default (not inside collapsed dropdowns)
+  for (const sel of ['#refresh-btn','#account-btn']) {
+    await assertVisible(page, sel, slug, `${sel} visible by default`);
   }
+  // The "More" button has no id; locate by text content
+  const moreVisible = await page.evaluate(() => {
+    const b = Array.from(document.querySelectorAll('.header-btn')).find(el => /^More/.test(el.textContent.trim()));
+    if (!b) return { exists: false };
+    const r = b.getBoundingClientRect();
+    return { exists: true, visible: r.width > 0 && r.height > 0 };
+  });
+  record(slug, 'More button visible by default', moreVisible.visible === true, moreVisible.exists ? '' : 'not found');
+
+  // ── 4b. Account dropdown: click → items become visible ──
+  const accountDropdown = await page.evaluate(() => {
+    document.getElementById('account-btn').click();
+    const menu = document.querySelector('#account-btn + .header-more-menu') || document.querySelector('.header-more-wrap:has(#account-btn) .header-more-menu');
+    if (!menu) return { ok: false, why: 'no menu sibling' };
+    const items = menu.querySelectorAll('a, button');
+    return { ok: items.length > 0, itemCount: items.length, items: Array.from(items).map(i => i.textContent.trim().slice(0,30)) };
+  });
+  record(slug, 'Account dropdown opens with >= 1 items', accountDropdown.ok, accountDropdown.why || `items=${accountDropdown.itemCount}`);
+  // Close it
+  await page.evaluate(() => document.querySelectorAll('.header-more-menu.show').forEach(m => m.classList.remove('show')));
+
+  // ── 4c. More dropdown: click → all 6 expected items become visible ──
+  const moreDropdown = await page.evaluate(() => {
+    const trigger = Array.from(document.querySelectorAll('.header-btn')).find(b => /^More/.test(b.textContent.trim()));
+    if (!trigger) return { ok: false, why: 'no More trigger' };
+    trigger.click();
+    const menu = trigger.parentElement.querySelector('.header-more-menu');
+    if (!menu) return { ok: false, why: 'no menu sibling' };
+    const wantedIds = ['#regen-btn', '#regen-companies-btn', '#why-hidden-btn', '#resume-btn', '#contacts-btn', '#prefs-btn'];
+    const visible = wantedIds.filter(id => {
+      const el = menu.querySelector(id);
+      if (!el) return false;
+      const r = el.getBoundingClientRect();
+      return r.width > 0 && r.height > 0;
+    });
+    return { ok: visible.length === wantedIds.length, visible, expected: wantedIds };
+  });
+  record(slug, 'More dropdown shows all 6 items', moreDropdown.ok, moreDropdown.why || `${moreDropdown.visible.length}/${moreDropdown.expected.length} visible: ${moreDropdown.visible.join(',')}`);
+  // Close
+  await page.evaluate(() => document.querySelectorAll('.header-more-menu.show').forEach(m => m.classList.remove('show')));
 
   // ── 5. WizV3 + wizard close button ──
   console.log('  ── Wizard ──');
