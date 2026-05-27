@@ -1,0 +1,40 @@
+name: List users (admin one-off)
+
+# Calls /admin/users on the Worker to list all account emails.
+# Used when looking up the right email for password reset.
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  list:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call /admin/users
+        env:
+          ADMIN_KEY: ${{ secrets.WORKER_ADMIN_KEY }}
+        run: |
+          set -e
+          if [ -z "$ADMIN_KEY" ]; then
+            echo "::error::WORKER_ADMIN_KEY secret is not set"
+            exit 1
+          fi
+          curl -sS -H "X-Admin-Key: $ADMIN_KEY" \
+            "https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/admin/users" \
+            -o /tmp/users.json
+          python3 -c "
+          import json
+          d = json.load(open('/tmp/users.json'))
+          users = d.get('users', [])
+          print(f'Total users: {len(users)}')
+          print()
+          for u in users:
+              email = u.get('email','(no email)')
+              slug = u.get('slug','?')
+              name = u.get('name','?')
+              has_pw = bool(u.get('hasPassword') or u.get('passwordSet'))
+              print(f'  {slug:25s}  {email:40s}  name={name}  hasPw={has_pw}')
+          "
