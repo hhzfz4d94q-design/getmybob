@@ -374,9 +374,9 @@ async function regenerateSkillsProfile(env, slug) {
     return `IMPORTANT: the user wants their target-company list to mirror this size mix (sums to ~100%): startups ${pct.startup}% / mid-size ${pct.midsize}% / large ${pct.large}%. ${excludeLine}Across the 15-25 targetCompanies you suggest, the proportion of each size category must roughly match those percentages. Size definitions: startup = under 500 employees / typically Series A-C; midsize = 500-10k employees / established but not Fortune 500; large = 10k+ employees / Fortune 500 / public. For startup suggestions prefer "greenhouse"/"lever"/"ashby" atsHint; for large prefer "workday".`;
   })();
 
-  const prompt = `Analyze this resume EXHAUSTIVELY and produce a comprehensive structured skills profile.
+  const prompt = `Analyze this resume and produce a structured skills profile that gives the candidate a manageable, signal-dense starting list.
 
-CRITICAL: Be thorough, not sparse. Extract EVERY meaningful signal from the resume. If the resume mentions 20 technologies, include 20. If it spans 5 industries, include 5. Better to over-include than to miss things.
+CRITICAL: Be precise, not exhaustive. The user will trim to a tight bullseye (5 titles / 5 industries / 25 skills) via a wizard, so your job is to surface the BEST 8-12 per field — not every possible variant. Quality over coverage. Better to give the user 10 strong, distinct options than 30 with overlap. If you find yourself listing minor variants of the same thing, consolidate.
 
 INFERENCE RULES — also INCLUDE industry-standard items even when not literally typed in the resume:
 
@@ -394,7 +394,13 @@ INFERENCE RULES — also INCLUDE industry-standard items even when not literally
 
   These are inferences based on what a senior practitioner in that domain would universally know and have touched. Be reasonable — do not include irrelevant ones. If a resume is purely healthcare, do not add banking-specific items.
 
-CRITICAL: Be thorough but not sloppy. The user's profession determines what frameworks/regulations they'd know. A senior GRC leader at a US bank would unquestionably know NIST CSF, COSO, SOX ITGC, FFIEC even if they don't list them by name on their resume.
+CRITICAL: The user's profession determines what frameworks/regulations they'd know. A senior GRC leader at a US bank would unquestionably know NIST CSF, COSO, SOX ITGC, FFIEC even if they don't list them by name on their resume — include the 3-5 most central ones, not every adjacent standard.
+
+SENIORITY CALIBRATION — BE CONSERVATIVE:
+
+- seniorityLevel should match the candidate's MOST RECENT title, not their aspirational ceiling. A "Principal, X" or "Senior Director, X" maps to seniorityLevel="vp" at most. Do NOT default to "c-suite" unless their most recent title literally contains Chief/CEO/CTO/CIO/COO/CFO/President.
+- careerStage: a candidate with VP/SVP/EVP/Chief/President in recent titles → "executive". Otherwise prefer "senior" over "executive" when on the boundary. The user can edit upward; they cannot edit a too-aggressive default downward without noticing.
+- targetTitles must stay within current level + 1 rung. NEVER include CXO titles unless the candidate's current title is already C-suite.
 
 Return ONLY a JSON object with this exact shape (no prose, no code fences):
 
@@ -433,17 +439,17 @@ Field guidance (ALL fields lowercase strings):
   - "executive": 18+ yrs, VP+/C-suite. Use this for anyone whose recent titles include VP, SVP, EVP, Chief, President, Head-of (org-wide).
   This field drives which jobs and companies we surface — be precise.
 
-- targetTitles (10-20): SPECIFIC titles this person could fill. Be concrete and varied. e.g. for a banking-tech leader: ["chief technology officer", "head of digital", "vp transformation", "director of risk", "head of grc", "vp engineering", "chief operating officer", "head of strategy"]. INCLUDE adjacent senior roles they could pivot into.
+- targetTitles (8-12): SPECIFIC titles matching the candidate's ACTUAL current level and at most ONE rung above. Do NOT jump 2-3 rungs (e.g. a Sr Director should NOT see Chief titles — only Director, Sr Director, VP, Head of). Concrete and varied within the band. e.g. for a Sr Director banking-tech leader targeting director/vp roles: ["head of digital transformation", "vp banking technology", "vp grc", "director of enterprise architecture", "senior director, technology", "head of it strategy", "vp third-party risk management", "director of digital banking"]. Each title must be tokenizable into 2+ meaningful words.
 
-- industries (8-15): broad sectors where their resume directly applies. e.g. ["banking", "fintech", "capital markets", "wealth management", "credit risk", "cybersecurity", "insurance", "consulting", "saas"].
+- industries (6-10): broad sectors where the candidate has DIRECT hands-on experience (not just employer-adjacent). Each industry will be a heavy match signal, so be selective — only the sectors they'd actually target. e.g. ["banking", "commercial banking", "fintech", "consulting", "regtech"]. AVOID umbrella terms like "saas" or "enterprise software" unless the candidate specifically targets B2B software.
 
-- specialties (10-25): granular sub-domains and functional areas they have hands-on depth in. e.g. ["investment banking", "anti-money-laundering", "credit risk modeling", "regulatory reporting", "digital transformation", "vendor management", "m&a integration", "operational risk", "treasury", "trade finance", "market risk"]. EXTRACT these from the actual bullets in the resume.
+- specialties (6-10): granular sub-domains and functional areas with HANDS-ON depth (not just touched on a project). These are surfaced to the AI re-ranker as context, so be specific. e.g. ["credit risk modeling", "regulatory reporting", "digital transformation", "vendor management", "m&a integration"]. Pull from the actual bullets — if the resume doesn't directly evidence a specialty, don't list it.
 
-- keywords (25-40): high-signal terms from THIS resume that should BOOST a job's score when present in its title or description. Mix of: domain words, methodologies (agile, scrum, lean), outcome areas (cost reduction, revenue growth), and concepts (digital strategy, automation). NO generic words like "team" or "leadership" alone.
+- keywords (15-25): high-signal terms from THIS resume that should BOOST a job's score when present in its title or description. Mix of: domain words, methodologies (agile, scrum, lean), outcome areas (cost reduction, revenue growth), and concepts (digital strategy, automation). NO generic words like "team" or "leadership" alone. Note: total skills budget across keywords + technologies + frameworks should sum to ~25-30, because the user trims to 25 in the wizard.
 
-- technologies (10-25 if present in resume): specific tools, platforms, products, languages, vendors, or systems mentioned. e.g. ["salesforce", "aws", "azure", "oracle erp", "sap", "tableau", "snowflake", "moody's analytics", "calypso", "murex", "actimize", "fico", "sas", "servicenow", "splunk", "qualys", "okta"]. Include vendor names. If resume doesn't mention specific tools, return empty array.
+- technologies (5-10 if present in resume): the most SIGNATURE tools/platforms/vendors mentioned — not every tool ever touched. Pick the ones a recruiter would scan for. If resume doesn't mention specific tools, return empty array.
 
-- frameworks (any present, be EXHAUSTIVE — DO NOT miss these. SCAN THE ENTIRE RESUME including bullet points): standards, control frameworks, methodologies, and best-practice frameworks. Be liberal. Include cybersecurity, privacy, IT-governance, risk, audit, and delivery methodology frameworks. Look for these (include any you find):
+- frameworks (5-10, the most CENTRAL to the candidate's domain): standards, control frameworks, methodologies, and best-practice frameworks. Be selective — pick the ones the candidate would actually reference in their own self-description, not every adjacent standard. Common buckets to draw from:
 
   Cybersecurity & risk: nist csf, nist 800-53, nist 800-171, nist 800-37, nist 800-30, nist 800-66, nist rmf, iso 27001, iso 27002, iso 27017, iso 27018, iso 31000, iso 22301, soc 2, soc 1, ssae 18, mitre att&ck, owasp, owasp top 10, cis controls, cis benchmarks, fair, octave, cobit, togaf, sabsa, zero trust, devsecops, cmmc, disa stig, csa ccm, csa star, swift csp, isa 62443, nerc cip, iso 13485, iec 62304
 
