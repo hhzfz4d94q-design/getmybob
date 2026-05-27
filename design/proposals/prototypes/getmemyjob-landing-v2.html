@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>getmemyjob — Find the signal in the noise</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --midnight:#0B0828; --royal:#1E146E; --blue:#1817B5; --periwinkle:#5C5CE0; --mist:#D1DEFF;
+  --grad:linear-gradient(90deg,#1817B5 0%,#5C5CE0 100%);
+  --grad-hero:linear-gradient(135deg,#0B0828 0%,#1E146E 40%,#1817B5 100%);
+  --ink:#0B0828; --muted:#5F5A7E; --muted-soft:#8A86A6;
+  --hairline:#E5E5F0; --hairline-soft:#F0F0F7;
+  --surface:#fff; --surface-soft:#FAFAFD; --surface-tint:#F6F6FB; --brand-50:#EEEEF8;
+  --shadow-sm:0 2px 4px rgba(11,8,40,.07),0 1px 2px rgba(11,8,40,.04);
+  --shadow-md:0 6px 16px rgba(11,8,40,.09),0 2px 4px rgba(11,8,40,.05);
+  --shadow-lg:0 16px 40px rgba(11,8,40,.14),0 4px 12px rgba(11,8,40,.06);
+  --shadow-brand:0 12px 32px rgba(24,23,181,.22);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',-apple-system,system-ui,sans-serif;color:var(--ink);background:var(--surface);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+
+/* === Nav === */
+.nav{padding:14px 32px;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--hairline-soft);position:sticky;top:0;z-index:100}
+.nav-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;letter-spacing:-.02em}
+.brand-mark{width:34px;height:34px;border-radius:50%;background:var(--grad-hero);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;letter-spacing:.05em}
+.brand-wrap{display:flex;align-items:baseline;gap:0}
+.brand-wrap .a{color:var(--ink)}
+.brand-wrap .b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.parent{font-size:11px;color:var(--muted-soft);margin-left:8px;font-weight:600;letter-spacing:.04em}
+.nav-cta-row{display:flex;gap:10px;align-items:center}
+.btn-ghost{padding:9px 16px;border-radius:8px;font-weight:600;font-size:13px;color:var(--ink);background:transparent;border:1px solid var(--hairline);cursor:pointer;font-family:inherit}
+.btn-ghost:hover{border-color:var(--ink)}
+.btn-grad{padding:9px 16px;border-radius:8px;font-weight:600;font-size:13px;color:#fff;background:var(--grad);box-shadow:var(--shadow-sm);cursor:pointer;border:none;font-family:inherit;transition:transform .2s,box-shadow .2s}
+.btn-grad:hover{transform:translateY(-1px);box-shadow:var(--shadow-brand)}
+
+/* === Hero — dark, with brand gradient === */
+.hero{background:var(--grad-hero);color:#fff;padding:96px 32px 120px;position:relative;overflow:hidden}
+.hero-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1.2fr 1fr;gap:64px;align-items:center;position:relative}
+@media (max-width:920px){.hero-inner{grid-template-columns:1fr;gap:32px}}
+.hero .eyebrow{font-size:11px;font-weight:700;color:var(--mist);letter-spacing:.08em;text-transform:uppercase;margin-bottom:20px;display:inline-flex;align-items:center;gap:10px}
+.hero .eyebrow::before{content:'';width:32px;height:1.5px;background:var(--mist);border-radius:1px}
+.hero h1{font-size:72px;line-height:1.02;font-weight:800;letter-spacing:-.03em;margin-bottom:24px}
+@media (max-width:920px){.hero h1{font-size:48px}}
+.hero h1 em{font-style:normal;background:linear-gradient(90deg,#fff 0%,#D1DEFF 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p.sub{font-size:19px;color:rgba(255,255,255,.78);max-width:540px;margin-bottom:32px}
+.hero-cta-row{display:flex;gap:14px;flex-wrap:wrap}
+.btn-light{padding:14px 24px;border-radius:10px;background:#fff;color:var(--midnight);font-weight:700;font-size:15px;box-shadow:var(--shadow-sm);transition:transform .2s,box-shadow .2s;border:none;cursor:pointer;font-family:inherit}
+.btn-light:hover{transform:translateY(-1px);box-shadow:var(--shadow-lg)}
+.btn-outline{padding:14px 24px;border-radius:10px;background:transparent;color:#fff;font-weight:600;font-size:15px;border:1px solid rgba(255,255,255,.3);transition:all .2s;cursor:pointer;font-family:inherit}
+.btn-outline:hover{border-color:#fff;background:rgba(255,255,255,.08)}
+.signal-line{margin-top:32px;display:flex;gap:24px;font-size:13px;color:rgba(255,255,255,.65);flex-wrap:wrap}
+.signal-line span{display:inline-flex;align-items:center;gap:8px}
+.signal-line span::before{content:'';width:6px;height:6px;border-radius:50%;background:#10B981}
+
+/* Hero visual — animated bullseye */
+.hero-art{display:flex;justify-content:center;align-items:center}
+.hero-art svg{width:100%;max-width:440px;height:auto}
+@keyframes pulse{0%{opacity:1}50%{opacity:.4}100%{opacity:1}}
+.hero-art .focal{animation:pulse 2.5s ease-in-out infinite}
+@keyframes drift{0%{transform:translate(0,0)}50%{transform:translate(3px,-3px)}100%{transform:translate(0,0)}}
+.hero-art .candidate{animation:drift 6s ease-in-out infinite}
+
+/* === Match-board (the "after") === */
+.matchboard-section{padding:80px 32px;background:var(--surface-soft)}
+.matchboard{max-width:1200px;margin:0 auto;background:#fff;border:1px solid var(--hairline);border-radius:24px;box-shadow:var(--shadow-lg);overflow:hidden;margin-top:-72px;position:relative;z-index:5}
+.mb-head{padding:20px 28px;border-bottom:1px solid var(--hairline-soft);display:flex;justify-content:space-between;align-items:center}
+.mb-head .l{font-weight:700;font-size:15px}
+.mb-head .l .grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.mb-head .r{font-size:12px;color:var(--muted);display:flex;gap:14px;align-items:center}
+.mb-head .live{display:inline-flex;align-items:center;gap:6px;color:#0A6B3A;font-weight:600}
+.mb-head .live::before{content:'';width:6px;height:6px;border-radius:50%;background:#10B981;box-shadow:0 0 0 3px rgba(16,185,129,.18)}
+.mb-grid{padding:24px 28px;display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+@media (max-width:920px){.mb-grid{grid-template-columns:repeat(2,1fr)}}
+.mb-card{border:1px solid var(--hairline);border-radius:12px;padding:14px 14px 12px;background:#fff;transition:transform .2s,box-shadow .2s,border-color .2s;cursor:pointer}
+.mb-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);border-color:var(--periwinkle)}
+.mb-card .row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.mb-card .rank{font-size:10px;color:var(--muted-soft);font-weight:700;letter-spacing:.04em}
+.mb-card .score{padding:3px 9px;background:var(--blue);color:#fff;font-size:11px;font-weight:700;border-radius:999px;font-variant-numeric:tabular-nums}
+.mb-card.medium .score{background:var(--brand-50);color:var(--blue)}
+.mb-card h4{font-size:14px;font-weight:700;margin-bottom:4px;line-height:1.2}
+.mb-card .co{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px}
+.mb-bars{display:flex;flex-direction:column;gap:4px}
+.mb-bars .bar{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--muted-soft)}
+.mb-bars .bar .label{width:8px;font-weight:700}
+.mb-bars .bar .track{flex:1;height:4px;background:var(--hairline-soft);border-radius:999px;overflow:hidden}
+.mb-bars .bar .fill{height:100%;background:var(--blue);border-radius:inherit}
+.mb-card.medium .mb-bars .bar .fill{background:var(--periwinkle)}
+.mb-foot{padding:16px 28px;background:var(--surface-tint);border-top:1px solid var(--hairline-soft);font-size:12px;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
+
+/* === Features === */
+.features{padding:96px 32px;max-width:1200px;margin:0 auto}
+.features-head{text-align:center;margin-bottom:56px;max-width:680px;margin-inline:auto}
+.features-head .eyebrow{font-size:11px;font-weight:700;color:var(--blue);letter-spacing:.08em;text-transform:uppercase;margin-bottom:16px}
+.features-head h2{font-size:44px;font-weight:800;letter-spacing:-.025em;line-height:1.1;margin-bottom:14px}
+@media (max-width:820px){.features-head h2{font-size:32px}}
+.features-head p{font-size:17px;color:var(--muted)}
+.f-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+@media (max-width:820px){.f-grid{grid-template-columns:1fr}}
+.fcard{padding:32px;border:1px solid var(--hairline);border-radius:18px;background:#fff;transition:transform .2s,box-shadow .2s,border-color .2s}
+.fcard:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);border-color:var(--periwinkle)}
+.fcard-icon{width:48px;height:48px;border-radius:12px;background:var(--brand-50);display:flex;align-items:center;justify-content:center;color:var(--blue);margin-bottom:18px}
+.fcard h3{font-size:18px;font-weight:700;letter-spacing:-.01em;margin-bottom:8px}
+.fcard p{color:var(--muted);font-size:14px;line-height:1.55}
+
+/* === CTA strip === */
+.cta{background:var(--grad-hero);color:#fff;padding:80px 32px;margin-top:40px}
+.cta-inner{max-width:900px;margin:0 auto;text-align:center}
+.cta h2{font-size:48px;line-height:1.05;font-weight:800;letter-spacing:-.025em;margin-bottom:20px}
+@media (max-width:820px){.cta h2{font-size:32px}}
+.cta p{font-size:18px;color:rgba(255,255,255,.78);margin-bottom:32px}
+
+/* Footer */
+footer{background:var(--midnight);color:#fff;padding:48px 32px 32px}
+.footer-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:24px;font-size:13px;color:rgba(255,255,255,.6)}
+.footer-inner a:hover{color:#fff}
+footer .brand{color:#fff}
+footer .brand .a{color:#fff}
+footer .brand-mark{background:#fff;color:var(--royal)}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="#">
+      <div class="brand-mark">G</div>
+      <div class="brand-wrap"><span class="a">getme</span><span class="b">myjob</span></div>
+      <span class="parent">an OfficeBeat product</span>
+    </a>
+    <div class="nav-cta-row">
+      <a class="btn-ghost" href="/login.html">Sign in</a>
+      <a class="btn-grad" href="#request">Request access →</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="eyebrow">Invite-only · For senior leaders</div>
+      <h1>Find the signal<br><em>in the noise.</em></h1>
+      <p class="sub">20,000+ open roles flow past your inbox every day. We tune the matcher around your bullseye — 5 titles, 5 industries, 15 skills — and surface twenty each morning that are worth your attention.</p>
+      <div class="hero-cta-row">
+        <a class="btn-light" href="#request">Request alpha access →</a>
+        <a class="btn-outline" href="#how">See how it works</a>
+      </div>
+      <div class="signal-line">
+        <span>87 ATSes scraped daily</span>
+        <span>AI-tuned to your bullseye</span>
+        <span>Warm intros, not cold drafts</span>
+      </div>
+    </div>
+    <div class="hero-art">
+      <svg viewBox="0 0 440 440" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#5C5CE0"/>
+            <stop offset="1" stop-color="#fff"/>
+          </linearGradient>
+        </defs>
+        <g transform="translate(220 220)">
+          <!-- candidate noise -->
+          <g fill="#fff" opacity=".22" class="candidate">
+            <circle cx="-140" cy="-70" r="1.5"/><circle cx="110" cy="-130" r="1.5"/>
+            <circle cx="160" cy="30" r="1.5"/><circle cx="-90" cy="140" r="1.5"/>
+            <circle cx="-175" cy="50" r="1.5"/><circle cx="150" cy="-50" r="1.5"/>
+            <circle cx="50" cy="160" r="1.5"/><circle cx="-140" cy="-140" r="1.5"/>
+            <circle cx="195" cy="90" r="1.5"/><circle cx="-195" cy="-25" r="1.5"/>
+            <circle cx="30" cy="-165" r="1.5"/><circle cx="180" cy="-155" r="1.5"/>
+            <circle cx="-160" cy="160" r="1.5"/><circle cx="210" cy="-15" r="1.5"/>
+          </g>
+          <!-- rings -->
+          <circle r="190" fill="none" stroke="#fff" stroke-width=".8" opacity=".15"/>
+          <circle r="150" fill="none" stroke="#fff" stroke-width=".8" opacity=".18"/>
+          <circle r="105" fill="none" stroke="#fff" stroke-width=".8" opacity=".22"/>
+          <circle r="60" fill="none" stroke="#D1DEFF" stroke-width="1.3" opacity=".5"/>
+          <circle r="32" fill="none" stroke="#fff" stroke-width="1.8"/>
+          <!-- matched -->
+          <circle cx="-10" cy="-12" r="4" fill="#D1DEFF"/>
+          <circle cx="14" cy="-6" r="4" fill="#fff"/>
+          <circle cx="-16" cy="10" r="4" fill="#D1DEFF"/>
+          <circle cx="8" cy="16" r="4" fill="#fff"/>
+          <!-- focal -->
+          <circle r="10" fill="#fff" class="focal"/>
+          <circle r="6" fill="url(#g)"/>
+          <!-- crosshair -->
+          <g stroke="#fff" stroke-width="1.2" opacity=".8">
+            <line x1="-24" y1="0" x2="-14" y2="0"/><line x1="14" y1="0" x2="24" y2="0"/>
+            <line x1="0" y1="-24" x2="0" y2="-14"/><line x1="0" y1="14" x2="0" y2="24"/>
+          </g>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- The match-board floats over the hero/section seam — strong visual proof -->
+<section class="matchboard-section">
+  <div class="matchboard">
+    <div class="mb-head">
+      <div class="l">Today's <span class="grad">Top 20</span> — Tue 27 May</div>
+      <div class="r">
+        <span class="live">Refreshed 2 min ago</span>
+        <span>Avg score 88</span>
+      </div>
+    </div>
+    <div class="mb-grid">
+      <div class="mb-card">
+        <div class="row"><span class="rank">01</span><span class="score">94</span></div>
+        <h4>VP, Risk Strategy</h4><div class="co">Stripe · NYC</div>
+        <div class="mb-bars">
+          <div class="bar"><span class="label">T</span><div class="track"><div class="fill" style="width:92%"></div></div></div>
+          <div class="bar"><span class="label">I</span><div class="track"><div class="fill" style="width:88%"></div></div></div>
+          <div class="bar"><span class="label">S</span><div class="track"><div class="fill" style="width:85%"></div></div></div>
+        </div>
+      </div>
+      <div class="mb-card">
+        <div class="row"><span class="rank">02</span><span class="score">91</span></div>
+        <h4>Director, TPRM</h4><div class="co">Ramp · Remote</div>
+        <div class="mb-bars">
+          <div class="bar"><span class="label">T</span><div class="track"><div class="fill" style="width:85%"></div></div></div>
+          <div class="bar"><span class="label">I</span><div class="track"><div class="fill" style="width:90%"></div></div></div>
+          <div class="bar"><span class="label">S</span><div class="track"><div class="fill" style="width:88%"></div></div></div>
+        </div>
+      </div>
+      <div class="mb-card">
+        <div class="row"><span class="rank">03</span><span class="score">89</span></div>
+        <h4>Head of GRC</h4><div class="co">Plaid · SF</div>
+        <div class="mb-bars">
+          <div class="bar"><span class="label">T</span><div class="track"><div class="fill" style="width:82%"></div></div></div>
+          <div class="bar"><span class="label">I</span><div class="track"><div class="fill" style="width:88%"></div></div></div>
+          <div class="bar"><span class="label">S</span><div class="track"><div class="fill" style="width:80%"></div></div></div>
+        </div>
+      </div>
+      <div class="mb-card medium">
+        <div class="row"><span class="rank">04</span><span class="score">86</span></div>
+        <h4>VP, ERM</h4><div class="co">Brex · NYC</div>
+        <div class="mb-bars">
+          <div class="bar"><span class="label">T</span><div class="track"><div class="fill" style="width:78%"></div></div></div>
+          <div class="bar"><span class="label">I</span><div class="track"><div class="fill" style="width:82%"></div></div></div>
+          <div class="bar"><span class="label">S</span><div class="track"><div class="fill" style="width:75%"></div></div></div>
+        </div>
+      </div>
+      <div class="mb-card medium">
+        <div class="row"><span class="rank">05</span><span class="score">83</span></div>
+        <h4>Dir, Reg Compliance</h4><div class="co">Mercury · Remote</div>
+        <div class="mb-bars">
+          <div class="bar"><span class="label">T</span><div class="track"><div class="fill" style="width:72%"></div></div></div>
+          <div class="bar"><span class="label">I</span><div class="track"><div class="fill" style="width:78%"></div></div></div>
+          <div class="bar"><span class="label">S</span><div class="track"><div class="fill" style="width:70%"></div></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="mb-foot">
+      <span>+ 15 more matches today</span>
+      <a href="#" style="color:var(--blue);font-weight:600">Open full dashboard →</a>
+    </div>
+  </div>
+</section>
+
+<section class="features" id="how">
+  <div class="features-head">
+    <div class="eyebrow">How it works</div>
+    <h2>Curate once. Wake up to twenty.</h2>
+    <p>No more endless scrolling. Tell the matcher exactly what you want, and we do the work.</p>
+  </div>
+  <div class="f-grid">
+    <div class="fcard">
+      <div class="fcard-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>
+      </div>
+      <h3>1 · Set your bullseye</h3>
+      <p>5 titles · 5 industries · 15 skills · 15 target companies. The wizard walks you through it in under 10 minutes.</p>
+    </div>
+    <div class="fcard">
+      <div class="fcard-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>
+      </div>
+      <h3>2 · We scrape 87 ATSes</h3>
+      <p>Every Greenhouse, Lever, Ashby, Workday, Workable board — daily. Score each role against your bullseye.</p>
+    </div>
+    <div class="fcard">
+      <div class="fcard-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <h3>3 · Top 20 by 6 AM</h3>
+      <p>With LinkedIn warm-intro drafts for the companies where you already know someone. Apply when you're ready.</p>
+    </div>
+  </div>
+</section>
+
+<section class="cta" id="request">
+  <div class="cta-inner">
+    <h2>Stop scrolling. Start shipping applications that matter.</h2>
+    <p>Currently invite-only for senior risk, compliance, and product leaders in financial services and healthcare.</p>
+    <a class="btn-light" href="mailto:hello@officebeatllc.com?subject=getmemyjob%20alpha%20access">Request alpha access →</a>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <a class="brand" href="https://officebeatllc.com">
+      <div class="brand-mark">OB</div>
+      <div class="brand-wrap"><span class="a">getme</span><span class="b" style="background:linear-gradient(90deg,#fff 0%,#D1DEFF 100%);-webkit-background-clip:text;background-clip:text;color:transparent">myjob</span></div>
+    </a>
+    <span>© 2026 OfficeBeat LLC · An OfficeBeat product</span>
+    <span><a href="#">Privacy</a> · <a href="#">Terms</a> · <a href="mailto:hello@officebeatllc.com">Contact</a></span>
+  </div>
+</footer>
+
+</body>
+</html>
