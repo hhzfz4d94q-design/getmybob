@@ -40,21 +40,25 @@ jobs:
             "https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/admin/users" \
             > /tmp/users.json
 
-          # 2. Build deduplicated company list (Python is simpler than jq here)
+          # 2. Build deduplicated company list via curl (urllib hit by CF anti-bot)
           python3 << 'PY'
-          import json, os, urllib.request
+          import json, os, subprocess
           users = json.load(open('/tmp/users.json'))['users']
+          print(f'Got {len(users)} users')
           companies = set()
           for u in users:
-              # Pull each user's profile to get targetCompanies
               slug = u.get('slug')
               if not slug: continue
               try:
-                  url = f'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/skills-profile?user={slug}'
-                  with urllib.request.urlopen(url, timeout=10) as r:
-                      pj = json.load(r)
+                  result = subprocess.run(
+                      ['curl', '-sS', '--max-time', '15',
+                       f'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/skills-profile?user={slug}'],
+                      capture_output=True, text=True, check=True)
+                  pj = json.loads(result.stdout)
                   prof = pj.get('profile') or {}
-                  for c in (prof.get('targetCompanies') or []):
+                  tc = prof.get('targetCompanies') or []
+                  print(f'  {slug}: {len(tc)} targetCompanies')
+                  for c in tc:
                       if isinstance(c, dict) and c.get('name'):
                           companies.add(c['name'].strip())
                       elif isinstance(c, str) and c.strip():
@@ -66,23 +70,31 @@ jobs:
           json.dump(companies, open('/tmp/companies.json','w'))
           PY
 
-          # 3. Send in batches of 30 to /admin/enrich-companies
+          # 3. Send in batches of 30 via curl
           python3 << 'PY'
-          import json, os, urllib.request
+          import json, os, subprocess
           companies = json.load(open('/tmp/companies.json'))
           force = os.environ.get('FORCE', 'false').lower() == 'true'
           all_out = {'fromCache': {}, 'newlyClassified': {}}
           BATCH = 30
           for i in range(0, len(companies), BATCH):
               chunk = companies[i:i+BATCH]
-              body = json.dumps({'companies': chunk, 'force': force}).encode()
-              req = urllib.request.Request(
-                  'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/admin/enrich-companies',
-                  data=body, method='POST',
-                  headers={'Content-Type':'application/json','X-Admin-Key': os.environ['ADMIN_KEY']})
-              with urllib.request.urlopen(req, timeout=60) as r:
-                  result = json.load(r)
+              body = json.dumps({'companies': chunk, 'force': force})
+              proc = subprocess.run(
+                  ['curl', '-sS', '--max-time', '90', '-X', 'POST',
+                   '-H', 'Content-Type: application/json',
+                   '-H', f'X-Admin-Key: {os.environ["ADMIN_KEY"]}',
+                   '--data', body,
+                   'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/admin/enrich-companies'],
+                  capture_output=True, text=True, check=True)
+              try:
+                  result = json.loads(proc.stdout)
+              except json.JSONDecodeError:
+                  print(f'Batch {i//BATCH+1}: non-JSON response: {proc.stdout[:200]}')
+                  continue
               print(f'Batch {i//BATCH+1}: cached={result.get("cachedCount",0)}  new={result.get("newCount",0)}')
+              if result.get('error'):
+                  print(f'  error: {result["error"]}')
               all_out['fromCache'].update(result.get('fromCache') or {})
               all_out['newlyClassified'].update(result.get('newlyClassified') or {})
           import datetime as _dt
