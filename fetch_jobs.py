@@ -263,6 +263,128 @@ def fetch_ashby(slug):
     return out
 
 
+def fetch_workable(slug):
+    """Workable public job board API. Most companies (incl. Resolver, ProcessUnity,
+    many GRC SaaS) expose their open roles at apply.workable.com/{slug}.
+    The widget endpoint returns JSON with all published jobs."""
+    # Public widget endpoint — no auth required
+    url = f"https://apply.workable.com/api/v3/accounts/{slug}/jobs?state=published&limit=200"
+    data = fetch_json(url)
+    if not data or "results" not in data:
+        # Try alternate endpoint shapes some Workable deployments use
+        alt = fetch_json(f"https://apply.workable.com/api/v1/widget/accounts/{slug}")
+        if alt and "jobs" in alt:
+            jobs_list = alt["jobs"]
+        else:
+            return []
+    else:
+        jobs_list = data["results"]
+    out = []
+    for j in jobs_list:
+        if not isinstance(j, dict): continue
+        title = j.get("title") or j.get("full_title") or ""
+        if not title: continue
+        loc = j.get("location") or {}
+        loc_str = ""
+        if isinstance(loc, dict):
+            city = loc.get("city") or ""
+            region = loc.get("region") or ""
+            country = loc.get("country") or ""
+            wp = loc.get("workplace_type") or ""
+            parts = [p for p in (city, region, country) if p]
+            loc_str = ", ".join(parts)
+            if wp and wp.lower() in ("remote", "hybrid"):
+                loc_str = (loc_str + f" ({wp})") if loc_str else wp
+        elif isinstance(loc, str):
+            loc_str = loc
+        # Salary/compensation hint
+        comp = j.get("compensation") or {}
+        sal_str = ""
+        if isinstance(comp, dict):
+            mn = comp.get("min_amount") or comp.get("min")
+            mx = comp.get("max_amount") or comp.get("max")
+            cur = comp.get("currency") or "USD"
+            if mn and mx:
+                try:
+                    sal_str = f"${int(mn):,} - ${int(mx):,}"
+                except Exception:
+                    sal_str = f"{mn} - {mx} {cur}"
+        # Description: prefer full_description, fall back to description
+        desc = _strip_html(j.get("full_description") or j.get("description") or "")
+        out.append({
+            "source": "workable",
+            "company_slug": slug,
+            "company_name": slug.replace("-", " ").title(),
+            "external_id": str(j.get("id") or j.get("shortcode") or j.get("code") or title),
+            "title": title,
+            "location": loc_str,
+            "url": j.get("application_url") or j.get("shortlink") or j.get("url") or "",
+            "posted_at": j.get("published_on") or j.get("created_at") or "",
+            "description": desc,
+            "salary_range": sal_str,
+        })
+    return out
+
+
+def fetch_icims(entry):
+    """iCIMS public-portal scraper. Most enterprise/banking deployments use
+    careers-{slug}.icims.com. iCIMS doesn't expose a clean public JSON API,
+    so we hit the all-jobs HTML page and extract job links via regex.
+    Best-effort — pages with heavy JS rendering may return empty."""
+    if isinstance(entry, dict):
+        slug = entry.get("slug") or entry.get("tenant") or ""
+    else:
+        slug = entry or ""
+    if not slug: return []
+    base = f"https://careers-{slug}.icims.com"
+    # The /jobs/search page returns a paginated list. searchPosition empty = all.
+    page_html_url = f"{base}/jobs/search?ss=1&hashed=-1&searchKeyword=&searchLocation=&searchCategory=&searchPositionType=&mobile=false&width=1024&height=800&bga=true&needsRedirect=false&jan1offset=-300&jun1offset=-240"
+    # fetch_json won't work for HTML; do raw HTTP
+    try:
+        req = urllib.request.Request(page_html_url, headers={
+            "User-Agent": "Mozilla/5.0 (compatible; getmemyjob/1.0; +https://getmemyjob.officebeatllc.com)",
+            "Accept": "text/html,application/xhtml+xml",
+        })
+        with urllib.request.urlopen(req, timeout=20) as r:
+            html = r.read().decode("utf-8", errors="replace")
+    except Exception as e:
+        # Log silently — many iCIMS portals are JS-rendered or block automated UA
+        try:
+            os.makedirs(os.path.join(ROOT, "reports"), exist_ok=True)
+            with open(os.path.join(ROOT, "reports", "icims_debug.log"), "a", encoding="utf-8") as f:
+                f.write(f"[{slug}] fetch_failed: {type(e).__name__}: {e}\n")
+        except Exception: pass
+        return []
+    # Extract job links: <a href="/jobs/{id}/{slug-name}/job" ...>Title</a>
+    import re as _r
+    pattern = _r.compile(r'<a[^>]+href="(/jobs/(\d+)/[^"]+/job[^"]*)"[^>]*>([^<]+)</a>')
+    out = []
+    seen = set()
+    for m in pattern.finditer(html):
+        path, jid, title = m.group(1), m.group(2), m.group(3).strip()
+        if jid in seen or not title: continue
+        seen.add(jid)
+        out.append({
+            "source": "icims",
+            "company_slug": slug,
+            "company_name": slug.replace("-", " ").title(),
+            "external_id": jid,
+            "title": title,
+            "location": "",  # iCIMS list page doesn't include location reliably
+            "url": base + path,
+            "posted_at": "",
+            "description": "",  # would require N+1 fetches to individual job pages — skip for now
+            "salary_range": "",
+        })
+    if not out:
+        try:
+            os.makedirs(os.path.join(ROOT, "reports"), exist_ok=True)
+            with open(os.path.join(ROOT, "reports", "icims_debug.log"), "a", encoding="utf-8") as f:
+                f.write(f"[{slug}] 0 jobs found in HTML (len={len(html)}, likely JS-rendered)\n")
+        except Exception: pass
+    return out
+
+
 def fetch_workday(entry):
     """Workday Cxs API. Entry: {name, tenant, subdomain, site}.
     Pages through results (Workday paginates at 20 per request)."""
@@ -895,7 +1017,7 @@ def fetch_himss(entry):
     return out
 
 
-SOURCES = {"greenhouse": fetch_greenhouse, "lever": fetch_lever, "ashby": fetch_ashby, "workday": fetch_workday, "wttj": fetch_wttj, "remoteok": fetch_remoteok, "yc": fetch_yc, "hn_hiring": fetch_hn_hiring, "healthecareers": fetch_healthecareers, "himss": fetch_himss}
+SOURCES = {"greenhouse": fetch_greenhouse, "lever": fetch_lever, "ashby": fetch_ashby, "workable": fetch_workable, "workday": fetch_workday, "wttj": fetch_wttj, "icims": fetch_icims, "remoteok": fetch_remoteok, "yc": fetch_yc, "hn_hiring": fetch_hn_hiring, "healthecareers": fetch_healthecareers, "himss": fetch_himss}
 
 
 # --- Utilities -----------------------------------------------------------
@@ -2231,7 +2353,7 @@ def _merge_user_target_companies(companies):
             # gives us coverage; we pay ~3 extra HTTP requests per company.
             # This is also how WTTJ gets activated for the first time — it
             # was coded but had 0 companies configured.
-            SLUG_POOLS = ("greenhouse", "lever", "ashby", "wttj")
+            SLUG_POOLS = ("greenhouse", "lever", "ashby", "wttj", "workable", "icims")
             if hint not in SLUG_POOLS and hint != "unknown":
                 skipped += 1
                 continue
