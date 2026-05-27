@@ -2342,20 +2342,28 @@ def score_job(job):
             sen_titles = profile.get("seniorityTitles", []) or SENIOR_TITLE_TERMS
             if any(t in title for t in sen_titles if t and len(t) > 1):
                 title_strength = 0.10
-        s += int(title_strength * w_t * 0.75)
+        # RELEVANCE-FIRST (2026-05-27): wizard picks now dominate the score.
+        # Tight title match alone can drive 50+ points. Industry +20, skills +20.
+        # Goal: a job perfectly matching the bullseye scores ~95+ before fresh bonus.
+        s += int(title_strength * w_t * 1.0)  # was 0.75, now 1.0 — title pick is king
 
-        # INDUSTRY component: cap at 3 hits = full credit
+        # INDUSTRY component: cap at 2 hits = full credit (was 3 — tighter)
         ind_hits = sum(1 for i in profile.get("industries", []) if i and i in blob)
-        ind_strength = min(ind_hits / 3.0, 1.0)
-        s += int(ind_strength * w_i * 0.5)
+        ind_strength = min(ind_hits / 2.0, 1.0)
+        s += int(ind_strength * w_i * 0.8)  # was 0.5, now 0.8
 
-        # SKILLS component: keywords + technologies + frameworks; cap at 8 hits
+        # SKILLS component: keywords + technologies + frameworks; cap at 5 hits (was 8)
         skl_terms = (profile.get("keywords", []) or []) + \
                     (profile.get("technologies", []) or []) + \
                     (profile.get("frameworks", []) or [])
         kw_hits = sum(1 for k in skl_terms if k and k in blob)
-        skl_strength = min(kw_hits / 8.0, 1.0)
-        s += int(skl_strength * w_s * 0.5)
+        skl_strength = min(kw_hits / 5.0, 1.0)
+        s += int(skl_strength * w_s * 0.8)  # was 0.5, now 0.8
+
+        # PERFECT-MATCH BONUS: if title_strength == 1.0 AND industry hit, this is
+        # a bullseye. Add +15 so it lands at the absolute top.
+        if title_strength >= 1.0 and ind_hits >= 1:
+            s += 15
 
         # Penalty (2026-05-26): if NEITHER the title matched a targetTitle
         # NOR did keywords/specialties land any hits in the blob, this is a
@@ -3788,10 +3796,15 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
             return 9999
 
     def _fresh_bonus(first_seen):
+        # Relevance-first (2026-05-27): much stronger recency bias.
+        # New postings get applications fast; week-old jobs are already in
+        # the pile. Reward speed.
         h = _hours_old(first_seen)
-        if h <= 48: return 10   # last 2 days — meaningful bump
-        if h <= 168: return 4   # last week — small bump
-        return 0
+        if h <= 24: return 25    # last day — huge bump (cuts to front)
+        if h <= 72: return 15    # last 3 days — strong bump
+        if h <= 168: return 6    # last week — small bump
+        if h <= 336: return 0    # 1-2 weeks — neutral
+        return -5                # 2+ weeks — gently push down
 
     # Re-sort: effective_score = score + fresh_bonus DESC; tiebreak on most-recent last_seen DESC.
     rows = sorted(rows, key=lambda r: (int(r[11] or 0) + _fresh_bonus(r[6]), r[7] or ""), reverse=True)
@@ -3986,7 +3999,12 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         return ld is None or ld <= GHOST_DAYS
     rows = [r for r in rows if _not_ghost(r)]
 
-    rows = rows[:1000]
+    # Relevance-first top-50 (2026-05-27): cut from 1000 → 50. With heavy
+    # wizard-pick weighting + recency bonus, the top 50 are the only jobs
+    # that genuinely matter today. If user wants more, they can broaden
+    # the bullseye via the wizard.
+    TOP_N = 50
+    rows = rows[:TOP_N]
 
     # ============================================================
     # WHY-HIDDEN TOOL — classify each dropped row with a reason code
@@ -4236,6 +4254,20 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
     else:
         cards_html = "<p style='padding:24px;color:#666;'>No matches in the last 30 days. Click Refresh data to look again.</p>"
 
+    # Relevance floor warning: if we couldn't fill 50 strong matches today,
+    # surface a banner suggesting the user broaden the bullseye.
+    RELEVANCE_FLOOR = 60
+    strong_count = sum(1 for r in rows if (int(r[11] or 0) >= RELEVANCE_FLOOR))
+    low_match_warning_html = ''
+    if SKILLS_PROFILE and strong_count < 15 and len(rows) > 0:
+        low_match_warning_html = (
+            '<div style="background:#fef3c7;border:1px solid #fbbf24;border-radius:8px;padding:12px 16px;margin:0 auto 14px;max-width:1400px;font-size:13px;color:#78350f;font-family:Inter,system-ui,sans-serif;">'
+            f'<strong>⚠️ Only {strong_count} strong match{"" if strong_count == 1 else "es"} today (score \u2265 {RELEVANCE_FLOOR}).</strong> '
+            'Showing all ' + str(len(rows)) + ' jobs we have so the feed isn\'t empty, but consider broadening your bullseye '
+            '(more target titles or industries) via the wizard to get more strong daily matches.'
+            '</div>'
+        )
+
     html = HTML_TEMPLATE.format(
         total=total,
         senior_remote=senior_remote,
@@ -4248,6 +4280,7 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         subtitle=_esc(subtitle),
         has_profile_js=("true" if SKILLS_PROFILE else "false"),
         hidden_jobs_json=hidden_jobs_json,
+        low_match_warning=low_match_warning_html,
     )
     # Some embedded emoji in HTML_TEMPLATE are stored as UTF-16 surrogate
     # pair literals (\ud83c\udfaf etc). Merge them into proper codepoints
@@ -4628,6 +4661,7 @@ HTML_TEMPLATE = """<!doctype html>
     </div>
   </div>
 </header>
+{low_match_warning}
 <div class="stats">
   <div class="stat"><b>{total}</b>Total jobs tracked</div>
   <div class="stat"><b>{senior_remote}</b>Senior + Remote (last 7d)</div>
@@ -8648,7 +8682,7 @@ const _HIDDEN_REASON_LABELS = {{
   industry_mismatch: 'Industry doesn\'t overlap with your 5 picks, and company isn\'t on your targetCompanies allowlist',
   location: 'Location/remote preference mismatch (your pref: %d)',
   ghost: 'Job is stale (listed for %d) — possible ghost listing',
-  dedup_or_truncated: 'Survived filters but truncated by the 1000-card display cap or multi-location dedup',
+  dedup_or_truncated: 'Survived filters but didn't make the top-50 cut (broaden bullseye for more) or was deduped across locations',
 }};
 
 function _hiddenReasonText(r) {{
