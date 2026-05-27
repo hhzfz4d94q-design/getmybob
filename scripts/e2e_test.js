@@ -386,6 +386,76 @@ async function testUser(browser, slug) {
   });
   record(slug, 'wizard #wiz3-skip hidden on required bullseye step', skipState.ok, skipState.why);
 
+  // ── 14b. Wizard auth-error UX: when both keys are cleared, AI button shows friendly card, not raw error ──
+  console.log('  ── Wizard auth UX ──');
+  const authUX = await page.evaluate(async () => {
+    // Save current keys so we can restore later
+    const savedEdit = localStorage.getItem('htj_resume_key_amit-arora') || localStorage.getItem('htj_resume_key_geetu') || localStorage.getItem('htj_resume_key') || '';
+    const savedAdmin = localStorage.getItem('htj_admin_key') || '';
+    // Clear both
+    try { localStorage.removeItem('htj_resume_key_amit-arora'); localStorage.removeItem('htj_resume_key_geetu'); localStorage.removeItem('htj_resume_key'); localStorage.removeItem('htj_admin_key'); } catch(_){}
+    // Re-render the bullseye step so the new state is read
+    WizV3.goto('your-bullseye');
+    await new Promise(r => setTimeout(r, 600));
+    const btn = document.getElementById('bs-co-ask');
+    if (!btn) {
+      if (savedEdit) localStorage.setItem('htj_resume_key', savedEdit);
+      if (savedAdmin) localStorage.setItem('htj_admin_key', savedAdmin);
+      return { ok: false, why: '#bs-co-ask button not found' };
+    }
+    btn.click();
+    await new Promise(r => setTimeout(r, 400));
+    const out = document.getElementById('bs-co-result');
+    const html = out ? out.innerHTML : '';
+    // Restore keys for downstream tests
+    if (savedEdit) localStorage.setItem('htj_resume_key', savedEdit);
+    if (savedAdmin) localStorage.setItem('htj_admin_key', savedAdmin);
+    // Friendly card markers
+    const hasYellowBg = /background:\s*#fef3c7/i.test(html);
+    const hasAccountLink = /\/account\.html/.test(html);
+    const noRawError = !/Failed:\s*HTTP\s*4\d\d/i.test(html) && !/Invalid X-Edit-Key/i.test(html);
+    return {
+      ok: hasYellowBg && hasAccountLink && noRawError,
+      why: `yellow=${hasYellowBg} link=${hasAccountLink} noRaw=${noRawError}`
+    };
+  });
+  record(slug, 'wizard AI button shows friendly card when no auth (not raw 401)', authUX.ok, authUX.why);
+
+  // ── 14c. patchProfile() throws friendly 'Session expired' on 401, not raw 'HTTP 401' ──
+  const patchUX = await page.evaluate(async () => {
+    // Save & clear keys
+    const savedEdit = localStorage.getItem('htj_resume_key') || '';
+    const savedAdmin = localStorage.getItem('htj_admin_key') || '';
+    try { localStorage.removeItem('htj_resume_key_amit-arora'); localStorage.removeItem('htj_resume_key_geetu'); localStorage.removeItem('htj_resume_key'); localStorage.removeItem('htj_admin_key'); } catch(_){}
+    let msg = '';
+    try {
+      // Call the wizard-scope patchProfile via WizV3 if it exposes it; else simulate via fetch
+      // The wizard step's save() calls patchProfile internally — easier to trigger via clicking Continue on a step that calls it.
+      // We just verify the error message format by triggering a save with empty keys.
+      // Since patchProfile is a closure inside WizV3 IIFE, we can't call it directly. Instead, monkey-patch fetch to force a 401.
+      const realFetch = window.fetch;
+      window.fetch = async () => ({ ok:false, status:401, json: async()=>({ error:'Invalid X-Edit-Key' }) });
+      try {
+        // Re-render bullseye and click Continue to trigger the save path
+        WizV3.goto('your-bullseye');
+        await new Promise(r => setTimeout(r, 300));
+        document.getElementById('wiz3-continue').click();
+        await new Promise(r => setTimeout(r, 600));
+        const errEl = document.querySelector('.wiz3-msg.err, .wiz3-msg.show');
+        msg = errEl ? (errEl.textContent + ' ' + errEl.innerHTML) : '(no err element)';
+      } finally {
+        window.fetch = realFetch;
+      }
+    } catch(e) { msg = 'threw: ' + e.message; }
+    // Restore
+    if (savedEdit) localStorage.setItem('htj_resume_key', savedEdit);
+    if (savedAdmin) localStorage.setItem('htj_admin_key', savedAdmin);
+    const friendly = /session expired/i.test(msg) || /account\.html/i.test(msg) || /Not signed in/i.test(msg);
+    const noRaw = !/^Couldn't save:\s*HTTP\s*4\d\d\s*$/i.test(msg.trim());
+    return { ok: friendly && noRaw, why: msg.slice(0, 200) };
+  });
+  record(slug, 'wizard Continue shows friendly error (not raw "HTTP 401")', patchUX.ok, patchUX.why);
+
   // ── 15. Wizard skill picker cap enforcement (already at 14/15 per screenshot — verify it accepts 1 more, rejects 2) ──
   const capTest = await page.evaluate(() => {
     const tHost = document.querySelector('#bs-skills-host');
