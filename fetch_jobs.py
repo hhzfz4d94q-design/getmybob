@@ -2347,12 +2347,21 @@ def score_job(job):
         # ("Head of GRC" vs "Director, Risk Strategy" vs "VP Compliance") so
         # title-matching is brittle. Industry + skill keywords are robust —
         # they capture the substantive fit regardless of titling convention.
-        s += int(title_strength * w_t * 0.4)   # was 1.0 — title is now a tiebreaker, not the driver
+        # Read signal-stability multipliers from profile.
+        # Stability = how reliable each signal is as evidence.
+        # Defaults: title 0.4 (brittle — wording varies), industry 1.0 (robust), skills 1.0 (robust).
+        # User can tune via the wizard 'signal-stability' step.
+        _stab = profile.get("signalStability") or {}
+        title_stab = max(0.0, min(1.0, (_stab.get("title", 40) or 0) / 100.0))
+        ind_stab = max(0.0, min(1.0, (_stab.get("industry", 100) or 0) / 100.0))
+        skl_stab = max(0.0, min(1.0, (_stab.get("skills", 100) or 0) / 100.0))
+
+        s += int(title_strength * w_t * title_stab)   # default 0.4 — title is a tiebreaker unless user cranks it up
 
         # INDUSTRY component: cap at 2 hits = full credit. Dominant signal.
         ind_hits = sum(1 for i in profile.get("industries", []) if i and i in blob)
         ind_strength = min(ind_hits / 2.0, 1.0)
-        s += int(ind_strength * w_i * 1.0)     # was 0.8 — full weight
+        s += int(ind_strength * w_i * ind_stab)       # default 1.0 — full weight
 
         # SKILLS component: keywords + technologies + frameworks; cap at 5 hits.
         # Dominant signal alongside industry.
@@ -2361,7 +2370,7 @@ def score_job(job):
                     (profile.get("frameworks", []) or [])
         kw_hits = sum(1 for k in skl_terms if k and k in blob)
         skl_strength = min(kw_hits / 5.0, 1.0)
-        s += int(skl_strength * w_s * 1.0)     # was 0.8 — full weight
+        s += int(skl_strength * w_s * skl_stab)       # default 1.0 — full weight
 
         # PERFECT-MATCH BONUS (v2): fires when industry AND skills both hit
         # at high strength. Title is no longer required for the bonus —
@@ -2850,7 +2859,7 @@ WIZARD_V3_BLOCK = r"""
     <section id="wiz3-main" style="position:relative;">
       <button id="wiz3-close" type="button" aria-label="Close wizard">&times;</button>
       <header id="wiz3-head">
-        <div class="wiz3-step-no" id="wiz3-step-no">Step 1 of 16</div>
+        <div class="wiz3-step-no" id="wiz3-step-no">Step 1 of 17</div>
         <h2 id="wiz3-h2">Welcome</h2>
         <p class="wiz3-sub" id="wiz3-sub"></p>
       </header>
@@ -3303,6 +3312,49 @@ WIZARD_V3_BLOCK = r"""
         const w = this.collect(ctx.body);
         st.data.matchWeights = w;
         await patchProfile({ matchWeights: w });
+      },
+    },
+    {
+      key: "signal-stability",
+      title: "How reliable is each match signal?",
+      subtitle: "Industries and skills are robust — they capture the substance of a role regardless of title wording. Titles vary wildly between companies for the same job. Adjust how much to trust each signal as evidence.",
+      optional: true,
+      async render(body, st) {
+        body.innerHTML =
+          ['title','industry','skills'].map(k => {
+            const labels = {title:'Title-wording reliability', industry:'Industry reliability', skills:'Skills reliability'};
+            const hints  = {title: 'Low = ignore title wording (different companies title the same role differently)', industry: 'High = job\'s industry must overlap your picks', skills: 'High = job\'s description must contain your skill keywords'};
+            const defaults = {title:40, industry:100, skills:100};
+            return '<div style="margin-bottom:14px;">' +
+                   '<label style="display:flex;justify-content:space-between;align-items:baseline;">' +
+                     '<span>' + labels[k] + '</span>' +
+                     '<span style="font-weight:600;color:#5C5CD6;" id="wiz3-stab-' + k + '-val">' + defaults[k] + '%</span>' +
+                   '</label>' +
+                   '<input type="range" id="wiz3-stab-' + k + '" min="0" max="100" step="5" value="' + defaults[k] + '" style="width:100%;">' +
+                   '<div class="hint" style="font-size:11.5px;color:#888;">' + hints[k] + '</div>' +
+                   '</div>';
+          }).join('');
+        const p = await getProfile();
+        const s = (st.data.signalStability) || p.signalStability || { title: 40, industry: 100, skills: 100 };
+        ['title','industry','skills'].forEach(k => {
+          const el = body.querySelector('#wiz3-stab-' + k);
+          const v = (s[k] != null) ? s[k] : ({title:40,industry:100,skills:100}[k]);
+          if (el) { el.value = v; body.querySelector('#wiz3-stab-' + k + '-val').textContent = v + '%'; }
+        });
+        ['title','industry','skills'].forEach(k => {
+          const el = body.querySelector('#wiz3-stab-' + k);
+          if (el) el.addEventListener('input', () => { body.querySelector('#wiz3-stab-' + k + '-val').textContent = el.value + '%'; });
+        });
+      },
+      collect(body) {
+        const out = {};
+        ['title','industry','skills'].forEach(k => { out[k] = parseInt((body.querySelector('#wiz3-stab-' + k) || {}).value || 0, 10); });
+        return out;
+      },
+      async save(st, ctx) {
+        const s = this.collect(ctx.body);
+        st.data.signalStability = s;
+        await patchProfile({ signalStability: s });
       },
     },
     {
