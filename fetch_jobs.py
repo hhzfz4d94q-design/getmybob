@@ -4089,24 +4089,30 @@ WIZARD_V3_BLOCK = r"""
     // exceeds the bullseye caps get force-routed to the new picker steps.
     // Caps mirror what pick-titles / pick-industries / pick-skills enforce.
     // Skipped if user just opened wizard (pending set) or hasn't finished yet.
+    // MIGRATION (refined 2026-05-27): only trigger when the user's profile
+    // exceeds the caps that 'your-bullseye' ACTUALLY enforces:
+    //   targetTitles ≤ 5, industries ≤ 5, keywords ≤ 15
+    // (technologies + frameworks are NOT capped — they hold the legacy long-
+    // tail and we keep them as-is). Routes to 'your-bullseye' not the dead
+    // 'pick-titles' step. Also stamps a one-time 'migrated' flag so we don't
+    // re-trigger every reload after the user just walked through it.
     let needsMigration = false;
     if (state.finished && !pending) {
       try {
         const p = await getProfile();
-        const titles = ((p && p.targetTitles) || []).length;
-        const inds   = ((p && p.industries)   || []).length;
-        const skills = ((p && p.keywords) || []).length
-                     + ((p && p.technologies) || []).length
-                     + ((p && p.frameworks) || []).length;
-        if (titles > 5 || inds > 5 || skills > 15) {
+        const titles  = ((p && p.targetTitles) || []).length;
+        const inds    = ((p && p.industries)   || []).length;
+        const kwOnly  = ((p && p.keywords)     || []).length;
+        const alreadyMigrated = !!(state.data && state.data.bullseyeMigratedAt);
+        if (!alreadyMigrated && (titles > 5 || inds > 5 || kwOnly > 15)) {
           needsMigration = true;
           state.finished = false;
-          state.currentStep = "pick-titles";
-          // Don't blow away completed[] — keep their progress on other steps;
-          // they only need to re-confirm the 3 picker steps.
+          state.currentStep = "your-bullseye";
           state.completed = state.completed.filter(k => k !== "your-bullseye");
+          state.data = state.data || {};
+          state.data.bullseyeMigratedAt = new Date().toISOString();
           saveState(state);
-          try { console.log("[wizard migration] over-cap profile detected — opening picker"); } catch(e) {}
+          try { console.log("[wizard migration] over-cap profile detected — opening your-bullseye"); } catch(e) {}
         }
       } catch (e) { /* network blip — skip migration this load */ }
     }
