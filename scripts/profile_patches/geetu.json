@@ -1,0 +1,61 @@
+{
+  "_note": "One-off seniority + domain fix. Patches scalar fields directly and REPLACES array fields. Run via .github/workflows/patch-profiles.yml.",
+  "patchFields": {
+    "seniorityLevel": "vp",
+    "careerStage": "executive",
+    "primaryRole": "Senior digital transformation & product leader (Healthcare / Life Sciences) — targeting Director / Senior Director / Principal / VP / Group PM roles (NOT C-suite)",
+    "targetTitles": [
+      "vp of product management",
+      "vp of digital transformation",
+      "vp of healthcare technology",
+      "vp of engineering and product",
+      "vp of technology",
+      "vp of platform and product",
+      "vp of program management",
+      "vp of saas product management",
+      "vp of product strategy",
+      "vp of digital health",
+      "senior director of digital solutions",
+      "senior director of product strategy",
+      "senior director, product",
+      "senior director, digital health",
+      "senior director, product management",
+      "director of product portfolio",
+      "director of product management",
+      "director of digital health",
+      "director of digital transformation",
+      "director, product",
+      "head of digital health",
+      "head of product strategy",
+      "head of innovation",
+      "head of digital operations",
+      "head of product",
+      "group product manager",
+      "senior group product manager",
+      "principal product manager",
+      "senior principal, digital transformation",
+      "principal, digital health",
+      "principal product manager, healthcare"
+    ],
+    "seniorityTitles": [
+      "vp",
+      "head of",
+      "principal",
+      "senior principal",
+      "senior director",
+      "director",
+      "group product manager",
+      "senior group product manager"
+    ],
+    "industries": [
+      "healthcare technology",
+      "digital health",
+      "pharmaceuticals",
+      "laboratory diagnostics",
+      "specialty ehr",
+      "health it",
+      "life sciences",
+      "direct-to-consumer health"
+    ]
+  }
+}

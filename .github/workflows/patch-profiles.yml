@@ -1,0 +1,72 @@
+name: Patch profiles (one-off seniority/domain fix)
+
+# Reads every JSON file under scripts/profile_patches/<slug>.json and POSTs
+# its `patchFields` to the Worker's /skills-profile endpoint, using the
+# WORKER_ADMIN_KEY secret. After patching, triggers a dashboard refresh so
+# the per-user HTML rebuilds against the corrected profiles.
+
+on:
+  workflow_dispatch:
+    inputs:
+      trigger_refresh:
+        description: "Trigger a refresh-jobs run after patching"
+        required: false
+        default: "true"
+
+env:
+  WORKER_URL: https://cool-darkness-dce5.tr6jz6v7wg.workers.dev
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Resolve admin key
+        id: cfg
+        env:
+          SECRET_KEY: ${{ secrets.WORKER_ADMIN_KEY }}
+        run: |
+          if [ -z "$SECRET_KEY" ]; then
+            echo "::error::WORKER_ADMIN_KEY secret missing — set it in repo Settings → Secrets"
+            exit 1
+          fi
+          echo "::add-mask::$SECRET_KEY"
+          echo "key=$SECRET_KEY" >> "$GITHUB_OUTPUT"
+
+      - name: Apply profile patches
+        env:
+          WORKER_URL: ${{ env.WORKER_URL }}
+          ADMIN_KEY: ${{ steps.cfg.outputs.key }}
+        run: python3 scripts/apply_profile_patches.py
+
+      - name: Commit patch report
+        if: always()
+        run: |
+          git config user.email "actions-bot@getmemyjob.local"
+          git config user.name "Patch-profiles workflow"
+          git add reports/ 2>/dev/null || true
+          if git diff --staged --quiet; then
+            echo "no report to commit"
+          else
+            git commit -m "auto: patch-profiles report"
+            git push
+          fi
+
+      - name: Trigger dashboard refresh
+        if: ${{ github.event.inputs.trigger_refresh != 'false' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api repos/${{ github.repository }}/dispatches \
+            -X POST \
+            -f event_type='refresh-jobs' \
+            && echo "Refresh dispatched — watch the 'Refresh jobs and deploy dashboard' workflow"
