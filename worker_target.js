@@ -61,6 +61,7 @@ export default {
     if (url.pathname === '/api/auth/logout') return handleLogout(request, env, cors);
     if (url.pathname === '/api/auth/me') return handleMe(request, env, cors);
     if (url.pathname === '/api/auth/change-password') return handleChangePassword(request, env, cors);
+    if (url.pathname === '/api/auth/admin-reset-password') return handleAdminResetPassword(request, env, cors);
     if (url.pathname === '/api/auth/capacity') return handleCapacity(request, env, cors);
     if (url.pathname === '/api/auth/admin-login') return handleAdminLogin(request, env, cors);
     if (url.pathname === '/api/auth/admin-change-password') return handleAdminChangePassword(request, env, cors);
@@ -1847,6 +1848,39 @@ async function handleMe(request, env, cors) {
     status: status,
   }, 200, cors);
 }
+
+// POST /api/auth/admin-reset-password  { email, newPassword }
+// Admin-only path: lets the platform admin reset ANY user's password
+// (including their own) without knowing the current one. This is the
+// 'forgot password' recovery path until proper email-based recovery exists.
+// Requires X-Admin-Key.
+async function handleAdminResetPassword(request, env, cors) {
+  if (request.method !== 'POST') return _json({ error: 'POST only' }, 405, cors);
+  if (!env.ADMIN_KEY) return _json({ error: 'Worker missing ADMIN_KEY secret' }, 500, cors);
+  if (request.headers.get('X-Admin-Key') !== env.ADMIN_KEY) {
+    return _json({ error: 'Invalid X-Admin-Key' }, 401, cors);
+  }
+  let body;
+  try { body = await request.json(); } catch (e) { return _json({ error: 'Bad JSON' }, 400, cors); }
+  const email = String(body.email || '').trim().toLowerCase();
+  const newPassword = String(body.newPassword || '');
+  if (!email) return _json({ error: 'Body must include {email, newPassword}' }, 400, cors);
+  if (newPassword.length < 8) return _json({ error: 'New password must be at least 8 characters' }, 400, cors);
+  const slug = await env.RESUMES.get(`auth:email:${email}`);
+  if (!slug) return _json({ error: `No account found for ${email}` }, 404, cors);
+  const authRaw = await env.RESUMES.get(uk(slug, 'auth'));
+  if (!authRaw) return _json({ error: `Auth record missing for slug ${slug}` }, 404, cors);
+  const auth = JSON.parse(authRaw);
+  const newSalt = _b64(_randomBytes(16));
+  const newHash = await hashPasswordPbkdf2(newPassword, newSalt);
+  auth.salt = newSalt;
+  auth.hash = newHash;
+  auth.passwordUpdatedAt = new Date().toISOString();
+  auth.lastResetBy = 'admin';
+  await env.RESUMES.put(uk(slug, 'auth'), JSON.stringify(auth));
+  return _json({ ok: true, slug, email, resetAt: auth.passwordUpdatedAt }, 200, cors);
+}
+
 
 // POST /api/auth/change-password  { currentPassword, newPassword }
 async function handleChangePassword(request, env, cors) {

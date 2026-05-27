@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reset password — getmemyjob</title>
+<link rel="icon" href="favicon-32.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --midnight:#0B0828; --royal:#1E146E; --blue:#1817B5; --periwinkle:#5C5CE0;
+    --grad:linear-gradient(90deg,#1817B5,#5C5CE0);
+    --ink:#0B0828; --muted:#5F5A7E; --muted-soft:#8A86A6;
+    --hairline:#E5E5F0; --hairline-soft:#F0F0F7;
+    --off-white:#FAFAFD; --surface-tint:#F6F6FB;
+    --err:#B91C1C; --err-bg:#FEF2F2;
+    --ok:#0A6B3A; --ok-bg:#ECFDF5;
+    --warn:#78350F; --warn-bg:#FEF3C7;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font:15px/1.55 'Inter',-apple-system,system-ui,sans-serif;color:var(--ink);background:var(--off-white);-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+  nav.top{background:#fff;border-bottom:1px solid var(--hairline)}
+  nav.top .row{display:flex;align-items:center;justify-content:space-between;padding:14px 28px;max-width:1080px;margin:0 auto}
+  .logo{display:inline-flex;align-items:center;text-decoration:none}
+  .logo img{height:38px;width:auto;display:block}
+  @media (max-width:720px){.logo img{height:30px}}
+  .auth-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 20px}
+  .auth-card{width:100%;max-width:480px;background:#fff;border:1px solid var(--hairline);border-radius:12px;padding:36px 32px;box-shadow:0 4px 24px rgba(11,8,40,.08)}
+  .auth-card h1{font-size:24px;font-weight:700;margin:0 0 6px 0;letter-spacing:-.01em}
+  .auth-card .sub{color:var(--muted);margin:0 0 22px 0;font-size:14px}
+  .tabs{display:flex;gap:4px;background:var(--surface-tint);border:1px solid var(--hairline);border-radius:8px;padding:4px;margin-bottom:24px}
+  .tab{flex:1;text-align:center;padding:8px 12px;font-size:13px;font-weight:600;color:var(--muted);background:transparent;border:none;border-radius:6px;cursor:pointer;font-family:inherit;transition:all .15s}
+  .tab.active{background:#fff;color:var(--blue);box-shadow:0 1px 2px rgba(11,8,40,.06)}
+  .form-row{margin-bottom:14px}
+  .form-row label{display:block;font-size:13px;font-weight:600;color:var(--ink);margin-bottom:6px}
+  .form-row input{width:100%;padding:10px 12px;font-size:14px;font-family:inherit;border:1px solid var(--hairline);border-radius:6px;background:#fff;color:var(--ink);transition:border-color .15s}
+  .form-row input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(24,23,181,.12)}
+  .form-row .hint{font-size:11.5px;color:var(--muted-soft);margin-top:4px}
+  .submit-btn{width:100%;padding:12px;font-size:15px;font-weight:600;color:#fff;background:var(--grad);border:none;border-radius:6px;cursor:pointer;transition:filter .15s;font-family:inherit;box-shadow:0 2px 4px rgba(11,8,40,.07)}
+  .submit-btn:hover:not(:disabled){filter:brightness(1.05)}
+  .submit-btn:disabled{opacity:.6;cursor:not-allowed}
+  .msg{border-radius:6px;padding:10px 12px;font-size:13px;margin-bottom:16px;display:none}
+  .msg.show{display:block}
+  .msg.err{background:var(--err-bg);color:var(--err);border:1px solid #FED7D7}
+  .msg.ok{background:var(--ok-bg);color:var(--ok);border:1px solid #A7F3D0}
+  .msg.warn{background:var(--warn-bg);color:var(--warn);border:1px solid #FCD34D}
+  .info-block{background:var(--surface-tint);border:1px solid var(--hairline);border-radius:8px;padding:14px;font-size:13px;color:var(--muted);line-height:1.55;margin-bottom:16px}
+  .info-block strong{color:var(--ink)}
+  .alt{text-align:center;margin-top:20px;font-size:13px;color:var(--muted)}
+  .alt a{color:var(--blue);text-decoration:none;font-weight:600}
+  .alt a:hover{text-decoration:underline}
+  footer{text-align:center;padding:24px;color:var(--muted);font-size:12px}
+</style>
+</head>
+<body>
+<nav class="top">
+  <div class="row">
+    <a href="/landing.html" class="logo" aria-label="OfficeBeat home">
+      <img src="officebeat-logo.png" alt="OfficeBeat">
+    </a>
+    <a href="/login.html" style="font-size:14px;color:var(--blue);text-decoration:none;font-weight:600;">← Back to sign in</a>
+  </div>
+</nav>
+
+<div class="auth-wrap">
+  <div class="auth-card">
+    <h1>Reset password</h1>
+    <p class="sub">Two paths: admin-key reset if you have one, otherwise email the team.</p>
+
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-tab="admin" type="button">I have an admin key</button>
+      <button class="tab" data-tab="email" type="button">Email the team</button>
+    </div>
+
+    <!-- Admin-key reset -->
+    <div id="tab-admin" class="tab-panel">
+      <div class="info-block">
+        <strong>For the platform admin (Amit).</strong>
+        Paste your admin key, enter the account email and a new password. The reset is immediate — you can sign in straight after.
+      </div>
+      <div id="adminMsg" class="msg" role="alert"></div>
+      <form id="adminForm" autocomplete="off">
+        <div class="form-row">
+          <label for="adminKey">Admin key</label>
+          <input type="password" id="adminKey" required autocomplete="off">
+          <div class="hint">The X-Admin-Key secret. If your browser already stored it, we'll prefill below.</div>
+        </div>
+        <div class="form-row">
+          <label for="resetEmail">Account email</label>
+          <input type="email" id="resetEmail" required autocomplete="email">
+        </div>
+        <div class="form-row">
+          <label for="newPassword">New password</label>
+          <input type="password" id="newPassword" required minlength="8" autocomplete="new-password">
+          <div class="hint">8 characters minimum.</div>
+        </div>
+        <button type="submit" class="submit-btn" id="adminSubmit">Reset password</button>
+      </form>
+    </div>
+
+    <!-- Email-the-team path -->
+    <div id="tab-email" class="tab-panel" hidden>
+      <div class="info-block">
+        <strong>Not the admin?</strong>
+        getmemyjob is invite-only, so password resets are handled by the team.
+        Tap below — it opens a pre-filled email. We typically reset within a few hours.
+      </div>
+      <a class="submit-btn" style="display:block;text-align:center;text-decoration:none;"
+         href="mailto:info@officebeatllc.com?subject=getmemyjob%20password%20reset&body=Hi%20%E2%80%94%20I%27d%20like%20to%20reset%20my%20password.%0A%0AAccount%20email%3A%0AName%3A%0A%0AThanks%21">
+        Email info@officebeatllc.com
+      </a>
+    </div>
+
+    <div class="alt">
+      Remembered it? <a href="/login.html">Back to sign in</a>
+    </div>
+  </div>
+</div>
+
+<footer>By OfficeBeat LLC</footer>
+
+<script>
+const WORKER = 'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev';
+
+// Tab switcher
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    document.querySelectorAll('.tab-panel').forEach(p => p.hidden = (p.id !== 'tab-' + t.dataset.tab));
+  });
+});
+
+// Prefill admin key from localStorage if present
+(function prefillAdmin() {
+  try {
+    const k = localStorage.getItem('htj_admin_key');
+    if (k) {
+      document.getElementById('adminKey').value = k;
+      document.getElementById('adminKey').setAttribute('placeholder', '••••••• (loaded from this browser)');
+    }
+  } catch (_) {}
+})();
+
+const adminForm = document.getElementById('adminForm');
+const adminMsg = document.getElementById('adminMsg');
+const adminSubmit = document.getElementById('adminSubmit');
+
+function showMsg(el, kind, text) {
+  el.className = 'msg show ' + kind;
+  el.textContent = text;
+}
+function clearMsg(el) { el.className = 'msg'; el.textContent = ''; }
+
+adminForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  clearMsg(adminMsg);
+  adminSubmit.disabled = true; adminSubmit.textContent = 'Resetting…';
+  const adminKey = document.getElementById('adminKey').value.trim();
+  const email = document.getElementById('resetEmail').value.trim().toLowerCase();
+  const newPassword = document.getElementById('newPassword').value;
+  try {
+    const r = await fetch(WORKER + '/api/auth/admin-reset-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Key': adminKey },
+      body: JSON.stringify({ email, newPassword })
+    });
+    let j;
+    try { j = await r.json(); } catch (_) {
+      showMsg(adminMsg, 'err', 'Worker returned non-JSON (status ' + r.status + ')');
+      return;
+    }
+    if (!r.ok) {
+      showMsg(adminMsg, 'err', j.error || ('Failed: HTTP ' + r.status));
+      return;
+    }
+    // Stash the admin key for future use on this browser
+    try { localStorage.setItem('htj_admin_key', adminKey); } catch(_){}
+    showMsg(adminMsg, 'ok',
+      'Password reset for ' + j.email + '. Redirecting to sign in…');
+    setTimeout(() => location.assign('/login.html'), 1500);
+  } catch (err) {
+    showMsg(adminMsg, 'err', 'Network error: ' + (err && err.message ? err.message : err));
+  } finally {
+    adminSubmit.disabled = false; adminSubmit.textContent = 'Reset password';
+  }
+});
+</script>
+</body>
+</html>
