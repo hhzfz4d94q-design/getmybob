@@ -3144,14 +3144,41 @@ WIZARD_V3_BLOCK = r"""
   window.replayTour = function () { state.finished = false; saveState(state); open(); };
 
   // Disable the old auto-launch: we'll trigger v3 here instead.
-  function autoLaunch() {
+  async function autoLaunch() {
     // If old v2 auto-launch already ran and opened a modal, hide it.
     const oldModal = document.getElementById("gmj-wizard");
     if (oldModal) oldModal.classList.remove("show");
     // Decide whether to open: not finished, OR pending step from reload.
     let pending = "";
     try { pending = localStorage.getItem("gmj_wizard_state_v3_pendingStep") || ""; } catch (e) {}
-    if (pending || !state.finished) {
+
+    // MIGRATION (2026-05-27): existing users whose AI-extracted profile
+    // exceeds the bullseye caps get force-routed to the new picker steps.
+    // Caps mirror what pick-titles / pick-industries / pick-skills enforce.
+    // Skipped if user just opened wizard (pending set) or hasn't finished yet.
+    let needsMigration = false;
+    if (state.finished && !pending) {
+      try {
+        const p = await getProfile();
+        const titles = ((p && p.targetTitles) || []).length;
+        const inds   = ((p && p.industries)   || []).length;
+        const skills = ((p && p.keywords) || []).length
+                     + ((p && p.technologies) || []).length
+                     + ((p && p.frameworks) || []).length;
+        if (titles > 5 || inds > 5 || skills > 25) {
+          needsMigration = true;
+          state.finished = false;
+          state.currentStep = "pick-titles";
+          // Don't blow away completed[] — keep their progress on other steps;
+          // they only need to re-confirm the 3 picker steps.
+          state.completed = state.completed.filter(k => k !== "pick-titles" && k !== "pick-industries" && k !== "pick-skills");
+          saveState(state);
+          try { console.log("[wizard migration] over-cap profile detected — opening picker"); } catch(e) {}
+        }
+      } catch (e) { /* network blip — skip migration this load */ }
+    }
+
+    if (pending || !state.finished || needsMigration) {
       setTimeout(open, 500);
     }
   }
@@ -5236,10 +5263,13 @@ async function aiRerankCards() {{
     if (c.style.display === 'none') return;
     const fp = c.getAttribute('data-fp');
     if (!fp) return;
-    if (cache[fp]) {{ _applyAiScore(c, cache[fp].score); return; }}
+    if (cache[fp]) {{ _applyAiScore(c, cache[fp].score, cache[fp].hardBlocker); return; }}
     const titleEl = c.querySelector('.title a, .title');
     const title = titleEl ? titleEl.innerText.trim() : '';
-    if (title) need.push({{fp: fp, title: title}});
+    // Pull JD snippet from the card body — already in DOM, no extra fetch.
+    const descEl = c.querySelector('.desc');
+    const desc = descEl ? descEl.innerText.trim().slice(0, 1200) : '';
+    if (title) need.push({{fp: fp, title: title, desc: desc}});
   }});
   if (cache && Object.keys(cache).length) {{ _resortByAiScore(); }}
   if (!need.length) return;
@@ -5256,10 +5286,13 @@ async function aiRerankCards() {{
       if (!r.ok) continue;
       const data = await r.json().catch(function() {{ return {{}}; }});
       const scores = (data && data.scores) || {{}};
-      for (const [fp, score] of Object.entries(scores)) {{
-        cache[fp] = {{score: score, ts: Date.now()}};
+      for (const [fp, val] of Object.entries(scores)) {{
+        // val may be a plain int (old API) or an object {{score, hardBlocker}} (new API)
+        const score = (typeof val === 'object' && val) ? (val.score || 0) : val;
+        const hardBlocker = (typeof val === 'object' && val) ? !!val.hardBlocker : false;
+        cache[fp] = {{score: score, hardBlocker: hardBlocker, ts: Date.now()}};
         const c = document.querySelector('.card[data-fp="' + fp + '"]');
-        if (c) _applyAiScore(c, score);
+        if (c) _applyAiScore(c, score, hardBlocker);
       }}
       _saveRerankCache(cache);
       _resortByAiScore();
@@ -5267,9 +5300,16 @@ async function aiRerankCards() {{
   }}
 }}
 
-function _applyAiScore(card, score) {{
+function _applyAiScore(card, score, hardBlocker) {{
   const scoreEl = card.querySelector('.score');
   if (!scoreEl) return;
+  if (hardBlocker) {{
+    // Card flunked the JD-aware AI check (requires expertise the user doesn't have, wrong seniority, etc.)
+    card.setAttribute('data-ai-score', '0');
+    card.setAttribute('data-ai-blocked', '1');
+    card.style.display = 'none';
+    return;
+  }}
   card.setAttribute('data-ai-score', String(score));
   scoreEl.textContent = String(score);
   scoreEl.title = 'AI fit score (' + score + '/100)';

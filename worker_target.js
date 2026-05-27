@@ -1265,11 +1265,18 @@ Return JSON shape: {"<fp>": <int>, "<fp>": <int>, ...}`;
       if (m) { try { scores = JSON.parse(m[0]); } catch (ee) { scores = {}; } }
       else scores = {};
     }
-    // Coerce values to ints 0..100
+    // Normalize. Accept either int (legacy) or {score, hardBlocker} (new).
     const out = {};
     for (const [k, v] of Object.entries(scores || {})) {
-      const n = Math.max(0, Math.min(100, parseInt(v, 10) || 0));
-      out[k] = n;
+      if (!k) continue;
+      if (typeof v === 'object' && v) {
+        const n = Math.max(0, Math.min(100, parseInt(v.score, 10) || 0));
+        const hb = !!v.hardBlocker;
+        out[k] = { score: hb ? 0 : n, hardBlocker: hb };
+      } else {
+        const n = Math.max(0, Math.min(100, parseInt(v, 10) || 0));
+        out[k] = { score: n, hardBlocker: false };
+      }
     }
     return Response.json({ scores: out }, { headers: cors });
   } catch (e) {
