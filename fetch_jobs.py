@@ -1876,10 +1876,28 @@ def score_job(job):
         # E1 (relaxed): stage filter removed — we no longer drop jobs by
         # seniority gap. Stage influence is only via the +6 score bonus at
         # the end of score_job for an exact-stage match.
-        # AI-driven negative keywords — disqualify on title match
+        # AI-driven negative keywords — disqualify on title match.
+        # Word-boundary + senior-context aware (2026-05-27):
+        # - Keyword must appear as a STANDALONE TOKEN, not substring. Stops
+        #   "assistant" from killing "Assistant Vice President", "staff" from
+        #   killing "Chief of Staff", "associate" from killing "Associate Director", etc.
+        # - If the title contains any seniority signal (VP / Director / Head of /
+        #   Chief / Principal / Managing / etc.), DON'T block — those are real
+        #   senior roles regardless of any junior-sounding word that follows.
         neg = profile.get("negativeKeywords", [])
-        if any(n and n in title for n in neg):
-            return 0
+        if neg:
+            _title_tokens = set(re.findall(r"\b[a-z]+\b", title))
+            _SENIOR_GUARD = {"vp","svp","evp","chief","cio","cto","cdo","coo","cfo","cro","cpo","ceo",
+                             "principal","director","head","managing","executive","president","partner","lead","leader"}
+            _title_has_senior = bool(_SENIOR_GUARD & _title_tokens)
+            for n in neg:
+                if not n: continue
+                _n_tokens = set(re.findall(r"\b[a-z]+\b", n.lower()))
+                if not _n_tokens or not _n_tokens.issubset(_title_tokens):
+                    continue  # keyword not a real token match
+                if _title_has_senior:
+                    continue  # don't block senior-titled roles even if they contain a junior keyword
+                return 0
 
         # --- User-configurable weights (sum to 100) ---
         weights = profile.get("matchWeights") or {}

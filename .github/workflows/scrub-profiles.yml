@@ -1,0 +1,77 @@
+name: Scrub profiles (universal cleanup)
+
+# Walks every user via /admin/users and applies generic best-practice cleanup:
+# - Trims keywords[] to 15 (matches wizard cap)
+# - Removes overly-aggressive negativeKeywords (assistant, associate, staff, etc.)
+# - (Optional) Auto-regenerates targetCompanies from bullseye
+
+on:
+  workflow_dispatch:
+    inputs:
+      regen_companies:
+        description: "Also call /regenerate-companies for every user?"
+        required: false
+        default: "true"
+      trigger_refresh:
+        description: "Trigger refresh-jobs after scrubbing?"
+        required: false
+        default: "true"
+
+env:
+  WORKER_URL: https://cool-darkness-dce5.tr6jz6v7wg.workers.dev
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  scrub:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Resolve admin key
+        id: cfg
+        env:
+          SECRET_KEY: ${{ secrets.WORKER_ADMIN_KEY }}
+        run: |
+          if [ -z "$SECRET_KEY" ]; then
+            echo "::error::WORKER_ADMIN_KEY secret missing"
+            exit 1
+          fi
+          echo "::add-mask::$SECRET_KEY"
+          echo "key=$SECRET_KEY" >> "$GITHUB_OUTPUT"
+
+      - name: Run scrub
+        env:
+          WORKER_URL: ${{ env.WORKER_URL }}
+          ADMIN_KEY: ${{ steps.cfg.outputs.key }}
+        run: |
+          ARGS=""
+          if [ "${{ github.event.inputs.regen_companies }}" != "false" ]; then ARGS="$ARGS --regen-companies"; fi
+          python3 scripts/scrub_profiles.py $ARGS
+
+      - name: Commit scrub report
+        if: always()
+        run: |
+          git config user.email "actions-bot@getmemyjob.local"
+          git config user.name "Scrub-profiles workflow"
+          git add reports/ 2>/dev/null || true
+          if git diff --staged --quiet; then
+            echo "no report to commit"
+          else
+            git commit -m "auto: scrub-profiles report"
+            git push
+          fi
+
+      - name: Trigger dashboard refresh
+        if: ${{ github.event.inputs.trigger_refresh != 'false' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api repos/${{ github.repository }}/dispatches -X POST \
+            -f event_type='refresh-jobs' \
+            && echo "Refresh dispatched"

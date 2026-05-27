@@ -482,7 +482,7 @@ Field guidance (ALL fields lowercase strings):
 
 - certifications (any present): CFA, FRM, PMP, CISSP, CISM, MBA, CPA, six sigma, scrum master, etc.
 
-- negativeKeywords (10-20): job types this person should NOT see — junior roles, adjacent-but-wrong roles, fields they've moved away from. e.g. ["junior", "intern", "associate", "entry level", "individual contributor", "field sales", "sdr"].
+- negativeKeywords (up to 5, ONLY universally-junior signals): things to NEVER show. Stick to terms that are ALWAYS junior regardless of role family: ["intern", "entry level", "new grad", "graduate program"]. DO NOT include "assistant" (EU/UK firms title Director-level roles "Assistant Vice President"), "associate" (Associate Director / Associate Partner are senior), "staff" (Chief of Staff is senior), "analyst" (Senior Analyst / Investment Analyst can be appropriate), "coordinator" (Program Coordinator can be a real career role). The scorer applies these as token-blocks with a senior-context guard, so over-listing here causes silent kills.
 
 - remotePreferred: true if resume signals remote/hybrid preference or recent remote experience.
 
