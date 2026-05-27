@@ -1544,6 +1544,66 @@ def detect_title_stage(title):
         return "early-career"
     return None  # untagged — neutral
 
+def days_since_posted(posted_at_iso):
+    """Return days since the job was posted, or None if no date. Tolerant of
+    multiple ISO formats and odd values. Caps at 999 to avoid silly numbers."""
+    if not posted_at_iso:
+        return None
+    try:
+        from datetime import datetime, timezone
+        s = str(posted_at_iso)
+        # Try a few common shapes
+        for fmt in ("%Y-%m-%dT%H:%M:%S.%fZ", "%Y-%m-%dT%H:%M:%SZ", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d"):
+            try:
+                dt = datetime.strptime(s.split("+")[0].replace("Z","").strip(), fmt.replace("Z",""))
+                dt = dt.replace(tzinfo=timezone.utc)
+                delta = datetime.now(timezone.utc) - dt
+                d = max(0, int(delta.total_seconds() // 86400))
+                return min(d, 999)
+            except ValueError:
+                pass
+        # Fall through: not parseable
+        return None
+    except Exception:
+        return None
+
+
+def freshness_multiplier(posted_at_iso):
+    """Smooth exponential decay: 1.0 at posting, ~0.51 at 14 days,
+    ~0.05 at 60 days. Returns 1.0 (neutral) if no date known."""
+    import math
+    d = days_since_posted(posted_at_iso)
+    if d is None:
+        return 1.0
+    return math.exp(-d / 21.0)
+
+
+_NEXT_STAGE = {
+    "early-career": "mid-career",
+    "mid-career":   "senior",
+    "senior":       "executive",
+    "executive":    "executive",  # already at top; same-stage match still valid
+}
+
+def trajectory_match(user_stage, job_stage):
+    """Return one of: 'next' (one rung up — most desirable),
+    'same' (lateral — fine), 'down' (regression), or None.
+    Both args are stage strings from detect_title_stage / careerStage."""
+    if not user_stage or not job_stage:
+        return None
+    u = STAGE_ORDER.get(user_stage)
+    j = STAGE_ORDER.get(job_stage)
+    if u is None or j is None:
+        return None
+    if j == u + 1:
+        return "next"
+    if j == u:
+        return "same"
+    if j < u:
+        return "down"
+    return None  # too far ahead — uncertain
+
+
 def stage_compatible(user_stage, job_stage):
     """A job is compatible if it's within 1 step of the user's stage on either side.
     user_stage and job_stage are strings; missing values default to compatible (don't drop on no-signal)."""
@@ -2442,14 +2502,33 @@ def score_job(job):
     if len(job["description"]) < 200:
         s -= 10
 
-    # E1: tiny boost when title-stage exactly matches user career stage
+    # E1 (refined 2026-05-27): trajectory boost — value 'next-level' jobs MORE
+    # than lateral ones because they're the move a senior candidate actually
+    # wants. +10 for one rung up, +6 for lateral, -8 for a step down.
     if profile:
-        _us = profile.get("careerStage")
-        _js = detect_title_stage(job["title"])
-        if _us and _js and _us == _js:
+        _us = profile.get("targetStage") or _NEXT_STAGE.get(profile.get("careerStage") or "", None) or profile.get("careerStage")
+        _js = detect_title_stage(job.get("title") or "")
+        _user_now = profile.get("careerStage")
+        traj = trajectory_match(_user_now, _js) if _user_now and _js else None
+        if traj == "next":
+            s += 10
+        elif traj == "same":
             s += 6
+        elif traj == "down":
+            s -= 8
 
-    return max(0, min(100, s))
+    # E6 (2026-05-27): smooth freshness decay — multiplies the post-base
+    # signal score by exp(-days/21). Replaces the prior binary recency boost.
+    # A 3-day-old listing keeps ~87% of its score; a 30-day-old listing keeps ~24%.
+    # Jobs with no posted_at get neutral (1.0) so we don't punish silent ATSes.
+    fresh_mult = freshness_multiplier(job.get("posted_at"))
+    # Apply ONLY to the SIGNAL portion (above 50 base), so a zero-signal stale
+    # job doesn't get pushed negative.
+    if s > 50 and fresh_mult < 1.0:
+        signal = s - 50
+        s = 50 + signal * fresh_mult
+
+    return max(0, min(100, int(s)))
 
 
 # --- Storage -------------------------------------------------------------
@@ -4244,8 +4323,27 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
             warm_intro_html = f'<a class="btn ghost-btn small warm-intro" href="{_ri["linkedinSearch"]}" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>'
         else:
             warm_intro_html = ''
+        # REPOST detection (2026-05-27): if we first saw this fingerprint many
+        # days BEFORE the JD's claimed posted_at, the JD was re-posted under a
+        # new ID. Surface so user knows they may have applied before.
+        _repost_days = None
+        try:
+            from datetime import datetime as _rdt, timezone as _rtz
+            if first_seen and posted_at:
+                _fs = _rdt.fromisoformat(str(first_seen).replace("Z", "+00:00"))
+                _pa = _rdt.fromisoformat(str(posted_at).replace("Z", "+00:00"))
+                if _fs.tzinfo is None: _fs = _fs.replace(tzinfo=_rtz.utc)
+                if _pa.tzinfo is None: _pa = _pa.replace(tzinfo=_rtz.utc)
+                # If posted_at is at least 30 days AFTER first_seen, it's a repost
+                _gap = (_pa - _fs).days
+                if _gap >= 30:
+                    _repost_days = _gap
+        except Exception:
+            pass
+        _repost_badge = f' · <span class="repost-badge" title="Re-posted {_repost_days} days after we first saw this job — you may have already seen / applied to it.">↻ re-posted {_repost_days}d after first sighting</span>' if _repost_days else ''
+
         cards.append(f"""
-        <div class="card" data-fp="{fp}" data-score="{score}" data-senior="{senior}" data-remote="{remote}" data-employment="{emp}" data-listed-days="{listed_days if listed_days is not None else 9999}" data-salary-max="{salary_max}" data-last-seen="{last_seen or ''}" data-first-seen="{first_seen or ''}" data-recruiter="{_is_recr}" data-why="{_esc(_why)}" data-cluster-count="{_xc_count}" data-cluster-companies="{_esc(_xc_label)}" data-title-norm="{_norm_key}">
+        <div class="card" data-fp="{fp}" data-score="{score}" data-senior="{senior}" data-remote="{remote}" data-employment="{emp}" data-listed-days="{listed_days if listed_days is not None else 9999}" data-salary-max="{salary_max}" data-last-seen="{last_seen or ''}" data-first-seen="{first_seen or ''}" data-recruiter="{_is_recr}" data-why="{_esc(_why)}" data-cluster-count="{_xc_count}" data-cluster-companies="{_esc(_xc_label)}" data-title-norm="{_norm_key}" data-repost-days="{_repost_days or ''}">
           <div class="row1">
             <div class="title"><a href="{url}" target="_blank">{_esc(title)}</a></div>
             <div class="score">{score}</div>
@@ -4253,7 +4351,7 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
           <div class="row2">
             <span class="company">{_esc(company)}</span> ·
             <span class="loc">{_esc(loc or 'Location N/A')}</span> ·
-            <span class="age">{listed_days}d old</span>
+            <span class="age">{listed_days}d old</span>{_repost_badge}
           </div>
           {salary_html}
           <div class="badges" data-badges>{badge_html}</div>
@@ -4456,6 +4554,7 @@ HTML_TEMPLATE = """<!doctype html>
   }}
   .header-more-menu a:hover, .header-more-menu button:hover {{ background: #F6F6FB; }}
   .header-more-menu a:active, .header-more-menu button:active {{ background: #EEEEF8; }}
+  .repost-badge {{ display: inline-block; padding: 1px 6px; background: #FEF3C7; color: #78350F; border-radius: 4px; font-size: 11px; font-weight: 600; }}
   .stats {{ display: flex; gap: 24px; padding: 14px 28px; background: white; border-bottom: 1px solid #e5e5ea; }}
   .stat {{ font-size: 13px; }}
   .goal-stat {{ background: linear-gradient(135deg, #f8f4ff 0%, #eef0ff 100%) !important; }}
