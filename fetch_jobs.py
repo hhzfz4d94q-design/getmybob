@@ -4917,6 +4917,9 @@ HTML_TEMPLATE = """<!doctype html>
 const WORKER_BASE = 'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev';
 const USER_SLUG = '{user_slug}';
 const USER_QS = '?user=' + encodeURIComponent(USER_SLUG);
+// Hidden-jobs JSON: build-time-emitted list of jobs that didn't make Top-N,
+// each tagged with a reason. Used by the "Why isn't [X] in my feed?" modal.
+const _hiddenJobs = {hidden_jobs_json};
 
 // Remember this user as the most-recently-used dashboard so the root URL
 // can auto-redirect them here next time.
