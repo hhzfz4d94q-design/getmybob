@@ -55,9 +55,14 @@ def run() -> int:
         page.on("console", lambda msg: console_errors.append(f"{msg.type}: {msg.text}")
                 if msg.type in ("error",) else None)
 
-        print(f"Loading {URL}")
+        # Use a cache-busting query param + Cache-Control header to avoid CF CDN
+        # serving the previous deploy. Belt-and-suspenders with the 90s wait.
+        import time
+        url_cb = URL + ("&" if "?" in URL else "?") + f"_cb={int(time.time())}"
+        page.set_extra_http_headers({"Cache-Control": "no-cache", "Pragma": "no-cache"})
+        print(f"Loading {url_cb}")
         try:
-            page.goto(URL, wait_until="domcontentloaded", timeout=30_000)
+            page.goto(url_cb, wait_until="domcontentloaded", timeout=30_000)
         except PWError as e:
             check(f"page loads", False, f"goto failed: {e}")
             try: page.screenshot(path=SCREENSHOT, full_page=True)

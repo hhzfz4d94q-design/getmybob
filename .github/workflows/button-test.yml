@@ -33,10 +33,11 @@ jobs:
           python -m playwright install chromium --with-deps
 
       - name: Wait for Cloudflare Pages deploy to settle
-        # On push events the smoke test sometimes runs before CF Pages has
-        # finished deploying the new commit. A 30s sleep is cheap insurance.
+        # On push events the smoke test runs before CF Pages has finished
+        # deploying the new commit. CF Pages typically takes 60-120s.
+        # 90s gives us a safe margin and also lets the CDN cache settle.
         if: github.event_name == 'push'
-        run: sleep 30
+        run: sleep 90
 
       - name: Run button smoke test
         id: smoke
@@ -57,6 +58,14 @@ jobs:
             cat /tmp/button_test.log 2>/dev/null || echo "(no log)"
             echo '```'
           } >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload test log (always)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: button-test-log
+          path: /tmp/button_test.log
+          if-no-files-found: ignore
 
       - name: Upload failure screenshot
         if: failure()
