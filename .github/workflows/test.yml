@@ -33,6 +33,9 @@ jobs:
       - name: ATS scraper parser tests (greenhouse/lever/ashby fixtures)
         run: python3 tests/test_scrapers.py
 
+      - name: score_job() golden tests (locks in scoring behavior)
+        run: python3 tests/test_scoring.py
+
       - name: Dashboard JS syntax + onclick handlers (catches "all buttons break")
         run: python3 tests/test_dashboard_js_syntax.py
 
