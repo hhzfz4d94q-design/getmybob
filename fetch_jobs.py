@@ -5861,7 +5861,7 @@ async function showWarmIntroModal(fp, connections) {{
       + '<div style="margin-bottom:18px;">'
       + '  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">'
       + '    <div style="font-size:12px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.4px;">LinkedIn DM</div>'
-      + '    <button onclick="navigator.clipboard.writeText(' + JSON.stringify(dm) + '); this.textContent=\'Copied\'; setTimeout(()=>this.textContent=\'Copy\',1500);" style="padding:4px 10px;font-size:11px;background:#5C5CD6;color:white;border:none;border-radius:4px;cursor:pointer;">Copy</button>'
+      + '    <button class="copy-text-btn copy-btn-primary" data-copy-payload="' + escHtml(dm).replace(/"/g, '&quot;') + '" style="padding:4px 10px;font-size:11px;background:#5C5CD6;color:white;border:none;border-radius:4px;cursor:pointer;">Copy</button>'
       + '  </div>'
       + '  <div style="padding:10px 12px;background:#f8f9fb;border:1px solid #e6e8eb;border-radius:6px;font-size:13px;color:#1a1a2e;white-space:pre-wrap;line-height:1.5;">' + dmEsc + '</div>'
       + '</div>'
@@ -5869,7 +5869,7 @@ async function showWarmIntroModal(fp, connections) {{
       + '  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">'
       + '    <div style="font-size:12px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.4px;">Email</div>'
       + '    <div style="display:flex;gap:6px;">'
-      + '      <button onclick="navigator.clipboard.writeText(' + JSON.stringify("Subject: " + subj + "\n\n" + body) + '); this.textContent=\'Copied\'; setTimeout(()=>this.textContent=\'Copy\',1500);" style="padding:4px 10px;font-size:11px;background:white;color:#5C5CD6;border:1px solid #5C5CD6;border-radius:4px;cursor:pointer;">Copy</button>'
+      + '      <button class="copy-text-btn" data-copy-payload="' + escHtml("Subject: " + subj + "\n\n" + body).replace(/"/g, '&quot;') + '" style="padding:4px 10px;font-size:11px;background:white;color:#5C5CD6;border:1px solid #5C5CD6;border-radius:4px;cursor:pointer;">Copy</button>'
       + '      <a href="' + mailtoUrl + '" style="padding:4px 10px;font-size:11px;background:#5C5CD6;color:white;border:none;border-radius:4px;cursor:pointer;text-decoration:none;">Open in mail app</a>'
       + '    </div>'
       + '  </div>'
@@ -6079,11 +6079,29 @@ function _resortByAiScore() {{
 (function setupModalCloseDelegate() {{
   document.addEventListener('click', function(e) {{
     var btn = e.target;
-    if (!btn || !btn.classList || !btn.classList.contains('modal-close-btn')) return;
-    var modalId = btn.getAttribute('data-modal-id');
-    if (modalId) {{
-      var modal = document.getElementById(modalId);
-      if (modal) modal.remove();
+    if (!btn || !btn.classList) return;
+    // Modal close buttons
+    if (btn.classList.contains('modal-close-btn')) {{
+      var modalId = btn.getAttribute('data-modal-id');
+      if (modalId) {{
+        var modal = document.getElementById(modalId);
+        if (modal) modal.remove();
+      }}
+      return;
+    }}
+    // Copy-to-clipboard buttons
+    if (btn.classList.contains('copy-text-btn')) {{
+      var raw = btn.getAttribute('data-copy-payload') || '';
+      // The data-attr value was HTML-escaped; decode common entities
+      var txt = raw.replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&#39;/g, "'");
+      if (navigator.clipboard && navigator.clipboard.writeText) {{
+        navigator.clipboard.writeText(txt).then(function() {{
+          var orig = btn.textContent;
+          btn.textContent = 'Copied';
+          setTimeout(function() {{ btn.textContent = orig || 'Copy'; }}, 1500);
+        }});
+      }}
+      return;
     }}
   }}, false);
 }})();
