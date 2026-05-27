@@ -1,0 +1,32 @@
+name: JS syntax gate
+
+# Runs on every PR + push touching fetch_jobs.py.
+# Extracts every <script> block from the rendered dashboard HTML and runs
+# node -c on each. Fails the build (and blocks deploys) if any script has
+# a syntax error — catching escape-hell bugs (literal \n, bare apostrophes,
+# unescaped quotes inside string literals) BEFORE they ship to users.
+
+on:
+  push:
+    paths:
+      - 'fetch_jobs.py'
+      - 'scripts/validate_dashboard_js.py'
+      - '.github/workflows/js-syntax-gate.yml'
+  pull_request:
+    paths:
+      - 'fetch_jobs.py'
+  workflow_dispatch: {}
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate every <script> block parses as JS
+        run: python3 scripts/validate_dashboard_js.py

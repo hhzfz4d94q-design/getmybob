@@ -1,0 +1,26 @@
+name: Worker contract test
+
+# Runs after every manage-worker (deploy) OR on manual dispatch. Hits each
+# known Worker endpoint and asserts response shape + status. Catches Worker
+# regressions BEFORE they reach the client.
+
+on:
+  workflow_dispatch: {}
+  workflow_run:
+    workflows: ["Manage Cloudflare Worker (dump / deploy)"]
+    types: [completed]
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run contract tests
+        env:
+          WORKER_URL: https://cool-darkness-dce5.tr6jz6v7wg.workers.dev
+          ADMIN_KEY: ${{ secrets.WORKER_ADMIN_KEY }}
+        run: python3 scripts/worker_contract_tests.py

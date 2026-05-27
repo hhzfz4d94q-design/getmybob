@@ -1,0 +1,34 @@
+name: Live dashboard smoke test
+
+# Runs after refresh-jobs deploys, OR on manual dispatch. Headless-browser
+# loads each user dashboard, asserts every expected function is defined,
+# every header button exists, wizard initialises, and ZERO console errors.
+# Fails loudly if the live dashboard is broken — alerts us before users hit it.
+
+on:
+  workflow_dispatch:
+    inputs:
+      users:
+        description: "Comma-separated user slugs (default: amit-arora,geetu)"
+        required: false
+        default: 'amit-arora,geetu'
+  workflow_run:
+    workflows: ["Refresh jobs and deploy dashboard"]
+    types: [completed]
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    # Don't run if the upstream refresh failed
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install puppeteer
+        run: npm install puppeteer --no-save
+      - name: Run smoke test
+        env:
+          SITE: https://getmemyjob.officebeatllc.com
+        run: node scripts/smoke_test_browser.js "${{ github.event.inputs.users || 'amit-arora,geetu' }}"
