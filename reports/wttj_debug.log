@@ -292,3 +292,297 @@
 [treasuryprime] https://api.welcometothejungle.com/api/v1/profiles/treasuryprime/jobs: HTTPError: HTTP Error 404: Not Found
 [treasuryprime] https://api.welcometothejungle.com/api/v2/organizations/treasuryprime/jobs: HTTPError: HTTP Error 404: Not Found
 [treasuryprime] all WTTJ candidates failed — likely Cloudflare bot protection
+[modernizingmedicine] https://api.welcometothejungle.com/api/v1/organizations/modernizingmedicine: HTTPError: HTTP Error 404: Not Found
+[modernizingmedicine] https://api.welcometothejungle.com/api/v1/organizations/modernizingmedicine/jobs: HTTPError: HTTP Error 404: Not Found
+[modernizingmedicine] https://api.welcometothejungle.com/api/v1/organizations/modernizingmedicine/job_offers: HTTPError: HTTP Error 404: Not Found
+[modernizingmedicine] https://api.welcometothejungle.com/api/v1/organizations/modernizingmedicine/job_postings: HTTPError: HTTP Error 404: Not Found
+[modernizingmedicine] https://api.welcometothejungle.com/api/v1/profiles/modernizingmedicine/jobs: HTTPError: HTTP Error 404: Not Found
+[modernizingmedicine] https://api.welcometothejungle.com/api/v2/organizations/modernizingmedicine/jobs: HTTPError: HTTP Error 404: Not Found
+[modernizingmedicine] all WTTJ candidates failed — likely Cloudflare bot protection
+[priviahealth] https://api.welcometothejungle.com/api/v1/organizations/priviahealth: HTTPError: HTTP Error 404: Not Found
+[priviahealth] https://api.welcometothejungle.com/api/v1/organizations/priviahealth/jobs: HTTPError: HTTP Error 404: Not Found
+[priviahealth] https://api.welcometothejungle.com/api/v1/organizations/priviahealth/job_offers: HTTPError: HTTP Error 404: Not Found
+[priviahealth] https://api.welcometothejungle.com/api/v1/organizations/priviahealth/job_postings: HTTPError: HTTP Error 404: Not Found
+[priviahealth] https://api.welcometothejungle.com/api/v1/profiles/priviahealth/jobs: HTTPError: HTTP Error 404: Not Found
+[priviahealth] https://api.welcometothejungle.com/api/v2/organizations/priviahealth/jobs: HTTPError: HTTP Error 404: Not Found
+[priviahealth] all WTTJ candidates failed — likely Cloudflare bot protection
+[arcadia] resolved org.reference='yy9MRi'
+[arcadia] https://api.welcometothejungle.com/api/v1/organizations/arcadia/jobs: HTTPError: HTTP Error 404: Not Found
+[arcadia] https://api.welcometothejungle.com/api/v1/organizations/arcadia/job_offers: HTTPError: HTTP Error 404: Not Found
+[arcadia] https://api.welcometothejungle.com/api/v1/organizations/arcadia/job_postings: HTTPError: HTTP Error 404: Not Found
+[arcadia] https://api.welcometothejungle.com/api/v1/profiles/arcadia/jobs: HTTPError: HTTP Error 404: Not Found
+[arcadia] https://api.welcometothejungle.com/api/v2/organizations/arcadia/jobs: HTTPError: HTTP Error 404: Not Found
+[arcadia] https://api.welcometothejungle.com/api/v1/organizations/yy9MRi/jobs: HTTPError: HTTP Error 404: Not Found
+[arcadia] https://api.welcometothejungle.com/api/v1/organizations/yy9MRi/job_offers: HTTPError: HTTP Error 404: Not Found
+[arcadia] https://api.welcometothejungle.com/api/v1/organizations/yy9MRi/job_postings: HTTPError: HTTP Error 404: Not Found
+[arcadia] https://api.welcometothejungle.com/api/v1/profiles/yy9MRi/jobs: HTTPError: HTTP Error 404: Not Found
+[arcadia] https://api.welcometothejungle.com/api/v2/organizations/yy9MRi/jobs: HTTPError: HTTP Error 404: Not Found
+[arcadia] falling back to org metadata only (no jobs)
+[arcadia] JSON top-level keys: ['organization']
+[arcadia] org keys: ['cover', 'cover_position', 'default_language', 'equality_indexes', 'expansion_metadata', 'expansion_migration', 'labels', 'logo', 'media_website_url', 'name', 'nb_employees', 'offices', 'profile_type', 'reference', 'sectors', 'slug', 'updated_at', 'urls', 'video_cover', 'website_organization']
+[arcadia] org.urls: [{"kind": "canonical", "href": "https://www.welcometothejungle.com/en/companies/arcadia", "language": "en"}, {"kind": "alternate", "href": "https://www.welcometothejungle.com/en/companies/arcadia", "language": "en"}]
+[arcadia] org.reference: 'yy9MRi'
+[arcadia] NO jobs found via any strategy
+[azarahealthcare] https://api.welcometothejungle.com/api/v1/organizations/azarahealthcare: HTTPError: HTTP Error 404: Not Found
+[azarahealthcare] https://api.welcometothejungle.com/api/v1/organizations/azarahealthcare/jobs: HTTPError: HTTP Error 404: Not Found
+[azarahealthcare] https://api.welcometothejungle.com/api/v1/organizations/azarahealthcare/job_offers: HTTPError: HTTP Error 404: Not Found
+[azarahealthcare] https://api.welcometothejungle.com/api/v1/organizations/azarahealthcare/job_postings: HTTPError: HTTP Error 404: Not Found
+[azarahealthcare] https://api.welcometothejungle.com/api/v1/profiles/azarahealthcare/jobs: HTTPError: HTTP Error 404: Not Found
+[azarahealthcare] https://api.welcometothejungle.com/api/v2/organizations/azarahealthcare/jobs: HTTPError: HTTP Error 404: Not Found
+[azarahealthcare] all WTTJ candidates failed — likely Cloudflare bot protection
+[nuvolo] https://api.welcometothejungle.com/api/v1/organizations/nuvolo: HTTPError: HTTP Error 404: Not Found
+[nuvolo] https://api.welcometothejungle.com/api/v1/organizations/nuvolo/jobs: HTTPError: HTTP Error 404: Not Found
+[nuvolo] https://api.welcometothejungle.com/api/v1/organizations/nuvolo/job_offers: HTTPError: HTTP Error 404: Not Found
+[nuvolo] https://api.welcometothejungle.com/api/v1/organizations/nuvolo/job_postings: HTTPError: HTTP Error 404: Not Found
+[nuvolo] https://api.welcometothejungle.com/api/v1/profiles/nuvolo/jobs: HTTPError: HTTP Error 404: Not Found
+[nuvolo] https://api.welcometothejungle.com/api/v2/organizations/nuvolo/jobs: HTTPError: HTTP Error 404: Not Found
+[nuvolo] all WTTJ candidates failed — likely Cloudflare bot protection
+[coherehealth] https://api.welcometothejungle.com/api/v1/organizations/coherehealth: HTTPError: HTTP Error 404: Not Found
+[coherehealth] https://api.welcometothejungle.com/api/v1/organizations/coherehealth/jobs: HTTPError: HTTP Error 404: Not Found
+[coherehealth] https://api.welcometothejungle.com/api/v1/organizations/coherehealth/job_offers: HTTPError: HTTP Error 404: Not Found
+[coherehealth] https://api.welcometothejungle.com/api/v1/organizations/coherehealth/job_postings: HTTPError: HTTP Error 404: Not Found
+[coherehealth] https://api.welcometothejungle.com/api/v1/profiles/coherehealth/jobs: HTTPError: HTTP Error 404: Not Found
+[coherehealth] https://api.welcometothejungle.com/api/v2/organizations/coherehealth/jobs: HTTPError: HTTP Error 404: Not Found
+[coherehealth] all WTTJ candidates failed — likely Cloudflare bot protection
+[transcarent] resolved org.reference='u2qj75'
+[transcarent] https://api.welcometothejungle.com/api/v1/organizations/transcarent/jobs: HTTPError: HTTP Error 404: Not Found
+[transcarent] https://api.welcometothejungle.com/api/v1/organizations/transcarent/job_offers: HTTPError: HTTP Error 404: Not Found
+[transcarent] https://api.welcometothejungle.com/api/v1/organizations/transcarent/job_postings: HTTPError: HTTP Error 404: Not Found
+[transcarent] https://api.welcometothejungle.com/api/v1/profiles/transcarent/jobs: HTTPError: HTTP Error 404: Not Found
+[transcarent] https://api.welcometothejungle.com/api/v2/organizations/transcarent/jobs: HTTPError: HTTP Error 404: Not Found
+[transcarent] https://api.welcometothejungle.com/api/v1/organizations/u2qj75/jobs: HTTPError: HTTP Error 404: Not Found
+[transcarent] https://api.welcometothejungle.com/api/v1/organizations/u2qj75/job_offers: HTTPError: HTTP Error 404: Not Found
+[transcarent] https://api.welcometothejungle.com/api/v1/organizations/u2qj75/job_postings: HTTPError: HTTP Error 404: Not Found
+[transcarent] https://api.welcometothejungle.com/api/v1/profiles/u2qj75/jobs: HTTPError: HTTP Error 404: Not Found
+[transcarent] https://api.welcometothejungle.com/api/v2/organizations/u2qj75/jobs: HTTPError: HTTP Error 404: Not Found
+[transcarent] falling back to org metadata only (no jobs)
+[transcarent] JSON top-level keys: ['organization']
+[transcarent] org keys: ['cover', 'cover_position', 'default_language', 'equality_indexes', 'expansion_metadata', 'expansion_migration', 'labels', 'logo', 'media_website_url', 'name', 'nb_employees', 'offices', 'profile_type', 'reference', 'sectors', 'slug', 'updated_at', 'urls', 'video_cover', 'website_organization']
+[transcarent] org.urls: [{"kind": "canonical", "href": "https://www.welcometothejungle.com/en/companies/transcarent", "language": "en"}, {"kind": "alternate", "href": "https://www.welcometothejungle.com/en/companies/transcarent", "language": "en"}]
+[transcarent] org.reference: 'u2qj75'
+[transcarent] NO jobs found via any strategy
+[aledade] resolved org.reference='bSRBGm'
+[aledade] https://api.welcometothejungle.com/api/v1/organizations/aledade/jobs: HTTPError: HTTP Error 404: Not Found
+[aledade] https://api.welcometothejungle.com/api/v1/organizations/aledade/job_offers: HTTPError: HTTP Error 404: Not Found
+[aledade] https://api.welcometothejungle.com/api/v1/organizations/aledade/job_postings: HTTPError: HTTP Error 404: Not Found
+[aledade] https://api.welcometothejungle.com/api/v1/profiles/aledade/jobs: HTTPError: HTTP Error 404: Not Found
+[aledade] https://api.welcometothejungle.com/api/v2/organizations/aledade/jobs: HTTPError: HTTP Error 404: Not Found
+[aledade] https://api.welcometothejungle.com/api/v1/organizations/bSRBGm/jobs: HTTPError: HTTP Error 404: Not Found
+[aledade] https://api.welcometothejungle.com/api/v1/organizations/bSRBGm/job_offers: HTTPError: HTTP Error 404: Not Found
+[aledade] https://api.welcometothejungle.com/api/v1/organizations/bSRBGm/job_postings: HTTPError: HTTP Error 404: Not Found
+[aledade] https://api.welcometothejungle.com/api/v1/profiles/bSRBGm/jobs: HTTPError: HTTP Error 404: Not Found
+[aledade] https://api.welcometothejungle.com/api/v2/organizations/bSRBGm/jobs: HTTPError: HTTP Error 404: Not Found
+[aledade] falling back to org metadata only (no jobs)
+[aledade] JSON top-level keys: ['organization']
+[aledade] org keys: ['cover', 'cover_position', 'default_language', 'equality_indexes', 'expansion_metadata', 'expansion_migration', 'labels', 'logo', 'media_website_url', 'name', 'nb_employees', 'offices', 'profile_type', 'reference', 'sectors', 'slug', 'updated_at', 'urls', 'video_cover', 'website_organization']
+[aledade] org.urls: [{"kind": "canonical", "href": "https://www.welcometothejungle.com/en/companies/aledade", "language": "en"}, {"kind": "alternate", "href": "https://www.welcometothejungle.com/en/companies/aledade", "language": "en"}]
+[aledade] org.reference: 'bSRBGm'
+[aledade] NO jobs found via any strategy
+[swordhealth] https://api.welcometothejungle.com/api/v1/organizations/swordhealth: HTTPError: HTTP Error 404: Not Found
+[swordhealth] https://api.welcometothejungle.com/api/v1/organizations/swordhealth/jobs: HTTPError: HTTP Error 404: Not Found
+[swordhealth] https://api.welcometothejungle.com/api/v1/organizations/swordhealth/job_offers: HTTPError: HTTP Error 404: Not Found
+[swordhealth] https://api.welcometothejungle.com/api/v1/organizations/swordhealth/job_postings: HTTPError: HTTP Error 404: Not Found
+[swordhealth] https://api.welcometothejungle.com/api/v1/profiles/swordhealth/jobs: HTTPError: HTTP Error 404: Not Found
+[swordhealth] https://api.welcometothejungle.com/api/v2/organizations/swordhealth/jobs: HTTPError: HTTP Error 404: Not Found
+[swordhealth] all WTTJ candidates failed — likely Cloudflare bot protection
+[nuna] https://api.welcometothejungle.com/api/v1/organizations/nuna: HTTPError: HTTP Error 404: Not Found
+[nuna] https://api.welcometothejungle.com/api/v1/organizations/nuna/jobs: HTTPError: HTTP Error 404: Not Found
+[nuna] https://api.welcometothejungle.com/api/v1/organizations/nuna/job_offers: HTTPError: HTTP Error 404: Not Found
+[nuna] https://api.welcometothejungle.com/api/v1/organizations/nuna/job_postings: HTTPError: HTTP Error 404: Not Found
+[nuna] https://api.welcometothejungle.com/api/v1/profiles/nuna/jobs: HTTPError: HTTP Error 404: Not Found
+[nuna] https://api.welcometothejungle.com/api/v2/organizations/nuna/jobs: HTTPError: HTTP Error 404: Not Found
+[nuna] all WTTJ candidates failed — likely Cloudflare bot protection
+[ro] resolved org.reference='ABAEeU'
+[ro] https://api.welcometothejungle.com/api/v1/organizations/ro/jobs: HTTPError: HTTP Error 404: Not Found
+[ro] https://api.welcometothejungle.com/api/v1/organizations/ro/job_offers: HTTPError: HTTP Error 404: Not Found
+[ro] https://api.welcometothejungle.com/api/v1/organizations/ro/job_postings: HTTPError: HTTP Error 404: Not Found
+[ro] https://api.welcometothejungle.com/api/v1/profiles/ro/jobs: HTTPError: HTTP Error 404: Not Found
+[ro] https://api.welcometothejungle.com/api/v2/organizations/ro/jobs: HTTPError: HTTP Error 404: Not Found
+[ro] https://api.welcometothejungle.com/api/v1/organizations/ABAEeU/jobs: HTTPError: HTTP Error 404: Not Found
+[ro] https://api.welcometothejungle.com/api/v1/organizations/ABAEeU/job_offers: HTTPError: HTTP Error 404: Not Found
+[ro] https://api.welcometothejungle.com/api/v1/organizations/ABAEeU/job_postings: HTTPError: HTTP Error 404: Not Found
+[ro] https://api.welcometothejungle.com/api/v1/profiles/ABAEeU/jobs: HTTPError: HTTP Error 404: Not Found
+[ro] https://api.welcometothejungle.com/api/v2/organizations/ABAEeU/jobs: HTTPError: HTTP Error 404: Not Found
+[ro] falling back to org metadata only (no jobs)
+[ro] JSON top-level keys: ['organization']
+[ro] org keys: ['cover', 'cover_position', 'default_language', 'equality_indexes', 'expansion_metadata', 'expansion_migration', 'labels', 'logo', 'media_website_url', 'name', 'nb_employees', 'offices', 'profile_type', 'reference', 'sectors', 'slug', 'updated_at', 'urls', 'video_cover', 'website_organization']
+[ro] org.urls: [{"kind": "canonical", "href": "https://www.welcometothejungle.com/en/companies/ro", "language": "en"}, {"kind": "alternate", "href": "https://www.welcometothejungle.com/en/companies/ro", "language": "en"}]
+[ro] org.reference: 'ABAEeU'
+[ro] NO jobs found via any strategy
+[himshershealth] https://api.welcometothejungle.com/api/v1/organizations/himshershealth: HTTPError: HTTP Error 404: Not Found
+[himshershealth] https://api.welcometothejungle.com/api/v1/organizations/himshershealth/jobs: HTTPError: HTTP Error 404: Not Found
+[himshershealth] https://api.welcometothejungle.com/api/v1/organizations/himshershealth/job_offers: HTTPError: HTTP Error 404: Not Found
+[himshershealth] https://api.welcometothejungle.com/api/v1/organizations/himshershealth/job_postings: HTTPError: HTTP Error 404: Not Found
+[himshershealth] https://api.welcometothejungle.com/api/v1/profiles/himshershealth/jobs: HTTPError: HTTP Error 404: Not Found
+[himshershealth] https://api.welcometothejungle.com/api/v2/organizations/himshershealth/jobs: HTTPError: HTTP Error 404: Not Found
+[himshershealth] all WTTJ candidates failed — likely Cloudflare bot protection
+[springhealth] https://api.welcometothejungle.com/api/v1/organizations/springhealth: HTTPError: HTTP Error 404: Not Found
+[springhealth] https://api.welcometothejungle.com/api/v1/organizations/springhealth/jobs: HTTPError: HTTP Error 404: Not Found
+[springhealth] https://api.welcometothejungle.com/api/v1/organizations/springhealth/job_offers: HTTPError: HTTP Error 404: Not Found
+[springhealth] https://api.welcometothejungle.com/api/v1/organizations/springhealth/job_postings: HTTPError: HTTP Error 404: Not Found
+[springhealth] https://api.welcometothejungle.com/api/v1/profiles/springhealth/jobs: HTTPError: HTTP Error 404: Not Found
+[springhealth] https://api.welcometothejungle.com/api/v2/organizations/springhealth/jobs: HTTPError: HTTP Error 404: Not Found
+[springhealth] all WTTJ candidates failed — likely Cloudflare bot protection
+[definitivehealthcare] https://api.welcometothejungle.com/api/v1/organizations/definitivehealthcare: HTTPError: HTTP Error 404: Not Found
+[definitivehealthcare] https://api.welcometothejungle.com/api/v1/organizations/definitivehealthcare/jobs: HTTPError: HTTP Error 404: Not Found
+[definitivehealthcare] https://api.welcometothejungle.com/api/v1/organizations/definitivehealthcare/job_offers: HTTPError: HTTP Error 404: Not Found
+[definitivehealthcare] https://api.welcometothejungle.com/api/v1/organizations/definitivehealthcare/job_postings: HTTPError: HTTP Error 404: Not Found
+[definitivehealthcare] https://api.welcometothejungle.com/api/v1/profiles/definitivehealthcare/jobs: HTTPError: HTTP Error 404: Not Found
+[definitivehealthcare] https://api.welcometothejungle.com/api/v2/organizations/definitivehealthcare/jobs: HTTPError: HTTP Error 404: Not Found
+[definitivehealthcare] all WTTJ candidates failed — likely Cloudflare bot protection
+[oncobiologicsspecialtyhealthsaasadjacent] https://api.welcometothejungle.com/api/v1/organizations/oncobiologicsspecialtyhealthsaasadjacent: HTTPError: HTTP Error 404: Not Found
+[oncobiologicsspecialtyhealthsaasadjacent] https://api.welcometothejungle.com/api/v1/organizations/oncobiologicsspecialtyhealthsaasadjacent/jobs: HTTPError: HTTP Error 404: Not Found
+[oncobiologicsspecialtyhealthsaasadjacent] https://api.welcometothejungle.com/api/v1/organizations/oncobiologicsspecialtyhealthsaasadjacent/job_offers: HTTPError: HTTP Error 404: Not Found
+[oncobiologicsspecialtyhealthsaasadjacent] https://api.welcometothejungle.com/api/v1/organizations/oncobiologicsspecialtyhealthsaasadjacent/job_postings: HTTPError: HTTP Error 404: Not Found
+[oncobiologicsspecialtyhealthsaasadjacent] https://api.welcometothejungle.com/api/v1/profiles/oncobiologicsspecialtyhealthsaasadjacent/jobs: HTTPError: HTTP Error 404: Not Found
+[oncobiologicsspecialtyhealthsaasadjacent] https://api.welcometothejungle.com/api/v2/organizations/oncobiologicsspecialtyhealthsaasadjacent/jobs: HTTPError: HTTP Error 404: Not Found
+[oncobiologicsspecialtyhealthsaasadjacent] all WTTJ candidates failed — likely Cloudflare bot protection
+[acuityinternational] https://api.welcometothejungle.com/api/v1/organizations/acuityinternational: HTTPError: HTTP Error 404: Not Found
+[acuityinternational] https://api.welcometothejungle.com/api/v1/organizations/acuityinternational/jobs: HTTPError: HTTP Error 404: Not Found
+[acuityinternational] https://api.welcometothejungle.com/api/v1/organizations/acuityinternational/job_offers: HTTPError: HTTP Error 404: Not Found
+[acuityinternational] https://api.welcometothejungle.com/api/v1/organizations/acuityinternational/job_postings: HTTPError: HTTP Error 404: Not Found
+[acuityinternational] https://api.welcometothejungle.com/api/v1/profiles/acuityinternational/jobs: HTTPError: HTTP Error 404: Not Found
+[acuityinternational] https://api.welcometothejungle.com/api/v2/organizations/acuityinternational/jobs: HTTPError: HTTP Error 404: Not Found
+[acuityinternational] all WTTJ candidates failed — likely Cloudflare bot protection
+[lyrahealth] https://api.welcometothejungle.com/api/v1/organizations/lyrahealth: HTTPError: HTTP Error 404: Not Found
+[lyrahealth] https://api.welcometothejungle.com/api/v1/organizations/lyrahealth/jobs: HTTPError: HTTP Error 404: Not Found
+[lyrahealth] https://api.welcometothejungle.com/api/v1/organizations/lyrahealth/job_offers: HTTPError: HTTP Error 404: Not Found
+[lyrahealth] https://api.welcometothejungle.com/api/v1/organizations/lyrahealth/job_postings: HTTPError: HTTP Error 404: Not Found
+[lyrahealth] https://api.welcometothejungle.com/api/v1/profiles/lyrahealth/jobs: HTTPError: HTTP Error 404: Not Found
+[lyrahealth] https://api.welcometothejungle.com/api/v2/organizations/lyrahealth/jobs: HTTPError: HTTP Error 404: Not Found
+[lyrahealth] all WTTJ candidates failed — likely Cloudflare bot protection
+[formationbio] https://api.welcometothejungle.com/api/v1/organizations/formationbio: HTTPError: HTTP Error 404: Not Found
+[formationbio] https://api.welcometothejungle.com/api/v1/organizations/formationbio/jobs: HTTPError: HTTP Error 404: Not Found
+[formationbio] https://api.welcometothejungle.com/api/v1/organizations/formationbio/job_offers: HTTPError: HTTP Error 404: Not Found
+[formationbio] https://api.welcometothejungle.com/api/v1/organizations/formationbio/job_postings: HTTPError: HTTP Error 404: Not Found
+[formationbio] https://api.welcometothejungle.com/api/v1/profiles/formationbio/jobs: HTTPError: HTTP Error 404: Not Found
+[formationbio] https://api.welcometothejungle.com/api/v2/organizations/formationbio/jobs: HTTPError: HTTP Error 404: Not Found
+[formationbio] all WTTJ candidates failed — likely Cloudflare bot protection
+[texascapitalbank] https://api.welcometothejungle.com/api/v1/organizations/texascapitalbank: HTTPError: HTTP Error 404: Not Found
+[texascapitalbank] https://api.welcometothejungle.com/api/v1/organizations/texascapitalbank/jobs: HTTPError: HTTP Error 404: Not Found
+[texascapitalbank] https://api.welcometothejungle.com/api/v1/organizations/texascapitalbank/job_offers: HTTPError: HTTP Error 404: Not Found
+[texascapitalbank] https://api.welcometothejungle.com/api/v1/organizations/texascapitalbank/job_postings: HTTPError: HTTP Error 404: Not Found
+[texascapitalbank] https://api.welcometothejungle.com/api/v1/profiles/texascapitalbank/jobs: HTTPError: HTTP Error 404: Not Found
+[texascapitalbank] https://api.welcometothejungle.com/api/v2/organizations/texascapitalbank/jobs: HTTPError: HTTP Error 404: Not Found
+[texascapitalbank] all WTTJ candidates failed — likely Cloudflare bot protection
+[customersbancorp] https://api.welcometothejungle.com/api/v1/organizations/customersbancorp: HTTPError: HTTP Error 404: Not Found
+[customersbancorp] https://api.welcometothejungle.com/api/v1/organizations/customersbancorp/jobs: HTTPError: HTTP Error 404: Not Found
+[customersbancorp] https://api.welcometothejungle.com/api/v1/organizations/customersbancorp/job_offers: HTTPError: HTTP Error 404: Not Found
+[customersbancorp] https://api.welcometothejungle.com/api/v1/organizations/customersbancorp/job_postings: HTTPError: HTTP Error 404: Not Found
+[customersbancorp] https://api.welcometothejungle.com/api/v1/profiles/customersbancorp/jobs: HTTPError: HTTP Error 404: Not Found
+[customersbancorp] https://api.welcometothejungle.com/api/v2/organizations/customersbancorp/jobs: HTTPError: HTTP Error 404: Not Found
+[customersbancorp] all WTTJ candidates failed — likely Cloudflare bot protection
+[atlanticunionbankshares] https://api.welcometothejungle.com/api/v1/organizations/atlanticunionbankshares: HTTPError: HTTP Error 404: Not Found
+[atlanticunionbankshares] https://api.welcometothejungle.com/api/v1/organizations/atlanticunionbankshares/jobs: HTTPError: HTTP Error 404: Not Found
+[atlanticunionbankshares] https://api.welcometothejungle.com/api/v1/organizations/atlanticunionbankshares/job_offers: HTTPError: HTTP Error 404: Not Found
+[atlanticunionbankshares] https://api.welcometothejungle.com/api/v1/organizations/atlanticunionbankshares/job_postings: HTTPError: HTTP Error 404: Not Found
+[atlanticunionbankshares] https://api.welcometothejungle.com/api/v1/profiles/atlanticunionbankshares/jobs: HTTPError: HTTP Error 404: Not Found
+[atlanticunionbankshares] https://api.welcometothejungle.com/api/v2/organizations/atlanticunionbankshares/jobs: HTTPError: HTTP Error 404: Not Found
+[atlanticunionbankshares] all WTTJ candidates failed — likely Cloudflare bot protection
+[westmonroepartners] https://api.welcometothejungle.com/api/v1/organizations/westmonroepartners: HTTPError: HTTP Error 404: Not Found
+[westmonroepartners] https://api.welcometothejungle.com/api/v1/organizations/westmonroepartners/jobs: HTTPError: HTTP Error 404: Not Found
+[westmonroepartners] https://api.welcometothejungle.com/api/v1/organizations/westmonroepartners/job_offers: HTTPError: HTTP Error 404: Not Found
+[westmonroepartners] https://api.welcometothejungle.com/api/v1/organizations/westmonroepartners/job_postings: HTTPError: HTTP Error 404: Not Found
+[westmonroepartners] https://api.welcometothejungle.com/api/v1/profiles/westmonroepartners/jobs: HTTPError: HTTP Error 404: Not Found
+[westmonroepartners] https://api.welcometothejungle.com/api/v2/organizations/westmonroepartners/jobs: HTTPError: HTTP Error 404: Not Found
+[westmonroepartners] all WTTJ candidates failed — likely Cloudflare bot protection
+[auditboard] resolved org.reference='ppP9Au'
+[auditboard] https://api.welcometothejungle.com/api/v1/organizations/auditboard/jobs: HTTPError: HTTP Error 404: Not Found
+[auditboard] https://api.welcometothejungle.com/api/v1/organizations/auditboard/job_offers: HTTPError: HTTP Error 404: Not Found
+[auditboard] https://api.welcometothejungle.com/api/v1/organizations/auditboard/job_postings: HTTPError: HTTP Error 404: Not Found
+[auditboard] https://api.welcometothejungle.com/api/v1/profiles/auditboard/jobs: HTTPError: HTTP Error 404: Not Found
+[auditboard] https://api.welcometothejungle.com/api/v2/organizations/auditboard/jobs: HTTPError: HTTP Error 404: Not Found
+[auditboard] https://api.welcometothejungle.com/api/v1/organizations/ppP9Au/jobs: HTTPError: HTTP Error 404: Not Found
+[auditboard] https://api.welcometothejungle.com/api/v1/organizations/ppP9Au/job_offers: HTTPError: HTTP Error 404: Not Found
+[auditboard] https://api.welcometothejungle.com/api/v1/organizations/ppP9Au/job_postings: HTTPError: HTTP Error 404: Not Found
+[auditboard] https://api.welcometothejungle.com/api/v1/profiles/ppP9Au/jobs: HTTPError: HTTP Error 404: Not Found
+[auditboard] https://api.welcometothejungle.com/api/v2/organizations/ppP9Au/jobs: HTTPError: HTTP Error 404: Not Found
+[auditboard] falling back to org metadata only (no jobs)
+[auditboard] JSON top-level keys: ['organization']
+[auditboard] org keys: ['cover', 'cover_position', 'default_language', 'equality_indexes', 'expansion_metadata', 'expansion_migration', 'labels', 'logo', 'media_website_url', 'name', 'nb_employees', 'offices', 'profile_type', 'reference', 'sectors', 'slug', 'updated_at', 'urls', 'video_cover', 'website_organization']
+[auditboard] org.urls: [{"kind": "canonical", "href": "https://www.welcometothejungle.com/en/companies/auditboard", "language": "en"}, {"kind": "alternate", "href": "https://www.welcometothejungle.com/en/companies/auditboard", "language": "en"}]
+[auditboard] org.reference: 'ppP9Au'
+[auditboard] NO jobs found via any strategy
+[logicgate] resolved org.reference='y4rhBa'
+[logicgate] https://api.welcometothejungle.com/api/v1/organizations/logicgate/jobs: HTTPError: HTTP Error 404: Not Found
+[logicgate] https://api.welcometothejungle.com/api/v1/organizations/logicgate/job_offers: HTTPError: HTTP Error 404: Not Found
+[logicgate] https://api.welcometothejungle.com/api/v1/organizations/logicgate/job_postings: HTTPError: HTTP Error 404: Not Found
+[logicgate] https://api.welcometothejungle.com/api/v1/profiles/logicgate/jobs: HTTPError: HTTP Error 404: Not Found
+[logicgate] https://api.welcometothejungle.com/api/v2/organizations/logicgate/jobs: HTTPError: HTTP Error 404: Not Found
+[logicgate] https://api.welcometothejungle.com/api/v1/organizations/y4rhBa/jobs: HTTPError: HTTP Error 404: Not Found
+[logicgate] https://api.welcometothejungle.com/api/v1/organizations/y4rhBa/job_offers: HTTPError: HTTP Error 404: Not Found
+[logicgate] https://api.welcometothejungle.com/api/v1/organizations/y4rhBa/job_postings: HTTPError: HTTP Error 404: Not Found
+[logicgate] https://api.welcometothejungle.com/api/v1/profiles/y4rhBa/jobs: HTTPError: HTTP Error 404: Not Found
+[logicgate] https://api.welcometothejungle.com/api/v2/organizations/y4rhBa/jobs: HTTPError: HTTP Error 404: Not Found
+[logicgate] falling back to org metadata only (no jobs)
+[logicgate] JSON top-level keys: ['organization']
+[logicgate] org keys: ['cover', 'cover_position', 'default_language', 'equality_indexes', 'expansion_metadata', 'expansion_migration', 'labels', 'logo', 'media_website_url', 'name', 'nb_employees', 'offices', 'profile_type', 'reference', 'sectors', 'slug', 'updated_at', 'urls', 'video_cover', 'website_organization']
+[logicgate] org.urls: [{"kind": "canonical", "href": "https://www.welcometothejungle.com/en/companies/logicgate", "language": "en"}, {"kind": "alternate", "href": "https://www.welcometothejungle.com/en/companies/logicgate", "language": "en"}]
+[logicgate] org.reference: 'y4rhBa'
+[logicgate] NO jobs found via any strategy
+[processunity] https://api.welcometothejungle.com/api/v1/organizations/processunity: HTTPError: HTTP Error 404: Not Found
+[processunity] https://api.welcometothejungle.com/api/v1/organizations/processunity/jobs: HTTPError: HTTP Error 404: Not Found
+[processunity] https://api.welcometothejungle.com/api/v1/organizations/processunity/job_offers: HTTPError: HTTP Error 404: Not Found
+[processunity] https://api.welcometothejungle.com/api/v1/organizations/processunity/job_postings: HTTPError: HTTP Error 404: Not Found
+[processunity] https://api.welcometothejungle.com/api/v1/profiles/processunity/jobs: HTTPError: HTTP Error 404: Not Found
+[processunity] https://api.welcometothejungle.com/api/v2/organizations/processunity/jobs: HTTPError: HTTP Error 404: Not Found
+[processunity] all WTTJ candidates failed — likely Cloudflare bot protection
+[diligentcorporation] https://api.welcometothejungle.com/api/v1/organizations/diligentcorporation: HTTPError: HTTP Error 404: Not Found
+[diligentcorporation] https://api.welcometothejungle.com/api/v1/organizations/diligentcorporation/jobs: HTTPError: HTTP Error 404: Not Found
+[diligentcorporation] https://api.welcometothejungle.com/api/v1/organizations/diligentcorporation/job_offers: HTTPError: HTTP Error 404: Not Found
+[diligentcorporation] https://api.welcometothejungle.com/api/v1/organizations/diligentcorporation/job_postings: HTTPError: HTTP Error 404: Not Found
+[diligentcorporation] https://api.welcometothejungle.com/api/v1/profiles/diligentcorporation/jobs: HTTPError: HTTP Error 404: Not Found
+[diligentcorporation] https://api.welcometothejungle.com/api/v2/organizations/diligentcorporation/jobs: HTTPError: HTTP Error 404: Not Found
+[diligentcorporation] all WTTJ candidates failed — likely Cloudflare bot protection
+[resolverkroll] https://api.welcometothejungle.com/api/v1/organizations/resolverkroll: HTTPError: HTTP Error 404: Not Found
+[resolverkroll] https://api.welcometothejungle.com/api/v1/organizations/resolverkroll/jobs: HTTPError: HTTP Error 404: Not Found
+[resolverkroll] https://api.welcometothejungle.com/api/v1/organizations/resolverkroll/job_offers: HTTPError: HTTP Error 404: Not Found
+[resolverkroll] https://api.welcometothejungle.com/api/v1/organizations/resolverkroll/job_postings: HTTPError: HTTP Error 404: Not Found
+[resolverkroll] https://api.welcometothejungle.com/api/v1/profiles/resolverkroll/jobs: HTTPError: HTTP Error 404: Not Found
+[resolverkroll] https://api.welcometothejungle.com/api/v2/organizations/resolverkroll/jobs: HTTPError: HTTP Error 404: Not Found
+[resolverkroll] all WTTJ candidates failed — likely Cloudflare bot protection
+[riskonnect] https://api.welcometothejungle.com/api/v1/organizations/riskonnect: HTTPError: HTTP Error 404: Not Found
+[riskonnect] https://api.welcometothejungle.com/api/v1/organizations/riskonnect/jobs: HTTPError: HTTP Error 404: Not Found
+[riskonnect] https://api.welcometothejungle.com/api/v1/organizations/riskonnect/job_offers: HTTPError: HTTP Error 404: Not Found
+[riskonnect] https://api.welcometothejungle.com/api/v1/organizations/riskonnect/job_postings: HTTPError: HTTP Error 404: Not Found
+[riskonnect] https://api.welcometothejungle.com/api/v1/profiles/riskonnect/jobs: HTTPError: HTTP Error 404: Not Found
+[riskonnect] https://api.welcometothejungle.com/api/v2/organizations/riskonnect/jobs: HTTPError: HTTP Error 404: Not Found
+[riskonnect] all WTTJ candidates failed — likely Cloudflare bot protection
+[sardineai] https://api.welcometothejungle.com/api/v1/organizations/sardineai: HTTPError: HTTP Error 404: Not Found
+[sardineai] https://api.welcometothejungle.com/api/v1/organizations/sardineai/jobs: HTTPError: HTTP Error 404: Not Found
+[sardineai] https://api.welcometothejungle.com/api/v1/organizations/sardineai/job_offers: HTTPError: HTTP Error 404: Not Found
+[sardineai] https://api.welcometothejungle.com/api/v1/organizations/sardineai/job_postings: HTTPError: HTTP Error 404: Not Found
+[sardineai] https://api.welcometothejungle.com/api/v1/profiles/sardineai/jobs: HTTPError: HTTP Error 404: Not Found
+[sardineai] https://api.welcometothejungle.com/api/v2/organizations/sardineai/jobs: HTTPError: HTTP Error 404: Not Found
+[sardineai] all WTTJ candidates failed — likely Cloudflare bot protection
+[alloy] resolved org.reference='jQWv7v'
+[alloy] https://api.welcometothejungle.com/api/v1/organizations/alloy/jobs: HTTPError: HTTP Error 404: Not Found
+[alloy] https://api.welcometothejungle.com/api/v1/organizations/alloy/job_offers: HTTPError: HTTP Error 404: Not Found
+[alloy] https://api.welcometothejungle.com/api/v1/organizations/alloy/job_postings: HTTPError: HTTP Error 404: Not Found
+[alloy] https://api.welcometothejungle.com/api/v1/profiles/alloy/jobs: HTTPError: HTTP Error 404: Not Found
+[alloy] https://api.welcometothejungle.com/api/v2/organizations/alloy/jobs: HTTPError: HTTP Error 404: Not Found
+[alloy] https://api.welcometothejungle.com/api/v1/organizations/jQWv7v/jobs: HTTPError: HTTP Error 404: Not Found
+[alloy] https://api.welcometothejungle.com/api/v1/organizations/jQWv7v/job_offers: HTTPError: HTTP Error 404: Not Found
+[alloy] https://api.welcometothejungle.com/api/v1/organizations/jQWv7v/job_postings: HTTPError: HTTP Error 404: Not Found
+[alloy] https://api.welcometothejungle.com/api/v1/profiles/jQWv7v/jobs: HTTPError: HTTP Error 404: Not Found
+[alloy] https://api.welcometothejungle.com/api/v2/organizations/jQWv7v/jobs: HTTPError: HTTP Error 404: Not Found
+[alloy] falling back to org metadata only (no jobs)
+[alloy] JSON top-level keys: ['organization']
+[alloy] org keys: ['cover', 'cover_position', 'default_language', 'equality_indexes', 'expansion_metadata', 'expansion_migration', 'labels', 'logo', 'media_website_url', 'name', 'nb_employees', 'offices', 'profile_type', 'reference', 'sectors', 'slug', 'updated_at', 'urls', 'video_cover', 'website_organization']
+[alloy] org.urls: [{"kind": "canonical", "href": "https://www.welcometothejungle.com/en/companies/alloy", "language": "en"}, {"kind": "alternate", "href": "https://www.welcometothejungle.com/en/companies/alloy", "language": "en"}]
+[alloy] org.reference: 'jQWv7v'
+[alloy] NO jobs found via any strategy
+[clsgroup] https://api.welcometothejungle.com/api/v1/organizations/clsgroup: HTTPError: HTTP Error 404: Not Found
+[clsgroup] https://api.welcometothejungle.com/api/v1/organizations/clsgroup/jobs: HTTPError: HTTP Error 404: Not Found
+[clsgroup] https://api.welcometothejungle.com/api/v1/organizations/clsgroup/job_offers: HTTPError: HTTP Error 404: Not Found
+[clsgroup] https://api.welcometothejungle.com/api/v1/organizations/clsgroup/job_postings: HTTPError: HTTP Error 404: Not Found
+[clsgroup] https://api.welcometothejungle.com/api/v1/profiles/clsgroup/jobs: HTTPError: HTTP Error 404: Not Found
+[clsgroup] https://api.welcometothejungle.com/api/v2/organizations/clsgroup/jobs: HTTPError: HTTP Error 404: Not Found
+[clsgroup] all WTTJ candidates failed — likely Cloudflare bot protection
+[treasuryprime] https://api.welcometothejungle.com/api/v1/organizations/treasuryprime: HTTPError: HTTP Error 404: Not Found
+[treasuryprime] https://api.welcometothejungle.com/api/v1/organizations/treasuryprime/jobs: HTTPError: HTTP Error 404: Not Found
+[treasuryprime] https://api.welcometothejungle.com/api/v1/organizations/treasuryprime/job_offers: HTTPError: HTTP Error 404: Not Found
+[treasuryprime] https://api.welcometothejungle.com/api/v1/organizations/treasuryprime/job_postings: HTTPError: HTTP Error 404: Not Found
+[treasuryprime] https://api.welcometothejungle.com/api/v1/profiles/treasuryprime/jobs: HTTPError: HTTP Error 404: Not Found
+[treasuryprime] https://api.welcometothejungle.com/api/v2/organizations/treasuryprime/jobs: HTTPError: HTTP Error 404: Not Found
+[treasuryprime] all WTTJ candidates failed — likely Cloudflare bot protection
