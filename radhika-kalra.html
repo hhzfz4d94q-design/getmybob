@@ -285,7 +285,7 @@
 
 <header>
   <h1>Jobs for Radhika KAlra</h1>
-  <div class="sub" title="Awaiting resume upload — click Resume to get started · Generated 2026-05-27 04:19">Awaiting resume upload — click Resume to get started · Generated 2026-05-27 04:19</div>
+  <div class="sub" title="Awaiting resume upload — click Resume to get started · Generated 2026-05-27 12:36">Awaiting resume upload — click Resume to get started · Generated 2026-05-27 12:36</div>
   <div class="header-actions">
     <button id="refresh-btn" class="header-btn" onclick="refreshData()" title="Pull fresh job listings from all sources. Takes 2-3 minutes.">⟳ Find new jobs</button>
     <div class="header-more-wrap">
@@ -310,9 +310,9 @@
 </header>
 
 <div class="stats">
-  <div class="stat"><b>19977</b>Total jobs tracked</div>
+  <div class="stat"><b>20182</b>Total jobs tracked</div>
   <div class="stat"><b>446</b>Senior + Remote (last 7d)</div>
-  <div class="stat"><b>2401</b>Possible ghost jobs (60d+)</div>
+  <div class="stat"><b>2404</b>Possible ghost jobs (60d+)</div>
   <div class="stat"><b id="shown-counter">0</b>Showing</div>
   <div class="stat goal-stat" id="goal-stat">
     <b><span id="goal-today-count">0</span>/<span id="goal-today-target">5</span></b>
@@ -1496,9 +1496,7 @@ function _decorateContactBadges() {
       btn.className = 'btn ghost-btn small contact-badge';
       btn.style.cssText = 'background:#ecfdf5;color:#0a6b3a;border-color:#a7f3d0;font-weight:600;';
       btn.textContent = '🤝 ' + matches.length + ' connection' + (matches.length === 1 ? '' : 's') + ' — Warm intro';
-      btn.title = matches.map(function(c) { return c.first + ' ' + c.last + (c.position ? ' (' + c.position + ')' : ''); }).join('
-') + '
-Click to draft personalized intro';
+      btn.title = matches.map(function(c) { return c.first + ' ' + c.last + (c.position ? ' (' + c.position + ')' : ''); }).join(' | ') + ' — Click to draft personalized intro';
       btn.addEventListener('click', function() { showWarmIntroModal(card.getAttribute('data-fp'), matches); });
       const dismiss = actions.querySelector('.dismiss');
       if (dismiss) actions.insertBefore(btn, dismiss);
