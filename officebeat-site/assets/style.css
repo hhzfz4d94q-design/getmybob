@@ -3,24 +3,58 @@
    Applies to officebeatllc.com AND getmemyjob.officebeatllc.com. */
 
 :root {
-  /* Primary brand — vibrant indigo from the deck */
-  --indigo: #5C5CD6;
-  --indigo-deep: #4B4BBE;
-  --indigo-pale: #8585E0;
+  /* === Real OfficeBeat logo palette (extracted 2026-05-27) === */
+  --midnight:   #0B0828;  /* "Office" wordmark, primary text */
+  --royal:      #1E146E;  /* OB pill body, deepest accents */
+  --blue:       #1817B5;  /* "Beat" core, primary CTA */
+  --periwinkle: #5C5CE0;  /* end of "Beat" gradient */
+  --mist:       #D1DEFF;  /* near-end tint, on dark surfaces */
 
-  /* Logo / heading accents — darker navy from the "OfficeBeat" wordmark */
-  --navy: #1F2C6F;
-  --navy-deep: #14205A;
+  /* Signature gradients — mirror the wordmark itself */
+  --grad:       linear-gradient(90deg, #1817B5 0%, #5C5CE0 100%);
+  --grad-hero:  linear-gradient(135deg, #0B0828 0%, #1E146E 40%, #1817B5 100%);
+  --grad-v:     linear-gradient(180deg, #1E146E 0%, #1817B5 60%, #5C5CE0 100%);
 
-  /* Accents / cards on dark sections */
-  --lilac: #E2E2F5;
-  --lilac-soft: #EEEEF8;
+  /* Legacy aliases — keep existing CSS rules working */
+  --indigo:      var(--blue);
+  --indigo-deep: var(--royal);
+  --indigo-pale: var(--periwinkle);
+  --navy:        #1F2C6F;        /* finance vertical accent */
+  --navy-deep:   #14205A;
+  --lilac:       #DCDCF1;
+  --lilac-soft:  #EEEEF8;
 
-  --off-white: #FAFAFC;
-  --ink: #1A1A2E;
-  --muted: #666680;
-  --hairline: #E5E7EE;
-  --white: #ffffff;
+  /* Vertical accents */
+  --vertical-finance:    #1F2C6F;
+  --vertical-finance-50: #E4E7F2;
+  --vertical-health:     #0E8C7A;
+  --vertical-health-50:  #DCF1ED;
+
+  /* Neutrals (re-balanced toward the navy brand) */
+  --off-white: #FAFAFD;
+  --ink:       #0B0828;
+  --ink-soft:  #1F1B45;
+  --muted:     #5F5A7E;
+  --muted-soft:#8A86A6;
+  --hairline:  #E5E5F0;
+  --hairline-soft: #F0F0F7;
+  --white:     #ffffff;
+  --surface-tint: #F6F6FB;
+
+  /* Shadows tinted to brand midnight */
+  --shadow-sm: 0 2px 4px rgba(11,8,40,.07), 0 1px 2px rgba(11,8,40,.04);
+  --shadow-md: 0 6px 16px rgba(11,8,40,.09), 0 2px 4px rgba(11,8,40,.05);
+  --shadow-lg: 0 16px 40px rgba(11,8,40,.14), 0 4px 12px rgba(11,8,40,.06);
+  --shadow-brand: 0 12px 32px rgba(24,23,181,.22);
+}
+
+/* ====== Brand utility classes — use across all pages ============== */
+.brand-text-grad { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.brand-bg-grad   { background: var(--grad); color: #fff; }
+.brand-bg-hero   { background: var(--grad-hero); color: #fff; }
+:focus-visible   { outline: 2px solid var(--blue); outline-offset: 2px; border-radius: 6px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 1ms !important; transition-duration: 1ms !important; }
 }
 
 * { box-sizing: border-box; }
@@ -94,8 +128,8 @@ nav.top .row {
   font-weight: 600; font-size: 15px; cursor: pointer;
   text-decoration: none; transition: all 0.15s; border: 1px solid transparent;
 }
-.btn.primary { background: var(--indigo); color: var(--white); }
-.btn.primary:hover { background: var(--indigo-deep); text-decoration: none; }
+.btn.primary { background: var(--grad); color: var(--white); box-shadow: var(--shadow-sm); border: none; }
+.btn.primary:hover { box-shadow: var(--shadow-brand); transform: translateY(-1px); text-decoration: none; filter: brightness(1.05); }
 .btn.ghost { background: transparent; color: var(--indigo); border-color: var(--indigo); }
 .btn.ghost:hover { background: var(--indigo); color: var(--white); text-decoration: none; }
 .btn.ghost-light { background: transparent; color: var(--white); border-color: rgba(255,255,255,0.6); }
@@ -105,7 +139,7 @@ nav.top .row {
 
 /* Hero */
 .hero {
-  background: linear-gradient(160deg, var(--indigo-deep) 0%, var(--indigo) 60%, var(--indigo-pale) 130%);
+  background: var(--grad-hero);
   color: var(--white);
   padding: 110px 0 130px;
   position: relative;
@@ -126,7 +160,7 @@ nav.top .row {
 
 /* Page header (non-home pages) */
 .page-header {
-  background: linear-gradient(160deg, var(--indigo-deep), var(--indigo));
+  background: var(--grad-hero);
   color: var(--white);
   padding: 84px 0 64px;
 }
@@ -683,4 +717,14 @@ footer .legal { font-size: 12px; color: rgba(255,255,255,0.5); display: flex; ju
   .nav-links .dd-pillar { padding: 6px 8px; margin-bottom: 2px; border-bottom: 0; }
   .nav-links .dd-pillar strong { font-size: 13px; }
   .nav-links .dd-pillar span.tag { display: none; }
+}
+
+/* === Vertical-specific page-header gradients (2026-05-27 design refresh) === */
+[data-surface="finance"] .page-header,
+[data-surface="finance"] .hero {
+  background: linear-gradient(135deg, #14205A 0%, #1F2C6F 50%, #2A3D90 100%);
+}
+[data-surface="health"] .page-header,
+[data-surface="health"] .hero {
+  background: linear-gradient(135deg, #084538 0%, #0E8C7A 60%, #1AB098 100%);
 }

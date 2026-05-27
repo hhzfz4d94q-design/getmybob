@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta http-equiv="refresh" content="0;url=/login.html">
+<title>getmemyjob — redirecting</title>
+<script>
+(function(){
+  try {
+    var tok = localStorage.getItem('gmj_session_token');
+    if (tok) { location.replace('/dashboard.html'); }
+    else { location.replace('/login.html'); }
+  } catch(e) { location.replace('/login.html'); }
+})();
+</script>
+</head><body>
+<p style="font:14px/1.5 -apple-system,sans-serif;text-align:center;margin-top:60px;color:#666;">
+  Redirecting to <a href="/login.html">sign in</a>…
+</p>
+</body></html>

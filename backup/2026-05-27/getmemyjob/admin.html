@@ -1,0 +1,679 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Admin · getmemyjob</title>
+<style>
+  body { font: 14px -apple-system, system-ui, sans-serif; margin: 0; background: #f7f7f8; color: #222; }
+  header { background: #5C5CD6; color: white; padding: 18px 28px; }
+  header h1 { margin: 0; font-size: 20px; }
+  header .sub { opacity: .85; font-size: 13px; margin-top: 4px; }
+  main { padding: 28px; max-width: 980px; margin: 0 auto; }
+  .card { background: #fff; border: 1px solid #e2e5ea; border-radius: 8px; padding: 18px 22px; margin-bottom: 22px; }
+  .card h2 { margin: 0 0 12px 0; font-size: 16px; color: #5C5CD6; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: end; }
+  label { display: block; font-size: 12px; font-weight: 600; color: #555; margin-bottom: 4px; }
+  input[type=text], input[type=email], input[type=password] {
+    border: 1px solid #ccc; border-radius: 6px; padding: 8px 10px; font-size: 14px; width: 100%; box-sizing: border-box;
+  }
+  .field { flex: 1; min-width: 180px; }
+  button {
+    background: #5C5CD6; color: #fff; border: 0; padding: 9px 16px; border-radius: 6px;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+  button:hover { background: #4B4BBE; }
+  button.secondary { background: #f3f4f6; color: #5C5CD6; border: 1px solid #ccd0d6; }
+  button.secondary:hover { background: #e6e8eb; }
+  button.danger { background: #c83333; }
+  button.danger:hover { background: #a02828; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid #eee; }
+  th { background: #f5f6f8; color: #555; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; }
+  td.actions { text-align: right; white-space: nowrap; }
+  td.actions button { font-size: 11.5px; padding: 5px 10px; margin-left: 4px; }
+  .badge { display: inline-block; font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 10px; letter-spacing: 0.3px; }
+  .badge.ok { background: #e6fff0; color: #0a6b3a; }
+  .badge.warn { background: #fff4e6; color: #b06000; }
+  .status { font-size: 12px; color: #555; margin-top: 8px; min-height: 18px; }
+  .status.error { color: #b00; }
+  .status.success { color: #0a6b3a; }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(20,30,50,0.45); display: none; align-items: center; justify-content: center; z-index: 50; }
+  .modal-overlay.show { display: flex; }
+  .modal { background: #fff; padding: 24px 28px; border-radius: 10px; max-width: 460px; width: 100%; margin: 12px; box-shadow: 0 24px 60px rgba(0,0,0,0.18); }
+  .modal h3 { margin: 0 0 10px 0; }
+  .modal p { font-size: 13px; color: #555; margin: 0 0 14px 0; }
+  code { background: #f5f6f8; padding: 1px 6px; border-radius: 4px; font-size: 12.5px; }
+</style>
+</head><body>
+<nav style="background:#fff;border-bottom:1px solid #E5E7EE;padding:14px 28px;margin:0;">
+  <a href="/landing.html" style="display:inline-flex;align-items:center;text-decoration:none;">
+    <img src="officebeat-logo.png" alt="OfficeBeat" style="height:38px;width:auto;display:block;">
+  </a>
+</nav>
+
+
+<header>
+  <h1>Admin · getmemyjob</h1>
+  <div class="sub">Manage alpha users · invite via email · view status</div>
+  <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+    <button class="secondary" onclick="openChangePasswordModal()" style="font-size:13px;padding:6px 12px;">Change admin password</button>
+    <button class="secondary" onclick="signOut()" style="font-size:13px;padding:6px 12px;">Sign out</button>
+  </div>
+</header>
+
+<main id="main" style="display:none;">
+
+  <div class="card">
+    <h2>Invite a new user</h2>
+    <div class="row">
+      <div class="field">
+        <label>Name</label>
+        <input type="text" id="new-name" placeholder="Jane Doe" autocomplete="off">
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="new-email" placeholder="jane@example.com" autocomplete="off">
+      </div>
+      <div>
+        <button id="create-btn" onclick="createUser()">Create &amp; invite</button>
+      </div>
+    </div>
+    <div class="status" id="create-status"></div>
+  </div>
+
+  <div class="card" id="pending-card" style="border:2px solid #f0a500;background:#fffbe6;">
+    <h2 style="color:#b58300;">Pending approvals <span id="pending-badge" style="display:none;background:#f0a500;color:white;font-size:13px;padding:2px 10px;border-radius:10px;margin-left:8px;">0</span></h2>
+    <p style="font-size:13px;color:#7a5a00;margin-top:-4px;">New self-serve signups appear here. Approve to provision their dashboard.</p>
+    <table id="pending-table">
+      <thead><tr>
+        <th>Name</th><th>Email</th><th>Signed up</th><th>Profile</th><th></th>
+      </tr></thead>
+      <tbody id="pending-tbody">
+        <tr><td colspan="5" style="color:#888;padding:12px;">Loading…</td></tr>
+      </tbody>
+    </table>
+    <div class="status" id="pending-status"></div>
+  </div>
+
+  <div class="card">
+    <h2>Existing users</h2>
+    <table id="users-table">
+      <thead><tr>
+        <th>Name</th><th>Email</th><th>Slug</th><th>Status</th><th></th>
+      </tr></thead>
+      <tbody id="users-tbody">
+        <tr><td colspan="5" style="color:#888; padding: 16px 12px;">Loading…</td></tr>
+      </tbody>
+    </table>
+    <div class="status" id="list-status"></div>
+  </div>
+
+</main>
+
+<!-- Login modal -->
+<div class="modal-overlay show" id="login-modal">
+  <div class="modal">
+    <h3>Admin sign in</h3>
+    <p>Sign in with your admin email and password.</p>
+    <label>Email</label>
+    <input type="email" id="admin-email-input" placeholder="team@officebeatllc.com" autocomplete="username" style="margin-bottom:10px;">
+    <label>Password</label>
+    <input type="password" id="admin-password-input" placeholder="••••••••" autocomplete="current-password" style="margin-bottom:10px;">
+    <button onclick="signIn()">Sign in</button>
+    <div class="status error" id="login-status"></div>
+    <details style="margin-top:14px;font-size:12px;color:#666;">
+      <summary style="cursor:pointer;">Have an ADMIN_KEY instead?</summary>
+      <div style="margin-top:8px;">
+        <input type="password" id="admin-key-input" placeholder="paste ADMIN_KEY" autocomplete="off" style="margin-bottom:6px;">
+        <button onclick="signInWithKey()" class="secondary" style="font-size:12px;padding:6px 10px;">Sign in with key</button>
+      </div>
+    </details>
+  </div>
+</div>
+
+<!-- Change admin password modal -->
+<div class="modal-overlay" id="change-pw-modal">
+  <div class="modal">
+    <h3>Change admin password</h3>
+    <p style="font-size:13px;color:#666;">New password must be at least 10 characters. Email defaults to <code>team@officebeatllc.com</code>.</p>
+    <label>Admin email (optional)</label>
+    <input type="email" id="change-pw-email" placeholder="team@officebeatllc.com" autocomplete="off" style="margin-bottom:10px;">
+    <label>New password</label>
+    <input type="password" id="change-pw-new" autocomplete="new-password" minlength="10" style="margin-bottom:10px;">
+    <label>Confirm new password</label>
+    <input type="password" id="change-pw-confirm" autocomplete="new-password" minlength="10" style="margin-bottom:10px;">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;">
+      <button onclick="saveAdminPassword()">Save new password</button>
+      <button class="secondary" onclick="closeChangePasswordModal()">Cancel</button>
+    </div>
+    <div class="status" id="change-pw-status"></div>
+  </div>
+</div>
+
+<!-- Edit user modal -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <h3>Edit user</h3>
+    <p>Slug <code id="edit-slug">—</code> (URL cannot change)</p>
+    <label>Name</label>
+    <input type="text" id="edit-name" autocomplete="off" style="margin-bottom:10px;">
+    <label>Email</label>
+    <input type="email" id="edit-email" autocomplete="off" style="margin-bottom:10px;">
+    <label style="display:flex; align-items:center; gap:6px; font-weight:500;">
+      <input type="checkbox" id="edit-reset-key" style="width:auto;"> Reset password (generates a new one)
+    </label>
+    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:14px;">
+      <button onclick="saveEdit()">Save changes</button>
+      <button class="secondary" onclick="closeEditModal()">Cancel</button>
+    </div>
+    <div class="status" id="edit-status"></div>
+  </div>
+</div>
+
+
+<!-- Profile (AI skills) modal -->
+<div class="modal-overlay" id="profile-modal">
+  <div class="modal" style="max-width:680px;">
+    <h3>AI skills profile — <code id="profile-slug">—</code></h3>
+    <p style="font-size:13px; color:#555; margin-top:-6px;">What the AI extracted from this user's resume. Drives job matching.</p>
+    <div id="profile-body" style="max-height:60vh; overflow:auto; font-size:13px;"></div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:14px;">
+      <button class="secondary" onclick="closeProfileModal()">Close</button>
+    </div>
+    <div class="status" id="profile-status"></div>
+  </div>
+</div>
+
+<!-- Invite preview modal -->
+<div class="modal-overlay" id="invite-modal">
+  <div class="modal">
+    <h3>Invite ready</h3>
+    <p id="invite-summary"></p>
+    <div style="background:#f5f6f8; padding:10px 12px; border-radius:6px; font-family: ui-monospace, Menlo, monospace; font-size:12px; white-space:pre-wrap; max-height:240px; overflow:auto; margin-bottom:14px;" id="invite-body"></div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <button onclick="openMailto()">Open in email client</button>
+      <button class="secondary" onclick="copyInvite()">Copy to clipboard</button>
+      <button class="secondary" onclick="closeInviteModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const WORKER_BASE = 'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev';
+const SITE_BASE = window.location.origin;
+let _adminKey = null;
+let _currentInvite = null;
+
+function $(id) { return document.getElementById(id); }
+
+async function signIn() {
+  const email = ($('admin-email-input').value || '').trim().toLowerCase();
+  const password = $('admin-password-input').value || '';
+  if (!email || !password) { $('login-status').textContent = 'Email and password required.'; return; }
+  $('login-status').textContent = 'Signing in…';
+  try {
+    const r = await fetch(WORKER_BASE + '/api/auth/admin-login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+    const data = await r.json().catch(() => ({}));
+    if (r.status === 401) { $('login-status').textContent = 'Invalid email or password.'; return; }
+    if (r.status === 503) { $('login-status').textContent = data.error || 'Admin login not configured. Use the ADMIN_KEY fallback below.'; return; }
+    if (!r.ok) { $('login-status').textContent = data.error || ('Sign-in failed: HTTP ' + r.status); return; }
+    if (!data.adminKey) { $('login-status').textContent = 'Sign-in failed: no key returned.'; return; }
+    await _activateAdminKey(data.adminKey);
+  } catch (e) {
+    $('login-status').textContent = 'Sign-in failed: ' + (e.message || e);
+  }
+}
+
+async function signInWithKey() {
+  const key = ($('admin-key-input').value || '').trim();
+  if (!key) { $('login-status').textContent = 'Please paste the ADMIN_KEY.'; return; }
+  $('login-status').textContent = 'Verifying key…';
+  await _activateAdminKey(key);
+}
+
+async function _activateAdminKey(key) {
+  try {
+    const r = await fetch(WORKER_BASE + '/admin/users', { headers: { 'X-Admin-Key': key } });
+    if (r.status === 401) { $('login-status').textContent = 'Invalid admin key.'; return; }
+    if (!r.ok) { $('login-status').textContent = 'Sign-in failed: HTTP ' + r.status; return; }
+    _adminKey = key;
+    localStorage.setItem('htj_admin_key', key);
+    $('login-modal').classList.remove('show');
+    $('main').style.display = 'block';
+    const data = await r.json();
+    renderUsers(data.users || []);
+    refreshPending();
+  } catch (e) {
+    $('login-status').textContent = 'Sign-in failed: ' + (e.message || e);
+  }
+}
+
+function signOut() {
+  _adminKey = null;
+  localStorage.removeItem('htj_admin_key');
+  $('main').style.display = 'none';
+  var ake=$('admin-key-input'); if (ake) ake.value='';
+  var aee=$('admin-email-input'); if (aee) aee.value='';
+  var ape=$('admin-password-input'); if (ape) ape.value='';
+  $('login-status').textContent = '';
+  $('login-modal').classList.add('show');
+}
+
+
+function openProfileModal(slug) {
+  $('profile-slug').textContent = slug;
+  $('profile-body').innerHTML = '<div style="padding:20px; color:#888;">Loading…</div>';
+  $('profile-status').textContent = '';
+  $('profile-modal').classList.add('show');
+  fetch(WORKER_BASE + '/skills-profile?user=' + encodeURIComponent(slug))
+    .then(r => r.json())
+    .then(data => renderProfile(data.profile || {}))
+    .catch(e => { $('profile-body').innerHTML = '<div style="color:#c00; padding:12px;">Failed to load: ' + escHtml(e.message || e) + '</div>'; });
+}
+
+function closeProfileModal() { $('profile-modal').classList.remove('show'); }
+
+function renderProfile(p) {
+  if (!p || Object.keys(p).length === 0) {
+    $('profile-body').innerHTML = '<div style="padding:20px; color:#888;">No profile yet — user has not uploaded a resume.</div>';
+    return;
+  }
+  function section(title, items) {
+    if (!items || (Array.isArray(items) && items.length === 0)) return '';
+    let chips;
+    if (Array.isArray(items)) {
+      chips = items.map(x => {
+        if (typeof x === 'string') return '<span style="display:inline-block; background:#eef0fb; color:#3b3bb0; padding:3px 8px; border-radius:12px; font-size:12px; margin:2px;">' + escHtml(x) + '</span>';
+        if (x && typeof x === 'object') {
+          const lbl = x.name || x.slug || JSON.stringify(x);
+          const sub = x.atsHint ? ' (' + escHtml(x.atsHint) + ')' : '';
+          const tip = x.why ? ' title="' + escHtml(x.why) + '"' : '';
+          return '<span' + tip + ' style="display:inline-block; background:#fef3e8; color:#9a4a00; padding:3px 8px; border-radius:12px; font-size:12px; margin:2px;">' + escHtml(lbl) + sub + '</span>';
+        }
+        return '';
+      }).join('');
+    } else {
+      chips = '<span style="font-size:13px;">' + escHtml(String(items)) + '</span>';
+    }
+    return '<div style="margin:10px 0;"><div style="font-weight:600; font-size:12px; color:#555; text-transform:uppercase; letter-spacing:0.4px; margin-bottom:4px;">' + escHtml(title) + '</div><div>' + chips + '</div></div>';
+  }
+  let html = '';
+  if (p.primaryRole) html += '<div style="font-size:15px; font-weight:600; color:#5C5CD6; margin-bottom:4px;">' + escHtml(p.primaryRole) + '</div>';
+  if (p.summary) html += '<p style="font-size:13px; color:#444; line-height:1.5;">' + escHtml(p.summary) + '</p>';
+  html += section('Target titles', p.targetTitles);
+  html += section('Target companies (AI suggested)', p.targetCompanies);
+  html += section('Industries', p.industries);
+  html += section('Specialties', p.specialties);
+  html += section('Frameworks', p.frameworks);
+  html += section('Regulations', p.regulations);
+  html += section('Technologies', p.technologies);
+  html += section('Certifications', p.certifications);
+  html += section('Keywords', p.keywords);
+  html += section('Negative keywords', p.negativeKeywords);
+  html += section('Seniority level', p.seniorityLevel);
+  html += section('Seniority titles', p.seniorityTitles);
+  if (p.generatedAt) html += '<div style="font-size:11px; color:#888; margin-top:14px;">Generated ' + escHtml(p.generatedAt) + '</div>';
+  $('profile-body').innerHTML = html;
+}
+
+function escHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function openChangePasswordModal() {
+  $('change-pw-email').value = '';
+  $('change-pw-new').value = '';
+  $('change-pw-confirm').value = '';
+  $('change-pw-status').textContent = '';
+  $('change-pw-modal').classList.add('show');
+}
+function closeChangePasswordModal() {
+  $('change-pw-modal').classList.remove('show');
+}
+async function saveAdminPassword() {
+  if (!_adminKey) { $('change-pw-status').textContent = 'Sign in first.'; return; }
+  const np = $('change-pw-new').value;
+  const cp = $('change-pw-confirm').value;
+  const ne = ($('change-pw-email').value || '').trim().toLowerCase();
+  if (np.length < 10) { $('change-pw-status').textContent = 'Password must be at least 10 characters.'; return; }
+  if (np !== cp) { $('change-pw-status').textContent = 'Passwords do not match.'; return; }
+  $('change-pw-status').textContent = 'Saving…';
+  try {
+    const body = { newPassword: np };
+    if (ne) body.newEmail = ne;
+    const r = await fetch(WORKER_BASE + '/api/auth/admin-change-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Key': _adminKey },
+      body: JSON.stringify(body),
+    });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok) { $('change-pw-status').textContent = data.error || ('HTTP ' + r.status); return; }
+    $('change-pw-status').textContent = 'Saved. Use the new password next time you sign in.';
+    setTimeout(closeChangePasswordModal, 1500);
+  } catch (e) {
+    $('change-pw-status').textContent = 'Save failed: ' + (e.message || e);
+  }
+}
+
+async function refreshPending() {
+  if (!_adminKey) return;
+  const tbody = $('pending-tbody');
+  const badge = $('pending-badge');
+  try {
+    const r = await fetch(WORKER_BASE + '/admin/pending-users', { headers: { 'X-Admin-Key': _adminKey } });
+    if (!r.ok) {
+      tbody.innerHTML = '<tr><td colspan="5" style="color:#a00;padding:12px;">Failed to load: HTTP ' + r.status + '</td></tr>';
+      return;
+    }
+    const data = await r.json();
+    const list = data.users || [];
+    if (list.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" style="color:#888;padding:12px;">Nobody waiting — you\'re all caught up.</td></tr>';
+      badge.style.display = 'none';
+      return;
+    }
+    badge.textContent = list.length;
+    badge.style.display = 'inline-block';
+    tbody.innerHTML = list.map(u => {
+      const when = u.createdAt ? new Date(u.createdAt).toLocaleString() : '—';
+      const profile = u.hasResume ? (u.primaryRole || 'Resume uploaded') : '<span style="color:#a00;">No resume yet</span>';
+      return '<tr>' +
+        '<td>' + escHtml(u.name) + '</td>' +
+        '<td>' + escHtml(u.email) + '</td>' +
+        '<td>' + escHtml(when) + '</td>' +
+        '<td>' + profile + '</td>' +
+        '<td style="white-space:nowrap;">' +
+          '<button onclick="approveUser(\'' + u.slug + '\')" style="background:#22a06b;margin-right:6px;">Approve</button>' +
+          '<button class="secondary" onclick="rejectUser(\'' + u.slug + '\', \'' + escHtml(u.name).replace(/\\/g,"\\\\").replace(/'/g,"\\'") + '\')">Reject</button>' +
+        '</td>' +
+      '</tr>';
+    }).join('');
+  } catch (e) {
+    tbody.innerHTML = '<tr><td colspan="5" style="color:#a00;padding:12px;">Error: ' + escHtml(e.message || e) + '</td></tr>';
+  }
+}
+
+async function approveUser(slug) {
+  if (!_adminKey) return;
+  $('pending-status').textContent = 'Approving ' + slug + '…';
+  try {
+    const r = await fetch(WORKER_BASE + '/admin/approve-user', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Key': _adminKey },
+      body: JSON.stringify({ slug }),
+    });
+    if (!r.ok) {
+      const data = await r.json().catch(() => ({}));
+      $('pending-status').textContent = 'Approve failed: ' + (data.error || ('HTTP ' + r.status));
+      return;
+    }
+    $('pending-status').textContent = 'Approved. Dashboard build kicked off — they\'ll get an email shortly.';
+    refreshPending();
+    refreshUsers();
+  } catch (e) {
+    $('pending-status').textContent = 'Approve failed: ' + (e.message || e);
+  }
+}
+
+async function rejectUser(slug, name) {
+  if (!_adminKey) return;
+  if (!confirm('Reject ' + (name || slug) + '? They will not be able to log in.')) return;
+  $('pending-status').textContent = 'Rejecting…';
+  try {
+    const r = await fetch(WORKER_BASE + '/admin/reject-user', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Key': _adminKey },
+      body: JSON.stringify({ slug }),
+    });
+    if (!r.ok) {
+      const data = await r.json().catch(() => ({}));
+      $('pending-status').textContent = 'Reject failed: ' + (data.error || ('HTTP ' + r.status));
+      return;
+    }
+    $('pending-status').textContent = 'Rejected.';
+    refreshPending();
+    refreshUsers();
+  } catch (e) {
+    $('pending-status').textContent = 'Reject failed: ' + (e.message || e);
+  }
+}
+
+async function refreshUsers() {
+  if (!_adminKey) return;
+  try {
+    const r = await fetch(WORKER_BASE + '/admin/users', { headers: { 'X-Admin-Key': _adminKey } });
+    if (!r.ok) return;
+    const data = await r.json();
+    renderUsers(data.users || []);
+  } catch (e) {}
+}
+
+function renderUsers(users) {
+  const tbody = $('users-tbody');
+  if (!users || users.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" style="color:#888; padding: 16px 12px;">No users yet — invite one above.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = users.map(u => {
+    const statusBadge = u.hasResume
+      ? '<span class="badge ok">Active</span>'
+      : '<span class="badge warn">Awaiting upload</span>';
+    return '<tr>' +
+      '<td>' + escHtml(u.name) + '</td>' +
+      '<td>' + escHtml(u.email || '—') + '</td>' +
+      '<td><a href="' + SITE_BASE + '/' + escHtml(u.slug) + '.html" target="_blank">' + escHtml(u.slug) + '</a></td>' +
+      '<td>' + statusBadge + '</td>' +
+      '<td class="actions">' +
+        '<button class="secondary" onclick="openProfileModal(\'' + escHtml(u.slug) + '\')">Profile</button>' +
+        '<button class="secondary" onclick="openEditModal(\'' + escHtml(u.slug) + '\')">Edit</button>' +
+        '<button class="secondary" onclick="resendInvite(\'' + escHtml(u.slug) + '\')">Resend invite</button>' +
+        (u.slug === 'geetu' ? '' : '<button class="danger" onclick="deleteUser(\'' + escHtml(u.slug) + '\')">Delete</button>') +
+      '</td>' +
+    '</tr>';
+  }).join('');
+}
+
+async function fetchUsers() {
+  try {
+    const r = await fetch(WORKER_BASE + '/admin/users', { headers: { 'X-Admin-Key': _adminKey } });
+    if (r.status === 401) { signOut(); return null; }
+    const data = await r.json();
+    return data.users || [];
+  } catch (e) {
+    $('list-status').className = 'status error';
+    $('list-status').textContent = 'Failed to load users: ' + (e.message || e);
+    return null;
+  }
+}
+
+async function createUser() {
+  const name = $('new-name').value.trim();
+  const email = $('new-email').value.trim();
+  if (!name || !email) {
+    $('create-status').className = 'status error';
+    $('create-status').textContent = 'Name and email are both required.';
+    return;
+  }
+  $('create-status').className = 'status';
+  $('create-status').textContent = 'Creating…';
+  $('create-btn').disabled = true;
+  try {
+    const r = await fetch(WORKER_BASE + '/admin/users', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Key': _adminKey },
+      body: JSON.stringify({ name, email }),
+    });
+    const data = await r.json();
+    if (!r.ok || data.error) {
+      $('create-status').className = 'status error';
+      $('create-status').textContent = 'Failed: ' + (data.error || ('HTTP ' + r.status));
+      return;
+    }
+    $('create-status').className = 'status success';
+    $('create-status').textContent = 'Created ' + data.user.slug + '. Opening invite…';
+    $('new-name').value = '';
+    $('new-email').value = '';
+    showInvite(data.user, data.editKey);
+    const users = await fetchUsers();
+    if (users) renderUsers(users);
+  } catch (e) {
+    $('create-status').className = 'status error';
+    $('create-status').textContent = 'Failed: ' + (e.message || e);
+  } finally {
+    $('create-btn').disabled = false;
+  }
+}
+
+async function resendInvite(slug) {
+  const users = await fetchUsers();
+  if (!users) return;
+  const u = users.find(x => x.slug === slug);
+  if (!u) { alert('User not found'); return; }
+  if (!u.email) { alert('No email saved for this user — click Edit and add one before resending.'); return; }
+  showInvite(u, u.editKey);
+}
+
+let _editingSlug = null;
+
+async function openEditModal(slug) {
+  const users = await fetchUsers();
+  if (!users) return;
+  const u = users.find(x => x.slug === slug);
+  if (!u) { alert('User not found'); return; }
+  _editingSlug = slug;
+  $('edit-slug').textContent = slug;
+  $('edit-name').value = u.name || '';
+  $('edit-email').value = u.email || '';
+  $('edit-reset-key').checked = false;
+  $('edit-status').textContent = '';
+  $('edit-status').className = 'status';
+  $('edit-modal').classList.add('show');
+}
+
+function closeEditModal() {
+  $('edit-modal').classList.remove('show');
+  _editingSlug = null;
+}
+
+async function saveEdit() {
+  if (!_editingSlug) return;
+  const name = $('edit-name').value.trim();
+  const email = $('edit-email').value.trim();
+  const resetKey = $('edit-reset-key').checked;
+  if (!name) {
+    $('edit-status').className = 'status error';
+    $('edit-status').textContent = 'Name is required.';
+    return;
+  }
+  $('edit-status').className = 'status';
+  $('edit-status').textContent = 'Saving…';
+  try {
+    const r = await fetch(WORKER_BASE + '/admin/users', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Key': _adminKey },
+      body: JSON.stringify({ slug: _editingSlug, name, email, resetKey }),
+    });
+    const data = await r.json();
+    if (!r.ok || data.error) {
+      $('edit-status').className = 'status error';
+      $('edit-status').textContent = 'Failed: ' + (data.error || ('HTTP ' + r.status));
+      return;
+    }
+    $('edit-status').className = 'status success';
+    $('edit-status').textContent = resetKey ? 'Saved. New password generated — opening invite to share.' : 'Saved.';
+    const users = await fetchUsers();
+    if (users) renderUsers(users);
+    if (resetKey) {
+      // After a password reset, immediately open the invite to send the new password
+      showInvite(data.user, data.editKey);
+    }
+    setTimeout(() => closeEditModal(), 800);
+  } catch (e) {
+    $('edit-status').className = 'status error';
+    $('edit-status').textContent = 'Failed: ' + (e.message || e);
+  }
+}
+
+function showInvite(user, editKey) {
+  // Personal URL with the password baked in — first click unlocks the dashboard
+  // automatically and strips the key from the URL bar.
+  const baseUrl = SITE_BASE + '/' + user.slug + '.html';
+  const inviteUrl = baseUrl + '?key=' + encodeURIComponent(editKey);
+  const subject = 'Your personal job-search dashboard is ready';
+  const body = [
+    'Hi ' + (user.name.split(' ')[0] || user.name) + ',',
+    '',
+    'I built a personal job-search dashboard tailored to your background.',
+    'It pulls open roles from ~50 healthcare/tech companies, ranks them',
+    'against your resume, and one-clicks a tailored summary + cover letter +',
+    'tailored resume per job.',
+    '',
+    'Your link (unlocks automatically — keep it private):',
+    inviteUrl,
+    '',
+    'Click the link, then on the dashboard click "Resume" (top-right) and',
+    'upload your resume as PDF or Word. The AI parses it and starts scoring',
+    'jobs against your profile within minutes.',
+    '',
+    'If you ever need to re-enter the password manually it is: ' + editKey,
+    '',
+    'Let me know if anything is off — I tune it.',
+  ].join('\n');
+  _currentInvite = { to: user.email, subject, body, name: user.name };
+  $('invite-summary').textContent = 'To: ' + user.email + ' · Slug: ' + user.slug;
+  $('invite-body').textContent = body;
+  $('invite-modal').classList.add('show');
+}
+
+function openMailto() {
+  if (!_currentInvite) return;
+  const m = 'mailto:' + encodeURIComponent(_currentInvite.to) +
+    '?subject=' + encodeURIComponent(_currentInvite.subject) +
+    '&body=' + encodeURIComponent(_currentInvite.body);
+  window.location.href = m;
+}
+
+function copyInvite() {
+  if (!_currentInvite) return;
+  const txt = 'To: ' + _currentInvite.to + '\nSubject: ' + _currentInvite.subject + '\n\n' + _currentInvite.body;
+  navigator.clipboard.writeText(txt);
+}
+
+function closeInviteModal() {
+  $('invite-modal').classList.remove('show');
+}
+
+async function deleteUser(slug) {
+  if (!confirm('Delete user ' + slug + '? All their resume versions and saved data will be removed. This cannot be undone.')) return;
+  try {
+    const r = await fetch(WORKER_BASE + '/admin/users', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Key': _adminKey },
+      body: JSON.stringify({ slug }),
+    });
+    const data = await r.json();
+    if (!r.ok || data.error) { alert('Failed: ' + (data.error || ('HTTP ' + r.status))); return; }
+    const users = await fetchUsers();
+    if (users) renderUsers(users);
+  } catch (e) {
+    alert('Failed: ' + (e.message || e));
+  }
+}
+
+// Auto-login if we have a saved admin key
+window.addEventListener('DOMContentLoaded', async () => {
+  const cached = localStorage.getItem('htj_admin_key');
+  if (cached) {
+    await _activateAdminKey(cached);
+  }
+  const pwd = $('admin-password-input');
+  if (pwd) pwd.addEventListener('keydown', (e) => { if (e.key === 'Enter') signIn(); });
+  const eml = $('admin-email-input');
+  if (eml) eml.addEventListener('keydown', (e) => { if (e.key === 'Enter') { const p = $('admin-password-input'); if (p) p.focus(); } });
+  const keyIn = $('admin-key-input');
+  if (keyIn) keyIn.addEventListener('keydown', (e) => { if (e.key === 'Enter') signInWithKey(); });
+});
+</script>
+</body></html>

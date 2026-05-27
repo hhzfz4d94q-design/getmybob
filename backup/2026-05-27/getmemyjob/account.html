@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Account · getmemyjob</title>
+<link rel="icon" href="favicon-32.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root { --navy:#5C5CD6; --navy-deep:#4B4BBE; --off-white:#FAFAFC; --ink:#1A1A2E; --muted:#666680; --hairline:#E5E7EE; --lilac-soft:#EEEEF8; --ok:#15803D; --ok-bg:#ECFDF5; --err:#B91C1C; --err-bg:#FEF2F2; }
+  * { box-sizing: border-box; }
+  html, body { margin:0; padding:0; }
+  body { font: 15px/1.55 'Inter', -apple-system, system-ui, sans-serif; color: var(--ink); background: var(--off-white); -webkit-font-smoothing: antialiased; }
+  nav.top { background:#fff; border-bottom:1px solid var(--hairline); }
+  nav.top .row { display:flex; align-items:center; justify-content:space-between; padding:14px 28px; max-width:1080px; margin:0 auto; }
+  .logo img { height:38px; }
+  @media (max-width:720px) { .logo img { height:30px; } }
+  .nav-right { display:flex; align-items:center; gap:14px; font-size:14px; }
+  .nav-right .who { color: var(--muted); }
+  .nav-right .who b { color: var(--ink); }
+  .nav-btn { font-size:13px; color:var(--navy); background:transparent; border:1px solid var(--navy); border-radius:6px; padding:6px 12px; cursor:pointer; font-family:inherit; font-weight:500; text-decoration:none; }
+  .nav-btn:hover { background:var(--navy); color:#fff; }
+  .container { max-width:560px; margin:0 auto; padding:60px 28px; }
+  .card { background:#fff; border:1px solid var(--hairline); border-radius:12px; padding:32px; box-shadow:0 4px 24px rgba(60,60,120,0.04); }
+  h1 { margin:0 0 6px 0; font-size:24px; font-weight:700; letter-spacing:-0.01em; }
+  .sub { color:var(--muted); margin:0 0 24px 0; font-size:14px; }
+  label { display:block; font-size:13px; font-weight:600; margin-bottom:6px; color:var(--ink); }
+  input { width:100%; padding:10px 12px; font-size:14px; font-family:inherit; border:1px solid var(--hairline); border-radius:6px; margin-bottom:14px; }
+  input:focus { outline:none; border-color:var(--navy); }
+  .hint { font-size:12px; color:var(--muted); margin-top:-10px; margin-bottom:14px; }
+  .btn { display:inline-block; padding:11px 18px; font-size:14px; font-weight:600; border:none; border-radius:6px; cursor:pointer; font-family:inherit; text-decoration:none; }
+  .btn.primary { background:var(--navy); color:#fff; }
+  .btn.primary:hover { background:var(--navy-deep); }
+  .btn.ghost { background:transparent; color:var(--navy); border:1px solid var(--navy); }
+  .msg { padding:10px 14px; border-radius:6px; font-size:13px; margin-top:14px; display:none; }
+  .msg.ok { background:var(--ok-bg); color:var(--ok); display:block; }
+  .msg.err { background:var(--err-bg); color:var(--err); display:block; }
+</style>
+</head>
+<body>
+<nav class="top">
+  <div class="row">
+    <a href="/landing.html" class="logo" aria-label="OfficeBeat home">
+      <img src="officebeat-logo.png" alt="OfficeBeat">
+    </a>
+    <div class="nav-right">
+      <span class="who">Signed in as <b id="userName">…</b></span>
+      <a class="nav-btn" id="backToDashboard" href="/dashboard.html">Back to dashboard</a>
+      <button class="nav-btn" id="signOutBtn">Sign out</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="card">
+    <h1>Change password</h1>
+    <p class="sub">Update the password you use to sign in.</p>
+    <form id="changePwForm" autocomplete="on">
+      <label for="curPw">Current password</label>
+      <input type="password" id="curPw" name="current_password" autocomplete="current-password" required>
+
+      <label for="newPw">New password</label>
+      <input type="password" id="newPw" name="new_password" autocomplete="new-password" minlength="8" required>
+      <div class="hint">At least 8 characters.</div>
+
+      <label for="newPw2">Confirm new password</label>
+      <input type="password" id="newPw2" autocomplete="new-password" minlength="8" required>
+
+      <button type="submit" class="btn primary" id="saveBtn">Save new password</button>
+    </form>
+    <div id="msg" class="msg"></div>
+  </div>
+</div>
+
+<script>
+const WORKER = 'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev';
+const TOKEN_KEY = 'gmj_session_token';
+
+function $(id) { return document.getElementById(id); }
+function showMsg(type, text) {
+  const m = $('msg');
+  m.className = 'msg ' + type;
+  m.textContent = text;
+}
+function clearSession() {
+  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem('gmj_user_slug');
+  localStorage.removeItem('gmj_user_name');
+  localStorage.removeItem('gmj_user_email');
+}
+
+(async function init() {
+  const tok = localStorage.getItem(TOKEN_KEY);
+  if (!tok) { location.replace('/login.html'); return; }
+  try {
+    const r = await fetch(WORKER + '/api/auth/me', { headers: { 'Authorization': 'Bearer ' + tok } });
+    const j = await r.json();
+    if (!j.authenticated) { clearSession(); location.replace('/login.html'); return; }
+    $('userName').textContent = j.name || j.email || 'you';
+    // If user has a per-slug dashboard, point Back link at it
+    if (j.slug) $('backToDashboard').href = '/' + j.slug + '.html';
+  } catch (e) {
+    location.replace('/login.html');
+  }
+})();
+
+$('changePwForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const cur = $('curPw').value;
+  const next = $('newPw').value;
+  const next2 = $('newPw2').value;
+  if (next.length < 8) { showMsg('err', 'New password must be at least 8 characters.'); return; }
+  if (next !== next2) { showMsg('err', 'New passwords do not match.'); return; }
+  $('saveBtn').disabled = true; $('saveBtn').textContent = 'Saving…';
+  showMsg('', '');
+  try {
+    const tok = localStorage.getItem(TOKEN_KEY);
+    const r = await fetch(WORKER + '/api/auth/change-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tok },
+      body: JSON.stringify({ currentPassword: cur, newPassword: next }),
+    });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok) {
+      showMsg('err', data.error || ('Save failed: HTTP ' + r.status));
+      return;
+    }
+    showMsg('ok', 'Password updated. Use the new password next time you sign in.');
+    $('curPw').value = ''; $('newPw').value = ''; $('newPw2').value = '';
+  } catch (err) {
+    showMsg('err', 'Could not reach the server. ' + (err && err.message ? err.message : err));
+  } finally {
+    $('saveBtn').disabled = false; $('saveBtn').textContent = 'Save new password';
+  }
+});
+
+$('signOutBtn').addEventListener('click', async () => {
+  const tok = localStorage.getItem(TOKEN_KEY);
+  try {
+    if (tok) await fetch(WORKER + '/api/auth/logout', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + tok }
+    });
+  } catch (e) {}
+  clearSession();
+  location.replace('/login.html');
+});
+</script>
+</body>
+</html>
