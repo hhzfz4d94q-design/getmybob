@@ -70,14 +70,35 @@ These are the inputs every artifact below was built against.
 
 The system has three layers:
 
-### a. Brand tokens — shared by both sites
+### a. Brand tokens — extracted from the real logo
 
-`--brand-indigo: #5C5CD6` (preserved exactly), plus a calibrated scale of
-indigo from `-50` through `-700` for surfaces, hovers, focus rings, and
-the deep mark variant. Five status colors (track-applied, track-onsite,
-track-offer, etc.) for the dashboard's kanban-style chips. Seven
-neutral greys. Each token has a defined role and is referenced by name —
-**no hex literals anywhere downstream.**
+Earlier drafts collapsed the brand to a single `#5C5CD6`. The actual
+OfficeBeat logo runs a **gradient** — "Office" is near-black-navy, the
+OB pill is deep royal indigo, and "Beat" cascades from saturated royal
+blue through periwinkle. The token system now preserves that
+gradient as the signature rather than flattening it:
+
+| Token              | Hex       | Role                                                                |
+|--------------------|-----------|---------------------------------------------------------------------|
+| `--brand-midnight` | `#0B0828` | "Office" wordmark color, primary body text                          |
+| `--brand-royal`    | `#1E146E` | OB pill body, deepest accents                                       |
+| `--brand-blue`     | `#1817B5` | Core "Beat" royal blue — **primary CTA, focus rings**               |
+| `--brand-periwinkle` | `#5C5CE0` | End of "Beat" gradient — softer accents, secondary text          |
+| `--brand-mist`     | `#D1DEFF` | Near-end tint, used on dark surfaces                                |
+
+Three gradient tokens render the signature:
+
+- `--brand-gradient` — `blue → periwinkle` (the "Beat" cascade). Use on primary CTAs and headline accent words. Mirrors the wordmark.
+- `--brand-gradient-v` — vertical `royal → blue → periwinkle`. Use on score chips, bar fills, the wizard progress orb.
+- `--brand-gradient-hero` — diagonal `midnight → royal → blue`. Use on dark hero surfaces. Mirrors the full wordmark left-to-right.
+
+Plus a calibrated `-50` through `-300` neutral-blue scale for surfaces,
+hovers, and disabled states. Status colors, track colors, type, space,
+radius, shadows, and motion tokens round out the system.
+**Shadows are tinted to `rgba(11,8,40, *)`** rather than generic black —
+so even drop shadows carry the brand DNA. The previous `--brand-indigo`
+name remains as a legacy alias pointing at `--brand-blue` so existing
+references keep working without a mass rename.
 
 ### b. Vertical accents — NEW
 

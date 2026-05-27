@@ -7,17 +7,23 @@
 <style>
 /* === Unified tokens (subset for the prototype) === */
 :root{
-  --brand-indigo:#5C5CD6; --brand-indigo-strong:#4B4BBE; --brand-indigo-soft:#8585E0;
-  --brand-indigo-50:#EEEEF8; --brand-indigo-100:#E2E2F5; --brand-indigo-200:#C5C7F1; --brand-indigo-700:#3F3FBA;
-  --ink:#1A1A2E; --ink-soft:#2C2C4A; --muted:#666680; --muted-soft:#9090A8;
-  --hairline:#E5E7EE; --hairline-soft:#F0F1F5;
-  --surface:#fff; --surface-soft:#FAFAFC; --surface-tint:#F7F7FB;
+  /* Real OfficeBeat logo palette — midnight→royal→blue→periwinkle gradient
+     extracted directly from the wordmark. */
+  --brand-midnight:#0B0828; --brand-royal:#1E146E; --brand-blue:#1817B5; --brand-periwinkle:#5C5CE0;
+  --brand-gradient:linear-gradient(90deg,#1817B5 0%,#5C5CE0 100%);
+  --brand-gradient-hero:linear-gradient(135deg,#0B0828 0%,#1E146E 40%,#1817B5 100%);
+  /* Legacy aliases so prototype CSS keeps working with --brand-indigo refs */
+  --brand-indigo:#1817B5; --brand-indigo-strong:#1E146E; --brand-indigo-soft:#5C5CE0;
+  --brand-indigo-50:#EEEEF8; --brand-indigo-100:#DCDCF1; --brand-indigo-200:#BFBFEA; --brand-indigo-700:#1E146E;
+  --ink:#0B0828; --ink-soft:#1F1B45; --muted:#5F5A7E; --muted-soft:#8A86A6;
+  --hairline:#E5E5F0; --hairline-soft:#F0F0F7;
+  --surface:#fff; --surface-soft:#FAFAFD; --surface-tint:#F6F6FB;
   --status-ok:#0A6B3A; --status-ok-bg:#ECFDF5; --status-warn:#78350F; --status-warn-bg:#FEF3C7;
   --radius-sm:6px; --radius-md:8px; --radius-lg:12px; --radius-xl:16px; --radius-2xl:24px;
-  --shadow-sm:0 2px 4px rgba(20,22,40,.06),0 1px 2px rgba(20,22,40,.04);
-  --shadow-md:0 6px 16px rgba(20,22,40,.08),0 2px 4px rgba(20,22,40,.04);
-  --shadow-lg:0 16px 40px rgba(20,22,40,.12),0 4px 12px rgba(20,22,40,.06);
-  --shadow-indigo:0 12px 32px rgba(92,92,214,.20);
+  --shadow-sm:0 2px 4px rgba(11,8,40,.07),0 1px 2px rgba(11,8,40,.04);
+  --shadow-md:0 6px 16px rgba(11,8,40,.09),0 2px 4px rgba(11,8,40,.05);
+  --shadow-lg:0 16px 40px rgba(11,8,40,.14),0 4px 12px rgba(11,8,40,.06);
+  --shadow-indigo:0 12px 32px rgba(24,23,181,.22);
   --ease-out:cubic-bezier(.16,1,.3,1);
   --dur:200ms;
 }
@@ -43,7 +49,7 @@ html,body{margin:0;padding:0;font-family:'Inter',-apple-system,system-ui,sans-se
 .wiz-rail{background:var(--surface-tint);border-right:1px solid var(--hairline);padding:28px 22px;display:flex;flex-direction:column;gap:24px}
 @media (max-width:820px){.wiz-rail{display:none}}
 .wiz-brand{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700;color:var(--brand-indigo);letter-spacing:.05em;text-transform:uppercase}
-.wiz-brand-orb{width:28px;height:28px;border-radius:50%;background:conic-gradient(from 90deg,var(--brand-indigo) 0% var(--progress,30%),var(--brand-indigo-100) var(--progress,30%) 100%);position:relative;flex-shrink:0}
+.wiz-brand-orb{width:28px;height:28px;border-radius:50%;background:conic-gradient(from 90deg,var(--brand-blue) 0% var(--progress,30%),var(--brand-indigo-100) var(--progress,30%) 100%);position:relative;flex-shrink:0}
 .wiz-brand-orb::after{content:'';position:absolute;inset:5px;border-radius:50%;background:#fff}
 .wiz-brand-orb::before{content:attr(data-pct);position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--brand-indigo);z-index:1}
 .wiz-steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
@@ -76,8 +82,8 @@ html,body{margin:0;padding:0;font-family:'Inter',-apple-system,system-ui,sans-se
 .btn-ghost:hover{color:var(--ink);background:var(--hairline-soft)}
 .btn-secondary{background:#fff;color:var(--ink);border-color:var(--hairline)}
 .btn-secondary:hover{border-color:var(--ink-soft)}
-.btn-primary{background:var(--brand-indigo);color:#fff;box-shadow:var(--shadow-sm)}
-.btn-primary:hover{background:var(--brand-indigo-strong);transform:translateY(-1px);box-shadow:var(--shadow-indigo)}
+.btn-primary{background:var(--brand-gradient);color:#fff;box-shadow:var(--shadow-sm)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:var(--shadow-indigo);filter:brightness(1.05)}
 .btn-primary:disabled{background:var(--muted-soft);cursor:not-allowed;transform:none;box-shadow:none}
 
 /* === Step 1: Resume drop === */
@@ -166,7 +172,7 @@ html,body{margin:0;padding:0;font-family:'Inter',-apple-system,system-ui,sans-se
 
 /* === Done step === */
 .done-burst{text-align:center;padding:32px 0}
-.done-orb{width:96px;height:96px;margin:0 auto 18px;border-radius:50%;background:linear-gradient(135deg,var(--brand-indigo),var(--brand-indigo-700));display:flex;align-items:center;justify-content:center;font-size:44px;color:#fff;box-shadow:var(--shadow-indigo)}
+.done-orb{width:96px;height:96px;margin:0 auto 18px;border-radius:50%;background:var(--brand-gradient-hero);display:flex;align-items:center;justify-content:center;font-size:44px;color:#fff;box-shadow:var(--shadow-indigo)}
 .done-h{margin:0 0 8px;font-size:28px;font-weight:800;letter-spacing:-.01em}
 .done-sub{color:var(--muted);font-size:15px;max-width:420px;margin:0 auto 24px}
 .done-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:520px;margin:0 auto}

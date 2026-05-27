@@ -17,22 +17,32 @@ import cairo, math, os, random
 
 OUT = os.path.dirname(os.path.abspath(__file__))
 
-# --- Tokens (Signal Field palette) ----------------------------------
-INDIGO        = (92/255, 92/255, 214/255)
-INDIGO_STRONG = (75/255, 75/255, 190/255)
-INDIGO_DEEP   = (63/255, 63/255, 186/255)
-INDIGO_SOFT   = (133/255, 133/255, 224/255)
+# --- Tokens (extracted from the real OfficeBeat logo) ---------------
+# The brand spans a gradient: midnight → royal → blue → periwinkle.
+# We use the FULL palette here, not just the periwinkle endpoint.
+MIDNIGHT      = (11/255, 8/255, 40/255)     # #0B0828 — "Office" wordmark
+ROYAL         = (30/255, 20/255, 110/255)   # #1E146E — OB pill body
+BLUE          = (24/255, 23/255, 181/255)   # #1817B5 — "Beat" core
+PERIWINKLE    = (92/255, 92/255, 224/255)   # #5C5CE0 — end of "Beat"
+MIST          = (209/255, 222/255, 255/255) # #D1DEFF — near-end tint
+
+# Legacy aliases — kept so the existing plate code keeps compiling
+INDIGO        = BLUE              # was #5C5CD6, now points to brand core
+INDIGO_STRONG = ROYAL
+INDIGO_DEEP   = MIDNIGHT
+INDIGO_SOFT   = PERIWINKLE
 INDIGO_50     = (238/255, 238/255, 248/255)
-INDIGO_100    = (226/255, 226/255, 245/255)
-INK           = (26/255, 26/255, 46/255)
-MUTED         = (102/255, 102/255, 128/255)
-MUTED_SOFT    = (144/255, 144/255, 168/255)
-HAIRLINE      = (229/255, 231/255, 238/255)
-HAIRLINE_SOFT = (240/255, 241/255, 245/255)
+INDIGO_100    = (220/255, 220/255, 241/255)
+
+INK           = MIDNIGHT
+MUTED         = (95/255, 90/255, 126/255)   # #5F5A7E — blue-tinted muted
+MUTED_SOFT    = (138/255, 134/255, 166/255) # #8A86A6
+HAIRLINE      = (229/255, 229/255, 240/255) # #E5E5F0
+HAIRLINE_SOFT = (240/255, 240/255, 247/255) # #F0F0F7
 FINANCE       = (31/255, 44/255, 111/255)
 HEALTH        = (14/255, 140/255, 122/255)
 SURFACE       = (1, 1, 1)
-SURFACE_TINT  = (247/255, 247/255, 251/255)
+SURFACE_TINT  = (246/255, 246/255, 251/255) # #F6F6FB
 
 
 def setup(filename, w, h, bg=SURFACE, scale=2):
@@ -79,6 +89,29 @@ def tick(ctx, cx, cy, angle, inner, outer, color=MUTED_SOFT, width=0.5):
     x1 = cx + inner * math.cos(angle); y1 = cy + inner * math.sin(angle)
     x2 = cx + outer * math.cos(angle); y2 = cy + outer * math.sin(angle)
     thinline(ctx, x1, y1, x2, y2, color, width)
+
+
+def brand_gradient(ctx, x0, y0, x1, y1, stops=None):
+    """The signature OfficeBeat gradient — from the wordmark itself.
+    Returns a Cairo LinearGradient configured midnight→royal→blue→periwinkle.
+    Defaults: BLUE → PERIWINKLE (matches "B-e-a-t" of the wordmark)."""
+    grad = cairo.LinearGradient(x0, y0, x1, y1)
+    if stops is None:
+        grad.add_color_stop_rgb(0.0, *BLUE)
+        grad.add_color_stop_rgb(1.0, *PERIWINKLE)
+    else:
+        for offset, color in stops:
+            grad.add_color_stop_rgb(offset, *color)
+    return grad
+
+
+def hero_gradient(ctx, x0, y0, x1, y1):
+    """The deep-hero gradient: midnight → royal → blue (135deg in CSS)."""
+    grad = cairo.LinearGradient(x0, y0, x1, y1)
+    grad.add_color_stop_rgb(0.0, *MIDNIGHT)
+    grad.add_color_stop_rgb(0.4, *ROYAL)
+    grad.add_color_stop_rgb(1.0, *BLUE)
+    return grad
 
 
 def label_rgba(ctx, text, x, y, size, color, bold=False, caps=False, tracking=0):
@@ -151,21 +184,28 @@ def plate_01_bullseye():
     ctx.arc(cx, cy, rs[1], 0, 2*math.pi)
     ctx.stroke()
 
-    # five matched dots clustered inside the inner ring
-    matched = [(cx-22, cy-8), (cx+10, cy-26), (cx+24, cy+4), (cx-6, cy+22), (cx-30, cy+18)]
-    for (x, y) in matched:
-        ctx.set_source_rgb(*INDIGO)
+    # five matched dots clustered inside the inner ring — each dot uses
+    # a different stop on the brand gradient (subtle wordmark callback)
+    matched = [
+        ((cx-22, cy-8),   ROYAL),
+        ((cx+10, cy-26),  BLUE),
+        ((cx+24, cy+4),   BLUE),
+        ((cx-6,  cy+22),  PERIWINKLE),
+        ((cx-30, cy+18),  PERIWINKLE),
+    ]
+    for (x, y), color in matched:
+        ctx.set_source_rgb(*color)
         ctx.arc(x, y, 4, 0, 2*math.pi)
         ctx.fill()
         # subtle glow
-        ctx.set_source_rgba(*INDIGO, 0.18)
+        ctx.set_source_rgba(*color, 0.18)
         ctx.arc(x, y, 11, 0, 2*math.pi)
         ctx.fill()
 
-    # THE focal point — center, indigo, ringed in white then indigo
+    # THE focal point — center, brand ROYAL (the deep OB-pill blue) ringed in white
     ctx.set_source_rgb(1,1,1)
     ctx.arc(cx, cy, 9, 0, 2*math.pi); ctx.fill()
-    ctx.set_source_rgb(*INDIGO)
+    ctx.set_source_rgb(*ROYAL)
     ctx.arc(cx, cy, 6, 0, 2*math.pi); ctx.fill()
 
     # crosshair through center, slightly extended
@@ -185,8 +225,14 @@ def plate_01_bullseye():
     ctx.set_font_size(64); ctx.set_source_rgb(*INK)
     ctx.move_to(left_x, 240); ctx.show_text("Find the")
     ctx.move_to(left_x, 320); ctx.show_text("signal in")
-    ctx.set_source_rgb(*INDIGO)
-    ctx.move_to(left_x, 400); ctx.show_text("the noise.")
+    # "the noise." rendered with the brand gradient — same trick the logo
+    # uses on the word "Beat". Mirrors the wordmark's signature.
+    text = "the noise."
+    ctx.set_font_size(64)
+    ext = ctx.text_extents(text)
+    grad = brand_gradient(ctx, left_x, 0, left_x + ext.width, 0)
+    ctx.set_source(grad)
+    ctx.move_to(left_x, 400); ctx.show_text(text)
 
     ctx.select_font_face("Inter", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
     ctx.set_font_size(16); ctx.set_source_rgb(*MUTED)
@@ -331,8 +377,15 @@ def plate_03_signal_field():
     for i, h in enumerate(heights):
         x = bars_x0 + i*(bar_w + bar_gap)
         if x + bar_w > W - 80: break
-        color = INDIGO if i in peaks else (215/255, 217/255, 232/255)
-        ctx.set_source_rgb(*color)
+        if i in peaks:
+            # Signal peaks — vertical brand gradient (royal at base → periwinkle at top)
+            grad = cairo.LinearGradient(0, bars_y_base, 0, bars_y_base - h)
+            grad.add_color_stop_rgb(0.0, *ROYAL)
+            grad.add_color_stop_rgb(0.5, *BLUE)
+            grad.add_color_stop_rgb(1.0, *PERIWINKLE)
+            ctx.set_source(grad)
+        else:
+            ctx.set_source_rgb(215/255, 217/255, 232/255)  # noise floor
         ctx.rectangle(x, bars_y_base - h, bar_w, h)
         ctx.fill()
         # tiny baseline tick
@@ -367,8 +420,13 @@ def plate_03_signal_field():
     ctx.set_font_size(60); ctx.set_source_rgb(*INK)
     ctx.move_to(lx, 260); ctx.show_text("Where it")
     ctx.move_to(lx, 332); ctx.show_text("matters,")
-    ctx.set_source_rgb(*INDIGO)
-    ctx.move_to(lx, 404); ctx.show_text("with rigour.")
+    # "with rigour." with the signature brand gradient
+    text = "with rigour."
+    ctx.set_font_size(60)
+    ext = ctx.text_extents(text)
+    grad = brand_gradient(ctx, lx, 0, lx + ext.width, 0)
+    ctx.set_source(grad)
+    ctx.move_to(lx, 404); ctx.show_text(text)
 
     ctx.select_font_face("Inter", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
     ctx.set_font_size(17); ctx.set_source_rgb(*MUTED)
