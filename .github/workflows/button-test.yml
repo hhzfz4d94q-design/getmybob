@@ -1,0 +1,67 @@
+name: Button smoke test (live site, Playwright)
+
+# Actually loads the deployed dashboard in a headless browser and clicks
+# every header + card button to confirm they behave as expected.
+# Runs on every push to main (so we catch regressions after Cloudflare
+# Pages deploys), nightly, and on manual dispatch.
+# Does NOT run on PRs to avoid blocking on transient live-site issues.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 14 * * *'  # daily at 14:00 UTC (10am Eastern) — after the morning auto-refresh
+
+permissions:
+  contents: read
+
+jobs:
+  button-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Playwright + Chromium
+        run: |
+          pip install playwright
+          python -m playwright install chromium --with-deps
+
+      - name: Wait for Cloudflare Pages deploy to settle
+        # On push events the smoke test sometimes runs before CF Pages has
+        # finished deploying the new commit. A 30s sleep is cheap insurance.
+        if: github.event_name == 'push'
+        run: sleep 30
+
+      - name: Run button smoke test
+        id: smoke
+        env:
+          DASHBOARD_URL: https://getmemyjob.officebeatllc.com/amit-arora.html
+        run: |
+          set -o pipefail
+          python3 tests/test_buttons_live.py | tee /tmp/button_test.log
+          echo "exit=$?" >> $GITHUB_OUTPUT
+
+      - name: Add report to step summary
+        if: always()
+        run: |
+          {
+            echo "# Button smoke test — $(date -u '+%Y-%m-%d %H:%M UTC')"
+            echo ""
+            echo '```'
+            cat /tmp/button_test.log 2>/dev/null || echo "(no log)"
+            echo '```'
+          } >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload failure screenshot
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: failure-screenshot
+          path: tests/failure-screenshot.png
+          if-no-files-found: ignore

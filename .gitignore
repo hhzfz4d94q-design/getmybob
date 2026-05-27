@@ -29,3 +29,6 @@ fetch_jobs_PATCHED.py
 getmemyjob-helper-README.md
 getmemyjob-helper.zip
 getmemyjob-helper-firefox.zip
+
+# Playwright button-test failure screenshot (CI artifact, not committed)
+tests/failure-screenshot.png
