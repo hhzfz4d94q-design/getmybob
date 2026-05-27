@@ -3119,7 +3119,10 @@ WIZARD_V3_BLOCK = r"""
         askBtn.addEventListener("click", async () => {
           askBtn.disabled = true; askBtn.textContent = "Asking AI...";
           const ek = getEditKey();
-          if (!ek) { out.innerHTML = '<em style="color:#B91C1C;">No edit key</em>'; askBtn.disabled = false; askBtn.textContent = "Show me what AI would suggest"; return; }
+          if (!ek) {
+            out.innerHTML = '<div style="padding:10px 12px;background:#fef3c7;border:1px solid #fcd34d;border-radius:6px;font-size:12.5px;color:#78350f;">⚠ You\'re not signed in to this browser. Open <a href="/account.html" style="color:#5C5CD6;font-weight:600;">your account page</a> to paste your invite key, then come back. Skipping this step keeps your current 20 target companies.</div>';
+            askBtn.disabled = false; askBtn.textContent = "Show me what AI would suggest"; return;
+          }
           try {
             const r = await fetch(WORKER_BASE + "/regenerate-companies" + USER_QS, {
               method: "POST",
@@ -8553,7 +8556,7 @@ async function regenerateCompaniesFromHeader(btn) {{
     : (localStorage.getItem("htj_resume_key_" + USER_SLUG) || localStorage.getItem("htj_resume_key"));
   const adminKey = localStorage.getItem("htj_admin_key");
   if (!editKey && !adminKey) {{
-    wizBanner("Can't refresh — no auth in this browser. Re-open your invite link with ?key=….");
+    alert("Can't refresh — no auth in this browser.\\nOpen your invite link or admin login (or admin login) first, then try again.");
     return;
   }}
   const headers = editKey ? {{ "X-Edit-Key": editKey }} : {{ "X-Admin-Key": adminKey }};

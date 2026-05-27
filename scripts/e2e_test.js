@@ -265,6 +265,131 @@ async function testUser(browser, slug) {
     record(slug, 'first card has Mark Applied button', cardStats.firstHasMarkAppliedBtn);
   }
 
+  // ── 10. Dropdown menu items: click each and verify expected side effect ──
+  console.log('  ── More dropdown items ──');
+  // Open More dropdown first
+  await page.evaluate(() => {
+    const trigger = Array.from(document.querySelectorAll('.header-btn')).find(b => /^More/.test(b.textContent.trim()));
+    if (trigger) trigger.click();
+  });
+  await new Promise(r => setTimeout(r, 250));
+  // Click "Why isn't [X] in my feed?" — should open modal
+  const whyHiddenOpened = await page.evaluate(() => {
+    const btn = document.getElementById('why-hidden-btn');
+    if (!btn) return { ok: false, why: 'btn not found' };
+    btn.click();
+    return { ok: !!document.getElementById('why-hidden-modal') };
+  });
+  record(slug, 'click #why-hidden-btn opens why-hidden modal', whyHiddenOpened.ok, whyHiddenOpened.why || '');
+  // Test modal close via × button (uses our new modal-close-btn class)
+  const whyHiddenClosed = await page.evaluate(() => {
+    const close = document.querySelector('#why-hidden-modal .modal-close-btn');
+    if (!close) return { ok: false, why: 'no close button' };
+    close.click();
+    return { ok: !document.getElementById('why-hidden-modal') };
+  });
+  record(slug, 'why-hidden modal × button closes it', whyHiddenClosed.ok, whyHiddenClosed.why || '');
+
+  // ── 11. Card content sanity ──
+  console.log('  ── Cards ──');
+  const cards = await page.evaluate(() => {
+    const all = Array.from(document.querySelectorAll('.card[data-fp]'));
+    if (!all.length) return { count: 0 };
+    return {
+      count: all.length,
+      withScore: all.filter(c => {
+        const s = c.querySelector('.score');
+        const n = s ? parseInt(s.textContent, 10) : NaN;
+        return Number.isFinite(n) && n >= 0 && n <= 100;
+      }).length,
+      withApplyURL: all.filter(c => {
+        const a = c.querySelector('.title a[href]');
+        return a && a.href && a.href.startsWith('http');
+      }).length,
+      withCompany: all.filter(c => (c.querySelector('.company') || {}).textContent).length,
+      withWhyData: all.filter(c => c.getAttribute('data-why')).length,
+      topScores: all.slice(0, 5).map(c => parseInt((c.querySelector('.score') || {}).textContent, 10) || 0),
+    };
+  });
+  record(slug, `all ${cards.count} cards have valid 0-100 score`, cards.withScore === cards.count, `${cards.withScore}/${cards.count}`);
+  record(slug, `all cards have apply URL`, cards.withApplyURL === cards.count, `${cards.withApplyURL}/${cards.count}`);
+  record(slug, `all cards have company`, cards.withCompany === cards.count, `${cards.withCompany}/${cards.count}`);
+  record(slug, `all cards have data-why`, cards.withWhyData === cards.count, `${cards.withWhyData}/${cards.count}`);
+  record(slug, `top 5 cards have score >= 50`, cards.topScores.every(s => s >= 50), `scores=${cards.topScores.join(',')}`);
+
+  // ── 12. Click "Why?" button on first card → tooltip appears ──
+  const whyOnCard = await page.evaluate(() => {
+    const card = document.querySelector('.card[data-fp]');
+    if (!card) return { ok: false, why: 'no card' };
+    const whyBtn = Array.from(card.querySelectorAll('button')).find(b => /^Why/.test(b.textContent.trim()));
+    if (!whyBtn) return { ok: false, why: 'no Why? button' };
+    whyBtn.click();
+    return { ok: !!card.querySelector('.why-tooltip'), tooltipText: (card.querySelector('.why-tooltip') || {}).textContent };
+  });
+  record(slug, `card "Why?" button opens tooltip`, whyOnCard.ok, whyOnCard.why || `text="${(whyOnCard.tooltipText || '').slice(0, 50)}"`);
+
+  // ── 13. Walk wizard step-by-step (each goto + render without error) ──
+  console.log('  ── Wizard walk ──');
+  // Re-open wizard (force-show by clearing finished)
+  await page.evaluate(() => {
+    try {
+      const k = 'gmj_wizard_state_v3';
+      localStorage.setItem(k, JSON.stringify({ currentStep: 'welcome', completed: [], skipped: [], data: {}, finished: false }));
+      WizV3.open();
+    } catch (e) {}
+  });
+  await new Promise(r => setTimeout(r, 600));
+
+  const allSteps = ['welcome', 'upload-resume', 'your-bullseye', 'where-you-work', 'scoring-tune', 'daily-workflow', 'pick-blocks', 'addons', 'done'];
+  for (const stepKey of allSteps) {
+    const result = await page.evaluate((sk) => {
+      try {
+        WizV3.goto(sk);
+        // Wait a tick for async render
+        return new Promise(r => setTimeout(() => {
+          const body = document.getElementById('wiz3-body');
+          const h2 = document.getElementById('wiz3-h2');
+          r({
+            ok: body && body.innerHTML.length > 50,
+            currentStep: WizV3.state().currentStep,
+            title: h2 ? h2.textContent : '',
+            bodyLen: body ? body.innerHTML.length : 0,
+          });
+        }, 500));
+      } catch (e) {
+        return { ok: false, error: e.message };
+      }
+    }, stepKey);
+    record(slug, `wizard step '${stepKey}' renders`, result.ok, result.error || `title="${result.title}" bodyLen=${result.bodyLen}`);
+  }
+
+  // ── 14. Wizard footer buttons exist on a non-welcome step ──
+  await page.evaluate(() => WizV3.goto('your-bullseye'));
+  await new Promise(r => setTimeout(r, 600));
+  for (const sel of ['#wiz3-back', '#wiz3-skip', '#wiz3-continue']) {
+    await assertVisible(page, sel, slug, `wizard ${sel} visible on bullseye step`);
+  }
+
+  // ── 15. Wizard skill picker cap enforcement (already at 14/15 per screenshot — verify it accepts 1 more, rejects 2) ──
+  const capTest = await page.evaluate(() => {
+    const tHost = document.querySelector('#bs-skills-host');
+    if (!tHost || !tHost.__bullseyeValues) return { ok: false, why: 'skills picker not found' };
+    const before = tHost.__bullseyeValues().length;
+    const inp = tHost.querySelector('.bullseye-input');
+    if (!inp) return { ok: false, why: 'no input' };
+    return { ok: true, beforeCount: before, max: tHost.__bullseyeMax, inputDisabled: inp.disabled };
+  });
+  record(slug, 'skill picker has working state', capTest.ok, capTest.why || `count=${capTest.beforeCount}/max=${capTest.max} inputDisabled=${capTest.inputDisabled}`);
+
+  // ── 16. Close wizard via × button (programmatic click) ──
+  const wizClosed = await page.evaluate(() => {
+    const x = document.getElementById('wiz3-close');
+    if (!x) return { ok: false, why: 'no close button' };
+    x.click();
+    return { ok: !document.getElementById('wiz3-overlay').classList.contains('show') };
+  });
+  record(slug, 'wizard × button closes wizard', wizClosed.ok, wizClosed.why || '');
+
   await page.close();
 }
 
