@@ -1352,6 +1352,39 @@ async function handleTracker(request, env, cors, slug) {
       r.statusHistory.push({ status: body.status, at: now });
       if (body.status === 'applied' && !r.appliedAt) r.appliedAt = now;
       r.lastUpdated = now;
+      // ENGAGEMENT LEARNING (2026-05-27): if this is a dismissal AND the user
+      // has already dismissed 3+ jobs at the same company in the last 30 days,
+      // auto-add the company to their excludeCompanies. Saves the user from
+      // having to repeatedly hit X on the same employer.
+      if (body.status === 'dismissed' && r.company) {
+        try {
+          const company = String(r.company).trim().toLowerCase();
+          if (company) {
+            const cutoff = Date.now() - 30 * 24 * 3600 * 1000;
+            let dismissCount = 0;
+            for (const t of Object.values(tracker)) {
+              if (!t || t.status !== 'dismissed') continue;
+              if (String(t.company || '').trim().toLowerCase() !== company) continue;
+              const ts = Date.parse(t.lastUpdated || t.appliedAt || '');
+              if (!isNaN(ts) && ts >= cutoff) dismissCount += 1;
+            }
+            // Include THIS dismissal (just set)
+            if (dismissCount >= 3) {
+              const profRaw = await env.RESUMES.get(uk(slug, 'skills_profile'));
+              if (profRaw) {
+                const profile = JSON.parse(profRaw);
+                const excl = Array.isArray(profile.excludeCompanies) ? profile.excludeCompanies : [];
+                const exclLower = new Set(excl.map(x => String(x).toLowerCase()));
+                if (!exclLower.has(company)) {
+                  profile.excludeCompanies = [...excl, r.company.trim()];
+                  profile.lastAutoLearn = { kind: 'excludeCompany', value: r.company, dismissCount, at: now };
+                  await env.RESUMES.put(uk(slug, 'skills_profile'), JSON.stringify(profile));
+                }
+              }
+            }
+          }
+        } catch (e) { /* learning is best-effort */ }
+      }
       break;
     }
     case 'clearStatus': {

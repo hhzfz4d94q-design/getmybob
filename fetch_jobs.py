@@ -1941,11 +1941,16 @@ def _user_min_seniority_rank(profile):
 # ============================================================
 # F4: Salary filter helpers
 # ============================================================
-def _passes_salary_filter(salary_str, salary_max_parsed, profile):
+def _passes_salary_filter(salary_str, salary_max_parsed, profile, location=None, description=None):
     """Return True if this row should pass the salary gate based on user prefs.
     profile.salaryFloor (number) — hide jobs below this
     profile.hideNoSalary (bool)  — hide jobs whose salary_range is empty
     Empty strings/None disable the filter.
+
+    Smarter (2026-05-27):
+    - If ATS salary field is missing, try to extract from JD body
+    - If JD is from a disclosure-required jurisdiction (NY/CA/WA/CO/IL) AND
+      no salary visible, treat as 'company hid required disclosure' — soft fail
     """
     if not profile:
         return True
@@ -1956,7 +1961,19 @@ def _passes_salary_filter(salary_str, salary_max_parsed, profile):
     except (TypeError, ValueError):
         floor_n = 0
     has_salary = bool((salary_str or "").strip())
+    # Body extraction fallback when ATS field is empty
+    if not has_salary and description:
+        try:
+            lo, hi = _parse_salary_from_jd_body(description)
+            if hi:
+                salary_max_parsed = hi
+                has_salary = True
+        except Exception:
+            pass
     if hide_no_sal and not has_salary:
+        return False
+    # Disclosure-required jurisdiction without visible salary = suspicious
+    if hide_no_sal and not has_salary and location and _is_disclosure_required(location):
         return False
     if floor_n and has_salary and salary_max_parsed and salary_max_parsed < floor_n:
         return False
@@ -2460,13 +2477,31 @@ def score_job(job):
         ind_strength = min(ind_hits / 2.0, 1.0)
         s += int(ind_strength * w_i * ind_stab)       # default 1.0 — full weight
 
-        # SKILLS component: keywords + technologies + frameworks; cap at 5 hits.
-        # Dominant signal alongside industry.
+        # SKILLS component: keywords + technologies + frameworks.
+        # Section-weighted (2026-05-27): hits in 'requirements' count 3x;
+        # 'responsibilities' 2x; 'rest' (intro/perks) 1x; 'nice_to_have' 0.5x.
+        # Total weighted hits capped at 8 → strength 1.0.
         skl_terms = (profile.get("keywords", []) or []) + \
                     (profile.get("technologies", []) or []) + \
                     (profile.get("frameworks", []) or [])
-        kw_hits = sum(1 for k in skl_terms if k and k in blob)
-        skl_strength = min(kw_hits / 5.0, 1.0)
+        # Parse JD into sections (cached if already done)
+        _secs = parse_jd_sections(job.get("description") or "")
+        _weights = {"requirements": 3.0, "responsibilities": 2.0, "rest": 1.0, "nice_to_have": 0.5}
+        weighted_hits = 0.0
+        plain_hits = 0
+        for k in skl_terms:
+            if not k:
+                continue
+            for sec_name, sec_text in _secs.items():
+                if k in sec_text:
+                    weighted_hits += _weights.get(sec_name, 1.0)
+                    plain_hits += 1
+                    break  # count each skill once per JD
+        # Fall back to plain blob match if section parsing yielded nothing
+        if not any(_secs.values()):
+            weighted_hits = sum(1 for k in skl_terms if k and k in blob)
+        skl_strength = min(weighted_hits / 8.0, 1.0)
+        kw_hits = plain_hits if plain_hits else sum(1 for k in skl_terms if k and k in blob)
         s += int(skl_strength * w_s * skl_stab)       # default 1.0 — full weight
 
         # PERFECT-MATCH BONUS (v2): fires when industry AND skills both hit
@@ -2851,6 +2886,100 @@ def run():
     # so per-user views are correct even if scoring is global.
     generate_all_dashboards(conn)
     conn.close()
+
+
+_JD_SECTION_HEADERS = {
+    "responsibilities": ("responsibilities", "what you'll do", "what you will do", "the role",
+                         "the opportunity", "your role", "in this role", "key responsibilities",
+                         "your impact", "what you'll own", "what we need you to do", "day to day"),
+    "requirements":     ("requirements", "qualifications", "what you bring", "what we're looking for",
+                         "what we are looking for", "you have", "you should have", "you'll need",
+                         "minimum qualifications", "basic qualifications", "must have", "required"),
+    "nice_to_have":     ("nice to have", "nice-to-have", "bonus", "bonus points", "preferred qualifications",
+                         "preferred", "plus", "even better", "we'd love"),
+}
+
+def parse_jd_sections(description):
+    """Split a JD into responsibilities / requirements / nice_to_have sections.
+    Returns dict with those three keys mapped to substrings (lowercased).
+    A 'rest' key holds everything that didn't classify (intro paragraphs etc.).
+    Heuristic: scan line-by-line for header phrases; assign subsequent lines to
+    the active section until the next header or EOF.
+    Conservative: if no headers found, returns {responsibilities: '', requirements: '',
+    nice_to_have: '', rest: full_text}."""
+    if not description:
+        return {"responsibilities": "", "requirements": "", "nice_to_have": "", "rest": ""}
+    lines = description.lower().split("\n")
+    sections = {"responsibilities": [], "requirements": [], "nice_to_have": [], "rest": []}
+    active = "rest"
+    for line in lines:
+        stripped = line.strip()
+        if not stripped:
+            continue
+        # Header check: if a line is short-ish and starts/contains a header phrase
+        if len(stripped) < 80:
+            matched = None
+            for key, phrases in _JD_SECTION_HEADERS.items():
+                for ph in phrases:
+                    if ph in stripped:
+                        matched = key
+                        break
+                if matched:
+                    break
+            if matched:
+                active = matched
+                continue  # don't include the header itself in content
+        sections[active].append(stripped)
+    return {k: " ".join(v) for k, v in sections.items()}
+
+
+def _parse_salary_from_jd_body(description):
+    """Extract salary range from common JD-body patterns when the ATS didn't
+    expose a structured salary field. Looks for $NNN,NNN - $NNN,NNN, $NNNk – $NNNk,
+    'base salary range', etc. Returns (min_dollars, max_dollars) or (0, 0)."""
+    if not description:
+        return (0, 0)
+    text = description[:4000]  # bound the work; salary disclosures are near the top
+    # Common patterns from Greenhouse / Lever / Ashby disclosures
+    PATTERNS = [
+        # $180,000 - $250,000 or $180,000–$250,000 (em-dash)
+        r"\$(\d{2,3}(?:,\d{3})+)\s*[-\u2013\u2014to]+\s*\$(\d{2,3}(?:,\d{3})+)",
+        # $180K - $250K
+        r"\$(\d{2,3})\s*[Kk]\s*[-\u2013\u2014to]+\s*\$(\d{2,3})\s*[Kk]",
+        # USD 180,000 - 250,000
+        r"USD\s*(\d{2,3}(?:,\d{3})+)\s*[-\u2013\u2014to]+\s*(\d{2,3}(?:,\d{3})+)",
+    ]
+    for pat in PATTERNS:
+        m = re.search(pat, text)
+        if m:
+            try:
+                lo = int(m.group(1).replace(",", ""))
+                hi = int(m.group(2).replace(",", ""))
+                # If "K" pattern, scale up
+                if "K" in pat:
+                    lo *= 1000; hi *= 1000
+                if 30_000 <= lo <= 2_000_000 and lo <= hi:
+                    return (lo, hi)
+            except (ValueError, IndexError):
+                continue
+    return (0, 0)
+
+
+# Disclosure-required regions: jurisdictions where companies MUST post salary
+# in the JD. If a JD from these markets is missing salary, that's a red flag.
+_DISCLOSURE_LOCATIONS = (
+    "new york", " ny,", " ny ", "nyc",
+    "california", "san francisco", " sf,", " ca,", " ca ", "los angeles",
+    "washington", " wa,", "seattle",
+    "colorado", "denver",
+    "illinois", "chicago",  # 2025 expansion
+)
+
+def _is_disclosure_required(location):
+    """True if posting is in a jurisdiction with salary-disclosure law."""
+    if not location: return False
+    L = location.lower()
+    return any(t in L for t in _DISCLOSURE_LOCATIONS)
 
 
 def _parse_salary_max(salary_text):
