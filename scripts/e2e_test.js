@@ -370,11 +370,21 @@ async function testUser(browser, slug) {
   }
 
   // ── 14. Wizard footer buttons exist on a non-welcome step ──
+  // Back + Continue should always be visible on a non-welcome step.
+  // Skip is hidden on required (non-optional) steps — that's by design.
   await page.evaluate(() => WizV3.goto('your-bullseye'));
   await new Promise(r => setTimeout(r, 600));
-  for (const sel of ['#wiz3-back', '#wiz3-skip', '#wiz3-continue']) {
+  for (const sel of ['#wiz3-back', '#wiz3-continue']) {
     await assertVisible(page, sel, slug, `wizard ${sel} visible on bullseye step`);
   }
+  // Skip button should exist in DOM but be display:none on required steps
+  const skipState = await page.evaluate(() => {
+    const el = document.getElementById('wiz3-skip');
+    if (!el) return { ok:false, why:'wiz3-skip not in DOM' };
+    const d = getComputedStyle(el).display;
+    return { ok: d === 'none', why: `display=${d}` };
+  });
+  record(slug, 'wizard #wiz3-skip hidden on required bullseye step', skipState.ok, skipState.why);
 
   // ── 15. Wizard skill picker cap enforcement (already at 14/15 per screenshot — verify it accepts 1 more, rejects 2) ──
   const capTest = await page.evaluate(() => {
