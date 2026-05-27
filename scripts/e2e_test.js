@@ -422,37 +422,36 @@ async function testUser(browser, slug) {
   record(slug, 'wizard AI button shows friendly card when no auth (not raw 401)', authUX.ok, authUX.why);
 
   // ── 14c. patchProfile() throws friendly 'Session expired' on 401, not raw 'HTTP 401' ──
+  // Use the optional 'where-you-work' step which has no required-field validation,
+  // so patchProfile is the only thing that can fail. Mock fetch to force a 401.
   const patchUX = await page.evaluate(async () => {
-    // Save & clear keys
     const savedEdit = localStorage.getItem('htj_resume_key') || '';
     const savedAdmin = localStorage.getItem('htj_admin_key') || '';
-    try { localStorage.removeItem('htj_resume_key_amit-arora'); localStorage.removeItem('htj_resume_key_geetu'); localStorage.removeItem('htj_resume_key'); localStorage.removeItem('htj_admin_key'); } catch(_){}
     let msg = '';
+    const realFetch = window.fetch;
     try {
-      // Call the wizard-scope patchProfile via WizV3 if it exposes it; else simulate via fetch
-      // The wizard step's save() calls patchProfile internally — easier to trigger via clicking Continue on a step that calls it.
-      // We just verify the error message format by triggering a save with empty keys.
-      // Since patchProfile is a closure inside WizV3 IIFE, we can't call it directly. Instead, monkey-patch fetch to force a 401.
-      const realFetch = window.fetch;
-      window.fetch = async () => ({ ok:false, status:401, json: async()=>({ error:'Invalid X-Edit-Key' }) });
-      try {
-        // Re-render bullseye and click Continue to trigger the save path
-        WizV3.goto('your-bullseye');
-        await new Promise(r => setTimeout(r, 300));
-        document.getElementById('wiz3-continue').click();
-        await new Promise(r => setTimeout(r, 600));
+      // Force every fetch to look like a 401 from the worker
+      window.fetch = async () => ({
+        ok: false, status: 401,
+        json: async () => ({ error: 'Invalid X-Edit-Key (or use X-Admin-Key)' })
+      });
+      // Move to an optional step (no required-field validation) and click Continue
+      WizV3.goto('where-you-work');
+      await new Promise(r => setTimeout(r, 500));
+      const contBtn = document.getElementById('wiz3-continue');
+      if (!contBtn) { msg = '(no wiz3-continue button)'; }
+      else {
+        contBtn.click();
+        await new Promise(r => setTimeout(r, 700));
         const errEl = document.querySelector('.wiz3-msg.err, .wiz3-msg.show');
-        msg = errEl ? (errEl.textContent + ' ' + errEl.innerHTML) : '(no err element)';
-      } finally {
-        window.fetch = realFetch;
+        msg = errEl ? (errEl.textContent + ' || ' + errEl.innerHTML) : '(no err element rendered)';
       }
-    } catch(e) { msg = 'threw: ' + e.message; }
-    // Restore
-    if (savedEdit) localStorage.setItem('htj_resume_key', savedEdit);
-    if (savedAdmin) localStorage.setItem('htj_admin_key', savedAdmin);
+    } finally {
+      window.fetch = realFetch;
+    }
     const friendly = /session expired/i.test(msg) || /account\.html/i.test(msg) || /Not signed in/i.test(msg);
-    const noRaw = !/^Couldn't save:\s*HTTP\s*4\d\d\s*$/i.test(msg.trim());
-    return { ok: friendly && noRaw, why: msg.slice(0, 200) };
+    const noRaw = !/Couldn't save:\s*HTTP\s*4\d\d/i.test(msg) && !/Invalid X-Edit-Key/i.test(msg);
+    return { ok: friendly && noRaw, why: msg.slice(0, 220) };
   });
   record(slug, 'wizard Continue shows friendly error (not raw "HTTP 401")', patchUX.ok, patchUX.why);
 
