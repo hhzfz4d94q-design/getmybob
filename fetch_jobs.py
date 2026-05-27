@@ -3504,10 +3504,18 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
             s,
         )
     html = _merge_surrogates(html)
-    # Wizard v3: append the self-contained block just before </body>.
-    # This avoids any brace-escaping conflicts with HTML_TEMPLATE.format().
+    # Wizard v3: append the self-contained block just before the LAST </body>.
+    # CRITICAL: must use rsplit, not replace(..., 1). The FIRST </body> in the
+    # rendered HTML is inside a JS template literal in _renderResumeForPrint
+    # (which builds a complete <html>...</body></html> as a string for the
+    # printable resume). Injecting there put a literal <script>...</script>
+    # inside a JS template literal — the HTML parser then incorrectly closed
+    # the page's main <script> at that </script>, leaving the template literal
+    # unclosed → "Unexpected end of input" → ALL event handlers dead.
+    # rsplit on the LAST </body> targets the actual page body close.
     if "</body>" in html:
-        html = html.replace("</body>", WIZARD_V3_BLOCK + "\n</body>", 1)
+        parts = html.rsplit("</body>", 1)
+        html = parts[0] + WIZARD_V3_BLOCK + "\n</body>" + parts[1]
     else:
         html += WIZARD_V3_BLOCK
     with open(output_path, "w", encoding="utf-8") as f:

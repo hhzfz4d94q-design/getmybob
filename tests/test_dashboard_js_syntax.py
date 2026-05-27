@@ -50,31 +50,39 @@ def check(label, cond, detail=""):
         print(f"  ✗ {label}  ({detail})")
 
 
-def extract_inline_js(html: str) -> str:
-    """Concatenate all inline <script>...</script> bodies (no src=) into one string.
+def extract_inline_js_blocks(html: str) -> list[tuple[int, str]]:
+    """Find each top-level inline <script>...</script> block — exactly the
+    way the browser's HTML parser does it: from each opening <script> tag
+    (without src=) to the NEXT </script>. This is critical because the
+    browser parses each block as a SEPARATE JS context. Concatenating them
+    (as an earlier version of this test did) can mask serious bugs like
+    'Wizard v3 block injected into a JS template literal so the page sees
+    </script> early and dies with Unexpected-end-of-input'.
 
-    Note: the dashboard sometimes contains literal '<script>' / '</script>'
-    INSIDE a JS template literal (the wizard-v3 block renders an HTML chunk
-    that contains a script tag). To handle that without writing a full HTML
-    tokenizer, we take everything between the FIRST opening '<script>' tag
-    on its own line and the LAST '</script>' tag, which is how every
-    generated dashboard is structured.
+    Returns list of (start_line_1indexed, code) tuples.
     """
     lines = html.split("\n")
-    start = None
-    for i, line in enumerate(lines):
-        stripped = line.strip()
-        if stripped.startswith("<script>") and "src=" not in stripped:
-            start = i + 1
+    blocks: list[tuple[int, str]] = []
+    i = 0
+    while i < len(lines):
+        stripped = lines[i].strip()
+        # Match either `<script>` alone OR `<script>` opening (no src attribute)
+        is_open = stripped.startswith("<script>") and "src=" not in stripped and "</script>" not in stripped
+        if not is_open:
+            i += 1
+            continue
+        start = i + 1
+        # Find next </script> alone on a line (matches browser's HTML parser)
+        j = i + 1
+        while j < len(lines) and lines[j].strip() != "</script>":
+            j += 1
+        if j >= len(lines):
+            # Unterminated <script> — definitely a bug; record what we have
+            blocks.append((start + 1, "\n".join(lines[start:])))
             break
-    end = None
-    for i in range(len(lines) - 1, -1, -1):
-        if "</script>" in lines[i] and "<script>" not in lines[i] and "<script " not in lines[i]:
-            end = i
-            break
-    if start is None or end is None or start >= end:
-        return ""
-    return "\n".join(lines[start:end])
+        blocks.append((start + 1, "\n".join(lines[start:j])))
+        i = j + 1
+    return blocks
 
 
 def parse_js(js: str) -> tuple[bool, str]:
@@ -95,22 +103,38 @@ def parse_js(js: str) -> tuple[bool, str]:
 # (1) Inline JS parses cleanly
 # ----------------------------------------------------------------------
 print("(1) Inline JS syntax check (node --check on each dashboard):")
-parsed_js_by_file = {}  # cache for the next test
+parsed_js_by_file = {}  # cache for the next test — concatenated for grep purposes
 for p in DASHBOARDS:
     fn = os.path.basename(p)
     with open(p, "r", errors="replace") as f:
         html = f.read()
-    js = extract_inline_js(html)
-    if not js:
-        check(f"{fn}: inline JS extractable", False, "could not find <script>...</script> bounds")
+    blocks = extract_inline_js_blocks(html)
+    if not blocks:
+        check(f"{fn}: at least one inline <script> block found", False,
+              "could not find any inline <script>...</script>")
         continue
-    ok, err = parse_js(js)
-    if ok:
-        check(f"{fn}: parses cleanly ({len(js):,} bytes)", True)
-        parsed_js_by_file[p] = js
+    all_ok = True
+    block_summary = []
+    for idx, (start_line, code) in enumerate(blocks, 1):
+        ok, err = parse_js(code)
+        if ok:
+            block_summary.append(f"block {idx}@L{start_line}={len(code):,}B ✓")
+        else:
+            all_ok = False
+            # Translate node's local line to HTML line
+            import re as _re
+            m = _re.search(r":(\d+)", err)
+            html_line = (start_line + int(m.group(1)) - 1) if m else None
+            print(f"  ✗ {fn}: block {idx} (starts at HTML line {start_line}) FAILED parse"
+                  + (f" — error near HTML line {html_line}" if html_line else ""))
+            for ln in err.split("\n")[:5]:
+                print(f"      {ln}")
+    if all_ok:
+        check(f"{fn}: {len(blocks)} script block(s) parse cleanly  [" + ", ".join(block_summary) + "]", True)
+        # Concatenate ALL block code for the onclick-handler-resolution check below
+        parsed_js_by_file[p] = "\n".join(c for _, c in blocks)
     else:
-        check(f"{fn}: parses cleanly", False, "see error below")
-        print(f"      {err}")
+        check(f"{fn}: all {len(blocks)} script block(s) parse cleanly", False, "see error(s) above")
 
 
 # ----------------------------------------------------------------------

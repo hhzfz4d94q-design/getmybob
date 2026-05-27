@@ -2587,705 +2587,6 @@ function _buildPrintableHTML(r) {
          `</style></head><body>` +
          _renderResumeForPrint(r) +
          `
-<!-- ====================== Wizard v3 ====================== -->
-<style>
-  #wiz3-overlay { position:fixed; inset:0; background:rgba(20,22,40,0.55); z-index:2147483600; display:none; align-items:center; justify-content:center; padding:24px; font-family:'Inter',-apple-system,system-ui,sans-serif; }
-  #wiz3-overlay.show { display:flex; }
-  #wiz3-card { width:min(960px,100%); max-height:92vh; background:#fff; border-radius:14px; box-shadow:0 24px 60px rgba(20,22,40,0.4); display:grid; grid-template-columns:240px 1fr; overflow:hidden; }
-  @media (max-width:680px) { #wiz3-card { grid-template-columns:1fr; } #wiz3-rail { display:none; } }
-  #wiz3-rail { background:#F7F7FB; border-right:1px solid #E5E7EE; padding:24px 18px; overflow-y:auto; }
-  #wiz3-rail .wiz3-brand { font-size:13px; font-weight:700; color:#5C5CD6; letter-spacing:.02em; text-transform:uppercase; margin-bottom:18px; }
-  #wiz3-rail ol { list-style:none; padding:0; margin:0; }
-  #wiz3-rail li { display:flex; align-items:flex-start; gap:10px; padding:8px 6px; border-radius:8px; cursor:pointer; transition:background 0.15s; font-size:13px; color:#444; }
-  #wiz3-rail li:hover { background:#EEEEF8; }
-  #wiz3-rail li.is-current { background:#EEEEF8; color:#5C5CD6; font-weight:600; }
-  #wiz3-rail li.is-done   { color:#0A6B3A; }
-  #wiz3-rail li.is-skipped{ color:#9a9aac; }
-  #wiz3-rail li[aria-disabled="true"] { cursor:not-allowed; opacity:0.55; }
-  #wiz3-rail .wiz3-dot { flex:0 0 18px; width:18px; height:18px; border-radius:50%; border:1.5px solid #C0C4CC; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:#888; background:#fff; margin-top:1px; }
-  #wiz3-rail li.is-current .wiz3-dot { border-color:#5C5CD6; color:#5C5CD6; background:#fff; }
-  #wiz3-rail li.is-done    .wiz3-dot { border-color:#0A6B3A; background:#0A6B3A; color:#fff; }
-  #wiz3-rail li.is-skipped .wiz3-dot { border-color:#C0C4CC; background:#fff; color:#aaa; }
-  #wiz3-main { display:flex; flex-direction:column; min-height:0; }
-  #wiz3-head { padding:22px 28px 8px; border-bottom:1px solid #F0F0F5; flex:0 0 auto; }
-  #wiz3-head .wiz3-step-no { font-size:12px; color:#888; letter-spacing:.04em; font-weight:600; text-transform:uppercase; }
-  #wiz3-head h2 { margin:6px 0 2px; font-size:21px; font-weight:700; color:#1A1A2E; letter-spacing:-0.01em; }
-  #wiz3-head .wiz3-sub { font-size:13.5px; color:#666680; margin:0; }
-  #wiz3-body { flex:1 1 auto; padding:18px 28px 18px; overflow-y:auto; min-height:200px; }
-  #wiz3-body p { font-size:14px; color:#444; line-height:1.55; }
-  #wiz3-body label { display:block; font-size:12px; font-weight:600; color:#444; text-transform:uppercase; letter-spacing:.04em; margin:14px 0 6px; }
-  #wiz3-body input[type=text], #wiz3-body input[type=email], #wiz3-body input[type=tel], #wiz3-body input[type=url], #wiz3-body input[type=number], #wiz3-body select { width:100%; padding:9px 11px; font-size:14px; font-family:inherit; border:1px solid #D8DBE3; border-radius:6px; box-sizing:border-box; background:#fff; }
-  #wiz3-body input:focus, #wiz3-body select:focus { outline:none; border-color:#5C5CD6; box-shadow:0 0 0 3px rgba(92,92,214,0.12); }
-  #wiz3-body .hint { font-size:12px; color:#888; margin-top:-2px; }
-  #wiz3-body .radio-list label { display:flex; gap:10px; align-items:flex-start; padding:10px 12px; border:1px solid #D8DBE3; border-radius:8px; margin-bottom:8px; font-size:13.5px; font-weight:500; color:#1A1A2E; text-transform:none; letter-spacing:0; cursor:pointer; }
-  #wiz3-body .radio-list label:hover { border-color:#5C5CD6; background:#FAFAFE; }
-  #wiz3-body .radio-list input { margin-top:2px; }
-  #wiz3-foot { border-top:1px solid #F0F0F5; padding:14px 28px; display:flex; justify-content:space-between; align-items:center; gap:10px; flex:0 0 auto; background:#FAFAFC; }
-  #wiz3-foot .wiz3-left, #wiz3-foot .wiz3-right { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
-  .wiz3-btn { font-family:inherit; font-size:13.5px; font-weight:600; padding:9px 16px; border-radius:6px; cursor:pointer; border:1px solid transparent; transition:background 0.15s, border 0.15s; }
-  .wiz3-btn-primary { background:#5C5CD6; color:#fff; border-color:#5C5CD6; }
-  .wiz3-btn-primary:hover { background:#4B4BBE; }
-  .wiz3-btn-primary[disabled] { opacity:0.55; cursor:not-allowed; }
-  .wiz3-btn-ghost { background:transparent; color:#5C5CD6; border-color:#C7C7E8; }
-  .wiz3-btn-ghost:hover { background:#EEEEF8; }
-  .wiz3-btn-quiet { background:transparent; color:#888; border-color:transparent; }
-  .wiz3-btn-quiet:hover { color:#5C5CD6; }
-  .wiz3-msg { font-size:12.5px; padding:8px 12px; border-radius:6px; margin-top:12px; display:none; }
-  .wiz3-msg.show { display:block; }
-  .wiz3-msg.ok  { background:#ECFDF5; color:#0A6B3A; }
-  .wiz3-msg.err { background:#FEF2F2; color:#B91C1C; }
-  .wiz3-msg.info{ background:#EEEEF8; color:#4B4BBE; }
-  #wiz3-close { position:absolute; top:14px; right:18px; background:transparent; border:none; font-size:22px; color:#888; cursor:pointer; }
-  #wiz3-close:hover { color:#5C5CD6; }
-  .wiz3-chip-row { display:flex; flex-wrap:wrap; gap:6px; margin:6px 0 10px; }
-  .wiz3-chip { background:#EEEEF8; color:#4B4BBE; font-size:12px; padding:4px 9px; border-radius:12px; }
-  /* Hide old wizard markup so nothing leaks through */
-  #gmj-wizard.wiz-overlay { display:none !important; }
-</style>
-
-<div id="wiz3-overlay" role="dialog" aria-modal="true" aria-labelledby="wiz3-h2">
-  <div id="wiz3-card">
-    <aside id="wiz3-rail">
-      <div class="wiz3-brand">getmemyjob setup</div>
-      <ol id="wiz3-rail-list"></ol>
-    </aside>
-    <section id="wiz3-main" style="position:relative;">
-      <button id="wiz3-close" type="button" aria-label="Close wizard">&times;</button>
-      <header id="wiz3-head">
-        <div class="wiz3-step-no" id="wiz3-step-no">Step 1 of 12</div>
-        <h2 id="wiz3-h2">Welcome</h2>
-        <p class="wiz3-sub" id="wiz3-sub"></p>
-      </header>
-      <div id="wiz3-body"></div>
-      <footer id="wiz3-foot">
-        <div class="wiz3-left">
-          <button class="wiz3-btn wiz3-btn-quiet" id="wiz3-back" type="button">&larr; Back</button>
-        </div>
-        <div class="wiz3-right">
-          <button class="wiz3-btn wiz3-btn-quiet" id="wiz3-skip" type="button">Skip</button>
-          <button class="wiz3-btn wiz3-btn-primary" id="wiz3-continue" type="button">Continue &rarr;</button>
-        </div>
-      </footer>
-    </section>
-  </div>
-</div>
-
-<script>
-(function () {
-  if (window.WizV3) return; // idempotent
-  const STATE_KEY = "gmj_wizard_state_v3";
-  const WORKER = "https://cool-darkness-dce5.tr6jz6v7wg.workers.dev";
-  const SLUG = (typeof USER_SLUG === "string" && USER_SLUG) ? USER_SLUG : (window.USER_SLUG || "");
-
-  // ---- State persistence ----
-  function loadState() {
-    try {
-      const raw = localStorage.getItem(STATE_KEY);
-      if (raw) {
-        const s = JSON.parse(raw);
-        if (s && typeof s === "object") return s;
-      }
-    } catch (e) {}
-    return { currentStep: "welcome", completed: [], skipped: [], data: {}, finished: false };
-  }
-  function saveState(s) {
-    try { localStorage.setItem(STATE_KEY, JSON.stringify(s)); } catch (e) {}
-  }
-  let state = loadState();
-  // Migrate v2 → v3: if user already finished v2, mark v3 finished too so we don't bug them again.
-  try {
-    const seenV2 = localStorage.getItem("gmj_wizard_seen_v2");
-    if (seenV2 && !state.finished && !state.completed.length) {
-      state.finished = true;
-      saveState(state);
-    }
-  } catch (e) {}
-
-  // ---- Helpers ----
-  function getEditKey() {
-    try {
-      return localStorage.getItem("htj_resume_key_" + SLUG) || localStorage.getItem("htj_resume_key") || "";
-    } catch (e) { return ""; }
-  }
-  async function getProfile() {
-    try {
-      const r = await fetch(WORKER + "/skills-profile?user=" + encodeURIComponent(SLUG), { cache: "no-store" });
-      const j = await r.json();
-      return (j && j.profile) || {};
-    } catch (e) { return {}; }
-  }
-  async function patchProfile(patchFields) {
-    const ek = getEditKey();
-    if (!ek) throw new Error("Missing edit key");
-    const r = await fetch(WORKER + "/skills-profile?user=" + encodeURIComponent(SLUG), {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "X-Edit-Key": ek },
-      body: JSON.stringify({ patchFields }),
-    });
-    if (!r.ok) throw new Error("HTTP " + r.status);
-    return r.json();
-  }
-  function escHtml(s) {
-    return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
-  }
-  function setMsg(host, type, text) {
-    let el = host.querySelector(".wiz3-msg");
-    if (!el) {
-      el = document.createElement("div");
-      el.className = "wiz3-msg";
-      host.appendChild(el);
-    }
-    el.className = "wiz3-msg show " + type;
-    el.textContent = text;
-  }
-
-  // ---- Step definitions ----
-  // Contract: { key, title, subtitle, optional, render(body, state, ctx),
-  //             validate(state) -> "" or err, save(state) -> Promise, isComplete(state) }
-  const STEPS = [
-    {
-      key: "welcome",
-      title: "Welcome to getmemyjob",
-      subtitle: "We'll have your tailored dashboard ready in about 5 minutes.",
-      optional: true,
-      render(body, st) {
-        body.innerHTML =
-          '<p>Quick setup so we can match you to jobs that actually fit. You can stop any time — we\'ll remember exactly where you left off.</p>' +
-          '<p><strong>What\'s next:</strong></p>' +
-          '<ul style="font-size:14px;color:#444;line-height:1.7;padding-left:18px;">' +
-            '<li>Upload your resume so the AI can read your background</li>' +
-            '<li>Confirm your target titles, industries, locations, and remote preference</li>' +
-            '<li>Install the Helper extension so we can auto-fill 18 of 25 fields on apply forms</li>' +
-            '<li>Tell us your daily application target so we can show you a focus list</li>' +
-          '</ul>';
-      },
-      save() { return Promise.resolve(); },
-    },
-    {
-      key: "upload-resume",
-      title: "Upload your resume",
-      subtitle: "We'll extract your skills, titles, industries, and contact fields.",
-      optional: true,
-      render(body) {
-        body.innerHTML =
-          '<p>Click below to open the Resume panel. Upload a PDF or DOCX — the AI parses it in ~10 seconds.</p>' +
-          '<button type="button" class="wiz3-btn wiz3-btn-ghost" id="wiz3-open-resume">Open Resume panel</button>' +
-          '<p style="font-size:12px;color:#888;margin-top:12px;">When you close the panel, we\'ll move you to the next step automatically.</p>';
-        const btn = body.querySelector("#wiz3-open-resume");
-        if (btn) btn.addEventListener("click", () => {
-          try { if (typeof openResumeModal === "function") openResumeModal(); } catch (e) {}
-          // We don't auto-advance: user can come back. Continue button handles advancement.
-        });
-      },
-      async save() {
-        // Try to verify a resume was actually uploaded
-        try {
-          const p = await getProfile();
-          if (p && (p.primaryRole || p.targetTitles || p.industries)) return;
-        } catch (e) {}
-      },
-    },
-    {
-      key: "review-profile",
-      title: "Review your skills profile",
-      subtitle: "Edit any chips that don't reflect what you actually want to do.",
-      optional: true,
-      render(body) {
-        body.innerHTML =
-          '<p>The AI extracted titles, industries, skills, and target companies from your resume. Open the Profile tab to review and tweak.</p>' +
-          '<button type="button" class="wiz3-btn wiz3-btn-ghost" id="wiz3-open-profile">Open Profile editor</button>' +
-          '<p style="font-size:12px;color:#888;margin-top:12px;">Add or remove chips so the job matcher knows what you want. Come back here when you\'re done.</p>';
-        const btn = body.querySelector("#wiz3-open-profile");
-        if (btn) btn.addEventListener("click", () => {
-          try { if (typeof openResumeModal === "function") openResumeModal(); } catch (e) {}
-          setTimeout(() => {
-            const tabs = document.querySelectorAll(".tab-btn");
-            for (let i = 0; i < tabs.length; i++) {
-              if (tabs[i].textContent.toLowerCase().indexOf("profile") !== -1) { tabs[i].click(); break; }
-            }
-          }, 300);
-        });
-      },
-      save() { return Promise.resolve(); },
-    },
-    {
-      key: "locations-remote",
-      title: "Where do you want to work?",
-      subtitle: "We'll only show jobs that match your locations + remote preference.",
-      optional: true,
-      async render(body, st) {
-        body.innerHTML =
-          '<label for="wiz3-locs">Preferred locations (comma-separated)</label>' +
-          '<input type="text" id="wiz3-locs" placeholder="e.g. New York City, Remote (US)">' +
-          '<div class="hint">Cities, states, or country regions. Use "Remote (US)" to include US-only remote jobs.</div>' +
-          '<label for="wiz3-remote">Remote preference</label>' +
-          '<select id="wiz3-remote">' +
-            '<option value="any">Any — onsite, hybrid, or remote</option>' +
-            '<option value="hybrid">Hybrid — prefer some in-office days</option>' +
-            '<option value="onsite">Onsite — in-office is fine</option>' +
-            '<option value="remote-only">Remote only — must be fully remote</option>' +
-          '</select>';
-        const p = await getProfile();
-        const locsEl = body.querySelector("#wiz3-locs");
-        const remoteEl = body.querySelector("#wiz3-remote");
-        if (locsEl && Array.isArray(p.preferredLocations)) locsEl.value = p.preferredLocations.join(", ");
-        if (st.data.preferredLocations) locsEl.value = st.data.preferredLocations;
-        if (remoteEl) {
-          let rp = p.remotePreference || (p.remotePreferred ? "remote-only" : "any");
-          if (st.data.remotePreference) rp = st.data.remotePreference;
-          remoteEl.value = rp;
-        }
-      },
-      collect(body) {
-        const locs = (body.querySelector("#wiz3-locs") || {}).value || "";
-        const remote = (body.querySelector("#wiz3-remote") || {}).value || "any";
-        return { preferredLocations: locs, remotePreference: remote };
-      },
-      async save(st, ctx) {
-        const d = this.collect(ctx.body);
-        const preferredLocations = d.preferredLocations.split(",").map(s => s.trim()).filter(Boolean);
-        st.data.preferredLocations = d.preferredLocations;
-        st.data.remotePreference = d.remotePreference;
-        await patchProfile({ preferredLocations, remotePreference: d.remotePreference });
-      },
-    },
-    {
-      key: "company-sizes",
-      title: "What size companies do you target?",
-      subtitle: "Move the sliders to weight the kind of employers we surface.",
-      optional: true,
-      async render(body, st) {
-        body.innerHTML =
-          '<p style="font-size:13.5px;color:#444;">Tell us roughly the mix you prefer. We\'ll keep big names in the feed but bias toward your selection.</p>' +
-          ['startup','mid','large','enterprise'].map(k => {
-            const labels = {startup:"Startup (<$10M)", mid:"Mid-market ($10–100M)", large:"Large ($100M–1B)", enterprise:"Enterprise (>$1B)"};
-            return '<label>' + labels[k] + ' <span style="float:right;font-weight:500;color:#5C5CD6;" id="wiz3-sz-' + k + '-val">25%</span></label>' +
-                   '<input type="range" id="wiz3-sz-' + k + '" min="0" max="100" step="5" value="25" style="width:100%;">';
-          }).join('');
-        const p = await getProfile();
-        const prefs = (st.data.companySizePreferences) || p.companySizePreferences || { startup:25, mid:25, large:25, enterprise:25 };
-        ['startup','mid','large','enterprise'].forEach(k => {
-          const el = body.querySelector('#wiz3-sz-' + k);
-          if (el) { el.value = prefs[k] || 25; body.querySelector('#wiz3-sz-' + k + '-val').textContent = (prefs[k] || 25) + '%'; }
-          if (el) el.addEventListener('input', () => { body.querySelector('#wiz3-sz-' + k + '-val').textContent = el.value + '%'; });
-        });
-      },
-      collect(body) {
-        const out = {};
-        ['startup','mid','large','enterprise'].forEach(k => {
-          const el = body.querySelector('#wiz3-sz-' + k);
-          if (el) out[k] = parseInt(el.value, 10) || 0;
-        });
-        return out;
-      },
-      async save(st, ctx) {
-        const prefs = this.collect(ctx.body);
-        st.data.companySizePreferences = prefs;
-        await patchProfile({ companySizePreferences: prefs });
-      },
-    },
-    {
-      key: "match-weights",
-      title: "How should we score job matches?",
-      subtitle: "Weight title fit, industry fit, and skills fit. Must add to 100.",
-      optional: true,
-      async render(body, st) {
-        body.innerHTML =
-          ['titles','industry','skills'].map(k => {
-            const labels = {titles:"Title fit", industry:"Industry fit", skills:"Skills fit"};
-            const defaults = {titles:50, industry:25, skills:25};
-            return '<label>' + labels[k] + ' <span style="float:right;font-weight:500;color:#5C5CD6;" id="wiz3-w-' + k + '-val">' + defaults[k] + '%</span></label>' +
-                   '<input type="range" id="wiz3-w-' + k + '" min="0" max="100" step="5" value="' + defaults[k] + '" style="width:100%;">';
-          }).join('') +
-          '<div id="wiz3-w-total" style="margin-top:8px;font-size:13px;font-weight:600;text-align:right;">Total: 100%</div>';
-        const p = await getProfile();
-        const w = (st.data.matchWeights) || p.matchWeights || { titles:50, industry:25, skills:25 };
-        ['titles','industry','skills'].forEach(k => {
-          const el = body.querySelector('#wiz3-w-' + k);
-          if (el) { el.value = w[k] || 0; body.querySelector('#wiz3-w-' + k + '-val').textContent = (w[k] || 0) + '%'; }
-        });
-        const recomputeTotal = () => {
-          let t = 0;
-          ['titles','industry','skills'].forEach(k => { t += parseInt((body.querySelector('#wiz3-w-' + k) || {}).value || 0, 10); });
-          const totalEl = body.querySelector('#wiz3-w-total');
-          if (totalEl) { totalEl.textContent = 'Total: ' + t + '%'; totalEl.style.color = (t === 100) ? '#0A6B3A' : '#B91C1C'; }
-        };
-        ['titles','industry','skills'].forEach(k => {
-          const el = body.querySelector('#wiz3-w-' + k);
-          if (el) el.addEventListener('input', () => { body.querySelector('#wiz3-w-' + k + '-val').textContent = el.value + '%'; recomputeTotal(); });
-        });
-        recomputeTotal();
-      },
-      collect(body) {
-        const out = {};
-        ['titles','industry','skills'].forEach(k => { out[k] = parseInt((body.querySelector('#wiz3-w-' + k) || {}).value || 0, 10); });
-        return out;
-      },
-      validate(st, ctx) {
-        const w = this.collect(ctx.body);
-        const t = w.titles + w.industry + w.skills;
-        if (t !== 100) return "Weights must add to 100. Currently: " + t + ".";
-        return "";
-      },
-      async save(st, ctx) {
-        const w = this.collect(ctx.body);
-        st.data.matchWeights = w;
-        await patchProfile({ matchWeights: w });
-      },
-    },
-    {
-      key: "daily-target",
-      title: "Daily application target",
-      subtitle: "Pick a number. Your dashboard shows a focus list of that many jobs.",
-      optional: true,
-      render(body, st) {
-        body.innerHTML =
-          '<label for="wiz3-target">Applications per day</label>' +
-          '<input type="number" id="wiz3-target" min="1" max="50" value="5" style="max-width:140px;">' +
-          '<div class="hint">5 per day is a healthy default. You can change it later in Preferences.</div>';
-        let cur = 5;
-        try { cur = parseInt(localStorage.getItem("gmj_daily_target_" + SLUG) || "5", 10); } catch (e) {}
-        if (st.data.dailyTarget) cur = st.data.dailyTarget;
-        body.querySelector("#wiz3-target").value = cur;
-      },
-      async save(st, ctx) {
-        const v = parseInt(ctx.body.querySelector("#wiz3-target").value, 10) || 5;
-        try { localStorage.setItem("gmj_daily_target_" + SLUG, String(v)); } catch (e) {}
-        st.data.dailyTarget = v;
-      },
-    },
-    {
-      key: "recency-window",
-      title: "How recent should jobs be?",
-      subtitle: "Default sort window. You can override later in Preferences.",
-      optional: true,
-      render(body, st) {
-        const opts = [
-          {v:"0", label:"<strong>Last 24 hours</strong> — only roles posted today"},
-          {v:"7", label:"<strong>Last 7 days</strong> — freshest listings (recommended)"},
-          {v:"14", label:"<strong>Last 2 weeks</strong> — balance"},
-          {v:"30", label:"<strong>Last 30 days</strong> — widest reasonable pool"},
-          {v:"all", label:"<strong>All jobs</strong> — sort handles freshness"},
-        ];
-        body.innerHTML = '<div class="radio-list">' + opts.map(o => {
-          const cur = (st.data.recencyWindow != null ? String(st.data.recencyWindow) : "7");
-          return '<label><input type="radio" name="wiz3-rec" value="' + o.v + '"' + (cur === o.v ? ' checked' : '') + '> <span>' + o.label + '</span></label>';
-        }).join('') + '</div>';
-      },
-      async save(st, ctx) {
-        const v = (ctx.body.querySelector('input[name=wiz3-rec]:checked') || {}).value || "7";
-        try { localStorage.setItem("gmj_recency_window_" + SLUG, v); } catch (e) {}
-        st.data.recencyWindow = v;
-      },
-    },
-    {
-      key: "install-extension",
-      title: "Install the Helper extension",
-      subtitle: "Cuts apply time from ~10 minutes to ~60 seconds per job.",
-      optional: true,
-      render(body, st) {
-        const installed = (document.documentElement.getAttribute("data-gmj-installed") === "1") || window.__gmj_extension_ready === true;
-        body.innerHTML =
-          '<p style="margin-bottom:10px;">Without this, you re-type the same 18 fields on every application. With it: click Apply → 18 of 25 fields auto-fill in ~1 second.</p>' +
-          '<div style="background:#F7F7FB;border-radius:8px;padding:14px;margin-bottom:14px;font-size:13px;">' +
-            '<div style="font-weight:700;margin-bottom:6px;">3-step install (Chrome / Edge / Brave):</div>' +
-            '<ol style="margin:0;padding-left:18px;">' +
-              '<li><a href="/extension.zip" download style="color:#5C5CD6;font-weight:700;">⬇ Download getmemyjob-helper.zip</a> &amp; unzip it.</li>' +
-              '<li>Open <a href="chrome://extensions" target="_blank" style="color:#5C5CD6;font-weight:700;">chrome://extensions</a>, toggle <strong>Developer mode</strong> on (top-right).</li>' +
-              '<li>Click <strong>Load unpacked</strong> and select the unzipped folder.</li>' +
-            '</ol>' +
-          '</div>' +
-          '<details style="margin-top:10px;font-size:12.5px;color:#444;">' +
-            '<summary style="cursor:pointer;color:#5C5CD6;font-weight:600;">Using Firefox, Safari, or your phone?</summary>' +
-            '<div style="margin-top:8px;padding:10px;background:#fff;border:1px solid #E5E7EE;border-radius:6px;">' +
-              '<p style="margin:0 0 8px;"><strong>Firefox:</strong> <a href="/extension-firefox.zip" download style="color:#5C5CD6;font-weight:600;">⬇ Firefox build</a>, then open <code>about:debugging</code> → This Firefox → Load Temporary Add-on.</p>' +
-              '<p style="margin:0;"><strong>Safari, iOS, mobile:</strong> drag this to your bookmarks bar: <a href="javascript:void(0);" id="wiz3-bookmarklet" style="display:inline-block;margin-left:6px;padding:4px 10px;background:#5C5CD6;color:#fff;border-radius:4px;text-decoration:none;font-weight:700;">📌 getmemyjob Helper</a></p>' +
-            '</div>' +
-          '</details>' +
-          '<div id="wiz3-ext-status" style="margin-top:14px;padding:10px 14px;border-radius:6px;font-size:13.5px;font-weight:600;' +
-            (installed ? 'background:#ECFDF5;color:#0A6B3A;">✅ Helper detected. You can move on.' : 'background:#F7F7FB;color:#666;">⏳ Checking for the helper…') +
-          '</div>' +
-          '<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">' +
-            '<button type="button" class="wiz3-btn wiz3-btn-ghost" id="wiz3-ext-reload">↻ Reload &amp; re-check</button>' +
-          '</div>';
-        // Real bookmarklet href has to be set programmatically because the JS has braces
-        const bm = body.querySelector("#wiz3-bookmarklet");
-        if (bm) bm.setAttribute("href", "javascript:(function(){var s=document.createElement('script');s.src='https://getmemyjob.officebeatllc.com/bookmarklet.js?t='+Date.now();document.body.appendChild(s);})();");
-        const rl = body.querySelector("#wiz3-ext-reload");
-        if (rl) rl.addEventListener("click", () => {
-          try { localStorage.setItem("gmj_wizard_state_v3_pendingStep", "install-extension"); } catch (e) {}
-          location.reload();
-        });
-        // Live re-check
-        const recheck = () => {
-          const ok = (document.documentElement.getAttribute("data-gmj-installed") === "1") || window.__gmj_extension_ready === true;
-          const el = body.querySelector("#wiz3-ext-status");
-          if (!el) return;
-          if (ok) { el.style.background = "#ECFDF5"; el.style.color = "#0A6B3A"; el.innerHTML = "✅ Helper detected. You can move on."; }
-        };
-        if (window._wiz3ExtPoll) clearInterval(window._wiz3ExtPoll);
-        window._wiz3ExtPoll = setInterval(recheck, 1500);
-        document.addEventListener("gmj-extension-ready", () => { window.__gmj_extension_ready = true; recheck(); }, { once: true });
-        window.addEventListener("focus", recheck);
-      },
-      async save(st, ctx) {
-        // Don't block continue: install is optional. Mark complete if installed.
-        const ok = (document.documentElement.getAttribute("data-gmj-installed") === "1") || window.__gmj_extension_ready === true;
-        st.data.extensionInstalled = !!ok;
-      },
-    },
-    {
-      key: "app-profile",
-      title: "Application profile",
-      subtitle: "Stored once, auto-filled on every Greenhouse / Lever / Ashby / Workday form.",
-      optional: true,
-      async render(body, st) {
-        body.innerHTML =
-          '<label for="wiz3-phone">Phone</label><input type="tel" id="wiz3-phone" placeholder="(555) 123-4567">' +
-          '<label for="wiz3-location">City, State</label><input type="text" id="wiz3-location" placeholder="e.g. Allendale, NJ">' +
-          '<label for="wiz3-linkedin">LinkedIn URL</label><input type="url" id="wiz3-linkedin" placeholder="https://www.linkedin.com/in/your-name">' +
-          '<label for="wiz3-workauth">Work authorization</label>' +
-          '<select id="wiz3-workauth">' +
-            '<option value="US Citizen">US Citizen</option>' +
-            '<option value="Green Card">Green Card / Permanent Resident</option>' +
-            '<option value="H1B Visa">H1B Visa</option>' +
-            '<option value="OPT">OPT / STEM OPT</option>' +
-            '<option value="TN Visa">TN Visa</option>' +
-            '<option value="Other">Other</option>' +
-          '</select>' +
-          '<label for="wiz3-sponsor">Need visa sponsorship now or in the future?</label>' +
-          '<select id="wiz3-sponsor"><option value="No">No</option><option value="Yes">Yes</option></select>';
-        const p = await getProfile();
-        body.querySelector("#wiz3-phone").value    = st.data.phone    || p.phone    || "";
-        body.querySelector("#wiz3-location").value = st.data.location || p.location || "";
-        body.querySelector("#wiz3-linkedin").value = st.data.linkedinUrl || p.linkedinUrl || "";
-        body.querySelector("#wiz3-workauth").value = st.data.workAuthorization || p.workAuthorization || "US Citizen";
-        body.querySelector("#wiz3-sponsor").value  = st.data.requiresSponsorship || p.requiresSponsorship || "No";
-      },
-      async save(st, ctx) {
-        const phone = ctx.body.querySelector("#wiz3-phone").value || "";
-        const location = ctx.body.querySelector("#wiz3-location").value || "";
-        const linkedinUrl = ctx.body.querySelector("#wiz3-linkedin").value || "";
-        const workAuthorization = ctx.body.querySelector("#wiz3-workauth").value || "US Citizen";
-        const requiresSponsorship = ctx.body.querySelector("#wiz3-sponsor").value || "No";
-        Object.assign(st.data, { phone, location, linkedinUrl, workAuthorization, requiresSponsorship });
-        await patchProfile({ phone, location, linkedinUrl, workAuthorization, requiresSponsorship });
-      },
-    },
-    {
-      key: "linkedin-contacts",
-      title: "Add your LinkedIn network (optional)",
-      subtitle: "Upload your LinkedIn Connections.csv to see warm-intro badges on jobs.",
-      optional: true,
-      render(body) {
-        body.innerHTML =
-          '<p>Upload your <code>Connections.csv</code> once and the job feed shows <strong>🤝 N contacts</strong> badges on companies where you have a warm intro.</p>' +
-          '<button type="button" class="wiz3-btn wiz3-btn-ghost" id="wiz3-open-contacts">Open LinkedIn Contacts panel</button>' +
-          '<p style="font-size:12px;color:#888;margin-top:12px;">This is optional. You can do it any time from the dashboard.</p>';
-        const btn = body.querySelector("#wiz3-open-contacts");
-        if (btn) btn.addEventListener("click", () => { try { if (typeof openContactsModal === "function") openContactsModal(); } catch (e) {} });
-      },
-      save() { return Promise.resolve(); },
-    },
-    {
-      key: "done",
-      title: "All set",
-      subtitle: "We'll build your tailored dashboard now.",
-      optional: false,
-      render(body) {
-        body.innerHTML =
-          '<p>Your settings are saved. The next job-refresh run will rebuild your dashboard with everything tuned to your profile.</p>' +
-          '<p style="font-size:13.5px;color:#444;">Quick reminders:</p>' +
-          '<ul style="font-size:13.5px;color:#444;line-height:1.7;padding-left:18px;">' +
-            '<li><strong>Prep Application</strong> on any job → tailored cover letter + resume summary</li>' +
-            '<li><strong>Refresh data</strong> in the header → trigger a fresh pull anytime</li>' +
-            '<li><strong>?</strong> in the header → replay this setup</li>' +
-          '</ul>';
-      },
-      async save(st) {
-        st.finished = true;
-        // Best-effort: trigger a refresh so the new dashboard regenerates
-        try {
-          const ek = getEditKey();
-          await fetch(WORKER + "/refresh?user=" + encodeURIComponent(SLUG), {
-            method: "POST",
-            headers: ek ? { "X-Edit-Key": ek } : {},
-          });
-        } catch (e) {}
-      },
-    },
-  ];
-
-  // ---- Controller ----
-  function stepIndex(key) { for (let i = 0; i < STEPS.length; i++) if (STEPS[i].key === key) return i; return 0; }
-  function currentStep() { return STEPS[stepIndex(state.currentStep)]; }
-
-  function renderRail() {
-    const list = document.getElementById("wiz3-rail-list");
-    if (!list) return;
-    list.innerHTML = STEPS.map((s, i) => {
-      const isCurrent = s.key === state.currentStep;
-      const isDone = state.completed.includes(s.key);
-      const isSkipped = state.skipped.includes(s.key);
-      let cls = "";
-      if (isCurrent) cls = "is-current";
-      else if (isDone) cls = "is-done";
-      else if (isSkipped) cls = "is-skipped";
-      const allowJump = isCurrent || isDone || isSkipped || (i <= Math.max(0, stepIndex(state.currentStep)));
-      return '<li class="' + cls + '"' + (allowJump ? '' : ' aria-disabled="true"') + ' data-key="' + s.key + '">' +
-        '<span class="wiz3-dot">' + (isDone ? "✓" : (isSkipped ? "–" : String(i+1))) + '</span>' +
-        '<span>' + escHtml(s.title) + '</span>' +
-      '</li>';
-    }).join('');
-    list.querySelectorAll("li[data-key]").forEach(li => {
-      if (li.getAttribute("aria-disabled") === "true") return;
-      li.addEventListener("click", () => goto(li.getAttribute("data-key")));
-    });
-  }
-
-  function renderHead(s, idx) {
-    document.getElementById("wiz3-step-no").textContent = "Step " + (idx + 1) + " of " + STEPS.length;
-    document.getElementById("wiz3-h2").textContent = s.title;
-    document.getElementById("wiz3-sub").textContent = s.subtitle || "";
-  }
-  function renderFoot(s, idx) {
-    const skip = document.getElementById("wiz3-skip");
-    const cont = document.getElementById("wiz3-continue");
-    const back = document.getElementById("wiz3-back");
-    back.disabled = (idx === 0);
-    back.style.visibility = (idx === 0) ? "hidden" : "visible";
-    skip.style.display = (s.optional && s.key !== "done") ? "" : "none";
-    cont.textContent = (s.key === "done") ? "Finish" : "Continue →";
-  }
-  async function render() {
-    saveState(state);
-    const s = currentStep(); const idx = stepIndex(state.currentStep);
-    renderRail();
-    renderHead(s, idx);
-    renderFoot(s, idx);
-    const body = document.getElementById("wiz3-body");
-    body.innerHTML = "";
-    try {
-      const r = s.render(body, state, { body });
-      if (r && typeof r.then === "function") await r;
-    } catch (e) { console.warn("wiz3 render", e); }
-  }
-  function goto(key) {
-    if (!STEPS.find(s => s.key === key)) return;
-    state.currentStep = key;
-    saveState(state);
-    render();
-  }
-  async function doContinue() {
-    const s = currentStep();
-    const body = document.getElementById("wiz3-body");
-    if (typeof s.validate === "function") {
-      const err = s.validate(state, { body });
-      if (err) { setMsg(body, "err", err); return; }
-    }
-    const cont = document.getElementById("wiz3-continue");
-    cont.disabled = true; cont.textContent = "Saving…";
-    try {
-      await s.save(state, { body });
-      if (!state.completed.includes(s.key)) state.completed.push(s.key);
-      state.skipped = state.skipped.filter(k => k !== s.key);
-    } catch (e) {
-      setMsg(body, "err", "Couldn't save: " + (e && e.message ? e.message : e));
-      cont.disabled = false; cont.textContent = "Continue →";
-      return;
-    }
-    cont.disabled = false;
-    const idx = stepIndex(state.currentStep);
-    if (idx + 1 >= STEPS.length) { finish(); return; }
-    state.currentStep = STEPS[idx + 1].key;
-    saveState(state);
-    render();
-  }
-  function doSkip() {
-    const s = currentStep();
-    if (!s.optional) return;
-    if (!state.skipped.includes(s.key)) state.skipped.push(s.key);
-    state.completed = state.completed.filter(k => k !== s.key);
-    const idx = stepIndex(state.currentStep);
-    if (idx + 1 >= STEPS.length) { finish(); return; }
-    state.currentStep = STEPS[idx + 1].key;
-    saveState(state);
-    render();
-  }
-  function doBack() {
-    const idx = stepIndex(state.currentStep);
-    if (idx === 0) return;
-    state.currentStep = STEPS[idx - 1].key;
-    saveState(state);
-    render();
-  }
-  function finish() {
-    state.finished = true;
-    saveState(state);
-    document.getElementById("wiz3-overlay").classList.remove("show");
-  }
-  function open() {
-    // If user did the reload-to-detect dance on the install-extension step, resume there.
-    try {
-      const pending = localStorage.getItem("gmj_wizard_state_v3_pendingStep");
-      if (pending) {
-        state.currentStep = pending;
-        localStorage.removeItem("gmj_wizard_state_v3_pendingStep");
-      }
-    } catch (e) {}
-    if (!state.currentStep || !STEPS.find(s => s.key === state.currentStep)) state.currentStep = "welcome";
-    document.getElementById("wiz3-overlay").classList.add("show");
-    render();
-  }
-  function close() { document.getElementById("wiz3-overlay").classList.remove("show"); saveState(state); }
-  function reset() {
-    state = { currentStep: "welcome", completed: [], skipped: [], data: {}, finished: false };
-    saveState(state);
-    open();
-  }
-
-  // Wire footer + close
-  document.getElementById("wiz3-back").addEventListener("click", doBack);
-  document.getElementById("wiz3-skip").addEventListener("click", doSkip);
-  document.getElementById("wiz3-continue").addEventListener("click", doContinue);
-  document.getElementById("wiz3-close").addEventListener("click", close);
-  // Backdrop click closes (but only outside the card)
-  document.getElementById("wiz3-overlay").addEventListener("click", (e) => {
-    if (e.target && e.target.id === "wiz3-overlay") close();
-  });
-
-  // Listen for postMessage from extension's marker (page-context can't see content-script JS directly)
-  window.addEventListener("message", (ev) => {
-    if (ev && ev.data && ev.data.type === "GMJ_EXTENSION_READY") window.__gmj_extension_ready = true;
-  });
-
-  // Public API
-  window.WizV3 = { open, close, reset, goto, state: () => state };
-
-  // Replace the old replayTour function so the ? button + Preferences link both
-  // open the new wizard.
-  window.replayTour = function () { state.finished = false; saveState(state); open(); };
-
-  // Disable the old auto-launch: we'll trigger v3 here instead.
-  function autoLaunch() {
-    // If old v2 auto-launch already ran and opened a modal, hide it.
-    const oldModal = document.getElementById("gmj-wizard");
-    if (oldModal) oldModal.classList.remove("show");
-    // Decide whether to open: not finished, OR pending step from reload.
-    let pending = "";
-    try { pending = localStorage.getItem("gmj_wizard_state_v3_pendingStep") || ""; } catch (e) {}
-    if (pending || !state.finished) {
-      setTimeout(open, 500);
-    }
-  }
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", autoLaunch);
-  } else {
-    autoLaunch();
-  }
-})();
-</script>
-<!-- ====================== /Wizard v3 ====================== -->
 
 </body></html>`;
 }
@@ -5499,4 +4800,704 @@ function wizWtPrefill() {
   } else { loadNotes(); }
 })();
 </script>
+
+<!-- ====================== Wizard v3 ====================== -->
+<style>
+  #wiz3-overlay { position:fixed; inset:0; background:rgba(20,22,40,0.55); z-index:2147483600; display:none; align-items:center; justify-content:center; padding:24px; font-family:'Inter',-apple-system,system-ui,sans-serif; }
+  #wiz3-overlay.show { display:flex; }
+  #wiz3-card { width:min(960px,100%); max-height:92vh; background:#fff; border-radius:14px; box-shadow:0 24px 60px rgba(20,22,40,0.4); display:grid; grid-template-columns:240px 1fr; overflow:hidden; }
+  @media (max-width:680px) { #wiz3-card { grid-template-columns:1fr; } #wiz3-rail { display:none; } }
+  #wiz3-rail { background:#F7F7FB; border-right:1px solid #E5E7EE; padding:24px 18px; overflow-y:auto; }
+  #wiz3-rail .wiz3-brand { font-size:13px; font-weight:700; color:#5C5CD6; letter-spacing:.02em; text-transform:uppercase; margin-bottom:18px; }
+  #wiz3-rail ol { list-style:none; padding:0; margin:0; }
+  #wiz3-rail li { display:flex; align-items:flex-start; gap:10px; padding:8px 6px; border-radius:8px; cursor:pointer; transition:background 0.15s; font-size:13px; color:#444; }
+  #wiz3-rail li:hover { background:#EEEEF8; }
+  #wiz3-rail li.is-current { background:#EEEEF8; color:#5C5CD6; font-weight:600; }
+  #wiz3-rail li.is-done   { color:#0A6B3A; }
+  #wiz3-rail li.is-skipped{ color:#9a9aac; }
+  #wiz3-rail li[aria-disabled="true"] { cursor:not-allowed; opacity:0.55; }
+  #wiz3-rail .wiz3-dot { flex:0 0 18px; width:18px; height:18px; border-radius:50%; border:1.5px solid #C0C4CC; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:#888; background:#fff; margin-top:1px; }
+  #wiz3-rail li.is-current .wiz3-dot { border-color:#5C5CD6; color:#5C5CD6; background:#fff; }
+  #wiz3-rail li.is-done    .wiz3-dot { border-color:#0A6B3A; background:#0A6B3A; color:#fff; }
+  #wiz3-rail li.is-skipped .wiz3-dot { border-color:#C0C4CC; background:#fff; color:#aaa; }
+  #wiz3-main { display:flex; flex-direction:column; min-height:0; }
+  #wiz3-head { padding:22px 28px 8px; border-bottom:1px solid #F0F0F5; flex:0 0 auto; }
+  #wiz3-head .wiz3-step-no { font-size:12px; color:#888; letter-spacing:.04em; font-weight:600; text-transform:uppercase; }
+  #wiz3-head h2 { margin:6px 0 2px; font-size:21px; font-weight:700; color:#1A1A2E; letter-spacing:-0.01em; }
+  #wiz3-head .wiz3-sub { font-size:13.5px; color:#666680; margin:0; }
+  #wiz3-body { flex:1 1 auto; padding:18px 28px 18px; overflow-y:auto; min-height:200px; }
+  #wiz3-body p { font-size:14px; color:#444; line-height:1.55; }
+  #wiz3-body label { display:block; font-size:12px; font-weight:600; color:#444; text-transform:uppercase; letter-spacing:.04em; margin:14px 0 6px; }
+  #wiz3-body input[type=text], #wiz3-body input[type=email], #wiz3-body input[type=tel], #wiz3-body input[type=url], #wiz3-body input[type=number], #wiz3-body select { width:100%; padding:9px 11px; font-size:14px; font-family:inherit; border:1px solid #D8DBE3; border-radius:6px; box-sizing:border-box; background:#fff; }
+  #wiz3-body input:focus, #wiz3-body select:focus { outline:none; border-color:#5C5CD6; box-shadow:0 0 0 3px rgba(92,92,214,0.12); }
+  #wiz3-body .hint { font-size:12px; color:#888; margin-top:-2px; }
+  #wiz3-body .radio-list label { display:flex; gap:10px; align-items:flex-start; padding:10px 12px; border:1px solid #D8DBE3; border-radius:8px; margin-bottom:8px; font-size:13.5px; font-weight:500; color:#1A1A2E; text-transform:none; letter-spacing:0; cursor:pointer; }
+  #wiz3-body .radio-list label:hover { border-color:#5C5CD6; background:#FAFAFE; }
+  #wiz3-body .radio-list input { margin-top:2px; }
+  #wiz3-foot { border-top:1px solid #F0F0F5; padding:14px 28px; display:flex; justify-content:space-between; align-items:center; gap:10px; flex:0 0 auto; background:#FAFAFC; }
+  #wiz3-foot .wiz3-left, #wiz3-foot .wiz3-right { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .wiz3-btn { font-family:inherit; font-size:13.5px; font-weight:600; padding:9px 16px; border-radius:6px; cursor:pointer; border:1px solid transparent; transition:background 0.15s, border 0.15s; }
+  .wiz3-btn-primary { background:#5C5CD6; color:#fff; border-color:#5C5CD6; }
+  .wiz3-btn-primary:hover { background:#4B4BBE; }
+  .wiz3-btn-primary[disabled] { opacity:0.55; cursor:not-allowed; }
+  .wiz3-btn-ghost { background:transparent; color:#5C5CD6; border-color:#C7C7E8; }
+  .wiz3-btn-ghost:hover { background:#EEEEF8; }
+  .wiz3-btn-quiet { background:transparent; color:#888; border-color:transparent; }
+  .wiz3-btn-quiet:hover { color:#5C5CD6; }
+  .wiz3-msg { font-size:12.5px; padding:8px 12px; border-radius:6px; margin-top:12px; display:none; }
+  .wiz3-msg.show { display:block; }
+  .wiz3-msg.ok  { background:#ECFDF5; color:#0A6B3A; }
+  .wiz3-msg.err { background:#FEF2F2; color:#B91C1C; }
+  .wiz3-msg.info{ background:#EEEEF8; color:#4B4BBE; }
+  #wiz3-close { position:absolute; top:14px; right:18px; background:transparent; border:none; font-size:22px; color:#888; cursor:pointer; }
+  #wiz3-close:hover { color:#5C5CD6; }
+  .wiz3-chip-row { display:flex; flex-wrap:wrap; gap:6px; margin:6px 0 10px; }
+  .wiz3-chip { background:#EEEEF8; color:#4B4BBE; font-size:12px; padding:4px 9px; border-radius:12px; }
+  /* Hide old wizard markup so nothing leaks through */
+  #gmj-wizard.wiz-overlay { display:none !important; }
+</style>
+
+<div id="wiz3-overlay" role="dialog" aria-modal="true" aria-labelledby="wiz3-h2">
+  <div id="wiz3-card">
+    <aside id="wiz3-rail">
+      <div class="wiz3-brand">getmemyjob setup</div>
+      <ol id="wiz3-rail-list"></ol>
+    </aside>
+    <section id="wiz3-main" style="position:relative;">
+      <button id="wiz3-close" type="button" aria-label="Close wizard">&times;</button>
+      <header id="wiz3-head">
+        <div class="wiz3-step-no" id="wiz3-step-no">Step 1 of 12</div>
+        <h2 id="wiz3-h2">Welcome</h2>
+        <p class="wiz3-sub" id="wiz3-sub"></p>
+      </header>
+      <div id="wiz3-body"></div>
+      <footer id="wiz3-foot">
+        <div class="wiz3-left">
+          <button class="wiz3-btn wiz3-btn-quiet" id="wiz3-back" type="button">&larr; Back</button>
+        </div>
+        <div class="wiz3-right">
+          <button class="wiz3-btn wiz3-btn-quiet" id="wiz3-skip" type="button">Skip</button>
+          <button class="wiz3-btn wiz3-btn-primary" id="wiz3-continue" type="button">Continue &rarr;</button>
+        </div>
+      </footer>
+    </section>
+  </div>
+</div>
+
+<script>
+(function () {
+  if (window.WizV3) return; // idempotent
+  const STATE_KEY = "gmj_wizard_state_v3";
+  const WORKER = "https://cool-darkness-dce5.tr6jz6v7wg.workers.dev";
+  const SLUG = (typeof USER_SLUG === "string" && USER_SLUG) ? USER_SLUG : (window.USER_SLUG || "");
+
+  // ---- State persistence ----
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STATE_KEY);
+      if (raw) {
+        const s = JSON.parse(raw);
+        if (s && typeof s === "object") return s;
+      }
+    } catch (e) {}
+    return { currentStep: "welcome", completed: [], skipped: [], data: {}, finished: false };
+  }
+  function saveState(s) {
+    try { localStorage.setItem(STATE_KEY, JSON.stringify(s)); } catch (e) {}
+  }
+  let state = loadState();
+  // Migrate v2 → v3: if user already finished v2, mark v3 finished too so we don't bug them again.
+  try {
+    const seenV2 = localStorage.getItem("gmj_wizard_seen_v2");
+    if (seenV2 && !state.finished && !state.completed.length) {
+      state.finished = true;
+      saveState(state);
+    }
+  } catch (e) {}
+
+  // ---- Helpers ----
+  function getEditKey() {
+    try {
+      return localStorage.getItem("htj_resume_key_" + SLUG) || localStorage.getItem("htj_resume_key") || "";
+    } catch (e) { return ""; }
+  }
+  async function getProfile() {
+    try {
+      const r = await fetch(WORKER + "/skills-profile?user=" + encodeURIComponent(SLUG), { cache: "no-store" });
+      const j = await r.json();
+      return (j && j.profile) || {};
+    } catch (e) { return {}; }
+  }
+  async function patchProfile(patchFields) {
+    const ek = getEditKey();
+    if (!ek) throw new Error("Missing edit key");
+    const r = await fetch(WORKER + "/skills-profile?user=" + encodeURIComponent(SLUG), {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Edit-Key": ek },
+      body: JSON.stringify({ patchFields }),
+    });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    return r.json();
+  }
+  function escHtml(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+  }
+  function setMsg(host, type, text) {
+    let el = host.querySelector(".wiz3-msg");
+    if (!el) {
+      el = document.createElement("div");
+      el.className = "wiz3-msg";
+      host.appendChild(el);
+    }
+    el.className = "wiz3-msg show " + type;
+    el.textContent = text;
+  }
+
+  // ---- Step definitions ----
+  // Contract: { key, title, subtitle, optional, render(body, state, ctx),
+  //             validate(state) -> "" or err, save(state) -> Promise, isComplete(state) }
+  const STEPS = [
+    {
+      key: "welcome",
+      title: "Welcome to getmemyjob",
+      subtitle: "We'll have your tailored dashboard ready in about 5 minutes.",
+      optional: true,
+      render(body, st) {
+        body.innerHTML =
+          '<p>Quick setup so we can match you to jobs that actually fit. You can stop any time — we\'ll remember exactly where you left off.</p>' +
+          '<p><strong>What\'s next:</strong></p>' +
+          '<ul style="font-size:14px;color:#444;line-height:1.7;padding-left:18px;">' +
+            '<li>Upload your resume so the AI can read your background</li>' +
+            '<li>Confirm your target titles, industries, locations, and remote preference</li>' +
+            '<li>Install the Helper extension so we can auto-fill 18 of 25 fields on apply forms</li>' +
+            '<li>Tell us your daily application target so we can show you a focus list</li>' +
+          '</ul>';
+      },
+      save() { return Promise.resolve(); },
+    },
+    {
+      key: "upload-resume",
+      title: "Upload your resume",
+      subtitle: "We'll extract your skills, titles, industries, and contact fields.",
+      optional: true,
+      render(body) {
+        body.innerHTML =
+          '<p>Click below to open the Resume panel. Upload a PDF or DOCX — the AI parses it in ~10 seconds.</p>' +
+          '<button type="button" class="wiz3-btn wiz3-btn-ghost" id="wiz3-open-resume">Open Resume panel</button>' +
+          '<p style="font-size:12px;color:#888;margin-top:12px;">When you close the panel, we\'ll move you to the next step automatically.</p>';
+        const btn = body.querySelector("#wiz3-open-resume");
+        if (btn) btn.addEventListener("click", () => {
+          try { if (typeof openResumeModal === "function") openResumeModal(); } catch (e) {}
+          // We don't auto-advance: user can come back. Continue button handles advancement.
+        });
+      },
+      async save() {
+        // Try to verify a resume was actually uploaded
+        try {
+          const p = await getProfile();
+          if (p && (p.primaryRole || p.targetTitles || p.industries)) return;
+        } catch (e) {}
+      },
+    },
+    {
+      key: "review-profile",
+      title: "Review your skills profile",
+      subtitle: "Edit any chips that don't reflect what you actually want to do.",
+      optional: true,
+      render(body) {
+        body.innerHTML =
+          '<p>The AI extracted titles, industries, skills, and target companies from your resume. Open the Profile tab to review and tweak.</p>' +
+          '<button type="button" class="wiz3-btn wiz3-btn-ghost" id="wiz3-open-profile">Open Profile editor</button>' +
+          '<p style="font-size:12px;color:#888;margin-top:12px;">Add or remove chips so the job matcher knows what you want. Come back here when you\'re done.</p>';
+        const btn = body.querySelector("#wiz3-open-profile");
+        if (btn) btn.addEventListener("click", () => {
+          try { if (typeof openResumeModal === "function") openResumeModal(); } catch (e) {}
+          setTimeout(() => {
+            const tabs = document.querySelectorAll(".tab-btn");
+            for (let i = 0; i < tabs.length; i++) {
+              if (tabs[i].textContent.toLowerCase().indexOf("profile") !== -1) { tabs[i].click(); break; }
+            }
+          }, 300);
+        });
+      },
+      save() { return Promise.resolve(); },
+    },
+    {
+      key: "locations-remote",
+      title: "Where do you want to work?",
+      subtitle: "We'll only show jobs that match your locations + remote preference.",
+      optional: true,
+      async render(body, st) {
+        body.innerHTML =
+          '<label for="wiz3-locs">Preferred locations (comma-separated)</label>' +
+          '<input type="text" id="wiz3-locs" placeholder="e.g. New York City, Remote (US)">' +
+          '<div class="hint">Cities, states, or country regions. Use "Remote (US)" to include US-only remote jobs.</div>' +
+          '<label for="wiz3-remote">Remote preference</label>' +
+          '<select id="wiz3-remote">' +
+            '<option value="any">Any — onsite, hybrid, or remote</option>' +
+            '<option value="hybrid">Hybrid — prefer some in-office days</option>' +
+            '<option value="onsite">Onsite — in-office is fine</option>' +
+            '<option value="remote-only">Remote only — must be fully remote</option>' +
+          '</select>';
+        const p = await getProfile();
+        const locsEl = body.querySelector("#wiz3-locs");
+        const remoteEl = body.querySelector("#wiz3-remote");
+        if (locsEl && Array.isArray(p.preferredLocations)) locsEl.value = p.preferredLocations.join(", ");
+        if (st.data.preferredLocations) locsEl.value = st.data.preferredLocations;
+        if (remoteEl) {
+          let rp = p.remotePreference || (p.remotePreferred ? "remote-only" : "any");
+          if (st.data.remotePreference) rp = st.data.remotePreference;
+          remoteEl.value = rp;
+        }
+      },
+      collect(body) {
+        const locs = (body.querySelector("#wiz3-locs") || {}).value || "";
+        const remote = (body.querySelector("#wiz3-remote") || {}).value || "any";
+        return { preferredLocations: locs, remotePreference: remote };
+      },
+      async save(st, ctx) {
+        const d = this.collect(ctx.body);
+        const preferredLocations = d.preferredLocations.split(",").map(s => s.trim()).filter(Boolean);
+        st.data.preferredLocations = d.preferredLocations;
+        st.data.remotePreference = d.remotePreference;
+        await patchProfile({ preferredLocations, remotePreference: d.remotePreference });
+      },
+    },
+    {
+      key: "company-sizes",
+      title: "What size companies do you target?",
+      subtitle: "Move the sliders to weight the kind of employers we surface.",
+      optional: true,
+      async render(body, st) {
+        body.innerHTML =
+          '<p style="font-size:13.5px;color:#444;">Tell us roughly the mix you prefer. We\'ll keep big names in the feed but bias toward your selection.</p>' +
+          ['startup','mid','large','enterprise'].map(k => {
+            const labels = {startup:"Startup (<$10M)", mid:"Mid-market ($10–100M)", large:"Large ($100M–1B)", enterprise:"Enterprise (>$1B)"};
+            return '<label>' + labels[k] + ' <span style="float:right;font-weight:500;color:#5C5CD6;" id="wiz3-sz-' + k + '-val">25%</span></label>' +
+                   '<input type="range" id="wiz3-sz-' + k + '" min="0" max="100" step="5" value="25" style="width:100%;">';
+          }).join('');
+        const p = await getProfile();
+        const prefs = (st.data.companySizePreferences) || p.companySizePreferences || { startup:25, mid:25, large:25, enterprise:25 };
+        ['startup','mid','large','enterprise'].forEach(k => {
+          const el = body.querySelector('#wiz3-sz-' + k);
+          if (el) { el.value = prefs[k] || 25; body.querySelector('#wiz3-sz-' + k + '-val').textContent = (prefs[k] || 25) + '%'; }
+          if (el) el.addEventListener('input', () => { body.querySelector('#wiz3-sz-' + k + '-val').textContent = el.value + '%'; });
+        });
+      },
+      collect(body) {
+        const out = {};
+        ['startup','mid','large','enterprise'].forEach(k => {
+          const el = body.querySelector('#wiz3-sz-' + k);
+          if (el) out[k] = parseInt(el.value, 10) || 0;
+        });
+        return out;
+      },
+      async save(st, ctx) {
+        const prefs = this.collect(ctx.body);
+        st.data.companySizePreferences = prefs;
+        await patchProfile({ companySizePreferences: prefs });
+      },
+    },
+    {
+      key: "match-weights",
+      title: "How should we score job matches?",
+      subtitle: "Weight title fit, industry fit, and skills fit. Must add to 100.",
+      optional: true,
+      async render(body, st) {
+        body.innerHTML =
+          ['titles','industry','skills'].map(k => {
+            const labels = {titles:"Title fit", industry:"Industry fit", skills:"Skills fit"};
+            const defaults = {titles:50, industry:25, skills:25};
+            return '<label>' + labels[k] + ' <span style="float:right;font-weight:500;color:#5C5CD6;" id="wiz3-w-' + k + '-val">' + defaults[k] + '%</span></label>' +
+                   '<input type="range" id="wiz3-w-' + k + '" min="0" max="100" step="5" value="' + defaults[k] + '" style="width:100%;">';
+          }).join('') +
+          '<div id="wiz3-w-total" style="margin-top:8px;font-size:13px;font-weight:600;text-align:right;">Total: 100%</div>';
+        const p = await getProfile();
+        const w = (st.data.matchWeights) || p.matchWeights || { titles:50, industry:25, skills:25 };
+        ['titles','industry','skills'].forEach(k => {
+          const el = body.querySelector('#wiz3-w-' + k);
+          if (el) { el.value = w[k] || 0; body.querySelector('#wiz3-w-' + k + '-val').textContent = (w[k] || 0) + '%'; }
+        });
+        const recomputeTotal = () => {
+          let t = 0;
+          ['titles','industry','skills'].forEach(k => { t += parseInt((body.querySelector('#wiz3-w-' + k) || {}).value || 0, 10); });
+          const totalEl = body.querySelector('#wiz3-w-total');
+          if (totalEl) { totalEl.textContent = 'Total: ' + t + '%'; totalEl.style.color = (t === 100) ? '#0A6B3A' : '#B91C1C'; }
+        };
+        ['titles','industry','skills'].forEach(k => {
+          const el = body.querySelector('#wiz3-w-' + k);
+          if (el) el.addEventListener('input', () => { body.querySelector('#wiz3-w-' + k + '-val').textContent = el.value + '%'; recomputeTotal(); });
+        });
+        recomputeTotal();
+      },
+      collect(body) {
+        const out = {};
+        ['titles','industry','skills'].forEach(k => { out[k] = parseInt((body.querySelector('#wiz3-w-' + k) || {}).value || 0, 10); });
+        return out;
+      },
+      validate(st, ctx) {
+        const w = this.collect(ctx.body);
+        const t = w.titles + w.industry + w.skills;
+        if (t !== 100) return "Weights must add to 100. Currently: " + t + ".";
+        return "";
+      },
+      async save(st, ctx) {
+        const w = this.collect(ctx.body);
+        st.data.matchWeights = w;
+        await patchProfile({ matchWeights: w });
+      },
+    },
+    {
+      key: "daily-target",
+      title: "Daily application target",
+      subtitle: "Pick a number. Your dashboard shows a focus list of that many jobs.",
+      optional: true,
+      render(body, st) {
+        body.innerHTML =
+          '<label for="wiz3-target">Applications per day</label>' +
+          '<input type="number" id="wiz3-target" min="1" max="50" value="5" style="max-width:140px;">' +
+          '<div class="hint">5 per day is a healthy default. You can change it later in Preferences.</div>';
+        let cur = 5;
+        try { cur = parseInt(localStorage.getItem("gmj_daily_target_" + SLUG) || "5", 10); } catch (e) {}
+        if (st.data.dailyTarget) cur = st.data.dailyTarget;
+        body.querySelector("#wiz3-target").value = cur;
+      },
+      async save(st, ctx) {
+        const v = parseInt(ctx.body.querySelector("#wiz3-target").value, 10) || 5;
+        try { localStorage.setItem("gmj_daily_target_" + SLUG, String(v)); } catch (e) {}
+        st.data.dailyTarget = v;
+      },
+    },
+    {
+      key: "recency-window",
+      title: "How recent should jobs be?",
+      subtitle: "Default sort window. You can override later in Preferences.",
+      optional: true,
+      render(body, st) {
+        const opts = [
+          {v:"0", label:"<strong>Last 24 hours</strong> — only roles posted today"},
+          {v:"7", label:"<strong>Last 7 days</strong> — freshest listings (recommended)"},
+          {v:"14", label:"<strong>Last 2 weeks</strong> — balance"},
+          {v:"30", label:"<strong>Last 30 days</strong> — widest reasonable pool"},
+          {v:"all", label:"<strong>All jobs</strong> — sort handles freshness"},
+        ];
+        body.innerHTML = '<div class="radio-list">' + opts.map(o => {
+          const cur = (st.data.recencyWindow != null ? String(st.data.recencyWindow) : "7");
+          return '<label><input type="radio" name="wiz3-rec" value="' + o.v + '"' + (cur === o.v ? ' checked' : '') + '> <span>' + o.label + '</span></label>';
+        }).join('') + '</div>';
+      },
+      async save(st, ctx) {
+        const v = (ctx.body.querySelector('input[name=wiz3-rec]:checked') || {}).value || "7";
+        try { localStorage.setItem("gmj_recency_window_" + SLUG, v); } catch (e) {}
+        st.data.recencyWindow = v;
+      },
+    },
+    {
+      key: "install-extension",
+      title: "Install the Helper extension",
+      subtitle: "Cuts apply time from ~10 minutes to ~60 seconds per job.",
+      optional: true,
+      render(body, st) {
+        const installed = (document.documentElement.getAttribute("data-gmj-installed") === "1") || window.__gmj_extension_ready === true;
+        body.innerHTML =
+          '<p style="margin-bottom:10px;">Without this, you re-type the same 18 fields on every application. With it: click Apply → 18 of 25 fields auto-fill in ~1 second.</p>' +
+          '<div style="background:#F7F7FB;border-radius:8px;padding:14px;margin-bottom:14px;font-size:13px;">' +
+            '<div style="font-weight:700;margin-bottom:6px;">3-step install (Chrome / Edge / Brave):</div>' +
+            '<ol style="margin:0;padding-left:18px;">' +
+              '<li><a href="/extension.zip" download style="color:#5C5CD6;font-weight:700;">⬇ Download getmemyjob-helper.zip</a> &amp; unzip it.</li>' +
+              '<li>Open <a href="chrome://extensions" target="_blank" style="color:#5C5CD6;font-weight:700;">chrome://extensions</a>, toggle <strong>Developer mode</strong> on (top-right).</li>' +
+              '<li>Click <strong>Load unpacked</strong> and select the unzipped folder.</li>' +
+            '</ol>' +
+          '</div>' +
+          '<details style="margin-top:10px;font-size:12.5px;color:#444;">' +
+            '<summary style="cursor:pointer;color:#5C5CD6;font-weight:600;">Using Firefox, Safari, or your phone?</summary>' +
+            '<div style="margin-top:8px;padding:10px;background:#fff;border:1px solid #E5E7EE;border-radius:6px;">' +
+              '<p style="margin:0 0 8px;"><strong>Firefox:</strong> <a href="/extension-firefox.zip" download style="color:#5C5CD6;font-weight:600;">⬇ Firefox build</a>, then open <code>about:debugging</code> → This Firefox → Load Temporary Add-on.</p>' +
+              '<p style="margin:0;"><strong>Safari, iOS, mobile:</strong> drag this to your bookmarks bar: <a href="javascript:void(0);" id="wiz3-bookmarklet" style="display:inline-block;margin-left:6px;padding:4px 10px;background:#5C5CD6;color:#fff;border-radius:4px;text-decoration:none;font-weight:700;">📌 getmemyjob Helper</a></p>' +
+            '</div>' +
+          '</details>' +
+          '<div id="wiz3-ext-status" style="margin-top:14px;padding:10px 14px;border-radius:6px;font-size:13.5px;font-weight:600;' +
+            (installed ? 'background:#ECFDF5;color:#0A6B3A;">✅ Helper detected. You can move on.' : 'background:#F7F7FB;color:#666;">⏳ Checking for the helper…') +
+          '</div>' +
+          '<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">' +
+            '<button type="button" class="wiz3-btn wiz3-btn-ghost" id="wiz3-ext-reload">↻ Reload &amp; re-check</button>' +
+          '</div>';
+        // Real bookmarklet href has to be set programmatically because the JS has braces
+        const bm = body.querySelector("#wiz3-bookmarklet");
+        if (bm) bm.setAttribute("href", "javascript:(function(){var s=document.createElement('script');s.src='https://getmemyjob.officebeatllc.com/bookmarklet.js?t='+Date.now();document.body.appendChild(s);})();");
+        const rl = body.querySelector("#wiz3-ext-reload");
+        if (rl) rl.addEventListener("click", () => {
+          try { localStorage.setItem("gmj_wizard_state_v3_pendingStep", "install-extension"); } catch (e) {}
+          location.reload();
+        });
+        // Live re-check
+        const recheck = () => {
+          const ok = (document.documentElement.getAttribute("data-gmj-installed") === "1") || window.__gmj_extension_ready === true;
+          const el = body.querySelector("#wiz3-ext-status");
+          if (!el) return;
+          if (ok) { el.style.background = "#ECFDF5"; el.style.color = "#0A6B3A"; el.innerHTML = "✅ Helper detected. You can move on."; }
+        };
+        if (window._wiz3ExtPoll) clearInterval(window._wiz3ExtPoll);
+        window._wiz3ExtPoll = setInterval(recheck, 1500);
+        document.addEventListener("gmj-extension-ready", () => { window.__gmj_extension_ready = true; recheck(); }, { once: true });
+        window.addEventListener("focus", recheck);
+      },
+      async save(st, ctx) {
+        // Don't block continue: install is optional. Mark complete if installed.
+        const ok = (document.documentElement.getAttribute("data-gmj-installed") === "1") || window.__gmj_extension_ready === true;
+        st.data.extensionInstalled = !!ok;
+      },
+    },
+    {
+      key: "app-profile",
+      title: "Application profile",
+      subtitle: "Stored once, auto-filled on every Greenhouse / Lever / Ashby / Workday form.",
+      optional: true,
+      async render(body, st) {
+        body.innerHTML =
+          '<label for="wiz3-phone">Phone</label><input type="tel" id="wiz3-phone" placeholder="(555) 123-4567">' +
+          '<label for="wiz3-location">City, State</label><input type="text" id="wiz3-location" placeholder="e.g. Allendale, NJ">' +
+          '<label for="wiz3-linkedin">LinkedIn URL</label><input type="url" id="wiz3-linkedin" placeholder="https://www.linkedin.com/in/your-name">' +
+          '<label for="wiz3-workauth">Work authorization</label>' +
+          '<select id="wiz3-workauth">' +
+            '<option value="US Citizen">US Citizen</option>' +
+            '<option value="Green Card">Green Card / Permanent Resident</option>' +
+            '<option value="H1B Visa">H1B Visa</option>' +
+            '<option value="OPT">OPT / STEM OPT</option>' +
+            '<option value="TN Visa">TN Visa</option>' +
+            '<option value="Other">Other</option>' +
+          '</select>' +
+          '<label for="wiz3-sponsor">Need visa sponsorship now or in the future?</label>' +
+          '<select id="wiz3-sponsor"><option value="No">No</option><option value="Yes">Yes</option></select>';
+        const p = await getProfile();
+        body.querySelector("#wiz3-phone").value    = st.data.phone    || p.phone    || "";
+        body.querySelector("#wiz3-location").value = st.data.location || p.location || "";
+        body.querySelector("#wiz3-linkedin").value = st.data.linkedinUrl || p.linkedinUrl || "";
+        body.querySelector("#wiz3-workauth").value = st.data.workAuthorization || p.workAuthorization || "US Citizen";
+        body.querySelector("#wiz3-sponsor").value  = st.data.requiresSponsorship || p.requiresSponsorship || "No";
+      },
+      async save(st, ctx) {
+        const phone = ctx.body.querySelector("#wiz3-phone").value || "";
+        const location = ctx.body.querySelector("#wiz3-location").value || "";
+        const linkedinUrl = ctx.body.querySelector("#wiz3-linkedin").value || "";
+        const workAuthorization = ctx.body.querySelector("#wiz3-workauth").value || "US Citizen";
+        const requiresSponsorship = ctx.body.querySelector("#wiz3-sponsor").value || "No";
+        Object.assign(st.data, { phone, location, linkedinUrl, workAuthorization, requiresSponsorship });
+        await patchProfile({ phone, location, linkedinUrl, workAuthorization, requiresSponsorship });
+      },
+    },
+    {
+      key: "linkedin-contacts",
+      title: "Add your LinkedIn network (optional)",
+      subtitle: "Upload your LinkedIn Connections.csv to see warm-intro badges on jobs.",
+      optional: true,
+      render(body) {
+        body.innerHTML =
+          '<p>Upload your <code>Connections.csv</code> once and the job feed shows <strong>🤝 N contacts</strong> badges on companies where you have a warm intro.</p>' +
+          '<button type="button" class="wiz3-btn wiz3-btn-ghost" id="wiz3-open-contacts">Open LinkedIn Contacts panel</button>' +
+          '<p style="font-size:12px;color:#888;margin-top:12px;">This is optional. You can do it any time from the dashboard.</p>';
+        const btn = body.querySelector("#wiz3-open-contacts");
+        if (btn) btn.addEventListener("click", () => { try { if (typeof openContactsModal === "function") openContactsModal(); } catch (e) {} });
+      },
+      save() { return Promise.resolve(); },
+    },
+    {
+      key: "done",
+      title: "All set",
+      subtitle: "We'll build your tailored dashboard now.",
+      optional: false,
+      render(body) {
+        body.innerHTML =
+          '<p>Your settings are saved. The next job-refresh run will rebuild your dashboard with everything tuned to your profile.</p>' +
+          '<p style="font-size:13.5px;color:#444;">Quick reminders:</p>' +
+          '<ul style="font-size:13.5px;color:#444;line-height:1.7;padding-left:18px;">' +
+            '<li><strong>Prep Application</strong> on any job → tailored cover letter + resume summary</li>' +
+            '<li><strong>Refresh data</strong> in the header → trigger a fresh pull anytime</li>' +
+            '<li><strong>?</strong> in the header → replay this setup</li>' +
+          '</ul>';
+      },
+      async save(st) {
+        st.finished = true;
+        // Best-effort: trigger a refresh so the new dashboard regenerates
+        try {
+          const ek = getEditKey();
+          await fetch(WORKER + "/refresh?user=" + encodeURIComponent(SLUG), {
+            method: "POST",
+            headers: ek ? { "X-Edit-Key": ek } : {},
+          });
+        } catch (e) {}
+      },
+    },
+  ];
+
+  // ---- Controller ----
+  function stepIndex(key) { for (let i = 0; i < STEPS.length; i++) if (STEPS[i].key === key) return i; return 0; }
+  function currentStep() { return STEPS[stepIndex(state.currentStep)]; }
+
+  function renderRail() {
+    const list = document.getElementById("wiz3-rail-list");
+    if (!list) return;
+    list.innerHTML = STEPS.map((s, i) => {
+      const isCurrent = s.key === state.currentStep;
+      const isDone = state.completed.includes(s.key);
+      const isSkipped = state.skipped.includes(s.key);
+      let cls = "";
+      if (isCurrent) cls = "is-current";
+      else if (isDone) cls = "is-done";
+      else if (isSkipped) cls = "is-skipped";
+      const allowJump = isCurrent || isDone || isSkipped || (i <= Math.max(0, stepIndex(state.currentStep)));
+      return '<li class="' + cls + '"' + (allowJump ? '' : ' aria-disabled="true"') + ' data-key="' + s.key + '">' +
+        '<span class="wiz3-dot">' + (isDone ? "✓" : (isSkipped ? "–" : String(i+1))) + '</span>' +
+        '<span>' + escHtml(s.title) + '</span>' +
+      '</li>';
+    }).join('');
+    list.querySelectorAll("li[data-key]").forEach(li => {
+      if (li.getAttribute("aria-disabled") === "true") return;
+      li.addEventListener("click", () => goto(li.getAttribute("data-key")));
+    });
+  }
+
+  function renderHead(s, idx) {
+    document.getElementById("wiz3-step-no").textContent = "Step " + (idx + 1) + " of " + STEPS.length;
+    document.getElementById("wiz3-h2").textContent = s.title;
+    document.getElementById("wiz3-sub").textContent = s.subtitle || "";
+  }
+  function renderFoot(s, idx) {
+    const skip = document.getElementById("wiz3-skip");
+    const cont = document.getElementById("wiz3-continue");
+    const back = document.getElementById("wiz3-back");
+    back.disabled = (idx === 0);
+    back.style.visibility = (idx === 0) ? "hidden" : "visible";
+    skip.style.display = (s.optional && s.key !== "done") ? "" : "none";
+    cont.textContent = (s.key === "done") ? "Finish" : "Continue →";
+  }
+  async function render() {
+    saveState(state);
+    const s = currentStep(); const idx = stepIndex(state.currentStep);
+    renderRail();
+    renderHead(s, idx);
+    renderFoot(s, idx);
+    const body = document.getElementById("wiz3-body");
+    body.innerHTML = "";
+    try {
+      const r = s.render(body, state, { body });
+      if (r && typeof r.then === "function") await r;
+    } catch (e) { console.warn("wiz3 render", e); }
+  }
+  function goto(key) {
+    if (!STEPS.find(s => s.key === key)) return;
+    state.currentStep = key;
+    saveState(state);
+    render();
+  }
+  async function doContinue() {
+    const s = currentStep();
+    const body = document.getElementById("wiz3-body");
+    if (typeof s.validate === "function") {
+      const err = s.validate(state, { body });
+      if (err) { setMsg(body, "err", err); return; }
+    }
+    const cont = document.getElementById("wiz3-continue");
+    cont.disabled = true; cont.textContent = "Saving…";
+    try {
+      await s.save(state, { body });
+      if (!state.completed.includes(s.key)) state.completed.push(s.key);
+      state.skipped = state.skipped.filter(k => k !== s.key);
+    } catch (e) {
+      setMsg(body, "err", "Couldn't save: " + (e && e.message ? e.message : e));
+      cont.disabled = false; cont.textContent = "Continue →";
+      return;
+    }
+    cont.disabled = false;
+    const idx = stepIndex(state.currentStep);
+    if (idx + 1 >= STEPS.length) { finish(); return; }
+    state.currentStep = STEPS[idx + 1].key;
+    saveState(state);
+    render();
+  }
+  function doSkip() {
+    const s = currentStep();
+    if (!s.optional) return;
+    if (!state.skipped.includes(s.key)) state.skipped.push(s.key);
+    state.completed = state.completed.filter(k => k !== s.key);
+    const idx = stepIndex(state.currentStep);
+    if (idx + 1 >= STEPS.length) { finish(); return; }
+    state.currentStep = STEPS[idx + 1].key;
+    saveState(state);
+    render();
+  }
+  function doBack() {
+    const idx = stepIndex(state.currentStep);
+    if (idx === 0) return;
+    state.currentStep = STEPS[idx - 1].key;
+    saveState(state);
+    render();
+  }
+  function finish() {
+    state.finished = true;
+    saveState(state);
+    document.getElementById("wiz3-overlay").classList.remove("show");
+  }
+  function open() {
+    // If user did the reload-to-detect dance on the install-extension step, resume there.
+    try {
+      const pending = localStorage.getItem("gmj_wizard_state_v3_pendingStep");
+      if (pending) {
+        state.currentStep = pending;
+        localStorage.removeItem("gmj_wizard_state_v3_pendingStep");
+      }
+    } catch (e) {}
+    if (!state.currentStep || !STEPS.find(s => s.key === state.currentStep)) state.currentStep = "welcome";
+    document.getElementById("wiz3-overlay").classList.add("show");
+    render();
+  }
+  function close() { document.getElementById("wiz3-overlay").classList.remove("show"); saveState(state); }
+  function reset() {
+    state = { currentStep: "welcome", completed: [], skipped: [], data: {}, finished: false };
+    saveState(state);
+    open();
+  }
+
+  // Wire footer + close
+  document.getElementById("wiz3-back").addEventListener("click", doBack);
+  document.getElementById("wiz3-skip").addEventListener("click", doSkip);
+  document.getElementById("wiz3-continue").addEventListener("click", doContinue);
+  document.getElementById("wiz3-close").addEventListener("click", close);
+  // Backdrop click closes (but only outside the card)
+  document.getElementById("wiz3-overlay").addEventListener("click", (e) => {
+    if (e.target && e.target.id === "wiz3-overlay") close();
+  });
+
+  // Listen for postMessage from extension's marker (page-context can't see content-script JS directly)
+  window.addEventListener("message", (ev) => {
+    if (ev && ev.data && ev.data.type === "GMJ_EXTENSION_READY") window.__gmj_extension_ready = true;
+  });
+
+  // Public API
+  window.WizV3 = { open, close, reset, goto, state: () => state };
+
+  // Replace the old replayTour function so the ? button + Preferences link both
+  // open the new wizard.
+  window.replayTour = function () { state.finished = false; saveState(state); open(); };
+
+  // Disable the old auto-launch: we'll trigger v3 here instead.
+  function autoLaunch() {
+    // If old v2 auto-launch already ran and opened a modal, hide it.
+    const oldModal = document.getElementById("gmj-wizard");
+    if (oldModal) oldModal.classList.remove("show");
+    // Decide whether to open: not finished, OR pending step from reload.
+    let pending = "";
+    try { pending = localStorage.getItem("gmj_wizard_state_v3_pendingStep") || ""; } catch (e) {}
+    if (pending || !state.finished) {
+      setTimeout(open, 500);
+    }
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", autoLaunch);
+  } else {
+    autoLaunch();
+  }
+})();
+</script>
+<!-- ====================== /Wizard v3 ====================== -->
 </body></html>
