@@ -1,19 +1,20 @@
 name: List users (admin one-off)
 
 # Calls /admin/users on the Worker to list all account emails.
-# Used when looking up the right email for password reset.
+# Commits the result to reports/users_TIMESTAMP.json so it's readable.
 
 on:
   workflow_dispatch: {}
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   list:
     runs-on: ubuntu-latest
     steps:
-      - name: Call /admin/users
+      - uses: actions/checkout@v4
+      - name: Call /admin/users and save
         env:
           ADMIN_KEY: ${{ secrets.WORKER_ADMIN_KEY }}
         run: |
@@ -22,19 +23,25 @@ jobs:
             echo "::error::WORKER_ADMIN_KEY secret is not set"
             exit 1
           fi
+          mkdir -p reports
+          TS=$(date -u +%Y%m%dT%H%M%SZ)
+          OUT="reports/users_${TS}.json"
           curl -sS -H "X-Admin-Key: $ADMIN_KEY" \
             "https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/admin/users" \
-            -o /tmp/users.json
+            -o "$OUT"
+          # Sanity print
           python3 -c "
           import json
-          d = json.load(open('/tmp/users.json'))
+          d = json.load(open('$OUT'))
           users = d.get('users', [])
-          print(f'Total users: {len(users)}')
-          print()
-          for u in users:
-              email = u.get('email','(no email)')
-              slug = u.get('slug','?')
-              name = u.get('name','?')
-              has_pw = bool(u.get('hasPassword') or u.get('passwordSet'))
-              print(f'  {slug:25s}  {email:40s}  name={name}  hasPw={has_pw}')
+          print(f'Wrote {len(users)} users to $OUT')
+          for u in users[:20]:
+              print(f\"  {u.get('slug','?'):25s}  {u.get('email','(none)')}\")
           "
+      - name: Commit
+        run: |
+          git config user.email "admin-list@getmemyjob.local"
+          git config user.name "admin-list-bot"
+          git add reports/users_*.json
+          git commit -m "auto: user list snapshot" || echo "nothing to commit"
+          git push
