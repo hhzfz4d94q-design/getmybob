@@ -456,6 +456,9 @@ async function testUser(browser, slug) {
   record(slug, 'wizard Continue shows friendly error (not raw "HTTP 401")', patchUX.ok, patchUX.why);
 
   // ── 15. Wizard skill picker cap enforcement (already at 14/15 per screenshot — verify it accepts 1 more, rejects 2) ──
+  // Make sure we're back on the bullseye step (prior auth-UX test moved us to where-you-work)
+  await page.evaluate(() => WizV3.goto('your-bullseye'));
+  await new Promise(r => setTimeout(r, 600));
   const capTest = await page.evaluate(() => {
     const tHost = document.querySelector('#bs-skills-host');
     if (!tHost || !tHost.__bullseyeValues) return { ok: false, why: 'skills picker not found' };
