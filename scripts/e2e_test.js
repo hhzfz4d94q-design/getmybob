@@ -481,6 +481,100 @@ async function testUser(browser, slug) {
   await page.close();
 }
 
+// ── Mobile + a11y + perf test (one user, 2 viewports) ─────────────────
+// Geetu uses iPad/iPhone sometimes. These assertions catch responsive bugs
+// that desktop E2E misses + lock in basic a11y + load-perf budgets.
+async function testMobileA11yPerf(browser, slug) {
+  console.log(`\n━━━ Mobile + a11y + perf: ${slug} ━━━`);
+  const viewports = [
+    { name: 'iphone',  width: 375, height: 667 },
+    { name: 'ipad',    width: 768, height: 1024 },
+  ];
+  for (const vp of viewports) {
+    console.log(`  ── ${vp.name} (${vp.width}x${vp.height}) ──`);
+    const page = await browser.newPage();
+    await page.setViewport({ width: vp.width, height: vp.height });
+    const url = `${SITE}/${slug}?_=e2e_mobile_${Date.now()}`;
+    const t0 = Date.now();
+    try {
+      await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    } catch (e) {
+      record(`${slug}-${vp.name}`, 'page loads', false, e.message);
+      await page.close();
+      continue;
+    }
+    const loadMs = Date.now() - t0;
+    record(`${slug}-${vp.name}`, `page loads under 8s (perf budget)`,
+           loadMs < 8000, `${loadMs}ms`);
+    await new Promise(r => setTimeout(r, 1500));
+
+    // Wizard reset to known state (then close it for layout tests)
+    await page.evaluate(() => { try { WizV3.reset(); } catch(_){} });
+    await new Promise(r => setTimeout(r, 500));
+
+    // (a) No horizontal scroll on this viewport
+    const horiz = await page.evaluate(() => ({
+      bw: document.body.scrollWidth,
+      cw: document.documentElement.clientWidth,
+    }));
+    record(`${slug}-${vp.name}`, 'no horizontal scroll',
+           horiz.bw <= horiz.cw + 2, `body=${horiz.bw} client=${horiz.cw}`);
+
+    // (b) Wizard close button visible (it's in viewport, not off-screen)
+    const closeVis = await page.evaluate(() => {
+      const x = document.getElementById('wiz3-close');
+      if (!x) return { ok:false, why:'no #wiz3-close' };
+      const r = x.getBoundingClientRect();
+      const styles = window.getComputedStyle(x);
+      const visible = r.width > 0 && r.height > 0
+                   && styles.visibility !== 'hidden' && styles.display !== 'none';
+      const inViewport = r.top >= 0 && r.left >= 0
+                      && r.bottom <= window.innerHeight && r.right <= window.innerWidth;
+      return { ok: visible && inViewport, why: `w=${Math.round(r.width)} h=${Math.round(r.height)} top=${Math.round(r.top)} left=${Math.round(r.left)} visible=${visible} inViewport=${inViewport}` };
+    });
+    record(`${slug}-${vp.name}`, 'wizard × button visible and in viewport',
+           closeVis.ok, closeVis.why);
+
+    // (c) Touch-target ≥ 44x44 (WCAG 2.5.5 AAA minimum for mobile)
+    const touchOK = await page.evaluate(() => {
+      const x = document.getElementById('wiz3-close');
+      if (!x) return { ok:false, why:'no element' };
+      const r = x.getBoundingClientRect();
+      return { ok: r.width >= 44 && r.height >= 44, why: `${Math.round(r.width)}x${Math.round(r.height)}` };
+    });
+    record(`${slug}-${vp.name}`, 'wizard × touch target ≥ 44x44',
+           touchOK.ok, touchOK.why);
+
+    // (d) Continue button is reachable (not pushed off-screen by content)
+    const contBtn = await page.evaluate(() => {
+      const btn = document.getElementById('wiz3-continue');
+      if (!btn) return { ok:false, why:'no #wiz3-continue' };
+      const r = btn.getBoundingClientRect();
+      return { ok: r.width >= 44 && r.height >= 24 && r.top < window.innerHeight,
+               why: `w=${Math.round(r.width)} h=${Math.round(r.height)} top=${Math.round(r.top)}` };
+    });
+    record(`${slug}-${vp.name}`, 'wizard Continue button reachable on viewport',
+           contBtn.ok, contBtn.why);
+
+    // (e) Cards readable — at least 1 card has computed font-size ≥ 12px
+    // First close the wizard so cards are visible
+    await page.evaluate(() => { try { const x = document.getElementById('wiz3-close'); if (x) x.click(); } catch(_){} });
+    await new Promise(r => setTimeout(r, 400));
+    const cardFontOK = await page.evaluate(() => {
+      const card = document.querySelector('.card[data-fp]');
+      if (!card) return { ok:false, why:'no card' };
+      const title = card.querySelector('.card-title') || card.querySelector('h3, h4, .title');
+      if (!title) return { ok:true, why:'no card-title element (acceptable)' };
+      const fs = parseFloat(window.getComputedStyle(title).fontSize);
+      return { ok: fs >= 12, why: `${fs}px` };
+    });
+    record(`${slug}-${vp.name}`, 'card title font-size ≥ 12px (legible)',
+           cardFontOK.ok, cardFontOK.why);
+
+    await page.close();
+  }
+}
+
 (async () => {
   const browser = await puppeteer.launch({
     headless: 'new',
@@ -489,6 +583,8 @@ async function testUser(browser, slug) {
   for (const u of USERS) {
     await testUser(browser, u);
   }
+  // One user is enough for mobile/a11y/perf (Geetu — the iPad user)
+  await testMobileA11yPerf(browser, USERS[USERS.length - 1]);
   await browser.close();
 
   // Write results to a JSON file (committed by CI on success or failure)
