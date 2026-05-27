@@ -6104,6 +6104,8 @@ function _resortByAiScore() {{
     try {{ _renderClusterBadges(); }} catch (e) {{}}
     // F2: AI re-rank the visible cards in the background.
     try {{ aiRerankCards(); }} catch (e) {{}}
+    // Engagement-driven intelligence: check for bullseye refinement suggestions
+    try {{ _checkRefinementSuggestions(); }} catch (e) {{}}
   }}
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
   else run();
@@ -8731,6 +8733,153 @@ function showWhyHiddenModal() {{
   inp.addEventListener('input', () => renderResults(inp.value));
   inp.focus();
   m.addEventListener('click', e => {{ if (e.target === m) m.remove(); }});
+}}
+
+
+// ==============================================================
+// Engagement-driven refinement suggestions
+// Pulls from /suggest-refinements (Claude reads tracker patterns +
+// compares to bullseye). Shows a dismissable banner with 1-click apply.
+// Throttled to once per 24h per dismissal.
+// ==============================================================
+const _REFINE_SUGG_CACHE_KEY = 'htj_refine_sugg_' + USER_SLUG;
+const _REFINE_SUGG_DISMISS_KEY = 'htj_refine_sugg_dismissed_' + USER_SLUG;
+const _REFINE_SUGG_TTL = 24 * 60 * 60 * 1000;
+
+async function _checkRefinementSuggestions() {{
+  // Don't bother more than once per 12h
+  try {{
+    const cached = JSON.parse(localStorage.getItem(_REFINE_SUGG_CACHE_KEY) || 'null');
+    if (cached && cached.ts && (Date.now() - cached.ts) < 12 * 60 * 60 * 1000) {{
+      _renderRefinementBanner(cached.suggestions || []);
+      return;
+    }}
+  }} catch (e) {{}}
+
+  const ek = (typeof getEditKey === 'function') ? getEditKey() : null;
+  if (!ek) return; // anon user — skip
+
+  try {{
+    const r = await fetch(WORKER_BASE + '/suggest-refinements' + USER_QS, {{
+      method: 'POST',
+      headers: {{ 'Content-Type': 'application/json', 'X-Edit-Key': ek }}
+    }});
+    if (!r.ok) return;
+    const data = await r.json();
+    const suggs = data.suggestions || [];
+    try {{ localStorage.setItem(_REFINE_SUGG_CACHE_KEY, JSON.stringify({{ ts: Date.now(), suggestions: suggs, meta: data.meta }})); }} catch (e) {{}}
+    _renderRefinementBanner(suggs);
+  }} catch (e) {{ /* silent */ }}
+}}
+
+function _isRefineSuggDismissed(sigKey) {{
+  try {{
+    const dis = JSON.parse(localStorage.getItem(_REFINE_SUGG_DISMISS_KEY) || '{{}}');
+    return dis[sigKey] && (Date.now() - dis[sigKey]) < 7 * 24 * 60 * 60 * 1000;
+  }} catch (e) {{ return false; }}
+}}
+
+function _markRefineSuggDismissed(sigKey) {{
+  try {{
+    const dis = JSON.parse(localStorage.getItem(_REFINE_SUGG_DISMISS_KEY) || '{{}}');
+    dis[sigKey] = Date.now();
+    localStorage.setItem(_REFINE_SUGG_DISMISS_KEY, JSON.stringify(dis));
+  }} catch (e) {{}}
+}}
+
+function _renderRefinementBanner(suggestions) {{
+  // Filter out dismissed
+  const active = (suggestions || []).filter(s => {{
+    const k = s.type + ':' + s.field + ':' + s.value;
+    return !_isRefineSuggDismissed(k);
+  }});
+  if (!active.length) return;
+  // Remove any existing banner
+  const existing = document.getElementById('refine-sugg-banner');
+  if (existing) existing.remove();
+
+  const banner = document.createElement('div');
+  banner.id = 'refine-sugg-banner';
+  banner.style.cssText = 'background:#fffbeb;border:1px solid #fcd34d;border-radius:8px;padding:12px 16px;margin:0 auto 14px;max-width:1400px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-family:Inter,system-ui,sans-serif;';
+
+  const lead = document.createElement('div');
+  lead.style.cssText = 'font-size:13px;color:#78350f;flex:1;min-width:220px;';
+  lead.innerHTML = '<strong style="font-size:14px;">💡 ' + active.length + ' suggestion' + (active.length === 1 ? '' : 's') + ' from your activity:</strong>';
+  banner.appendChild(lead);
+
+  const list = document.createElement('div');
+  list.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;flex:2;';
+
+  active.slice(0, 3).forEach((s, idx) => {{
+    const chip = document.createElement('div');
+    chip.style.cssText = 'display:flex;align-items:center;gap:6px;padding:6px 12px;background:white;border:1px solid #fcd34d;border-radius:6px;font-size:12.5px;';
+    const verb = s.type.startsWith('add_') ? 'Add' : 'Remove';
+    const label = document.createElement('span');
+    label.style.cssText = 'color:#444;';
+    label.innerHTML = '<strong>' + verb + ' "' + escHtml(s.value) + '"</strong> to ' + escHtml(s.field) + '<br><span style="font-size:11px;color:#888;font-style:italic;">' + escHtml(s.evidence || '') + '</span>';
+    chip.appendChild(label);
+    const apply = document.createElement('button');
+    apply.type = 'button';
+    apply.textContent = '✓ Apply';
+    apply.style.cssText = 'padding:4px 10px;font-size:11px;background:#16a34a;color:white;border:none;border-radius:4px;cursor:pointer;font-weight:600;';
+    apply.addEventListener('click', () => _applyRefinement(s, chip));
+    chip.appendChild(apply);
+    const skip = document.createElement('button');
+    skip.type = 'button';
+    skip.textContent = '×';
+    skip.title = 'Dismiss for 7 days';
+    skip.style.cssText = 'padding:4px 8px;font-size:14px;background:none;color:#888;border:none;border-radius:4px;cursor:pointer;';
+    skip.addEventListener('click', () => {{
+      _markRefineSuggDismissed(s.type + ':' + s.field + ':' + s.value);
+      chip.remove();
+      // If all gone, kill the banner
+      if (!list.children.length) banner.remove();
+    }});
+    chip.appendChild(skip);
+    list.appendChild(chip);
+  }});
+  banner.appendChild(list);
+
+  // Insert before the stats row
+  const stats = document.querySelector('.stats');
+  if (stats && stats.parentNode) {{
+    stats.parentNode.insertBefore(banner, stats);
+  }} else {{
+    document.body.insertBefore(banner, document.body.firstChild);
+  }}
+}}
+
+async function _applyRefinement(suggestion, chipEl) {{
+  const ek = (typeof getEditKey === 'function') ? getEditKey() : null;
+  if (!ek) {{ alert('No edit key — cannot save'); return; }}
+  // Fetch current profile to compute the new array
+  try {{
+    const r = await fetch(WORKER_BASE + '/skills-profile' + USER_QS + '&_=' + Date.now(), {{ cache: 'no-store' }});
+    const p = (await r.json()).profile || {{}};
+    const field = suggestion.field;
+    const cur = (p[field] || []).slice();
+    const val = (suggestion.value || '').toLowerCase().trim();
+    if (suggestion.type.startsWith('add_')) {{
+      if (!cur.includes(val)) cur.push(val);
+    }} else if (suggestion.type.startsWith('remove_')) {{
+      const idx = cur.indexOf(val);
+      if (idx >= 0) cur.splice(idx, 1);
+    }}
+    const r2 = await fetch(WORKER_BASE + '/skills-profile' + USER_QS, {{
+      method: 'POST',
+      headers: {{ 'Content-Type': 'application/json', 'X-Edit-Key': ek }},
+      body: JSON.stringify({{ patchFields: {{ [field]: cur }} }})
+    }});
+    if (r2.ok) {{
+      chipEl.style.background = '#ecfdf5';
+      chipEl.innerHTML = '<span style="color:#0a6b3a;font-size:12.5px;font-weight:600;">✓ Applied — refresh in 5 min to see new ranking</span>';
+      _markRefineSuggDismissed(suggestion.type + ':' + suggestion.field + ':' + suggestion.value);
+    }} else {{
+      chipEl.innerHTML = '<span style="color:#B91C1C;">Failed: HTTP ' + r2.status + '</span>';
+    }}
+  }} catch (e) {{
+    chipEl.innerHTML = '<span style="color:#B91C1C;">Error: ' + (e.message || e) + '</span>';
+  }}
 }}
 
 

@@ -76,6 +76,7 @@ export default {
     if (url.pathname === '/regenerate-profile') return handleRegenerateProfile(request, env, cors, slug);
     if (url.pathname === '/regenerate-companies') return handleRegenerateCompanies(request, env, cors, slug);
     if (url.pathname === '/draft-warm-intro') return handleDraftWarmIntro(request, env, cors, slug);
+    if (url.pathname === '/suggest-refinements') return handleSuggestRefinements(request, env, cors, slug);
     if (url.pathname === '/rerank-titles') return handleRerankTitles(request, env, cors, slug);
     if (url.pathname === '/prep') return handlePrep(request, env, cors, slug);
     if (url.pathname === '/tracker') return handleTracker(request, env, cors, slug);
@@ -85,7 +86,7 @@ export default {
     if (url.pathname === '/admin/digest-trigger') return handleDigestTrigger(request, env, cors);
     if (url.pathname === '/notes') return handleNotes(request, env, cors, slug);
     return new Response(
-      'Endpoints: /api/auth/{signup,login,logout,me,change-password}, /prep, /resume, /resume-versions, /parse-resume, /skills-profile, /regenerate-profile, /regenerate-companies, /draft-warm-intro, /rerank-titles, /tracker, /draft-followup, /interview-prep, /generate-digest, /refresh, /admin/users, /notes.',
+      'Endpoints: /api/auth/{signup,login,logout,me,change-password}, /prep, /resume, /resume-versions, /parse-resume, /skills-profile, /regenerate-profile, /regenerate-companies, /draft-warm-intro, /suggest-refinements, /rerank-titles, /tracker, /draft-followup, /interview-prep, /generate-digest, /refresh, /admin/users, /notes.',
       { status: 404, headers: cors }
     );
   },
@@ -998,6 +999,105 @@ Return ONLY a JSON object, no prose, no markdown:
     linkedin_dm: parsed.linkedin_dm,
     email_subject: parsed.email_subject || ('Referral request: ' + job.title + ' at ' + job.company),
     email_body: parsed.email_body || ''
+  }, { headers: cors });
+}
+
+// --- /suggest-refinements ---------------------------------------------
+// Engagement-driven intelligence: reads the user's tracker (apply/save/
+// dismiss patterns) and asks Claude for 1-3 specific bullseye refinements.
+// e.g. "12 of your 15 applies have 'GRC' in the title — add it to keywords?"
+// Returns structured suggestions the client can 1-click apply.
+async function handleSuggestRefinements(request, env, cors, slug) {
+  if (request.method !== 'POST') return new Response('POST only', { status: 405, headers: cors });
+  if (!env.ANTHROPIC_API_KEY) return Response.json({ error: 'Missing ANTHROPIC_API_KEY' }, { status: 500, headers: cors });
+  if (!env.RESUMES) return Response.json({ error: 'RESUMES KV binding missing' }, { status: 500, headers: cors });
+
+  // Load profile + tracker
+  const rawP = await env.RESUMES.get(uk(slug, 'skills_profile'));
+  if (!rawP) return Response.json({ error: 'No profile' }, { status: 404, headers: cors });
+  const profile = JSON.parse(rawP);
+  const tracker = await getTracker(env, slug);
+
+  // Filter to engaged jobs: applied / phonescreen / onsite / offer
+  const ENGAGED = new Set(['applied', 'phonescreen', 'onsite', 'offer', 'saved-today']);
+  const engaged = Object.values(tracker || {}).filter(t => t && ENGAGED.has(t.status));
+  const dismissed = Object.values(tracker || {}).filter(t => t && t.status === 'dismissed');
+
+  if (engaged.length < 5) {
+    return Response.json({
+      status: 'insufficient_data',
+      suggestions: [],
+      meta: { engaged_count: engaged.length, threshold: 5, message: 'Need at least 5 engaged jobs (applied/phonescreen/onsite/offer) to suggest refinements.' }
+    }, { headers: cors });
+  }
+
+  const engagedSummary = engaged.slice(0, 40).map(t => `${t.title || ''} @ ${t.company || ''}`).join('\n');
+  const dismissedSummary = dismissed.slice(0, 20).map(t => `${t.title || ''} @ ${t.company || ''}`).join('\n');
+
+  const prompt = `You're refining a job-seeker's matching configuration based on their actual engagement patterns. Compare what they're ENGAGING WITH vs. what their bullseye says, then suggest 1-3 specific refinements.
+
+CURRENT BULLSEYE:
+- targetTitles: ${JSON.stringify(profile.targetTitles || [])}
+- industries: ${JSON.stringify(profile.industries || [])}
+- keywords: ${JSON.stringify(profile.keywords || [])}
+- negativeKeywords: ${JSON.stringify(profile.negativeKeywords || [])}
+- seniorityLevel: ${profile.seniorityLevel || 'unknown'}
+
+JOBS THEY ENGAGED WITH (applied / interviewing / accepted): ${engaged.length} total. Sample:
+${engagedSummary}
+
+JOBS THEY DISMISSED: ${dismissed.length} total. Sample:
+${dismissedSummary}
+
+ANALYSIS RULES:
+1. Look for patterns in engaged jobs that AREN'T reflected in the bullseye. e.g. if 12 of 15 applied jobs have "GRC" in title but "grc" isn't in their keywords, suggest adding it.
+2. Look for bullseye entries that are NOT matching engaged jobs. e.g. if "fintech" is in industries but 0 engaged jobs are at fintech firms, suggest removing it.
+3. Look for negativeKeywords blocking jobs the user is actually applying to. e.g. if they applied to a "Senior Analyst" role but "analyst" is in their negativeKeywords, flag it.
+4. Be conservative: only suggest changes backed by ≥3 examples. Cite evidence specifically.
+5. Each suggestion's confidence: "high" (≥70% pattern), "medium" (40-70%), "low" (<40% but interesting).
+
+Return ONLY a JSON array (no prose, no markdown) of 1-3 suggestions in this shape:
+[
+  {
+    "type": "add_keyword" | "remove_keyword" | "add_industry" | "remove_industry" | "add_title" | "remove_title" | "remove_negative_keyword" | "add_negative_keyword",
+    "field": "keywords" | "industries" | "targetTitles" | "negativeKeywords",
+    "value": "string",
+    "evidence": "human-readable evidence (e.g. '12 of 15 applied jobs have GRC in title')",
+    "confidence": "high" | "medium" | "low"
+  }
+]
+
+If there are no clear patterns, return an empty array [].`;
+
+  let resp;
+  try {
+    resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-5-20250929',
+        max_tokens: 1500,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+  } catch (e) {
+    return Response.json({ error: 'Anthropic call failed: ' + String(e) }, { status: 502, headers: cors });
+  }
+  if (!resp.ok) return Response.json({ error: 'Anthropic ' + resp.status }, { status: 502, headers: cors });
+  const data = await resp.json();
+  const text = ((data.content && data.content[0] && data.content[0].text) || '').trim();
+  let parsed;
+  try { parsed = JSON.parse(text); }
+  catch (e) {
+    const m = text.match(/\[[\s\S]*\]/);
+    if (m) { try { parsed = JSON.parse(m[0]); } catch (ee) {} }
+  }
+  if (!Array.isArray(parsed)) parsed = [];
+
+  return Response.json({
+    status: parsed.length > 0 ? 'ok' : 'no_suggestions',
+    suggestions: parsed,
+    meta: { engaged_count: engaged.length, dismissed_count: dismissed.length }
   }, { headers: cors });
 }
 
