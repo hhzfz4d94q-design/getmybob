@@ -1,0 +1,24 @@
+{
+  "companyName": "Ramp",
+  "jobs": [
+    {
+      "id": "job-uuid-1",
+      "title": "Senior Backend Engineer",
+      "location": "New York City",
+      "jobUrl": "https://jobs.ashbyhq.com/Ramp/job-uuid-1",
+      "publishedAt": "2026-05-24T12:00:00.000Z",
+      "descriptionHtml": "<p>Build the rails of modern finance.</p>",
+      "compensation": {
+        "compensationTierSummary": "$220K – $290K • Offers Equity"
+      }
+    },
+    {
+      "id": "job-uuid-2",
+      "title": "Risk Analyst",
+      "location": "Remote (US)",
+      "jobUrl": "https://jobs.ashbyhq.com/Ramp/job-uuid-2",
+      "publishedAt": "2026-05-25T08:30:00.000Z",
+      "descriptionPlain": "Help us scale our risk infrastructure."
+    }
+  ]
+}

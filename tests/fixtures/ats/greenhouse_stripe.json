@@ -1,0 +1,23 @@
+{
+  "jobs": [
+    {
+      "id": 4567890,
+      "title": "Senior Software Engineer, Payments",
+      "absolute_url": "https://boards.greenhouse.io/stripe/jobs/4567890",
+      "location": {"name": "San Francisco, CA"},
+      "updated_at": "2026-05-25T14:23:00Z",
+      "first_published": "2026-05-20T09:00:00Z",
+      "content": "<p>Stripe is hiring a Senior Software Engineer for the Payments team.</p><p>You will work on payment processing infrastructure.</p>",
+      "metadata": [{"name": "Salary Range", "value": "$180,000 - $250,000"}]
+    },
+    {
+      "id": 4567891,
+      "title": "Product Manager",
+      "absolute_url": "https://boards.greenhouse.io/stripe/jobs/4567891",
+      "location": {"name": "New York, NY"},
+      "updated_at": "2026-05-26T10:00:00Z",
+      "first_published": "2026-05-22T09:00:00Z",
+      "content": "<p>Lead product strategy for Stripe Issuing.</p>"
+    }
+  ]
+}

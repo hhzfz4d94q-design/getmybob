@@ -165,6 +165,8 @@ def fetch_greenhouse(slug):
         return []
     out = []
     for j in data["jobs"]:
+        if not isinstance(j, dict):
+            continue  # defensively skip None / non-dict entries
         loc = (j.get("location") or {}).get("name") or ""
         out.append({
             "source": "greenhouse",
@@ -205,6 +207,8 @@ def fetch_lever(slug):
         return []
     out = []
     for j in data:
+        if not isinstance(j, dict):
+            continue
         loc = ((j.get("categories") or {}).get("location")) or ""
         out.append({
             "source": "lever",
@@ -247,6 +251,8 @@ def fetch_ashby(slug):
         return []
     out = []
     for j in data["jobs"]:
+        if not isinstance(j, dict):
+            continue
         loc = j.get("location") or ""
         out.append({
             "source": "ashby",

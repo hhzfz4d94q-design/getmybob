@@ -1,0 +1,7 @@
+{
+  "jobs": [
+    {"title": "OnlyTitle"},
+    {"id": 1, "title": "Valid Job", "absolute_url": "https://x/1", "location": {"name":"Remote"}},
+    null
+  ]
+}

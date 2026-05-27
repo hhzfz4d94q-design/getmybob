@@ -30,6 +30,9 @@ jobs:
       - name: Wizard v3 tests (static checks on WIZARD_V3_BLOCK)
         run: python3 tests/test_wizard_v3.py
 
+      - name: ATS scraper parser tests (greenhouse/lever/ashby fixtures)
+        run: python3 tests/test_scrapers.py
+
       - name: Dashboard JS syntax + onclick handlers (catches "all buttons break")
         run: python3 tests/test_dashboard_js_syntax.py
 

@@ -1,0 +1,19 @@
+[
+  {
+    "id": "abc-123-xyz",
+    "text": "Staff Engineer, Editor Platform",
+    "hostedUrl": "https://jobs.lever.co/canva/abc-123-xyz",
+    "categories": {"location": "Sydney, Australia", "team": "Engineering", "commitment": "Full-time"},
+    "createdAt": 1716638400000,
+    "descriptionPlain": "Build the next generation of Canva's editor.",
+    "salaryRange": {"min": 200000, "max": 280000, "currency": "AUD", "interval": "per-year-salary"}
+  },
+  {
+    "id": "def-456-uvw",
+    "text": "Marketing Manager",
+    "hostedUrl": "https://jobs.lever.co/canva/def-456-uvw",
+    "categories": {"location": "Remote"},
+    "createdAt": 1716724800000,
+    "description": "<p>Drive growth marketing.</p>"
+  }
+]
