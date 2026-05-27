@@ -2278,6 +2278,37 @@ def score_job(job):
 
     profile = SKILLS_PROFILE
     if profile:
+        # E5 (2026-05-27): hard-block companies the user has explicitly
+        # excluded. Default list catches consulting + staffing firms whose
+        # JDs match user industries+skills (because they SERVE those
+        # industries) but the user wants in-house roles, not consulting.
+        # See also: in-house heuristic below.
+        DEFAULT_EXCLUDE = {
+            "capco", "accenture", "deloitte", "kpmg", "ey", "pwc",
+            "pricewaterhousecoopers", "ernst & young", "ernst and young",
+            "cognizant", "infosys", "tcs", "tata consultancy services",
+            "wipro", "mindtree", "ltimindtree", "hcl", "hcltech",
+            "mckinsey", "bcg", "boston consulting", "bain & company",
+            "booz allen", "slalom", "ibm consulting", "ibm services",
+            "genpact", "publicis sapient", "thoughtworks", "epam",
+            "globant", "syntel", "mphasis", "tech mahindra", "ust global",
+            "ust", "concentrix", "altimetrik", "synechron",
+        }
+        user_excl = set()
+        for c in (profile.get("excludeCompanies") or []):
+            if isinstance(c, str) and c.strip():
+                user_excl.add(c.strip().lower())
+        # Merge: defaults always on; user list extends (additive)
+        excl = DEFAULT_EXCLUDE | user_excl
+        co = (job.get("company_name") or job.get("company_slug") or "").strip().lower()
+        if co and co in excl:
+            return 0
+        # Also catch slug-y variants (e.g. "capco-llc", "capco-careers")
+        for blocked in excl:
+            if blocked and len(blocked) >= 4 and co.startswith(blocked + "-"):
+                return 0
+
+
         # E1 (relaxed): stage filter removed — we no longer drop jobs by
         # seniority gap. Stage influence is only via the +6 score bonus at
         # the end of score_job for an exact-stage match.

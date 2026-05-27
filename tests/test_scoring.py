@@ -154,6 +154,30 @@ GOLDENS = [
                      "audit, regulatory reporting. Long enough description to avoid short-desc penalty. "
                      "Padded out to reach the 200-char floor so we don't get the -10 penalty."},
      None, 40, 100),
+
+    # 11. Consulting firm hard-block (Capco) — even a perfect-match JD scores 0
+    ("Capco hard-block: consulting firm in default excludeCompanies",
+     {"title": "VP of Risk",
+      "company_name": "Capco",
+      "description": "Lead GRC and TPRM engagements across our fintech and banking client base. "
+                     "Third-party risk, regulatory compliance, vendor management. Capital markets advisory."},
+     AMIT_PROFILE, 0, 0),
+
+    # 12. User-extended excludeCompanies blocks too
+    ("user excludeCompanies extends defaults",
+     {"title": "VP of Risk",
+      "company_name": "SomeOtherConsultancy",
+      "description": "Lead GRC and TPRM engagements across our banking client base. "
+                     "Third-party risk, regulatory compliance. Capital markets."},
+     {**AMIT_PROFILE, "excludeCompanies": ["SomeOtherConsultancy"]}, 0, 0),
+
+    # 13. Non-excluded company with same content still scores high
+    ("Stripe (not in exclude list) with consulting-shaped JD still scores",
+     {"title": "VP of Risk",
+      "company_name": "Stripe",
+      "description": "Lead GRC and TPRM at Stripe. Third-party risk, regulatory compliance, "
+                     "vendor management. Capital markets, fintech. Padded enough for no penalty."},
+     AMIT_PROFILE, 50, 100),
 ]
 
 print("score_job() golden tests:\n")
