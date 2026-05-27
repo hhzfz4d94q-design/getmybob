@@ -2119,13 +2119,34 @@ def _get_company_stage(company_name):
     return None
 
 
+# Funding boost — split into two signals:
+#   1. Active VC-backed stage tier (Series A-D / late-stage / series-e+):
+#      these are companies that HAVE capital and ARE scaling. +3.
+#   2. Recently funded (Claude knows the round closed in past ~24 months):
+#      stronger 'hot right now' signal. +5 in addition to the stage boost.
+# Combined max +8 for the hottest companies (series-c funded in 2024 etc).
+_HOT_STAGES = {"series-a", "series-b", "series-c", "series-d", "series-e-plus", "late-stage-private"}
+
 def recently_funded_boost(company_name):
-    """Return +5 if the company was funded within the last 12 months
-    according to the worker's cached classification."""
+    """Stage-tier + recency boost from worker /company-stage cache."""
     rec = _get_company_stage(company_name)
     if not rec:
         return 0
-    return 5 if rec.get('isRecentlyFunded') else 0
+    boost = 0
+    stage = (rec.get('stage') or '').lower()
+    yr = rec.get('lastFundedApproxYear')
+    # Tier boost: VC-backed stage = +3
+    if stage in _HOT_STAGES:
+        boost += 3
+    # Recency boost: funded in the last ~24 months (per Claude's knowledge horizon)
+    try:
+        from datetime import datetime as _fdt
+        now_y = _fdt.utcnow().year
+        if yr and isinstance(yr, int) and (now_y - yr) <= 2:
+            boost += 5
+    except Exception:
+        pass
+    return boost
 
 
 # --- Skills profile (loaded per-user, used for scoring) ------------------
