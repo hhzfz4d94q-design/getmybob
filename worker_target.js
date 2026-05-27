@@ -446,7 +446,7 @@ Field guidance (ALL fields lowercase strings):
 
 - specialties (10-20): granular sub-domains and functional areas with HANDS-ON depth (not just touched on a project). These are surfaced to the AI re-ranker as context, so be specific. e.g. ["credit risk modeling", "regulatory reporting", "digital transformation", "vendor management", "m&a integration"]. Pull from the actual bullets — if the resume doesn't directly evidence a specialty, don't list it.
 
-- keywords (up to 25): high-signal terms from THIS resume that should BOOST a job's score when present in its title or description. Mix of: domain words, methodologies (agile, scrum, lean), outcome areas (cost reduction, revenue growth), and concepts (digital strategy, automation). NO generic words like "team" or "leadership" alone. Note: total skills budget across keywords + technologies + frameworks should sum to ~25-30, because the user trims to 25 in the wizard.
+- keywords (up to 15): high-signal terms from THIS resume that should BOOST a job's score when present in its title or description. Mix of: domain words, methodologies (agile, scrum, lean), outcome areas (cost reduction, revenue growth), and concepts (digital strategy, automation). NO generic words like "team" or "leadership" alone. Note: total skills budget across keywords + technologies + frameworks should sum to ~15-20, because the user trims to 15 in the wizard.
 
 - technologies (up to 10 if present in resume): the most SIGNATURE tools/platforms/vendors mentioned — not every tool ever touched. Pick the ones a recruiter would scan for. If resume doesn't mention specific tools, return empty array.
 

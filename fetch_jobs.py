@@ -2666,22 +2666,22 @@ WIZARD_V3_BLOCK = r"""
     },
     {
       key: "pick-skills",
-      title: "Pick up to 25 skills",
+      title: "Pick up to 15 skills",
       subtitle: "Distinct, signal-dense terms. Skip generic words like \"leadership\" or \"team player\".",
       async render(body) {
         const p = await getProfile();
         // Combine keywords + technologies + frameworks — they all feed the same scoring axis
         const merged = [].concat(p.keywords || [], p.technologies || [], p.frameworks || []);
         renderBullseye(body, {
-          max: 25,
+          max: 15,
           current: merged,
           placeholder: "e.g. digital transformation",
-          hint: "These boost a job's score when found in its title or description. Tech names, methodologies, outcome areas — specific over generic.",
+          hint: "These boost a job's score when found in its title or description. 15 strong, distinct signals beat 25 mixed ones.",
         });
       },
       async save(st, ctx) {
         const items = (ctx.body.__bullseyeValues || (() => []))();
-        if (items.length > 25) { setMsg(ctx.body, "err", "Pick at most 25 skills — currently " + items.length); throw new Error("over cap"); }
+        if (items.length > 15) { setMsg(ctx.body, "err", "Pick at most 15 skills — currently " + items.length); throw new Error("over cap"); }
         // Skills go entirely into keywords; technologies/frameworks emptied so cap is enforced
         await patchProfile({ keywords: items, technologies: [], frameworks: [] });
         st.data.skills = items;
@@ -3167,7 +3167,7 @@ WIZARD_V3_BLOCK = r"""
         const skills = ((p && p.keywords) || []).length
                      + ((p && p.technologies) || []).length
                      + ((p && p.frameworks) || []).length;
-        if (titles > 5 || inds > 5 || skills > 25) {
+        if (titles > 5 || inds > 5 || skills > 15) {
           needsMigration = true;
           state.finished = false;
           state.currentStep = "pick-titles";
