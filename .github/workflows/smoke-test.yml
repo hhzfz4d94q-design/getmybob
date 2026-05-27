@@ -1,9 +1,9 @@
-name: Live dashboard smoke test
+name: Live dashboard E2E test
 
-# Runs after refresh-jobs deploys, OR on manual dispatch. Headless-browser
-# loads each user dashboard, asserts every expected function is defined,
-# every header button exists, wizard initialises, and ZERO console errors.
-# Fails loudly if the live dashboard is broken — alerts us before users hit it.
+# Runs the full end-to-end test suite after every refresh-jobs deploy.
+# Tests every user-facing behavior: page load, function definitions,
+# header button visibility, modal open/close, wizard step navigation,
+# card rendering, scroll behavior. Any regression = CI red.
 
 on:
   workflow_dispatch:
@@ -17,9 +17,8 @@ on:
     types: [completed]
 
 jobs:
-  smoke:
+  e2e:
     runs-on: ubuntu-latest
-    # Don't run if the upstream refresh failed
     if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     steps:
       - uses: actions/checkout@v4
@@ -28,7 +27,7 @@ jobs:
           node-version: "22"
       - name: Install puppeteer
         run: npm install puppeteer --no-save
-      - name: Run smoke test
+      - name: Run full E2E suite
         env:
           SITE: https://getmemyjob.officebeatllc.com
-        run: node scripts/smoke_test_browser.js "${{ github.event.inputs.users || 'amit-arora,geetu' }}"
+        run: node scripts/e2e_test.js "${{ github.event.inputs.users || 'amit-arora,geetu' }}"
