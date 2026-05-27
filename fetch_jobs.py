@@ -2438,7 +2438,7 @@ WIZARD_V3_BLOCK = r"""
     <section id="wiz3-main" style="position:relative;">
       <button id="wiz3-close" type="button" aria-label="Close wizard">&times;</button>
       <header id="wiz3-head">
-        <div class="wiz3-step-no" id="wiz3-step-no">Step 1 of 15</div>
+        <div class="wiz3-step-no" id="wiz3-step-no">Step 1 of 16</div>
         <h2 id="wiz3-h2">Welcome</h2>
         <p class="wiz3-sub" id="wiz3-sub"></p>
       </header>
@@ -3048,6 +3048,28 @@ WIZARD_V3_BLOCK = r"""
       save() { return Promise.resolve(); },
     },
     {
+      key: "pick-blocks",
+      title: "Things to never show me (optional)",
+      subtitle: "Words that, if found in a job title, will block that job — UNLESS the title also contains a seniority signal (VP/Director/Head/etc.). Edit only if the AI added something too aggressive.",
+      optional: true,
+      async render(body) {
+        const p = await getProfile();
+        renderBullseye(body, {
+          max: 20,  // soft cap; mostly to keep the list manageable
+          current: p.negativeKeywords || [],
+          placeholder: "e.g. intern",
+          hint: "Default keepers: intern, entry level, new grad. AVOID: 'assistant' (kills Assistant VP), 'associate' (kills Associate Director), 'staff' (kills Chief of Staff), 'analyst' (kills Senior Analyst). The scorer skips blocks if the title has any senior signal, so 'Associate Director' won't get killed by 'associate' even if you keep it — but cleaner to remove ambiguous terms.",
+        });
+      },
+      async save(st, ctx) {
+        const items = (ctx.body.__bullseyeValues || (() => []))();
+        // Normalize: lowercase, trim, dedupe (renderBullseye already does this; defensive copy)
+        const normalized = Array.from(new Set(items.map(s => (s || "").toLowerCase().trim()).filter(Boolean)));
+        await patchProfile({ negativeKeywords: normalized });
+        st.data.negativeKeywords = normalized;
+      },
+    },
+    {
       key: "done",
       title: "All set",
       subtitle: "We'll build your tailored dashboard now.",
@@ -3179,10 +3201,27 @@ WIZARD_V3_BLOCK = r"""
     saveState(state);
     render();
   }
-  function finish() {
+  async function finish() {
     state.finished = true;
     saveState(state);
     document.getElementById("wiz3-overlay").classList.remove("show");
+    // Failsafe: if the user reached the end without explicitly saving companies
+    // in pick-companies step (it's optional), auto-regen once so their target
+    // list aligns to the bullseye they just committed to. Silent on failure.
+    if (!state.data.companies_saved && !state.data.companies_autoregen) {
+      try {
+        const ek = (typeof getEditKey === "function") ? getEditKey() : null;
+        if (ek) {
+          state.data.companies_autoregen = true;
+          saveState(state);
+          fetch(WORKER_BASE + "/regenerate-companies" + USER_QS, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-Edit-Key": ek },
+            body: JSON.stringify({ dry_run: false })
+          }).catch(() => {});
+        }
+      } catch (e) { /* silent */ }
+    }
   }
   function open() {
     // If user did the reload-to-detect dance on the install-extension step, resume there.
