@@ -4,7 +4,7 @@ name: Refresh jobs and deploy dashboard
 # probe / other tooling kick a refresh without needing actions:write).
 on:
   schedule:
-    - cron: "0 */2 * * *"  # bumped 2026-05-27: every 2h (was 6h) for fresher matches
+    - cron: "0 */2 * * *"  # every 2h (12 runs/day) — increase to "0 * * * *" if Actions minutes allow
   workflow_dispatch: {}
   repository_dispatch:
     types: [refresh-jobs]

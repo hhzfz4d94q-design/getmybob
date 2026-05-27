@@ -2079,6 +2079,20 @@ def is_senior(job):
     return any(term in t for term in SENIOR_TITLE_TERMS)
 
 
+# Hiring-velocity cache: company_name (lower) -> int. Computed once per render
+# from a single DB query in generate_dashboard; consulted by score_job.
+HIRING_VELOCITY = {}
+
+
+def hiring_velocity_boost(company_name):
+    """Return +5 if company is 'actively scaling' (3+ senior roles posted in
+    past 30 days), else 0."""
+    if not company_name:
+        return 0
+    n = HIRING_VELOCITY.get(company_name.strip().lower(), 0)
+    return 5 if n >= 3 else 0
+
+
 # --- Skills profile (loaded per-user, used for scoring) ------------------
 WORKER_BASE_URL = "https://cool-darkness-dce5.tr6jz6v7wg.workers.dev"
 USERS_JSON_PATH = os.path.join(ROOT, "users.json")
@@ -2596,6 +2610,12 @@ def score_job(job):
             s += 6
         elif traj == "down":
             s -= 8
+
+    # E8 (2026-05-27): hiring-velocity boost — companies actively scaling
+    # (3+ senior postings in past 30 days) get +5 because they're more
+    # likely to actually hire than companies with one stale evergreen posting.
+    if profile:
+        s += hiring_velocity_boost(job.get("company_name") or "")
 
     # E7 (2026-05-27): company-type soft multiplier. Catches the long tail
     # of consulting/staffing firms not in the hard-block list. Multiplier
@@ -4065,6 +4085,26 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         LIMIT 20000
     """).fetchall()
 
+    # Populate HIRING_VELOCITY cache — count senior roles per company in past 30d
+    global HIRING_VELOCITY
+    HIRING_VELOCITY = {}
+    try:
+        velo_rows = conn.execute("""
+            SELECT LOWER(TRIM(company_name)) AS co, COUNT(*) AS n
+            FROM jobs
+            WHERE last_seen >= datetime('now', '-30 days')
+              AND senior = 1
+            GROUP BY co
+            HAVING n >= 3
+        """).fetchall()
+        for co, n in velo_rows:
+            if co:
+                HIRING_VELOCITY[co] = int(n)
+        if HIRING_VELOCITY:
+            print(f'[velocity] {len(HIRING_VELOCITY)} actively-scaling companies (3+ senior roles in 30d)', flush=True)
+    except Exception as _e:
+        print(f'[velocity] skipped: {_e}', flush=True)
+
     # Snapshot for the "why hidden?" debug tool — we'll diff against the
     # final kept rows after all filters + dedup + top-1000 cutoff run.
     _original_rows = list(rows)
@@ -4509,6 +4549,21 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
             warm_intro_html = f'<a class="btn ghost-btn small warm-intro" href="{_ri["linkedinSearch"]}" target="_blank" rel="noopener" title="Find a warm intro on LinkedIn" style="background:#fef3e8;color:#b85c00;border-color:#f0c47a;">🤝 Warm intro</a>'
         else:
             warm_intro_html = ''
+        # JUST-POSTED badge (2026-05-27): jobs ingested in last 24h get a
+        # green pill. Differs from the older 'last 7d' bonus — this is the
+        # 'you might be the first applicant' signal.
+        _just_posted_badge = ''
+        try:
+            from datetime import datetime as _jpdt, timezone as _jptz
+            if first_seen:
+                _fs = _jpdt.fromisoformat(str(first_seen).replace('Z','+00:00'))
+                if _fs.tzinfo is None: _fs = _fs.replace(tzinfo=_jptz.utc)
+                _hrs = (_jpdt.now(_jptz.utc) - _fs).total_seconds() / 3600
+                if _hrs < 24:
+                    _just_posted_badge = ' · <span class="just-posted-badge" title="Posted in the last 24 hours — early applicants get more attention.">⚡ just posted</span>'
+        except Exception:
+            pass
+
         # REPOST detection (2026-05-27): if we first saw this fingerprint many
         # days BEFORE the JD's claimed posted_at, the JD was re-posted under a
         # new ID. Surface so user knows they may have applied before.
@@ -4537,7 +4592,7 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
           <div class="row2">
             <span class="company">{_esc(company)}</span> ·
             <span class="loc">{_esc(loc or 'Location N/A')}</span> ·
-            <span class="age">{listed_days}d old</span>{_repost_badge}
+            <span class="age">{listed_days}d old</span>{_just_posted_badge}{_repost_badge}
           </div>
           {salary_html}
           <div class="badges" data-badges>{badge_html}</div>
@@ -4761,6 +4816,7 @@ HTML_TEMPLATE = """<!doctype html>
   .header-more-menu a:hover, .header-more-menu button:hover {{ background: #F6F6FB; }}
   .header-more-menu a:active, .header-more-menu button:active {{ background: #EEEEF8; }}
   .repost-badge {{ display: inline-block; padding: 1px 6px; background: #FEF3C7; color: #78350F; border-radius: 4px; font-size: 11px; font-weight: 600; }}
+  .just-posted-badge {{ display: inline-block; padding: 1px 6px; background: #DCFCE7; color: #0A6B3A; border-radius: 4px; font-size: 11px; font-weight: 700; }}
   .stats {{ display: flex; gap: 24px; padding: 14px 28px; background: white; border-bottom: 1px solid #e5e5ea; }}
   .stat {{ font-size: 13px; }}
   .goal-stat {{ background: linear-gradient(135deg, #f8f4ff 0%, #eef0ff 100%) !important; }}
