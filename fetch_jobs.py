@@ -5825,7 +5825,7 @@ async function showWarmIntroModal(fp, connections) {{
     + '  </div>'
     + '  <div id="warm-intro-content" style="padding:14px 22px 18px;overflow-y:auto;flex:1;">'
     + '    <div style="display:flex;align-items:center;gap:10px;color:#666;font-size:13px;"><div style="width:14px;height:14px;border:2px solid #5C5CD6;border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite;"></div> Drafting personalized intro via AI…</div>'
-    + '    <style>@keyframes spin { to { transform: rotate(360deg); } }</style>'
+    + '    <style>@keyframes spin {{ to {{ transform: rotate(360deg); }} }}</style>'
     + '  </div>'
     + '</div>';
   document.body.appendChild(m);
