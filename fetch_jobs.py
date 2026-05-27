@@ -2798,9 +2798,9 @@ WIZARD_V3_BLOCK = r"""
 <style>
   #wiz3-overlay { position:fixed; inset:0; background:rgba(20,22,40,0.55); z-index:2147483600; display:none; align-items:center; justify-content:center; padding:24px; font-family:'Inter',-apple-system,system-ui,sans-serif; }
   #wiz3-overlay.show { display:flex; }
-  #wiz3-card { width:min(960px,100%); max-height:92vh; background:#fff; border-radius:14px; box-shadow:0 24px 60px rgba(20,22,40,0.4); display:grid; grid-template-columns:240px 1fr; overflow:hidden; }
-  @media (max-width:680px) { #wiz3-card { grid-template-columns:1fr; } #wiz3-rail { display:none; } }
-  #wiz3-rail { background:#F7F7FB; border-right:1px solid #E5E7EE; padding:24px 18px; overflow-y:auto; }
+  #wiz3-card { width:min(960px,100%); max-height:92vh; background:#fff; border-radius:14px; box-shadow:0 24px 60px rgba(20,22,40,0.4); display:flex; flex-direction:row; overflow:hidden; }
+  @media (max-width:680px) { #wiz3-card { flex-direction:column; } #wiz3-rail { display:none; } }
+  #wiz3-rail { flex:0 0 240px; background:#F7F7FB; border-right:1px solid #E5E7EE; padding:24px 18px; overflow-y:auto; }
   #wiz3-rail .wiz3-brand { font-size:13px; font-weight:700; color:#5C5CD6; letter-spacing:.02em; text-transform:uppercase; margin-bottom:18px; }
   #wiz3-rail ol { list-style:none; padding:0; margin:0; }
   #wiz3-rail li { display:flex; align-items:flex-start; gap:10px; padding:8px 6px; border-radius:8px; cursor:pointer; transition:background 0.15s; font-size:13px; color:#444; }
@@ -2813,11 +2813,11 @@ WIZARD_V3_BLOCK = r"""
   #wiz3-rail li.is-current .wiz3-dot { border-color:#5C5CD6; color:#5C5CD6; background:#fff; }
   #wiz3-rail li.is-done    .wiz3-dot { border-color:#0A6B3A; background:#0A6B3A; color:#fff; }
   #wiz3-rail li.is-skipped .wiz3-dot { border-color:#C0C4CC; background:#fff; color:#aaa; }
-  #wiz3-main { display:flex; flex-direction:column; min-height:0; }
-  #wiz3-head { padding:22px 28px 8px; border-bottom:1px solid #F0F0F5; flex:0 0 auto; }
-  #wiz3-head .wiz3-step-no { font-size:12px; color:#888; letter-spacing:.04em; font-weight:600; text-transform:uppercase; }
-  #wiz3-head h2 { margin:6px 0 2px; font-size:21px; font-weight:700; color:#1A1A2E; letter-spacing:-0.01em; }
-  #wiz3-head .wiz3-sub { font-size:13.5px; color:#666680; margin:0; }
+  #wiz3-main { flex:1 1 0; display:flex; flex-direction:column; min-height:0; min-width:0; position:relative; overflow:hidden; }
+  #wiz3-head { padding:22px 60px 16px 28px; border-bottom:1px solid #F0F0F5; flex:0 0 auto; background:linear-gradient(135deg,#5C5CD6,#7878E0); color:#fff; }
+  #wiz3-head .wiz3-step-no { font-size:12px; color:rgba(255,255,255,0.85); letter-spacing:.04em; font-weight:600; text-transform:uppercase; }
+  #wiz3-head h2 { margin:6px 0 2px; font-size:21px; font-weight:700; color:#fff; letter-spacing:-0.01em; }
+  #wiz3-head .wiz3-sub { font-size:13.5px; color:rgba(255,255,255,0.85); margin:0; }
   #wiz3-body { flex:1 1 auto; padding:18px 28px 18px; overflow-y:auto; min-height:200px; }
   #wiz3-body p { font-size:14px; color:#444; line-height:1.55; }
   #wiz3-body label { display:block; font-size:12px; font-weight:600; color:#444; text-transform:uppercase; letter-spacing:.04em; margin:14px 0 6px; }
@@ -2842,8 +2842,8 @@ WIZARD_V3_BLOCK = r"""
   .wiz3-msg.ok  { background:#ECFDF5; color:#0A6B3A; }
   .wiz3-msg.err { background:#FEF2F2; color:#B91C1C; }
   .wiz3-msg.info{ background:#EEEEF8; color:#4B4BBE; }
-  #wiz3-close { position:absolute; top:14px; right:18px; background:transparent; border:none; font-size:22px; color:#888; cursor:pointer; }
-  #wiz3-close:hover { color:#5C5CD6; }
+  #wiz3-close { position:absolute; top:10px; right:14px; background:rgba(255,255,255,0.18); border:1px solid rgba(255,255,255,0.3); border-radius:8px; width:34px; height:34px; font-size:20px; line-height:1; color:#fff; cursor:pointer; z-index:10; display:flex; align-items:center; justify-content:center; }
+  #wiz3-close:hover { background:rgba(255,255,255,0.32); border-color:rgba(255,255,255,0.5); }
   .wiz3-chip-row { display:flex; flex-wrap:wrap; gap:6px; margin:6px 0 10px; }
   .wiz3-chip { background:#EEEEF8; color:#4B4BBE; font-size:12px; padding:4px 9px; border-radius:12px; }
   /* Hide old wizard markup so nothing leaks through */
