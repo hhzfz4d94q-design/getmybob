@@ -4923,6 +4923,8 @@ const USER_QS = '?user=' + encodeURIComponent(USER_SLUG);
 // Hidden-jobs JSON: build-time-emitted list of jobs that didn't make Top-N,
 // each tagged with a reason. Used by the "Why isn't [X] in my feed?" modal.
 const _hiddenJobs = {hidden_jobs_json};
+// Expose to window so page.evaluate() and external code can introspect
+try {{ window._hiddenJobs = _hiddenJobs; }} catch(_) {{}}
 
 // Remember this user as the most-recently-used dashboard so the root URL
 // can auto-redirect them here next time.
@@ -8689,11 +8691,16 @@ function _hiddenReasonColor(reason) {{
 }}
 
 function showWhyHiddenModal() {{
+  // Always create + append modal first, so even if anything below throws, the element is in DOM
   let m = document.getElementById('why-hidden-modal');
   if (m) m.remove();
   m = document.createElement('div');
   m.id = 'why-hidden-modal';
-  m.style.cssText = 'position:fixed;inset:0;background:rgba(20,22,40,0.55);z-index:2147483600;display:flex;align-items:center;justify-content:center;padding:24px;font-family:Inter,system-ui,sans-serif;';
+  m.style.cssText = 'position:fixed;inset:0;background:rgba(20,22,40,0.55);z-index:2147483700;display:flex;align-items:center;justify-content:center;padding:24px;font-family:Inter,system-ui,sans-serif;';
+  document.body.appendChild(m);  // appendChild FIRST so the element is in DOM no matter what
+  // Defensive read of _hiddenJobs (may be script-scoped const not on window in some contexts)
+  let hiddenCount = 0;
+  try {{ hiddenCount = (typeof _hiddenJobs !== 'undefined' && _hiddenJobs && _hiddenJobs.length) || 0; }} catch(_) {{ hiddenCount = 0; }}
   m.innerHTML = ''
     + '<div style="background:white;border-radius:12px;max-width:820px;width:100%;max-height:84vh;display:flex;flex-direction:column;box-shadow:0 20px 50px rgba(0,0,0,0.3);">'
     + '  <div style="padding:18px 22px;border-bottom:1px solid #e6e8eb;display:flex;justify-content:space-between;align-items:center;">'
@@ -8702,26 +8709,28 @@ function showWhyHiddenModal() {{
     + '  </div>'
     + '  <div style="padding:14px 22px;border-bottom:1px solid #f0f1f5;">'
     + '    <input type="text" id="why-hidden-input" placeholder="Type a company name or job title (e.g. AuditBoard, VP)" style="width:100%;padding:9px 12px;font-size:14px;border:1px solid #d0d4dc;border-radius:6px;">'
-    + '    <div style="font-size:12px;color:#888;margin-top:6px;">' + (_hiddenJobs ? _hiddenJobs.length : 0) + ' hidden jobs indexed (top 2000 by score). Searches name + title.</div>'
+    + '    <div style="font-size:12px;color:#888;margin-top:6px;">' + hiddenCount + ' hidden jobs indexed (top 2000 by score). Searches name + title.</div>'
     + '  </div>'
     + '  <div id="why-hidden-results" style="padding:8px 22px 18px;overflow-y:auto;flex:1;">'
     + '    <div style="color:#888;font-size:13px;font-style:italic;padding:10px 0;">Type a company or title above to see what\\'s hidden and why.</div>'
     + '  </div>'
     + '</div>';
-  document.body.appendChild(m);
   const inp = document.getElementById('why-hidden-input');
   const out = document.getElementById('why-hidden-results');
+  // Defensive snapshot — works whether _hiddenJobs is script-scoped const or window global
+  let _hj = [];
+  try {{ _hj = (typeof _hiddenJobs !== 'undefined' && Array.isArray(_hiddenJobs)) ? _hiddenJobs : []; }} catch(_) {{ _hj = []; }}
   const renderResults = (q) => {{
     const ql = (q || '').toLowerCase().trim();
     if (!ql) {{
       out.innerHTML = '<div style="color:#888;font-size:13px;font-style:italic;padding:10px 0;">Type a company or title above to see what\\'s hidden and why.</div>';
       return;
     }}
-    if (!_hiddenJobs || !_hiddenJobs.length) {{
+    if (!_hj || !_hj.length) {{
       out.innerHTML = '<div style="color:#B91C1C;font-size:13px;">No hidden-jobs data on this page (dashboard built before this feature shipped). Wait for next refresh-jobs run.</div>';
       return;
     }}
-    const matches = _hiddenJobs.filter(j => (j.company || '').toLowerCase().includes(ql) || (j.title || '').toLowerCase().includes(ql)).slice(0, 50);
+    const matches = _hj.filter(j => (j.company || '').toLowerCase().includes(ql) || (j.title || '').toLowerCase().includes(ql)).slice(0, 50);
     if (!matches.length) {{
       out.innerHTML = '<div style="color:#888;font-size:13px;padding:10px 0;">No hidden jobs match <strong>' + escHtml(q) + '</strong>. Either: (a) no such company in our scrape, (b) all their jobs are visible to you (check the grid).</div>';
       return;

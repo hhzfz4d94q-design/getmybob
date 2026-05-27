@@ -234,7 +234,13 @@ async function testUser(browser, slug) {
 
   // ── 8. Why hidden modal opens visibly ──
   console.log('  ── Modals ──');
-  await page.evaluate(() => { try { showWhyHiddenModal(); } catch(e){} });
+  // Capture any throw so we can surface it as the test detail
+  const whyOpen = await page.evaluate(() => {
+    try { showWhyHiddenModal(); return { ok:true, err:null }; }
+    catch(e){ return { ok:false, err: String(e && e.message || e) }; }
+  });
+  if (!whyOpen.ok) record(slug, 'showWhyHiddenModal() did not throw', false, whyOpen.err);
+  else record(slug, 'showWhyHiddenModal() did not throw', true);
   await new Promise(r => setTimeout(r, 400));
   await assertVisible(page, '#why-hidden-modal', slug, 'why-hidden modal opens visibly');
   // Close it
