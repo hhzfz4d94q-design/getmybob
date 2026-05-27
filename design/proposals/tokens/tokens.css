@@ -1,0 +1,216 @@
+/* =================================================================
+ * OfficeBeat × getmemyjob — Unified Design Tokens
+ * =================================================================
+ * Single source of truth. Import this file in:
+ *   - officebeat-site/assets/style.css  (replaces :root in style.css:5-23)
+ *   - landing.html, account.html, login.html, signup.html  (replaces inline :root)
+ *   - fetch_jobs.py HTML_TEMPLATE + WIZARD_V3_BLOCK (replaces ~25 hex literals)
+ *
+ * Tone target: confident-modern (Linear / Notion / Vercel)
+ * Brand mark: OfficeBeat indigo (#5C5CD6) preserved
+ *
+ * Two surface families:
+ *   A. officebeat — professional, restrained, white-dominant
+ *   B. getmemyjob — same indigo, warmer surface, more chromatic accents
+ * ================================================================= */
+
+:root {
+  /* ---------- Brand: shared between both sites ----------------- */
+  --brand-indigo:        #5C5CD6;  /* the OfficeBeat mark — preserved exactly */
+  --brand-indigo-strong: #4B4BBE;  /* hover / pressed */
+  --brand-indigo-soft:   #8585E0;  /* secondary accents on dark bgs */
+  --brand-indigo-50:     #EEEEF8;  /* tint surfaces, chips, hover */
+  --brand-indigo-100:    #E2E2F5;  /* card hover, table stripe */
+  --brand-indigo-200:    #C5C7F1;  /* used by landing as 'em' accent */
+  --brand-indigo-700:    #3F3FBA;  /* deep — for inverse-text / focus rings */
+
+  /* ---------- Vertical accents (NEW — solves #2 in audit) ------ */
+  --vertical-finance:    #1F2C6F;  /* deep navy — gravitas, paired with indigo */
+  --vertical-finance-50: #E4E7F2;
+  --vertical-health:     #0E8C7A;  /* emerald-teal — care, paired with indigo */
+  --vertical-health-50:  #DCF1ED;
+
+  /* ---------- Neutrals (unified) ------------------------------- */
+  --ink:            #1A1A2E;  /* primary text, dark surfaces */
+  --ink-soft:       #2C2C4A;  /* secondary text on light bg */
+  --muted:          #666680;  /* body small print */
+  --muted-soft:     #9090A8;  /* placeholders, disabled */
+  --hairline:       #E5E7EE;  /* borders, dividers */
+  --hairline-soft:  #F0F1F5;  /* very subtle dividers */
+  --surface:        #FFFFFF;  /* card bg, page bg */
+  --surface-soft:   #FAFAFC;  /* page bg alt */
+  --surface-tint:   #F7F7FB;  /* sidebar, rail */
+
+  /* ---------- Status / track colors (used by dashboard cards) -- */
+  --track-applied:   #3B82F6;  /* blue */
+  --track-phone:     #8B5CF6;  /* violet */
+  --track-onsite:    #F59E0B;  /* amber */
+  --track-offer:     #10B981;  /* emerald */
+  --track-saved:     #6366F1;  /* indigo-cool */
+  --track-dismissed: #94A3B8;  /* slate */
+  --track-rejected:  #EF4444;  /* red */
+
+  --status-ok:    #0A6B3A;  /* success text */
+  --status-ok-bg: #ECFDF5;
+  --status-err:   #B91C1C;
+  --status-err-bg:#FEF2F2;
+  --status-warn:  #78350F;
+  --status-warn-bg:#FEF3C7;
+  --status-info:  #4B4BBE;
+  --status-info-bg:#EEEEF8;
+
+  /* ---------- Type ---------------------------------------------- */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Menlo, Monaco, Consolas, monospace;
+
+  /* Modular scale — 1.25 minor third, anchored at 16px body */
+  --text-2xs: 11px;   --line-2xs: 1.4;
+  --text-xs:  12px;   --line-xs:  1.45;
+  --text-sm:  13px;   --line-sm:  1.5;
+  --text-md:  16px;   --line-md:  1.6;   /* body */
+  --text-lg:  18px;   --line-lg:  1.55;
+  --text-xl:  22px;   --line-xl:  1.4;   /* h4 / wizard step title */
+  --text-2xl: 28px;   --line-2xl: 1.3;   /* h3 / card hero */
+  --text-3xl: 36px;   --line-3xl: 1.2;   /* h2 / page section */
+  --text-4xl: 48px;   --line-4xl: 1.1;   /* h1 / vertical hero */
+  --text-5xl: 60px;   --line-5xl: 1.05;  /* hero only */
+
+  --weight-regular: 400;
+  --weight-medium:  500;
+  --weight-semibold:600;
+  --weight-bold:    700;
+  --weight-black:   800;  /* hero / display */
+
+  --tracking-tight: -0.02em;
+  --tracking-snug:  -0.01em;
+  --tracking-wide:  0.02em;
+  --tracking-caps:  0.06em;  /* for ALL-CAPS eyebrows */
+
+  /* ---------- Space (4px base) --------------------------------- */
+  --space-0:  0;
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+  --space-32: 128px;
+
+  /* Section rhythm */
+  --section-y-desktop: 88px;
+  --section-y-tablet:  64px;
+  --section-y-mobile:  48px;
+
+  /* ---------- Radius ------------------------------------------- */
+  --radius-xs:  4px;   /* pill chip inner */
+  --radius-sm:  6px;   /* input, small btn */
+  --radius-md:  8px;   /* button, badge */
+  --radius-lg:  12px;  /* card */
+  --radius-xl:  16px;  /* modal */
+  --radius-2xl: 24px;  /* hero panel */
+  --radius-full: 999px;
+
+  /* ---------- Elevation (soft, modern; no harsh shadows) ------- */
+  --shadow-xs: 0 1px 2px rgba(20, 22, 40, 0.05);
+  --shadow-sm: 0 2px 4px rgba(20, 22, 40, 0.06), 0 1px 2px rgba(20, 22, 40, 0.04);
+  --shadow-md: 0 6px 16px rgba(20, 22, 40, 0.08), 0 2px 4px rgba(20, 22, 40, 0.04);
+  --shadow-lg: 0 16px 40px rgba(20, 22, 40, 0.12), 0 4px 12px rgba(20, 22, 40, 0.06);
+  --shadow-xl: 0 24px 60px rgba(20, 22, 40, 0.18), 0 8px 16px rgba(20, 22, 40, 0.08);
+  --shadow-indigo: 0 12px 32px rgba(92, 92, 214, 0.20);  /* on-brand glow */
+
+  /* ---------- Motion ------------------------------------------- */
+  --ease-out:  cubic-bezier(0.16, 1, 0.3, 1);   /* "spring out" — modern feel */
+  --ease-in:   cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-both: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --dur-fast:   120ms;
+  --dur-normal: 200ms;
+  --dur-slow:   400ms;
+  --dur-page:   600ms;  /* page-level transitions */
+
+  /* ---------- Z (escape from z:99999 wars) --------------------- */
+  --z-base:     1;
+  --z-sticky:   100;
+  --z-overlay:  1000;
+  --z-modal:    10000;
+  --z-toast:    100000;
+  --z-tooltip:  1000000;
+  /* The dashboard wizard correctly uses 2147483600 — keep for that one widget */
+
+  /* ---------- Layout limits ----------------------------------- */
+  --container-narrow:  720px;   /* reading */
+  --container-default: 1080px;  /* most marketing */
+  --container-wide:    1280px;  /* dashboard */
+  --container-app:     1440px;  /* full app shell */
+}
+
+/* =================================================================
+ * Surface variants — apply per-vertical / per-product
+ * ================================================================= */
+
+/* Default = officebeat marketing surface (white, restrained) */
+:root {
+  --page-bg:       var(--surface);
+  --page-fg:       var(--ink);
+  --accent:        var(--brand-indigo);
+  --accent-bg:     var(--brand-indigo-50);
+}
+
+/* Apply to <body data-surface="finance"> on finance.html and practice pages */
+[data-surface="finance"] {
+  --accent:        var(--vertical-finance);
+  --accent-bg:     var(--vertical-finance-50);
+}
+
+/* Apply to <body data-surface="health"> on healthcare.html and practice pages */
+[data-surface="health"] {
+  --accent:        var(--vertical-health);
+  --accent-bg:     var(--vertical-health-50);
+}
+
+/* Apply to <body data-surface="product"> on getmemyjob dashboard / wizard */
+[data-surface="product"] {
+  --page-bg:       var(--surface-soft);
+  --accent:        var(--brand-indigo);
+  --accent-bg:     var(--brand-indigo-50);
+}
+
+/* =================================================================
+ * Dark hero surface — for indigo-bg sections
+ * Use class="surface-dark" on the section element, not on :root.
+ * ================================================================= */
+.surface-dark {
+  --page-fg:    #FFFFFF;
+  --muted:      rgba(255, 255, 255, 0.78);
+  --hairline:   rgba(255, 255, 255, 0.18);
+  color:        var(--page-fg);
+  background:   linear-gradient(160deg, var(--brand-indigo-700), var(--brand-indigo) 60%, var(--brand-indigo-soft));
+}
+
+/* =================================================================
+ * Accessibility — reduced motion respect (was missing across both sites)
+ * ================================================================= */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* =================================================================
+ * Focus ring — single visible style for keyboard nav
+ * Was: inconsistent / missing
+ * ================================================================= */
+:focus-visible {
+  outline: 2px solid var(--brand-indigo);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}

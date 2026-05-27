@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wizard v4 prototype — getmemyjob setup</title>
+<style>
+/* === Unified tokens (subset for the prototype) === */
+:root{
+  --brand-indigo:#5C5CD6; --brand-indigo-strong:#4B4BBE; --brand-indigo-soft:#8585E0;
+  --brand-indigo-50:#EEEEF8; --brand-indigo-100:#E2E2F5; --brand-indigo-200:#C5C7F1; --brand-indigo-700:#3F3FBA;
+  --ink:#1A1A2E; --ink-soft:#2C2C4A; --muted:#666680; --muted-soft:#9090A8;
+  --hairline:#E5E7EE; --hairline-soft:#F0F1F5;
+  --surface:#fff; --surface-soft:#FAFAFC; --surface-tint:#F7F7FB;
+  --status-ok:#0A6B3A; --status-ok-bg:#ECFDF5; --status-warn:#78350F; --status-warn-bg:#FEF3C7;
+  --radius-sm:6px; --radius-md:8px; --radius-lg:12px; --radius-xl:16px; --radius-2xl:24px;
+  --shadow-sm:0 2px 4px rgba(20,22,40,.06),0 1px 2px rgba(20,22,40,.04);
+  --shadow-md:0 6px 16px rgba(20,22,40,.08),0 2px 4px rgba(20,22,40,.04);
+  --shadow-lg:0 16px 40px rgba(20,22,40,.12),0 4px 12px rgba(20,22,40,.06);
+  --shadow-indigo:0 12px 32px rgba(92,92,214,.20);
+  --ease-out:cubic-bezier(.16,1,.3,1);
+  --dur:200ms;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;font-family:'Inter',-apple-system,system-ui,sans-serif;background:var(--surface-soft);color:var(--ink);font-size:16px;line-height:1.55}
+.page{max-width:1180px;margin:0 auto;padding:32px 24px}
+
+/* Top-of-page demo controls */
+.demo-controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;padding:16px;background:#fff;border:1px solid var(--hairline);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm)}
+.demo-controls h2{margin:0 12px 0 0;font-size:14px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:600;align-self:center}
+.demo-controls button{padding:8px 14px;font-size:13px;font-weight:600;border:1px solid var(--hairline);background:#fff;border-radius:var(--radius-md);cursor:pointer;color:var(--ink);transition:all var(--dur) var(--ease-out)}
+.demo-controls button:hover{border-color:var(--brand-indigo);color:var(--brand-indigo)}
+.demo-controls button.active{background:var(--brand-indigo);color:#fff;border-color:var(--brand-indigo);box-shadow:var(--shadow-indigo)}
+
+/* === Wizard shell === */
+.wiz-shell{
+  background:#fff;border:1px solid var(--hairline);border-radius:var(--radius-2xl);
+  box-shadow:var(--shadow-lg);overflow:hidden;display:grid;
+  grid-template-columns:280px 1fr;min-height:620px;
+}
+@media (max-width:820px){.wiz-shell{grid-template-columns:1fr}}
+
+.wiz-rail{background:var(--surface-tint);border-right:1px solid var(--hairline);padding:28px 22px;display:flex;flex-direction:column;gap:24px}
+@media (max-width:820px){.wiz-rail{display:none}}
+.wiz-brand{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700;color:var(--brand-indigo);letter-spacing:.05em;text-transform:uppercase}
+.wiz-brand-orb{width:28px;height:28px;border-radius:50%;background:conic-gradient(from 90deg,var(--brand-indigo) 0% var(--progress,30%),var(--brand-indigo-100) var(--progress,30%) 100%);position:relative;flex-shrink:0}
+.wiz-brand-orb::after{content:'';position:absolute;inset:5px;border-radius:50%;background:#fff}
+.wiz-brand-orb::before{content:attr(data-pct);position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--brand-indigo);z-index:1}
+.wiz-steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.wiz-steps li{display:flex;align-items:center;gap:10px;padding:8px 10px;font-size:13px;color:var(--muted);border-radius:var(--radius-sm);cursor:pointer;transition:background var(--dur) var(--ease-out)}
+.wiz-steps li:hover{background:rgba(92,92,214,.06)}
+.wiz-steps li.done{color:var(--ink)}
+.wiz-steps li.current{background:var(--brand-indigo-50);color:var(--brand-indigo);font-weight:600}
+.wiz-steps .num{width:22px;height:22px;border-radius:50%;background:var(--hairline);color:var(--muted);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.wiz-steps .done .num{background:var(--status-ok);color:#fff}
+.wiz-steps .done .num::before{content:'✓';font-size:13px}
+.wiz-steps .done .num span{display:none}
+.wiz-steps .current .num{background:var(--brand-indigo);color:#fff}
+.wiz-rail-foot{margin-top:auto;font-size:12px;color:var(--muted-soft);line-height:1.5}
+.wiz-rail-foot kbd{background:#fff;border:1px solid var(--hairline);border-radius:4px;padding:1px 6px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-soft)}
+
+.wiz-main{display:flex;flex-direction:column;min-height:0}
+.wiz-head{padding:32px 36px 16px;border-bottom:1px solid var(--hairline-soft);position:relative}
+.wiz-eyebrow{font-size:11px;font-weight:700;color:var(--brand-indigo);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.wiz-h2{margin:0 0 6px;font-size:24px;font-weight:700;letter-spacing:-.01em;color:var(--ink)}
+.wiz-sub{margin:0;font-size:14px;color:var(--muted);line-height:1.5}
+.wiz-close{position:absolute;top:18px;right:18px;width:40px;height:40px;border:1px solid var(--hairline);background:#fff;border-radius:var(--radius-md);font-size:18px;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all var(--dur) var(--ease-out)}
+.wiz-close:hover{border-color:var(--ink);color:var(--ink)}
+
+.wiz-body{padding:24px 36px;flex:1 1 auto;overflow-y:auto;min-height:380px}
+
+.wiz-foot{border-top:1px solid var(--hairline-soft);padding:16px 36px;display:flex;justify-content:space-between;align-items:center;background:var(--surface-soft);flex-shrink:0}
+.wiz-foot-left,.wiz-foot-right{display:flex;gap:10px;align-items:center}
+.btn{font-family:inherit;font-size:14px;font-weight:600;padding:10px 18px;border-radius:var(--radius-md);cursor:pointer;border:1px solid transparent;transition:all var(--dur) var(--ease-out);display:inline-flex;align-items:center;gap:6px}
+.btn-ghost{background:transparent;color:var(--muted)}
+.btn-ghost:hover{color:var(--ink);background:var(--hairline-soft)}
+.btn-secondary{background:#fff;color:var(--ink);border-color:var(--hairline)}
+.btn-secondary:hover{border-color:var(--ink-soft)}
+.btn-primary{background:var(--brand-indigo);color:#fff;box-shadow:var(--shadow-sm)}
+.btn-primary:hover{background:var(--brand-indigo-strong);transform:translateY(-1px);box-shadow:var(--shadow-indigo)}
+.btn-primary:disabled{background:var(--muted-soft);cursor:not-allowed;transform:none;box-shadow:none}
+
+/* === Step 1: Resume drop === */
+.dropzone{
+  border:2px dashed var(--brand-indigo-200);background:linear-gradient(180deg,var(--brand-indigo-50) 0%,#fff 100%);
+  border-radius:var(--radius-2xl);padding:48px 32px;text-align:center;cursor:pointer;
+  transition:all var(--dur) var(--ease-out);position:relative;overflow:hidden
+}
+.dropzone:hover,.dropzone.over{border-color:var(--brand-indigo);background:var(--brand-indigo-50);box-shadow:var(--shadow-indigo)}
+.dropzone-icon{width:72px;height:72px;margin:0 auto 18px;border-radius:50%;background:#fff;border:2px solid var(--brand-indigo-100);display:flex;align-items:center;justify-content:center;font-size:32px;color:var(--brand-indigo)}
+.dropzone h3{margin:0 0 6px;font-size:20px;font-weight:700}
+.dropzone p{margin:0 0 18px;color:var(--muted);font-size:14px}
+.dropzone .file-types{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.dropzone .file-types span{background:#fff;border:1px solid var(--hairline);padding:4px 10px;font-size:11px;border-radius:999px;color:var(--muted);font-weight:600}
+.or{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--muted-soft);font-size:12px}
+.or::before,.or::after{content:'';flex:1;height:1px;background:var(--hairline)}
+.paste-link{font-size:13px;color:var(--brand-indigo);text-decoration:none;font-weight:600;cursor:pointer}
+.paste-link:hover{text-decoration:underline}
+
+/* === Step 2: Bullseye canvas (all 4 pickers visible) === */
+.bullseye-canvas{
+  display:grid;grid-template-columns:1fr 1fr;gap:20px;
+}
+@media (max-width:720px){.bullseye-canvas{grid-template-columns:1fr}}
+.bp-section{background:#fff;border:1px solid var(--hairline);border-radius:var(--radius-lg);padding:18px 18px 14px;position:relative}
+.bp-section.hot{border-color:var(--brand-indigo-200);box-shadow:0 0 0 4px rgba(92,92,214,.06)}
+.bp-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.bp-title{font-size:13px;font-weight:700;color:var(--ink);letter-spacing:-.01em}
+.bp-counter{font-size:11px;font-weight:700;color:var(--muted);background:var(--brand-indigo-50);padding:2px 8px;border-radius:999px}
+.bp-counter.full{background:var(--status-ok-bg);color:var(--status-ok)}
+.bp-counter.over{background:#FEF2F2;color:#B91C1C}
+.bp-hint{font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.4}
+.bp-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;min-height:32px}
+.bp-chip{display:inline-flex;align-items:center;gap:6px;background:var(--brand-indigo-50);color:var(--brand-indigo-700);padding:5px 10px;font-size:12px;font-weight:600;border-radius:999px;border:1px solid var(--brand-indigo-100)}
+.bp-chip .x{cursor:pointer;color:var(--brand-indigo);font-weight:700;opacity:.6;font-size:14px;line-height:1}
+.bp-chip .x:hover{opacity:1}
+.bp-input{display:flex;gap:6px}
+.bp-input input{flex:1;font-family:inherit;font-size:13px;padding:7px 10px;border:1px solid var(--hairline);border-radius:var(--radius-sm);outline:none;transition:border-color var(--dur) var(--ease-out);background:#fff}
+.bp-input input:focus{border-color:var(--brand-indigo);box-shadow:0 0 0 3px rgba(92,92,214,.12)}
+.bp-input button{font-family:inherit;font-size:13px;font-weight:600;padding:7px 12px;border:1px solid var(--hairline);background:#fff;color:var(--ink);border-radius:var(--radius-sm);cursor:pointer}
+.bp-input button:hover{border-color:var(--brand-indigo);color:var(--brand-indigo)}
+
+/* The novel piece: live Top-N preview that updates as user picks */
+.bp-preview{background:var(--surface-tint);border-radius:var(--radius-lg);padding:14px;margin-top:18px;border:1px solid var(--hairline)}
+.bp-preview-head{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;display:flex;justify-content:space-between}
+.bp-preview-list{display:flex;flex-direction:column;gap:6px}
+.bp-preview-row{display:flex;align-items:center;gap:10px;background:#fff;padding:8px 10px;border:1px solid var(--hairline);border-radius:var(--radius-sm);font-size:12px;animation:fadeSlide 240ms var(--ease-out) both}
+@keyframes fadeSlide{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.bp-preview-row .rank{width:18px;height:18px;border-radius:50%;background:var(--brand-indigo);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.bp-preview-row .role{flex:1;color:var(--ink);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bp-preview-row .co{font-size:11px;color:var(--muted)}
+.bp-preview-row .score-pill{background:var(--status-ok-bg);color:var(--status-ok);font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px}
+.bp-preview .ghost{color:var(--muted-soft);font-style:italic;font-size:12px;text-align:center;padding:12px}
+
+/* === Step 3: Scoring waterfall === */
+.scoring-canvas{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media (max-width:720px){.scoring-canvas{grid-template-columns:1fr}}
+.scoring-controls{display:flex;flex-direction:column;gap:20px}
+.slider-row{display:flex;flex-direction:column;gap:6px}
+.slider-row label{display:flex;justify-content:space-between;font-size:13px;font-weight:600;color:var(--ink)}
+.slider-row .val{color:var(--brand-indigo);font-variant-numeric:tabular-nums;font-weight:700}
+.slider-row .desc{font-size:11px;color:var(--muted);line-height:1.4}
+.slider-row input[type=range]{appearance:none;width:100%;height:6px;background:var(--hairline);border-radius:999px;outline:none}
+.slider-row input[type=range]::-webkit-slider-thumb{appearance:none;width:18px;height:18px;border-radius:50%;background:var(--brand-indigo);cursor:pointer;border:3px solid #fff;box-shadow:0 2px 6px rgba(92,92,214,.4);transition:transform var(--dur) var(--ease-out)}
+.slider-row input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2)}
+.sum-pill{display:inline-flex;align-items:center;gap:6px;background:var(--brand-indigo-50);color:var(--brand-indigo-700);padding:6px 12px;border-radius:999px;font-size:12px;font-weight:700;align-self:flex-start}
+.sum-pill.ok{background:var(--status-ok-bg);color:var(--status-ok)}
+.sum-pill.bad{background:#FEF2F2;color:#B91C1C}
+
+/* Live waterfall: shows how a sample job's score is built */
+.waterfall{background:var(--surface-tint);border-radius:var(--radius-lg);padding:18px;border:1px solid var(--hairline)}
+.waterfall h4{margin:0 0 4px;font-size:13px;font-weight:700}
+.waterfall .job-line{font-size:12px;color:var(--muted);margin-bottom:14px}
+.waterfall .bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:12px}
+.waterfall .bar-label{width:90px;color:var(--ink-soft);font-weight:500}
+.waterfall .bar-track{flex:1;height:18px;background:#fff;border:1px solid var(--hairline);border-radius:999px;overflow:hidden;position:relative}
+.waterfall .bar-fill{height:100%;border-radius:999px;transition:width 400ms var(--ease-out)}
+.waterfall .bar-fill.title{background:var(--brand-indigo-soft)}
+.waterfall .bar-fill.industry{background:var(--brand-indigo)}
+.waterfall .bar-fill.skills{background:var(--brand-indigo-700)}
+.waterfall .bar-fill.bonus{background:var(--status-ok)}
+.waterfall .bar-val{width:42px;text-align:right;font-variant-numeric:tabular-nums;font-weight:700;color:var(--ink)}
+.waterfall .total{margin-top:14px;padding-top:12px;border-top:1px solid var(--hairline);display:flex;justify-content:space-between;align-items:center}
+.waterfall .total-num{font-size:32px;font-weight:800;color:var(--brand-indigo);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.waterfall .total-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+
+/* === Done step === */
+.done-burst{text-align:center;padding:32px 0}
+.done-orb{width:96px;height:96px;margin:0 auto 18px;border-radius:50%;background:linear-gradient(135deg,var(--brand-indigo),var(--brand-indigo-700));display:flex;align-items:center;justify-content:center;font-size:44px;color:#fff;box-shadow:var(--shadow-indigo)}
+.done-h{margin:0 0 8px;font-size:28px;font-weight:800;letter-spacing:-.01em}
+.done-sub{color:var(--muted);font-size:15px;max-width:420px;margin:0 auto 24px}
+.done-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:520px;margin:0 auto}
+.done-card{background:var(--surface-tint);padding:14px;border-radius:var(--radius-md);border:1px solid var(--hairline);text-align:left}
+.done-card .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin-bottom:4px}
+.done-card .val{font-size:18px;font-weight:700;color:var(--ink)}
+.done-card .val span{color:var(--brand-indigo)}
+
+/* Annotation pills at the top of the page */
+.tag{display:inline-block;background:var(--brand-indigo-50);color:var(--brand-indigo);font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;text-transform:uppercase;letter-spacing:.04em}
+.callout{margin:24px 0;padding:14px 18px;background:#fff;border:1px dashed var(--brand-indigo-200);border-radius:var(--radius-md);font-size:13px;color:var(--ink-soft)}
+.callout strong{color:var(--brand-indigo)}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="demo-controls">
+    <h2>Prototype demo</h2>
+    <button class="active" data-step="resume">1 · Resume drop</button>
+    <button data-step="bullseye">2 · Bullseye canvas</button>
+    <button data-step="scoring">3 · Scoring waterfall</button>
+    <button data-step="done">4 · Done</button>
+  </div>
+
+  <div class="wiz-shell">
+    <aside class="wiz-rail">
+      <div class="wiz-brand">
+        <div class="wiz-brand-orb" data-pct="33%" style="--progress:33%"></div>
+        getmemyjob setup
+      </div>
+      <ol class="wiz-steps">
+        <li class="done" data-jump="resume"><span class="num"><span>1</span></span> Welcome</li>
+        <li class="current" data-jump="resume"><span class="num"><span>2</span></span> Upload your resume</li>
+        <li data-jump="bullseye"><span class="num"><span>3</span></span> Your bullseye</li>
+        <li data-jump="scoring"><span class="num"><span>4</span></span> Where you work</li>
+        <li data-jump="scoring"><span class="num"><span>5</span></span> Scoring tune</li>
+        <li data-jump="scoring"><span class="num"><span>6</span></span> Daily workflow</li>
+        <li data-jump="scoring"><span class="num"><span>7</span></span> Optional add-ons</li>
+        <li data-jump="scoring"><span class="num"><span>8</span></span> Things to never show</li>
+        <li data-jump="done"><span class="num"><span>9</span></span> All set</li>
+      </ol>
+      <div class="wiz-rail-foot">
+        Press <kbd>Esc</kbd> anytime — your picks are saved.
+      </div>
+    </aside>
+
+    <section class="wiz-main">
+      <header class="wiz-head" id="head">
+        <div class="wiz-eyebrow" id="eyebrow">Step 2 of 9</div>
+        <h2 class="wiz-h2" id="title">Upload your resume</h2>
+        <p class="wiz-sub" id="sub">We'll extract titles, industries, and skills you've worked in — you'll trim them next step.</p>
+        <button class="wiz-close" aria-label="Close wizard">✕</button>
+      </header>
+
+      <div class="wiz-body" id="body">
+        <!-- Step 1: Resume drop -->
+        <div id="step-resume" class="step">
+          <label class="dropzone" id="dz">
+            <input type="file" hidden accept=".pdf,.docx,.txt">
+            <div class="dropzone-icon">↑</div>
+            <h3>Drop your resume here</h3>
+            <p>or click to browse — we parse locally, your file never leaves your browser</p>
+            <div class="file-types"><span>PDF</span><span>DOCX</span><span>TXT</span></div>
+          </label>
+          <div class="or">OR</div>
+          <div style="text-align:center"><a class="paste-link">Paste resume text instead →</a></div>
+          <div class="callout">
+            <strong>What changed vs v3:</strong> Dropzone is full-width, single focal target. File-type chips are visible. We're explicit that parsing is local. No need to "click upload" hidden behind 3 modals.
+          </div>
+        </div>
+
+        <!-- Step 2: Bullseye canvas (all 4 pickers visible) -->
+        <div id="step-bullseye" class="step" hidden>
+          <div class="bullseye-canvas">
+            <div class="bp-section hot">
+              <div class="bp-head">
+                <div class="bp-title">Target titles</div>
+                <div class="bp-counter">3 / 5</div>
+              </div>
+              <div class="bp-hint">Roles you'd actually say yes to. Multi-word > generic.</div>
+              <div class="bp-chips">
+                <span class="bp-chip">vp of risk <span class="x">×</span></span>
+                <span class="bp-chip">director of risk <span class="x">×</span></span>
+                <span class="bp-chip">head of compliance <span class="x">×</span></span>
+              </div>
+              <div class="bp-input">
+                <input placeholder="e.g. chief risk officer">
+                <button>+ Add</button>
+              </div>
+            </div>
+
+            <div class="bp-section">
+              <div class="bp-head">
+                <div class="bp-title">Industries</div>
+                <div class="bp-counter full">5 / 5</div>
+              </div>
+              <div class="bp-hint">DOMINANT match signal. Pick the next 12 months, not your whole resume.</div>
+              <div class="bp-chips">
+                <span class="bp-chip">fintech <span class="x">×</span></span>
+                <span class="bp-chip">banking <span class="x">×</span></span>
+                <span class="bp-chip">financial services <span class="x">×</span></span>
+                <span class="bp-chip">capital markets <span class="x">×</span></span>
+                <span class="bp-chip">payments <span class="x">×</span></span>
+              </div>
+              <div class="bp-input">
+                <input placeholder="Industries full" disabled>
+                <button disabled>+ Add</button>
+              </div>
+            </div>
+
+            <div class="bp-section">
+              <div class="bp-head">
+                <div class="bp-title">Skills</div>
+                <div class="bp-counter">11 / 15</div>
+              </div>
+              <div class="bp-hint">DOMINANT signal alongside industry. Skip generic ("leadership").</div>
+              <div class="bp-chips">
+                <span class="bp-chip">grc <span class="x">×</span></span>
+                <span class="bp-chip">tprm <span class="x">×</span></span>
+                <span class="bp-chip">third-party risk <span class="x">×</span></span>
+                <span class="bp-chip">credit risk <span class="x">×</span></span>
+                <span class="bp-chip">vendor management <span class="x">×</span></span>
+                <span class="bp-chip">regulatory compliance <span class="x">×</span></span>
+                <span class="bp-chip">core banking <span class="x">×</span></span>
+                <span class="bp-chip">enterprise risk <span class="x">×</span></span>
+                <span class="bp-chip">m&amp;a integration <span class="x">×</span></span>
+                <span class="bp-chip">sox <span class="x">×</span></span>
+                <span class="bp-chip">nist csf <span class="x">×</span></span>
+              </div>
+              <div class="bp-input">
+                <input placeholder="e.g. audit, regulatory reporting">
+                <button>+ Add</button>
+              </div>
+            </div>
+
+            <div class="bp-section">
+              <div class="bp-head">
+                <div class="bp-title">Target companies</div>
+                <div class="bp-counter">15 / 15</div>
+              </div>
+              <div class="bp-hint">AI re-derives these from your bullseye above. Refresh anytime.</div>
+              <div class="bp-chips">
+                <span class="bp-chip">Stripe <span class="x">×</span></span>
+                <span class="bp-chip">Ramp <span class="x">×</span></span>
+                <span class="bp-chip">Plaid <span class="x">×</span></span>
+                <span class="bp-chip">Brex <span class="x">×</span></span>
+                <span class="bp-chip">Mercury <span class="x">×</span></span>
+                <span class="bp-chip">+ 10 more</span>
+              </div>
+              <button class="btn btn-secondary" style="font-size:12px;padding:7px 12px;margin-top:6px">↻ Refresh from bullseye</button>
+            </div>
+          </div>
+
+          <div class="bp-preview">
+            <div class="bp-preview-head">
+              <span>Live preview — your Top-5 with current picks</span>
+              <span style="color:var(--brand-indigo)">↻ updating…</span>
+            </div>
+            <div class="bp-preview-list">
+              <div class="bp-preview-row"><div class="rank">1</div><div class="role">VP, Risk Strategy</div><div class="co">Stripe</div><div class="score-pill">94</div></div>
+              <div class="bp-preview-row" style="animation-delay:60ms"><div class="rank">2</div><div class="role">Director, Third Party Risk</div><div class="co">Ramp</div><div class="score-pill">91</div></div>
+              <div class="bp-preview-row" style="animation-delay:120ms"><div class="rank">3</div><div class="role">Head of GRC</div><div class="co">Plaid</div><div class="score-pill">89</div></div>
+              <div class="bp-preview-row" style="animation-delay:180ms"><div class="rank">4</div><div class="role">VP, Enterprise Risk Management</div><div class="co">Brex</div><div class="score-pill">86</div></div>
+              <div class="bp-preview-row" style="animation-delay:240ms"><div class="rank">5</div><div class="role">Director, Regulatory Compliance</div><div class="co">Mercury</div><div class="score-pill">83</div></div>
+            </div>
+          </div>
+
+          <div class="callout">
+            <strong>What changed vs v3:</strong> All 4 pickers visible at once on one canvas — no scroll between sections. <strong>Live Top-5 preview</strong> updates as you add/remove picks so you SEE the matcher react. The "Refresh companies" button is inline, not a separate wizard step.
+          </div>
+        </div>
+
+        <!-- Step 3: Scoring waterfall -->
+        <div id="step-scoring" class="step" hidden>
+          <div class="scoring-canvas">
+            <div class="scoring-controls">
+              <div class="slider-row">
+                <label>Title match <span class="val" id="vT">30</span></label>
+                <input type="range" min="0" max="100" value="30" id="sT">
+                <div class="desc">How much title wording matters. Low = "Head of GRC" and "Director, Compliance" feel equivalent.</div>
+              </div>
+              <div class="slider-row">
+                <label>Industry match <span class="val" id="vI">35</span></label>
+                <input type="range" min="0" max="100" value="35" id="sI">
+                <div class="desc">How much the company's industry matters. High = strict to fintech/banking.</div>
+              </div>
+              <div class="slider-row">
+                <label>Skills match <span class="val" id="vS">35</span></label>
+                <input type="range" min="0" max="100" value="35" id="sS">
+                <div class="desc">How much keywords in the JD body matter (GRC, TPRM, etc).</div>
+              </div>
+              <div class="sum-pill ok" id="sumPill"><span id="sumIcon">✓</span> Weights sum to <span id="sumVal">100</span></div>
+            </div>
+
+            <div class="waterfall">
+              <h4>Example: how a job scores right now</h4>
+              <div class="job-line"><strong>VP, Risk Strategy</strong> · Stripe · fintech</div>
+              <div class="bar-row"><div class="bar-label">Title</div><div class="bar-track"><div class="bar-fill title" id="bT" style="width:30%"></div></div><div class="bar-val" id="bTv">+30</div></div>
+              <div class="bar-row"><div class="bar-label">Industry</div><div class="bar-track"><div class="bar-fill industry" id="bI" style="width:35%"></div></div><div class="bar-val" id="bIv">+35</div></div>
+              <div class="bar-row"><div class="bar-label">Skills</div><div class="bar-track"><div class="bar-fill skills" id="bS" style="width:35%"></div></div><div class="bar-val" id="bSv">+35</div></div>
+              <div class="bar-row"><div class="bar-label">Bonus</div><div class="bar-track"><div class="bar-fill bonus" style="width:15%"></div></div><div class="bar-val">+15</div></div>
+              <div class="total"><span class="total-label">Final score</span><span class="total-num" id="totalNum">94</span></div>
+            </div>
+          </div>
+
+          <div class="callout">
+            <strong>What changed vs v3:</strong> Sliders show a <strong>live waterfall</strong> so you understand WHY a job scored what it did. Move a slider, watch the bars + final number animate. No more guessing what "title weight 30" means.
+          </div>
+        </div>
+
+        <!-- Done -->
+        <div id="step-done" class="step" hidden>
+          <div class="done-burst">
+            <div class="done-orb">✓</div>
+            <h2 class="done-h">You're all set, Amit</h2>
+            <p class="done-sub">Your matcher just rebuilt with your bullseye. 20 fresh jobs are waiting on your dashboard — ranked, with a "why" for each.</p>
+            <div class="done-cards">
+              <div class="done-card"><div class="lbl">Top match today</div><div class="val">VP, Risk Strategy<br><span>at Stripe</span></div></div>
+              <div class="done-card"><div class="lbl">Avg top-5 score</div><div class="val">88/100</div></div>
+              <div class="done-card"><div class="lbl">Warm intros possible</div><div class="val">12 / 20<br><span>via LinkedIn</span></div></div>
+              <div class="done-card"><div class="lbl">Companies covered</div><div class="val">87 ATSes scraped</div></div>
+            </div>
+            <button class="btn btn-primary" style="margin-top:24px">Open my dashboard →</button>
+          </div>
+        </div>
+      </div>
+
+      <footer class="wiz-foot">
+        <div class="wiz-foot-left">
+          <button class="btn btn-ghost">← Back</button>
+        </div>
+        <div class="wiz-foot-right">
+          <button class="btn btn-secondary">Skip</button>
+          <button class="btn btn-primary">Continue →</button>
+        </div>
+      </footer>
+    </section>
+  </div>
+
+</div>
+
+<script>
+// Step switcher
+const STEPS = ['resume','bullseye','scoring','done'];
+const HEADERS = {
+  resume:{eyebrow:'Step 2 of 9',title:'Upload your resume',sub:"We'll extract titles, industries, and skills you've worked in — you'll trim them next step."},
+  bullseye:{eyebrow:'Step 3 of 9',title:'Your bullseye',sub:'5 titles · 5 industries · 15 skills · 15 companies. Live preview shows how your Top-5 shifts as you pick.'},
+  scoring:{eyebrow:'Step 5 of 9',title:'How we score job matches',sub:'Tune the weights and watch the waterfall update in real time.'},
+  done:{eyebrow:'Step 9 of 9',title:'All set',sub:''}
+};
+const PCT={resume:'33%',bullseye:'45%',scoring:'70%',done:'100%'};
+function show(step){
+  STEPS.forEach(s=>document.getElementById('step-'+s).hidden = (s!==step));
+  document.querySelectorAll('.demo-controls button').forEach(b=>{
+    b.classList.toggle('active', b.dataset.step===step);
+  });
+  const h=HEADERS[step];
+  document.getElementById('eyebrow').textContent=h.eyebrow;
+  document.getElementById('title').textContent=h.title;
+  document.getElementById('sub').textContent=h.sub;
+  const orb=document.querySelector('.wiz-brand-orb');
+  orb.style.setProperty('--progress',PCT[step]);
+  orb.setAttribute('data-pct',PCT[step]);
+}
+document.querySelectorAll('.demo-controls button').forEach(b=>{
+  b.addEventListener('click',()=>show(b.dataset.step));
+});
+
+// Live scoring waterfall
+function recalc(){
+  const t=+document.getElementById('sT').value;
+  const i=+document.getElementById('sI').value;
+  const s=+document.getElementById('sS').value;
+  document.getElementById('vT').textContent=t;
+  document.getElementById('vI').textContent=i;
+  document.getElementById('vS').textContent=s;
+  const sum=t+i+s;
+  document.getElementById('sumVal').textContent=sum;
+  const pill=document.getElementById('sumPill');
+  pill.classList.toggle('ok', sum===100);
+  pill.classList.toggle('bad', sum!==100);
+  document.getElementById('sumIcon').textContent = sum===100?'✓':'!';
+  // Bars: each component contributes its weight × strength (here strength = 1.0 for sample job)
+  const bT=Math.min(t,100), bI=Math.min(i,100), bS=Math.min(s,100);
+  document.getElementById('bT').style.width=bT+'%';
+  document.getElementById('bI').style.width=bI+'%';
+  document.getElementById('bS').style.width=bS+'%';
+  document.getElementById('bTv').textContent='+'+bT;
+  document.getElementById('bIv').textContent='+'+bI;
+  document.getElementById('bSv').textContent='+'+bS;
+  // Final: 50 base + each component contributes weight * 0.5 + 15 bonus (capped 100)
+  const final=Math.min(100, 50 + Math.round((bT+bI+bS)*0.5) + 15);
+  document.getElementById('totalNum').textContent=final;
+}
+['sT','sI','sS'].forEach(id=>document.getElementById(id).addEventListener('input',recalc));
+
+// Dropzone visual feedback
+const dz=document.getElementById('dz');
+['dragenter','dragover'].forEach(e=>dz.addEventListener(e,ev=>{ev.preventDefault();dz.classList.add('over')}));
+['dragleave','drop'].forEach(e=>dz.addEventListener(e,ev=>{ev.preventDefault();dz.classList.remove('over')}));
+</script>
+</body>
+</html>
