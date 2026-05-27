@@ -5777,7 +5777,7 @@ function _decorateContactBadges() {{
       btn.className = 'btn ghost-btn small contact-badge';
       btn.style.cssText = 'background:#ecfdf5;color:#0a6b3a;border-color:#a7f3d0;font-weight:600;';
       btn.textContent = '🤝 ' + matches.length + ' connection' + (matches.length === 1 ? '' : 's') + ' — Warm intro';
-      btn.title = matches.map(function(c) {{ return c.first + ' ' + c.last + (c.position ? ' (' + c.position + ')' : ''); }}).join('\n') + '\nClick to draft personalized intro';
+      btn.title = matches.map(function(c) {{ return c.first + ' ' + c.last + (c.position ? ' (' + c.position + ')' : ''); }}).join(' | ') + ' — Click to draft personalized intro';
       btn.addEventListener('click', function() {{ showWarmIntroModal(card.getAttribute('data-fp'), matches); }});
       const dismiss = actions.querySelector('.dismiss');
       if (dismiss) actions.insertBefore(btn, dismiss);
