@@ -5817,7 +5817,7 @@ async function showWarmIntroModal(fp, connections) {{
     + '<div style="background:white;border-radius:12px;max-width:700px;width:100%;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 20px 50px rgba(0,0,0,0.3);">'
     + '  <div style="padding:18px 22px;border-bottom:1px solid #e6e8eb;display:flex;justify-content:space-between;align-items:center;">'
     + '    <h2 style="margin:0;font-size:18px;color:#1a1a2e;">🤝 Warm intro for ' + escHtml(title) + ' @ ' + escHtml(company) + '</h2>'
-    + '    <button onclick="document.getElementById(\'warm-intro-modal\').remove()" style="background:none;border:none;cursor:pointer;font-size:22px;color:#888;">×</button>'
+    + '    <button class="modal-close-btn" data-modal-id="warm-intro-modal" style="background:none;border:none;cursor:pointer;font-size:22px;color:#888;">×</button>'
     + '  </div>'
     + '  <div style="padding:14px 22px 6px;border-bottom:1px solid #f0f1f5;">'
     + '    <div style="font-size:12px;font-weight:600;color:#666;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.4px;">Your connections at this company</div>'
@@ -6071,6 +6071,21 @@ function _resortByAiScore() {{
   }}
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
   else run();
+}})();
+
+
+// One-time global listener for modal close buttons (avoids inline-onclick
+// nested-quote escape hell that broke the entire main script previously).
+(function setupModalCloseDelegate() {{
+  document.addEventListener('click', function(e) {{
+    var btn = e.target;
+    if (!btn || !btn.classList || !btn.classList.contains('modal-close-btn')) return;
+    var modalId = btn.getAttribute('data-modal-id');
+    if (modalId) {{
+      var modal = document.getElementById(modalId);
+      if (modal) modal.remove();
+    }}
+  }}, false);
 }})();
 
 (function captureInviteKey() {{
@@ -8545,7 +8560,7 @@ function _showCompaniesDiffModal(proposed, diff, headers, btn, origText) {{
     + '<div style="background:white;border-radius:12px;max-width:780px;width:100%;max-height:80vh;display:flex;flex-direction:column;box-shadow:0 20px 50px rgba(0,0,0,0.3);">'
     + '  <div style="padding:18px 22px;border-bottom:1px solid #e6e8eb;display:flex;justify-content:space-between;align-items:center;">'
     + '    <h2 style="margin:0;font-size:18px;color:#1a1a2e;">Bullseye-driven target companies</h2>'
-    + '    <button onclick="document.getElementById(\'companies-diff-modal\').remove()" style="background:none;border:none;cursor:pointer;font-size:22px;color:#888;">×</button>'
+    + '    <button class="modal-close-btn" data-modal-id="companies-diff-modal" style="background:none;border:none;cursor:pointer;font-size:22px;color:#888;">×</button>'
     + '  </div>'
     + '  <div style="padding:16px 22px;overflow-y:auto;flex:1;">'
     + '    <div style="font-size:13px;color:#555;margin-bottom:12px;">AI re-derived ' + proposed.length + ' companies using only your 5/5/25 bullseye — not your raw resume. <strong>' + diff.summary + '.</strong></div>'
@@ -8643,7 +8658,7 @@ function showWhyHiddenModal() {{
     + '<div style="background:white;border-radius:12px;max-width:820px;width:100%;max-height:84vh;display:flex;flex-direction:column;box-shadow:0 20px 50px rgba(0,0,0,0.3);">'
     + '  <div style="padding:18px 22px;border-bottom:1px solid #e6e8eb;display:flex;justify-content:space-between;align-items:center;">'
     + '    <h2 style="margin:0;font-size:18px;color:#1a1a2e;">Why isn\'t [company or title] in my feed?</h2>'
-    + '    <button onclick="document.getElementById(\'why-hidden-modal\').remove()" style="background:none;border:none;cursor:pointer;font-size:22px;color:#888;">×</button>'
+    + '    <button class="modal-close-btn" data-modal-id="why-hidden-modal" style="background:none;border:none;cursor:pointer;font-size:22px;color:#888;">×</button>'
     + '  </div>'
     + '  <div style="padding:14px 22px;border-bottom:1px solid #f0f1f5;">'
     + '    <input type="text" id="why-hidden-input" placeholder="Type a company name or job title (e.g. AuditBoard, VP)" style="width:100%;padding:9px 12px;font-size:14px;border:1px solid #d0d4dc;border-radius:6px;">'
