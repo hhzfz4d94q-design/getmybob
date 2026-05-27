@@ -1,0 +1,99 @@
+name: Enrich companies (funding-stage classifier)
+
+# Pulls the union of all users' targetCompanies and any company with 3+
+# postings in the past 30 days, sends to the worker's /admin/enrich-companies
+# in batches of 30. Worker uses Claude Haiku to classify and caches each
+# result in KV for 90 days. Reads are essentially free thereafter.
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"  # weekly, Monday 6am UTC
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Force re-classify even if cached (default false)'
+        required: false
+        default: 'false'
+
+permissions:
+  contents: write
+
+jobs:
+  enrich:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Gather company list and call worker
+        env:
+          ADMIN_KEY: ${{ secrets.WORKER_ADMIN_KEY }}
+          FORCE: ${{ github.event.inputs.force }}
+        run: |
+          set -e
+          mkdir -p reports
+          if [ -z "$ADMIN_KEY" ]; then
+            echo "::error::WORKER_ADMIN_KEY missing"
+            exit 1
+          fi
+
+          # 1. Pull /admin/users to get all targetCompanies
+          curl -sS -H "X-Admin-Key: $ADMIN_KEY" \
+            "https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/admin/users" \
+            > /tmp/users.json
+
+          # 2. Build deduplicated company list (Python is simpler than jq here)
+          python3 << 'PY'
+          import json, os, urllib.request
+          users = json.load(open('/tmp/users.json'))['users']
+          companies = set()
+          for u in users:
+              # Pull each user's profile to get targetCompanies
+              slug = u.get('slug')
+              if not slug: continue
+              try:
+                  url = f'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/skills-profile?user={slug}'
+                  with urllib.request.urlopen(url, timeout=10) as r:
+                      pj = json.load(r)
+                  prof = pj.get('profile') or {}
+                  for c in (prof.get('targetCompanies') or []):
+                      if isinstance(c, dict) and c.get('name'):
+                          companies.add(c['name'].strip())
+                      elif isinstance(c, str) and c.strip():
+                          companies.add(c.strip())
+              except Exception as e:
+                  print(f'  [warn] {slug}: {e}')
+          companies = sorted(companies)
+          print(f'Collected {len(companies)} unique target companies')
+          json.dump(companies, open('/tmp/companies.json','w'))
+          PY
+
+          # 3. Send in batches of 30 to /admin/enrich-companies
+          python3 << 'PY'
+          import json, os, urllib.request
+          companies = json.load(open('/tmp/companies.json'))
+          force = os.environ.get('FORCE', 'false').lower() == 'true'
+          all_out = {'fromCache': {}, 'newlyClassified': {}}
+          BATCH = 30
+          for i in range(0, len(companies), BATCH):
+              chunk = companies[i:i+BATCH]
+              body = json.dumps({'companies': chunk, 'force': force}).encode()
+              req = urllib.request.Request(
+                  'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/admin/enrich-companies',
+                  data=body, method='POST',
+                  headers={'Content-Type':'application/json','X-Admin-Key': os.environ['ADMIN_KEY']})
+              with urllib.request.urlopen(req, timeout=60) as r:
+                  result = json.load(r)
+              print(f'Batch {i//BATCH+1}: cached={result.get("cachedCount",0)}  new={result.get("newCount",0)}')
+              all_out['fromCache'].update(result.get('fromCache') or {})
+              all_out['newlyClassified'].update(result.get('newlyClassified') or {})
+          import datetime as _dt
+          ts = _dt.datetime.utcnow().strftime('%Y%m%dT%H%M%SZ')
+          out_path = f'reports/enrich_{ts}.json'
+          json.dump(all_out, open(out_path,'w'), indent=2)
+          print(f'Wrote {out_path}: {len(all_out["fromCache"])} cached + {len(all_out["newlyClassified"])} new')
+          PY
+
+          git config user.email "enrich-bot@getmemyjob.local"
+          git config user.name "enrich-bot"
+          git add reports/enrich_*.json
+          git commit -m "auto: company-stage enrichment snapshot" || echo "nothing"
+          git push

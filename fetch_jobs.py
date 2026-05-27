@@ -2093,6 +2093,41 @@ def hiring_velocity_boost(company_name):
     return 5 if n >= 3 else 0
 
 
+# Company-stage cache (worker /company-stage endpoint) — populated lazily
+# during render via _get_company_stage(). Maps company_name_lower -> dict or
+# None for known-not-classified. Avoids a per-job network round-trip.
+COMPANY_STAGE_CACHE = {}
+
+def _get_company_stage(company_name):
+    """Look up the company-stage record from worker KV. None if not cached."""
+    if not company_name:
+        return None
+    key = company_name.strip().lower()
+    if key in COMPANY_STAGE_CACHE:
+        return COMPANY_STAGE_CACHE[key]
+    try:
+        import urllib.parse, urllib.request, json as _json
+        url = f'{WORKER_BASE_URL}/company-stage?company={urllib.parse.quote(key)}'
+        with urllib.request.urlopen(url, timeout=4) as resp:
+            data = _json.loads(resp.read().decode('utf-8', errors='replace'))
+            if data.get('cached'):
+                COMPANY_STAGE_CACHE[key] = data
+                return data
+    except Exception:
+        pass
+    COMPANY_STAGE_CACHE[key] = None
+    return None
+
+
+def recently_funded_boost(company_name):
+    """Return +5 if the company was funded within the last 12 months
+    according to the worker's cached classification."""
+    rec = _get_company_stage(company_name)
+    if not rec:
+        return 0
+    return 5 if rec.get('isRecentlyFunded') else 0
+
+
 # --- Skills profile (loaded per-user, used for scoring) ------------------
 WORKER_BASE_URL = "https://cool-darkness-dce5.tr6jz6v7wg.workers.dev"
 USERS_JSON_PATH = os.path.join(ROOT, "users.json")
@@ -2616,6 +2651,11 @@ def score_job(job):
     # likely to actually hire than companies with one stale evergreen posting.
     if profile:
         s += hiring_velocity_boost(job.get("company_name") or "")
+        # E9 (2026-05-27): recently-funded boost — companies that raised in
+        # the last 12 months are statistically more likely to hire senior
+        # leaders. Source: worker /company-stage cache, populated by the
+        # enrich-companies workflow (weekly).
+        s += recently_funded_boost(job.get("company_name") or "")
 
     # E7 (2026-05-27): company-type soft multiplier. Catches the long tail
     # of consulting/staffing firms not in the hard-block list. Multiplier

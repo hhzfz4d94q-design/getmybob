@@ -47,6 +47,8 @@ export default {
 
     // Admin endpoints (provision / list / delete users)
     if (url.pathname === '/admin/users') return handleAdminUsers(request, env, cors);
+    if (url.pathname === '/admin/enrich-companies') return handleEnrichCompanies(request, env, cors);
+    if (url.pathname === '/company-stage') return handleCompanyStage(request, env, cors);
     if (url.pathname === '/admin/pending-users') return handleAdminPendingUsers(request, env, cors);
     if (url.pathname === '/admin/approve-user') return handleAdminApproveUser(request, env, cors);
     if (url.pathname === '/admin/reject-user') return handleAdminRejectUser(request, env, cors);
@@ -1195,6 +1197,115 @@ async function handlePublicUsers(request, env, cors) {
   return Response.json({ users: users.map(u => ({ slug: u.slug, name: u.name })) }, { headers: cors });
 }
 
+// --- /company-stage (public read) + /admin/enrich-companies (admin write) ---
+// Cache shape: KV key 'company:stage:{name_lower}' -> JSON {
+//   stage: 'seed' | 'series-a' | ... | 'public' | 'bootstrapped' | 'unknown',
+//   lastFundedApproxYear: 2024,
+//   isRecentlyFunded: boolean,   // last 12 months from analysis date
+//   analyzedAt: ISO,
+// }
+// TTL: 90 days (re-classify periodically as funding rounds close).
+async function handleCompanyStage(request, env, cors) {
+  if (!env.RESUMES) return Response.json({ error: 'RESUMES KV binding missing' }, { status: 500, headers: cors });
+  const url = new URL(request.url);
+  const company = String(url.searchParams.get('company') || '').trim().toLowerCase();
+  if (!company) return Response.json({ error: 'Missing ?company=' }, { status: 400, headers: cors });
+  const raw = await env.RESUMES.get('company:stage:' + company);
+  if (!raw) return Response.json({ company, cached: false, stage: null }, { headers: cors });
+  try { return Response.json({ company, cached: true, ...JSON.parse(raw) }, { headers: cors }); }
+  catch (e) { return Response.json({ company, cached: false, stage: null }, { headers: cors }); }
+}
+
+async function handleEnrichCompanies(request, env, cors) {
+  if (request.method !== 'POST') return Response.json({ error: 'POST only' }, { status: 405, headers: cors });
+  if (!env.ADMIN_KEY) return Response.json({ error: 'Worker missing ADMIN_KEY secret' }, { status: 500, headers: cors });
+  if (request.headers.get('X-Admin-Key') !== env.ADMIN_KEY) {
+    return Response.json({ error: 'Invalid X-Admin-Key' }, { status: 401, headers: cors });
+  }
+  if (!env.ANTHROPIC_API_KEY) return Response.json({ error: 'Missing ANTHROPIC_API_KEY' }, { status: 500, headers: cors });
+  let body;
+  try { body = await request.json(); } catch (e) { return Response.json({ error: 'Bad JSON' }, { status: 400, headers: cors }); }
+  const companies = Array.isArray(body.companies) ? body.companies.slice(0, 50) : [];
+  const force = !!body.force;
+  if (!companies.length) return Response.json({ error: 'Body must include {companies:[name,...]}' }, { status: 400, headers: cors });
+
+  // Filter to ones not already cached (unless force=true)
+  const toClassify = [];
+  const fromCache = {};
+  for (const raw of companies) {
+    const name = String(raw || '').trim();
+    if (!name) continue;
+    const key = 'company:stage:' + name.toLowerCase();
+    if (!force) {
+      const exist = await env.RESUMES.get(key);
+      if (exist) {
+        try { fromCache[name] = JSON.parse(exist); continue; } catch (e) {}
+      }
+    }
+    toClassify.push(name);
+  }
+
+  let newlyClassified = {};
+  if (toClassify.length) {
+    const prompt = `You are classifying companies by funding stage for a job-search product. Output ONLY valid JSON (no prose, no markdown).
+
+For each company below, return:
+{
+  "stage": one of: "bootstrapped", "seed", "series-a", "series-b", "series-c", "series-d", "series-e-plus", "late-stage-private", "public", "acquired", "unknown",
+  "lastFundedApproxYear": integer year of most recent funding round per your training data (or null if unknown / not applicable),
+  "notes": one short string (under 100 chars) — e.g. "Stripe last raised \$6.5B Series I in 2023"
+}
+
+Companies to classify:
+${toClassify.map((c, i) => `${i + 1}. ${c}`).join('\n')}
+
+Return as: {"results": {"CompanyName": {...}, ...}}`;
+
+    try {
+      const aiResp = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
+        body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 4000, messages: [{ role: 'user', content: prompt }] }),
+      });
+      const aiJson = await aiResp.json();
+      const text = ((aiJson.content || [])[0] || {}).text || '';
+      const cleanText = text.replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/i, '').trim();
+      const parsed = JSON.parse(cleanText);
+      const results = parsed.results || {};
+      const nowIso = new Date().toISOString();
+      const currentYear = new Date().getUTCFullYear();
+      for (const [name, info] of Object.entries(results)) {
+        const stage = String(info.stage || 'unknown').toLowerCase();
+        const yr = (typeof info.lastFundedApproxYear === 'number') ? info.lastFundedApproxYear : null;
+        const isRecentlyFunded = (yr !== null) && (currentYear - yr <= 1);
+        const record = {
+          stage,
+          lastFundedApproxYear: yr,
+          isRecentlyFunded,
+          notes: String(info.notes || '').slice(0, 200),
+          analyzedAt: nowIso,
+        };
+        await env.RESUMES.put('company:stage:' + name.toLowerCase(), JSON.stringify(record), { expirationTtl: 90 * 24 * 3600 });
+        newlyClassified[name] = record;
+      }
+    } catch (e) {
+      return Response.json({
+        error: 'AI classification failed: ' + (e && e.message || String(e)),
+        fromCache,
+        toClassify,
+      }, { status: 502, headers: cors });
+    }
+  }
+
+  return Response.json({
+    fromCache,
+    newlyClassified,
+    cachedCount: Object.keys(fromCache).length,
+    newCount: Object.keys(newlyClassified).length,
+  }, { headers: cors });
+}
+
+
 // --- /admin/users — full CRUD ------------------------------------------
 async function handleAdminUsers(request, env, cors) {
   if (!env.RESUMES) return Response.json({ error: 'RESUMES KV binding missing' }, { status: 500, headers: cors });
@@ -1213,11 +1324,58 @@ async function handleAdminUsers(request, env, cors) {
       const activeId = await env.RESUMES.get(uk(u.slug, 'resume:active'));
       const profile = await env.RESUMES.get(uk(u.slug, 'skills_profile'));
       const editKey = await env.RESUMES.get(uk(u.slug, 'edit_key'));
+      // Engagement rollup from tracker — validates auto-learn threshold
+      let trackerSummary = null;
+      try {
+        const trackerRaw = await env.RESUMES.get(uk(u.slug, 'tracker'));
+        if (trackerRaw) {
+          const tracker = JSON.parse(trackerRaw) || {};
+          const all = Object.values(tracker);
+          const cutoff30 = Date.now() - 30 * 24 * 3600 * 1000;
+          const dismissedByCompany = {};
+          let counts = { applied: 0, dismissed: 0, phonescreen: 0, onsite: 0, offer: 0, rejected: 0, saved: 0 };
+          let dismissedPast30 = 0;
+          for (const t of all) {
+            if (!t) continue;
+            const st = String(t.status || '').toLowerCase();
+            if (st in counts) counts[st] += 1;
+            if (st === 'dismissed') {
+              const ts = Date.parse(t.lastUpdated || '');
+              if (!isNaN(ts) && ts >= cutoff30) dismissedPast30 += 1;
+              const co = String(t.company || '').trim();
+              if (co) dismissedByCompany[co] = (dismissedByCompany[co] || 0) + 1;
+            }
+          }
+          const topDismissed = Object.entries(dismissedByCompany)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5)
+            .map(([company, count]) => ({ company, count }));
+          trackerSummary = {
+            total: all.length,
+            ...counts,
+            dismissedPast30Days: dismissedPast30,
+            topDismissedCompanies: topDismissed,
+          };
+        }
+      } catch (e) { /* tracker may be missing or malformed */ }
+      // excludeCompanies for context on what's already auto-learned
+      let excludeCompanies = [];
+      let lastAutoLearn = null;
+      try {
+        if (profile) {
+          const p = JSON.parse(profile);
+          excludeCompanies = Array.isArray(p.excludeCompanies) ? p.excludeCompanies : [];
+          lastAutoLearn = p.lastAutoLearn || null;
+        }
+      } catch (e) {}
       enriched.push({
         ...u,
         hasResume: !!activeId,
         hasProfile: !!profile,
         editKey: editKey || '',
+        tracker: trackerSummary,
+        excludeCompanies,
+        lastAutoLearn,
       });
     }
     return Response.json({ users: enriched }, { headers: cors });
