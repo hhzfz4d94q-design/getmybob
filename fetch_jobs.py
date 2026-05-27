@@ -385,6 +385,283 @@ def fetch_icims(entry):
     return out
 
 
+def fetch_smartrecruiters(slug):
+    """SmartRecruiters public posting API. Covers Bosch, GE, Visa, BlackRock,
+    hundreds of mid-market firms. The API is well-documented and no auth needed
+    for public postings."""
+    url = f"https://api.smartrecruiters.com/v1/companies/{slug}/postings?limit=100"
+    data = fetch_json(url)
+    if not data or "content" not in data:
+        return []
+    out = []
+    for j in data.get("content", []):
+        if not isinstance(j, dict): continue
+        title = j.get("name") or ""
+        if not title: continue
+        loc = j.get("location") or {}
+        loc_str = ""
+        if isinstance(loc, dict):
+            city = loc.get("city") or ""
+            region = loc.get("region") or ""
+            country = loc.get("country") or ""
+            parts = [p for p in (city, region, country) if p]
+            loc_str = ", ".join(parts)
+            if loc.get("remote"):
+                loc_str = (loc_str + " (Remote)") if loc_str else "Remote"
+        elif isinstance(loc, str):
+            loc_str = loc
+        # Description: usually in jobAd.sections (multiple sections); concat
+        desc_parts = []
+        job_ad = j.get("jobAd") or {}
+        sections = (job_ad.get("sections") or {})
+        for key in ("jobDescription", "qualifications", "additionalInformation"):
+            sec = sections.get(key) or {}
+            txt = sec.get("text") if isinstance(sec, dict) else ""
+            if txt:
+                desc_parts.append(_strip_html(txt))
+        desc = "\n\n".join(desc_parts)
+        # Compensation if present
+        sal_str = ""
+        comp = j.get("typeOfEmployment") or {}
+        if isinstance(comp, dict) and comp.get("label"):
+            sal_str = comp.get("label", "")
+        out.append({
+            "source": "smartrecruiters",
+            "company_slug": slug,
+            "company_name": (j.get("company") or {}).get("name") or slug.replace("-", " ").title(),
+            "external_id": str(j.get("id") or j.get("refNumber") or title),
+            "title": title,
+            "location": loc_str,
+            "url": (j.get("ref") or "").replace("api.smartrecruiters.com/v1/companies", "jobs.smartrecruiters.com") or f"https://jobs.smartrecruiters.com/{slug}/{j.get('id', '')}",
+            "posted_at": j.get("releasedDate") or j.get("createdOn") or "",
+            "description": desc,
+            "salary_range": sal_str,
+        })
+    return out
+
+
+def fetch_pinpoint(slug):
+    """Pinpoint ATS public job board API. Used by modern SaaS scale-ups."""
+    # Pinpoint deployments are subdomain-style (e.g. companyname.pinpointhq.com)
+    # Public job-board JSON endpoint:
+    url = f"https://{slug}.pinpointhq.com/api/v1/jobs"
+    data = fetch_json(url)
+    if not data:
+        # Try alt URL pattern
+        url2 = f"https://www.pinpointhq.com/api/v1/job_boards/{slug}/jobs"
+        data = fetch_json(url2)
+        if not data:
+            return []
+    jobs = data if isinstance(data, list) else (data.get("data") or data.get("jobs") or [])
+    out = []
+    for j in jobs:
+        if not isinstance(j, dict): continue
+        attrs = j.get("attributes") or j
+        title = attrs.get("title") or ""
+        if not title: continue
+        loc = attrs.get("location") or attrs.get("city") or ""
+        if isinstance(loc, dict):
+            loc = (loc.get("city") or "") + ", " + (loc.get("country") or "")
+            loc = loc.strip(", ")
+        out.append({
+            "source": "pinpoint",
+            "company_slug": slug,
+            "company_name": slug.replace("-", " ").title(),
+            "external_id": str(j.get("id") or attrs.get("id") or attrs.get("reference") or title),
+            "title": title,
+            "location": loc,
+            "url": attrs.get("apply_url") or attrs.get("url") or attrs.get("post_url") or "",
+            "posted_at": attrs.get("published_at") or attrs.get("created_at") or "",
+            "description": _strip_html(attrs.get("description") or attrs.get("summary") or ""),
+            "salary_range": attrs.get("salary") or "",
+        })
+    return out
+
+
+def fetch_teamtailor(slug):
+    """TeamTailor ATS — EU/Nordic + US scale-ups. Public job-board JSON-API."""
+    url = f"https://{slug}.teamtailor.com/jobs.json"
+    data = fetch_json(url)
+    if not data:
+        # Alt: api.teamtailor.com
+        data = fetch_json(f"https://api.teamtailor.com/v1/jobs?filter[company.slug]={slug}")
+        if not data:
+            return []
+    jobs = data if isinstance(data, list) else (data.get("data") or data.get("jobs") or [])
+    out = []
+    for j in jobs:
+        if not isinstance(j, dict): continue
+        attrs = j.get("attributes") or j
+        title = attrs.get("title") or ""
+        if not title: continue
+        loc_parts = []
+        if attrs.get("city"): loc_parts.append(attrs["city"])
+        if attrs.get("country"): loc_parts.append(attrs["country"])
+        if attrs.get("remote-status") == "fully_remote" or attrs.get("remote_status") == "fully_remote":
+            loc_parts.append("Remote")
+        loc = ", ".join(loc_parts)
+        url2 = ""
+        links = j.get("links") or {}
+        if isinstance(links, dict):
+            url2 = links.get("careersite-job-url") or links.get("self") or ""
+        out.append({
+            "source": "teamtailor",
+            "company_slug": slug,
+            "company_name": slug.replace("-", " ").title(),
+            "external_id": str(j.get("id") or attrs.get("reference") or title),
+            "title": title,
+            "location": loc,
+            "url": url2,
+            "posted_at": attrs.get("internal-name") and attrs.get("created-at") or attrs.get("created_at") or "",
+            "description": _strip_html(attrs.get("body") or attrs.get("description") or ""),
+            "salary_range": attrs.get("salary") or "",
+        })
+    return out
+
+
+def fetch_recruitee(slug):
+    """Recruitee ATS — EU scale-ups. Public job-board JSON-API."""
+    url = f"https://{slug}.recruitee.com/api/offers/"
+    data = fetch_json(url)
+    if not data or "offers" not in data:
+        return []
+    out = []
+    for j in data.get("offers", []):
+        if not isinstance(j, dict): continue
+        title = j.get("title") or j.get("position") or ""
+        if not title: continue
+        loc = j.get("location") or ""
+        if isinstance(loc, str) and j.get("city"):
+            loc = j.get("city") + (", " + j.get("country") if j.get("country") else "")
+        out.append({
+            "source": "recruitee",
+            "company_slug": slug,
+            "company_name": j.get("company_name") or slug.replace("-", " ").title(),
+            "external_id": str(j.get("id") or j.get("slug") or title),
+            "title": title,
+            "location": loc,
+            "url": j.get("careers_url") or j.get("url") or j.get("careers_apply_url") or "",
+            "posted_at": j.get("created_at") or j.get("published_at") or "",
+            "description": _strip_html(j.get("description") or j.get("requirements") or ""),
+            "salary_range": j.get("salary") or "",
+        })
+    return out
+
+
+def fetch_wellfound(slug):
+    """Wellfound (AngelList Talent) — startup-focused. Their public API was
+    deprecated in 2023, but their public job-board pages embed jobs in
+    __NEXT_DATA__ JSON we can scrape. Best-effort: many pages are now
+    server-rendered behind auth."""
+    url = f"https://wellfound.com/company/{slug}/jobs"
+    try:
+        req = urllib.request.Request(url, headers={
+            "User-Agent": "Mozilla/5.0 (compatible; getmemyjob/1.0; +https://getmemyjob.officebeatllc.com)",
+            "Accept": "text/html"
+        })
+        with urllib.request.urlopen(req, timeout=20) as r:
+            html = r.read().decode("utf-8", errors="replace")
+    except Exception as e:
+        try:
+            os.makedirs(os.path.join(ROOT, "reports"), exist_ok=True)
+            with open(os.path.join(ROOT, "reports", "wellfound_debug.log"), "a", encoding="utf-8") as f:
+                f.write(f"[{slug}] fetch_failed: {type(e).__name__}: {e}\n")
+        except Exception: pass
+        return []
+    # Extract __NEXT_DATA__ JSON
+    import re as _r
+    m = _r.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', html, _r.DOTALL)
+    if not m:
+        return []
+    try:
+        nd = json.loads(m.group(1))
+    except Exception:
+        return []
+    # Walk the JSON looking for arrays of job-like objects
+    out = []
+    def _walk(node):
+        if isinstance(node, list):
+            for it in node: _walk(it)
+        elif isinstance(node, dict):
+            # Heuristic: job objects have "title" + "slug" + "company"
+            if "title" in node and ("public_id" in node or "id" in node) and "compensation" in str(node):
+                title = node.get("title") or ""
+                if title and len(title) > 3 and len(title) < 200:
+                    out.append({
+                        "source": "wellfound",
+                        "company_slug": slug,
+                        "company_name": slug.replace("-", " ").title(),
+                        "external_id": str(node.get("public_id") or node.get("id") or title),
+                        "title": title,
+                        "location": (node.get("locations") or [""])[0] if isinstance(node.get("locations"), list) else (node.get("location") or ""),
+                        "url": f"https://wellfound.com/jobs/{node.get('public_id') or node.get('id')}",
+                        "posted_at": node.get("posted_at") or "",
+                        "description": _strip_html(node.get("description") or ""),
+                        "salary_range": str(node.get("compensation") or ""),
+                    })
+            for v in node.values(): _walk(v)
+    _walk(nd)
+    # Dedupe by external_id
+    seen = set(); deduped = []
+    for j in out:
+        if j["external_id"] in seen: continue
+        seen.add(j["external_id"]); deduped.append(j)
+    return deduped
+
+
+def fetch_trueup(entry):
+    """Trueup.io tracks funded companies + has job feeds. They have a
+    /jobs/api/v1 surface but rate-limited. Best-effort. Entry may be a
+    slug or {slug, name}."""
+    slug = entry if isinstance(entry, str) else entry.get("slug", "")
+    if not slug: return []
+    url = f"https://www.trueup.io/co/{slug}/jobs"
+    try:
+        req = urllib.request.Request(url, headers={
+            "User-Agent": "Mozilla/5.0 (compatible; getmemyjob/1.0)",
+            "Accept": "text/html"
+        })
+        with urllib.request.urlopen(req, timeout=20) as r:
+            html = r.read().decode("utf-8", errors="replace")
+    except Exception:
+        return []
+    # Trueup pages embed __NEXT_DATA__ too
+    import re as _r
+    m = _r.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', html, _r.DOTALL)
+    if not m: return []
+    try:
+        nd = json.loads(m.group(1))
+    except Exception:
+        return []
+    out = []
+    def _walk(node):
+        if isinstance(node, list):
+            for it in node: _walk(it)
+        elif isinstance(node, dict):
+            if "title" in node and "company" in str(node) and "location" in node:
+                title = node.get("title") or ""
+                if title and 3 < len(title) < 200:
+                    out.append({
+                        "source": "trueup",
+                        "company_slug": slug,
+                        "company_name": slug.replace("-", " ").title(),
+                        "external_id": str(node.get("id") or node.get("slug") or title),
+                        "title": title,
+                        "location": node.get("location") or "",
+                        "url": node.get("url") or node.get("apply_url") or "",
+                        "posted_at": node.get("posted_at") or "",
+                        "description": _strip_html(node.get("description") or ""),
+                        "salary_range": str(node.get("salary") or ""),
+                    })
+            for v in node.values(): _walk(v)
+    _walk(nd)
+    seen = set(); deduped = []
+    for j in out:
+        if j["external_id"] in seen: continue
+        seen.add(j["external_id"]); deduped.append(j)
+    return deduped
+
+
 def fetch_workday(entry):
     """Workday Cxs API. Entry: {name, tenant, subdomain, site}.
     Pages through results (Workday paginates at 20 per request)."""
@@ -1017,7 +1294,7 @@ def fetch_himss(entry):
     return out
 
 
-SOURCES = {"greenhouse": fetch_greenhouse, "lever": fetch_lever, "ashby": fetch_ashby, "workable": fetch_workable, "workday": fetch_workday, "wttj": fetch_wttj, "icims": fetch_icims, "remoteok": fetch_remoteok, "yc": fetch_yc, "hn_hiring": fetch_hn_hiring, "healthecareers": fetch_healthecareers, "himss": fetch_himss}
+SOURCES = {"greenhouse": fetch_greenhouse, "lever": fetch_lever, "ashby": fetch_ashby, "workable": fetch_workable, "workday": fetch_workday, "wttj": fetch_wttj, "icims": fetch_icims, "smartrecruiters": fetch_smartrecruiters, "pinpoint": fetch_pinpoint, "teamtailor": fetch_teamtailor, "recruitee": fetch_recruitee, "wellfound": fetch_wellfound, "trueup": fetch_trueup, "remoteok": fetch_remoteok, "yc": fetch_yc, "hn_hiring": fetch_hn_hiring, "healthecareers": fetch_healthecareers, "himss": fetch_himss}
 
 
 # --- Utilities -----------------------------------------------------------
@@ -2353,7 +2630,7 @@ def _merge_user_target_companies(companies):
             # gives us coverage; we pay ~3 extra HTTP requests per company.
             # This is also how WTTJ gets activated for the first time — it
             # was coded but had 0 companies configured.
-            SLUG_POOLS = ("greenhouse", "lever", "ashby", "wttj", "workable", "icims")
+            SLUG_POOLS = ("greenhouse", "lever", "ashby", "wttj", "workable", "icims", "smartrecruiters", "pinpoint", "teamtailor", "recruitee", "wellfound", "trueup")
             if hint not in SLUG_POOLS and hint != "unknown":
                 skipped += 1
                 continue
@@ -3912,6 +4189,7 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
           {salary_html}
           <div class="badges" data-badges>{badge_html}</div>
           <div class="desc">{_esc(_strip_html(desc)[:300])}…</div>
+          {f'<div class="why-inline" style="font-size:11.5px;color:#5C5CD6;margin-top:6px;font-style:italic;">→ Match: {_esc(_why)}</div>' if _why else ''}
           <div class="actions">
             <a class="btn primary" href="{url}" target="_blank" rel="noopener" onclick="applyAndOpen('{fp}', this, '{url}'); return true;">Apply now &rarr;</a>
             <button class="btn ghost-btn" onclick="prepApplication('{fp}', this)">Prep materials</button>
