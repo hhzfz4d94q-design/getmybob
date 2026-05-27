@@ -2805,7 +2805,16 @@ WIZARD_V3_BLOCK = r"""
   #wiz3-overlay { position:fixed; inset:0; background:rgba(20,22,40,0.55); z-index:2147483600; display:none; align-items:center; justify-content:center; padding:24px; font-family:'Inter',-apple-system,system-ui,sans-serif; }
   #wiz3-overlay.show { display:flex; }
   #wiz3-card { width:min(960px,100%); max-height:92vh; background:#fff; border-radius:14px; box-shadow:0 24px 60px rgba(20,22,40,0.4); display:flex; flex-direction:row; overflow:hidden; }
-  @media (max-width:680px) { #wiz3-card { flex-direction:column; } #wiz3-rail { display:none; } }
+  @media (max-width:680px) {
+    #wiz3-overlay { padding:0; }
+    #wiz3-card { flex-direction:column; max-height:100vh; max-width:100vw; border-radius:0; }
+    #wiz3-rail { display:none; }
+    #wiz3-foot { padding:10px 14px; }
+    #wiz3-head { padding:14px 18px; }
+  }
+  @media (max-width:1024px) {
+    body { overflow-x:hidden; }  /* dashboard isn't fully responsive yet; stop awkward sideways scroll */
+  }
   #wiz3-rail { flex:0 0 240px; background:#F7F7FB; border-right:1px solid #E5E7EE; padding:24px 18px; overflow-y:auto; }
   #wiz3-rail .wiz3-brand { font-size:13px; font-weight:700; color:#5C5CD6; letter-spacing:.02em; text-transform:uppercase; margin-bottom:18px; }
   #wiz3-rail ol { list-style:none; padding:0; margin:0; }
@@ -2848,7 +2857,7 @@ WIZARD_V3_BLOCK = r"""
   .wiz3-msg.ok  { background:#ECFDF5; color:#0A6B3A; }
   .wiz3-msg.err { background:#FEF2F2; color:#B91C1C; }
   .wiz3-msg.info{ background:#EEEEF8; color:#4B4BBE; }
-  #wiz3-close { position:absolute; top:10px; right:14px; background:rgba(255,255,255,0.18); border:1px solid rgba(255,255,255,0.3); border-radius:8px; width:34px; height:34px; font-size:20px; line-height:1; color:#fff; cursor:pointer; z-index:10; display:flex; align-items:center; justify-content:center; }
+  #wiz3-close { position:absolute; top:8px; right:10px; background:rgba(255,255,255,0.18); border:1px solid rgba(255,255,255,0.3); border-radius:10px; width:44px; height:44px; font-size:24px; line-height:1; color:#fff; cursor:pointer; z-index:10; display:flex; align-items:center; justify-content:center; }
   #wiz3-close:hover { background:rgba(255,255,255,0.32); border-color:rgba(255,255,255,0.5); }
   .wiz3-chip-row { display:flex; flex-wrap:wrap; gap:6px; margin:6px 0 10px; }
   .wiz3-chip { background:#EEEEF8; color:#4B4BBE; font-size:12px; padding:4px 9px; border-radius:12px; }
