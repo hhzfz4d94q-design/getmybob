@@ -2859,7 +2859,7 @@ WIZARD_V3_BLOCK = r"""
     <section id="wiz3-main" style="position:relative;">
       <button id="wiz3-close" type="button" aria-label="Close wizard">&times;</button>
       <header id="wiz3-head">
-        <div class="wiz3-step-no" id="wiz3-step-no">Step 1 of 17</div>
+        <div class="wiz3-step-no" id="wiz3-step-no">Step 1 of 9</div>
         <h2 id="wiz3-h2">Welcome</h2>
         <p class="wiz3-sub" id="wiz3-sub"></p>
       </header>
@@ -3062,87 +3062,48 @@ WIZARD_V3_BLOCK = r"""
       },
     },
     {
-      key: "pick-titles",
-      title: "Pick your 5 target job titles",
-      subtitle: "The matcher will look for these exact titles. Be specific — 5 sharp picks beat 30 vague ones.",
-      async render(body) {
-        const p = await getProfile();
-        renderBullseye(body, {
-          max: 5,
-          current: p.targetTitles || [],
-          placeholder: "e.g. vp of product management",
-          hint: "Lowercase, multi-word titles match best (e.g. \"vp grc\" not just \"vp\"). The AI pre-filled suggestions from your resume — trim to the 5 you actually want.",
-        });
-      },
-      async save(st, ctx) {
-        const items = (ctx.body.__bullseyeValues || (() => []))();
-        if (items.length > 5) { setMsg(ctx.body, "err", "Pick at most 5 titles — currently " + items.length); throw new Error("over cap"); }
-        if (items.length === 0) { setMsg(ctx.body, "err", "Pick at least 1 title."); throw new Error("empty"); }
-        await patchProfile({ targetTitles: items });
-        st.data.targetTitles = items;
-      },
-    },
-    {
-      key: "pick-industries",
-      title: "Pick your 5 industries",
-      subtitle: "Industries you want your NEXT job to be in — not every industry you've ever touched.",
-      async render(body) {
-        const p = await getProfile();
-        renderBullseye(body, {
-          max: 5,
-          current: p.industries || [],
-          placeholder: "e.g. healthcare technology",
-          hint: "Tight industry choice = less noise. 5 well-chosen industries kill 80% of irrelevant matches.",
-        });
-      },
-      async save(st, ctx) {
-        const items = (ctx.body.__bullseyeValues || (() => []))();
-        if (items.length > 5) { setMsg(ctx.body, "err", "Pick at most 5 industries — currently " + items.length); throw new Error("over cap"); }
-        if (items.length === 0) { setMsg(ctx.body, "err", "Pick at least 1 industry."); throw new Error("empty"); }
-        await patchProfile({ industries: items });
-        st.data.industries = items;
-      },
-    },
-    {
-      key: "pick-skills",
-      title: "Pick up to 15 skills",
-      subtitle: "Distinct, signal-dense terms. Skip generic words like \"leadership\" or \"team player\".",
-      async render(body) {
-        const p = await getProfile();
-        // Combine keywords + technologies + frameworks — they all feed the same scoring axis
-        const merged = [].concat(p.keywords || [], p.technologies || [], p.frameworks || []);
-        renderBullseye(body, {
-          max: 15,
-          current: merged,
-          placeholder: "e.g. digital transformation",
-          hint: "These boost a job's score when found in its title or description. 15 strong, distinct signals beat 25 mixed ones.",
-        });
-      },
-      async save(st, ctx) {
-        const items = (ctx.body.__bullseyeValues || (() => []))();
-        if (items.length > 15) { setMsg(ctx.body, "err", "Pick at most 15 skills — currently " + items.length); throw new Error("over cap"); }
-        // Skills go entirely into keywords; technologies/frameworks emptied so cap is enforced
-        await patchProfile({ keywords: items, technologies: [], frameworks: [] });
-        st.data.skills = items;
-      },
-    },
-    {
-      key: "pick-companies",
-      title: "Refresh your target companies",
-      subtitle: "AI will re-derive 20 companies from your 5/5/15 bullseye, not your raw resume. Review the diff, then save.",
-      optional: true,
+      key: "your-bullseye",
+      title: "Your bullseye — what you want the matcher to look for",
+      subtitle: "5 titles / 5 industries / 15 skills / 15 companies. Trim aggressively — sharp picks beat vague ones.",
       async render(body, st) {
-        body.innerHTML = ''
-          + '<p style="font-size:13px;color:#555;margin-bottom:14px;">Your current target list was built from your resume\'s broader history. Now that you\'ve trimmed to a tight bullseye, the AI can suggest companies that match what you actually want.</p>'
-          + '<button type="button" id="pick-co-ask" class="wiz3-btn wiz3-btn-ghost">Show me what AI would suggest</button>'
-          + '<div id="pick-co-result" style="margin-top:14px;"></div>'
-          + '<p style="font-size:12px;color:#888;margin-top:14px;">Optional — skip to keep your current 25 target companies.</p>';
-        const askBtn = body.querySelector("#pick-co-ask");
-        const out = body.querySelector("#pick-co-result");
+        body.innerHTML =
+          '<div id="bs-section-titles" style="margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid #eee;"><h3 style="margin:0 0 6px;font-size:14px;color:#1a1a2e;">1. Target job titles (max 5)</h3><p style="margin:0 0 10px;font-size:12px;color:#666;">The matcher looks for these as a fallback signal. Lowercase, multi-word.</p><div id="bs-titles-host"></div></div>' +
+          '<div id="bs-section-industries" style="margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid #eee;"><h3 style="margin:0 0 6px;font-size:14px;color:#1a1a2e;">2. Industries (max 5)</h3><p style="margin:0 0 10px;font-size:12px;color:#666;">Industries you want your NEXT job in — not every industry you have ever touched. DOMINANT match signal.</p><div id="bs-industries-host"></div></div>' +
+          '<div id="bs-section-skills" style="margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid #eee;"><h3 style="margin:0 0 6px;font-size:14px;color:#1a1a2e;">3. Skills (max 15)</h3><p style="margin:0 0 10px;font-size:12px;color:#666;">Distinct, signal-dense terms. Skip generic words. DOMINANT match signal alongside industry.</p><div id="bs-skills-host"></div></div>' +
+          '<div id="bs-section-companies"><h3 style="margin:0 0 6px;font-size:14px;color:#1a1a2e;">4. Target companies (optional refresh)</h3><p style="margin:0 0 10px;font-size:12px;color:#666;">AI will re-derive 20 companies from your bullseye above. Click below to see the diff.</p><div id="bs-companies-host"></div></div>';
+
+        const p = await getProfile();
+        // 1. Titles
+        renderBullseye(body.querySelector("#bs-titles-host"), {
+          max: 5, current: p.targetTitles || [],
+          placeholder: "e.g. vp of product management",
+          hint: "Lowercase, multi-word titles match best."
+        });
+        // 2. Industries
+        renderBullseye(body.querySelector("#bs-industries-host"), {
+          max: 5, current: p.industries || [],
+          placeholder: "e.g. healthcare technology",
+          hint: "Tight industry choice = less noise."
+        });
+        // 3. Skills (merge keywords + technologies + frameworks)
+        const merged = [].concat(p.keywords || [], p.technologies || [], p.frameworks || []);
+        renderBullseye(body.querySelector("#bs-skills-host"), {
+          max: 15, current: merged,
+          placeholder: "e.g. digital transformation",
+          hint: "These boost a job\'s score when found in title or description."
+        });
+        // 4. Companies — same inline UI as original pick-companies step
+        const cHost = body.querySelector("#bs-companies-host");
+        cHost.innerHTML =
+          '<button type="button" id="bs-co-ask" class="wiz3-btn wiz3-btn-ghost">Show me what AI would suggest</button>' +
+          '<div id="bs-co-result" style="margin-top:14px;"></div>' +
+          '<p style="font-size:11px;color:#888;margin-top:10px;">Skipping this section keeps your current target companies.</p>';
+        const askBtn = cHost.querySelector("#bs-co-ask");
+        const out = cHost.querySelector("#bs-co-result");
         askBtn.addEventListener("click", async () => {
-          askBtn.disabled = true; askBtn.textContent = "Asking AI…";
+          askBtn.disabled = true; askBtn.textContent = "Asking AI...";
           const ek = getEditKey();
-          if (!ek) { out.innerHTML = '<em style="color:#B91C1C;">No edit key — can\'t reach the AI.</em>'; askBtn.disabled = false; askBtn.textContent = "Show me what AI would suggest"; return; }
+          if (!ek) { out.innerHTML = '<em style="color:#B91C1C;">No edit key</em>'; askBtn.disabled = false; askBtn.textContent = "Show me what AI would suggest"; return; }
           try {
             const r = await fetch(WORKER_BASE + "/regenerate-companies" + USER_QS, {
               method: "POST",
@@ -3155,21 +3116,20 @@ WIZARD_V3_BLOCK = r"""
             const adding = (data.diff && data.diff.adding) || [];
             const keeping = (data.diff && data.diff.keeping) || [];
             const chip = (label, color, bg, border) => '<span style="display:inline-block;padding:3px 9px;background:' + bg + ';color:' + color + ';border:1px solid ' + border + ';border-radius:12px;font-size:12px;margin:2px;">' + label + '</span>';
-            const remHtml = removing.map(c => chip((c && c.name ? c.name : c) + " ✕", "#B91C1C", "#FEF2F2", "#fecaca")).join('') || '<em style="font-size:12px;color:#888;">(nothing)</em>';
-            const addHtml = adding.map(c => chip(c.name + " +", "#0a6b3a", "#ECFDF5", "#a7f3d0")).join('') || '<em style="font-size:12px;color:#888;">(nothing)</em>';
+            const remHtml = removing.map(c => chip((c && c.name ? c.name : c) + " x", "#B91C1C", "#FEF2F2", "#fecaca")).join('') || '<em style="font-size:12px;color:#888;">(none)</em>';
+            const addHtml = adding.map(c => chip(c.name + " +", "#0a6b3a", "#ECFDF5", "#a7f3d0")).join('') || '<em style="font-size:12px;color:#888;">(none)</em>';
             const keepHtml = keeping.map(c => chip(c.name, "#3F3F46", "#F4F4F5", "#e4e4e7")).join('') || '<em style="font-size:12px;color:#888;">(no overlap)</em>';
-            out.innerHTML = ''
-              + '<div style="font-size:13px;color:#555;margin-bottom:10px;"><strong>' + data.diff.summary + '</strong></div>'
-              + '<div style="margin-bottom:10px;"><div style="font-size:12px;font-weight:600;color:#B91C1C;margin-bottom:4px;">Removing (' + removing.length + ')</div><div style="line-height:1.7;">' + remHtml + '</div></div>'
-              + '<div style="margin-bottom:10px;"><div style="font-size:12px;font-weight:600;color:#0a6b3a;margin-bottom:4px;">Adding (' + adding.length + ')</div><div style="line-height:1.7;">' + addHtml + '</div></div>'
-              + '<div style="margin-bottom:14px;"><div style="font-size:12px;font-weight:600;color:#3F3F46;margin-bottom:4px;">Keeping (' + keeping.length + ')</div><div style="line-height:1.7;">' + keepHtml + '</div></div>'
-              + '<button type="button" id="pick-co-confirm" class="wiz3-btn wiz3-btn-primary" style="background:#5C5CD6;color:white;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;">Save these ' + ((data.proposed || []).length) + ' companies</button>';
+            out.innerHTML =
+              '<div style="font-size:13px;color:#555;margin-bottom:10px;"><strong>' + data.diff.summary + '</strong></div>' +
+              '<div style="margin-bottom:10px;"><div style="font-size:12px;font-weight:600;color:#B91C1C;margin-bottom:4px;">Removing (' + removing.length + ')</div><div style="line-height:1.7;">' + remHtml + '</div></div>' +
+              '<div style="margin-bottom:10px;"><div style="font-size:12px;font-weight:600;color:#0a6b3a;margin-bottom:4px;">Adding (' + adding.length + ')</div><div style="line-height:1.7;">' + addHtml + '</div></div>' +
+              '<div style="margin-bottom:14px;"><div style="font-size:12px;font-weight:600;color:#3F3F46;margin-bottom:4px;">Keeping (' + keeping.length + ')</div><div style="line-height:1.7;">' + keepHtml + '</div></div>' +
+              '<button type="button" id="bs-co-confirm" class="wiz3-btn wiz3-btn-primary" style="background:#5C5CD6;color:white;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;">Save these ' + ((data.proposed || []).length) + ' companies</button>';
             askBtn.textContent = "Re-ask AI";
             askBtn.disabled = false;
-            // Hand the proposed array to the confirm button
-            const confirmBtn = out.querySelector("#pick-co-confirm");
+            const confirmBtn = out.querySelector("#bs-co-confirm");
             confirmBtn.addEventListener("click", async () => {
-              confirmBtn.disabled = true; confirmBtn.textContent = "Saving…";
+              confirmBtn.disabled = true; confirmBtn.textContent = "Saving...";
               try {
                 const r2 = await fetch(WORKER_BASE + "/regenerate-companies" + USER_QS, {
                   method: "POST",
@@ -3180,33 +3140,66 @@ WIZARD_V3_BLOCK = r"""
                 if (!r2.ok) { confirmBtn.textContent = "Failed: " + (d2.error || r2.status); confirmBtn.disabled = false; return; }
                 confirmBtn.textContent = "✓ Saved " + ((d2.profile && d2.profile.targetCompanies || []).length) + " companies";
                 st.data.companies_saved = true;
-              } catch (e) {
-                confirmBtn.textContent = "Network error";
-              }
+              } catch (e) { confirmBtn.textContent = "Network error"; }
             });
           } catch (e) { out.innerHTML = '<em style="color:#B91C1C;">' + (e.message || e) + '</em>'; askBtn.disabled = false; askBtn.textContent = "Try again"; }
         });
       },
-      save() { return Promise.resolve(); }
+      async save(st, ctx) {
+        // Collect from all 3 picker sections (companies is async via button — not blocking save)
+        const tItems = ((ctx.body.querySelector("#bs-titles-host") || {}).__bullseyeValues || (() => []))();
+        const iItems = ((ctx.body.querySelector("#bs-industries-host") || {}).__bullseyeValues || (() => []))();
+        const sItems = ((ctx.body.querySelector("#bs-skills-host") || {}).__bullseyeValues || (() => []))();
+        // Validate caps
+        if (tItems.length > 5) { setMsg(ctx.body, "err", "Pick at most 5 titles (currently " + tItems.length + ")"); throw new Error("over cap"); }
+        if (iItems.length > 5) { setMsg(ctx.body, "err", "Pick at most 5 industries (currently " + iItems.length + ")"); throw new Error("over cap"); }
+        if (sItems.length > 15) { setMsg(ctx.body, "err", "Pick at most 15 skills (currently " + sItems.length + ")"); throw new Error("over cap"); }
+        if (tItems.length === 0) { setMsg(ctx.body, "err", "Pick at least 1 title."); throw new Error("empty titles"); }
+        if (iItems.length === 0) { setMsg(ctx.body, "err", "Pick at least 1 industry."); throw new Error("empty industries"); }
+        // Patch all bullseye fields in one go
+        await patchProfile({
+          targetTitles: tItems,
+          industries: iItems,
+          keywords: sItems,
+          technologies: [],
+          frameworks: []
+        });
+        st.data.targetTitles = tItems;
+        st.data.industries = iItems;
+        st.data.skills = sItems;
+      },
     },
     {
-      key: "locations-remote",
-      title: "Where do you want to work?",
-      subtitle: "We'll only show jobs that match your locations + remote preference.",
+      key: "where-you-work",
+      title: "Where you want to work",
+      subtitle: "Locations + remote preference + company sizes.",
       optional: true,
       async render(body, st) {
         body.innerHTML =
-          '<label for="wiz3-locs">Preferred locations (comma-separated)</label>' +
-          '<input type="text" id="wiz3-locs" placeholder="e.g. New York City, Remote (US)">' +
-          '<div class="hint">Cities, states, or country regions. Use "Remote (US)" to include US-only remote jobs.</div>' +
-          '<label for="wiz3-remote">Remote preference</label>' +
-          '<select id="wiz3-remote">' +
-            '<option value="any">Any — onsite, hybrid, or remote</option>' +
-            '<option value="hybrid">Hybrid — prefer some in-office days</option>' +
-            '<option value="onsite">Onsite — in-office is fine</option>' +
-            '<option value="remote-only">Remote only — must be fully remote</option>' +
-          '</select>';
+          '<div style="margin-bottom:22px;padding-bottom:18px;border-bottom:1px solid #eee;">' +
+            '<h3 style="margin:0 0 6px;font-size:14px;color:#1a1a2e;">1. Locations + remote</h3>' +
+            '<label for="wiz3-locs">Preferred locations (comma-separated)</label>' +
+            '<input type="text" id="wiz3-locs" placeholder="e.g. New York City, Remote (US)">' +
+            '<div class="hint">Cities, states, or country regions.</div>' +
+            '<label for="wiz3-remote" style="margin-top:10px;display:block;">Remote preference</label>' +
+            '<select id="wiz3-remote">' +
+              '<option value="any">Any — onsite, hybrid, or remote</option>' +
+              '<option value="hybrid">Hybrid — prefer some in-office days</option>' +
+              '<option value="onsite">Onsite — in-office is fine</option>' +
+              '<option value="remote-only">Remote only — must be fully remote</option>' +
+            '</select>' +
+          '</div>' +
+          '<div>' +
+            '<h3 style="margin:0 0 6px;font-size:14px;color:#1a1a2e;">2. Company size mix (must add to 100)</h3>' +
+            ['startup','midsize','large'].map(k => {
+              const labels = {startup:'Startups (under 500)', midsize:'Mid-size (500-10k)', large:'Large (10k+ / F500)'};
+              return '<label>' + labels[k] + ' <span style="float:right;font-weight:500;color:#5C5CD6;" id="wiz-mix-' + k + '-val">33%</span></label>' +
+                     '<input type="range" id="wiz-mix-' + k + '" min="0" max="100" step="5" value="33" oninput="wizMixOnSlide(\'' + k + '\')" style="width:100%;">';
+            }).join('') +
+            '<div id="wiz-mix-total" style="margin-top:8px;font-size:13px;font-weight:600;text-align:right;">Total: 99%</div>' +
+          '</div>';
         const p = await getProfile();
+        // Locations
         const locsEl = body.querySelector("#wiz3-locs");
         const remoteEl = body.querySelector("#wiz3-remote");
         if (locsEl && Array.isArray(p.preferredLocations)) locsEl.value = p.preferredLocations.join(", ");
@@ -3216,70 +3209,67 @@ WIZARD_V3_BLOCK = r"""
           if (st.data.remotePreference) rp = st.data.remotePreference;
           remoteEl.value = rp;
         }
-      },
-      collect(body) {
-        const locs = (body.querySelector("#wiz3-locs") || {}).value || "";
-        const remote = (body.querySelector("#wiz3-remote") || {}).value || "any";
-        return { preferredLocations: locs, remotePreference: remote };
+        // Size mix
+        const mix = (st.data.companySizeMix) || p.companySizeMix || { startup:33, midsize:33, large:34 };
+        ['startup','midsize','large'].forEach(k => {
+          const el = body.querySelector('#wiz-mix-' + k);
+          if (el) { el.value = mix[k] || 0; body.querySelector('#wiz-mix-' + k + '-val').textContent = (mix[k] || 0) + '%'; }
+        });
+        _wizMixRebalance('startup');
       },
       async save(st, ctx) {
-        const d = this.collect(ctx.body);
-        const preferredLocations = d.preferredLocations.split(",").map(s => s.trim()).filter(Boolean);
-        st.data.preferredLocations = d.preferredLocations;
-        st.data.remotePreference = d.remotePreference;
-        await patchProfile({ preferredLocations, remotePreference: d.remotePreference });
+        // Locations
+        const locs = (ctx.body.querySelector("#wiz3-locs") || {}).value || "";
+        const remote = (ctx.body.querySelector("#wiz3-remote") || {}).value || "any";
+        const preferredLocations = locs.split(",").map(s => s.trim()).filter(Boolean);
+        // Sizes
+        const mix = {};
+        ['startup','midsize','large'].forEach(k => { mix[k] = parseInt((ctx.body.querySelector('#wiz-mix-' + k) || {}).value || 0, 10); });
+        await patchProfile({
+          preferredLocations: preferredLocations,
+          remotePreference: remote,
+          companySizeMix: mix
+        });
+        st.data.preferredLocations = locs;
+        st.data.remotePreference = remote;
+        st.data.companySizeMix = mix;
       },
     },
     {
-      key: "company-sizes",
-      title: "What size companies do you target?",
-      subtitle: "Move the sliders to weight the kind of employers we surface.",
+      key: "scoring-tune",
+      title: "How we score job matches",
+      subtitle: "Two layers: PRIORITY (how much you care about each signal, must sum to 100) and RELIABILITY (how much to trust each signal — title-wording varies between companies so it\'s less reliable than industry+skills).",
       optional: true,
       async render(body, st) {
         body.innerHTML =
-          '<p style="font-size:13.5px;color:#444;">Tell us roughly the mix you prefer. We\'ll keep big names in the feed but bias toward your selection.</p>' +
-          ['startup','mid','large','enterprise'].map(k => {
-            const labels = {startup:"Startup (<$10M)", mid:"Mid-market ($10–100M)", large:"Large ($100M–1B)", enterprise:"Enterprise (>$1B)"};
-            return '<label>' + labels[k] + ' <span style="float:right;font-weight:500;color:#5C5CD6;" id="wiz3-sz-' + k + '-val">25%</span></label>' +
-                   '<input type="range" id="wiz3-sz-' + k + '" min="0" max="100" step="5" value="25" style="width:100%;">';
-          }).join('');
+          '<div style="margin-bottom:22px;padding-bottom:18px;border-bottom:1px solid #eee;">' +
+            '<h3 style="margin:0 0 6px;font-size:14px;color:#1a1a2e;">1. Priority weights (sum to 100)</h3>' +
+            ['titles','industry','skills'].map(k => {
+              const labels = {titles:"Title fit", industry:"Industry fit", skills:"Skills fit"};
+              const defaults = {titles:50, industry:25, skills:25};
+              return '<label>' + labels[k] + ' <span style="float:right;font-weight:500;color:#5C5CD6;" id="wiz3-w-' + k + '-val">' + defaults[k] + '%</span></label>' +
+                     '<input type="range" id="wiz3-w-' + k + '" min="0" max="100" step="5" value="' + defaults[k] + '" style="width:100%;">';
+            }).join('') +
+            '<div id="wiz3-w-total" style="margin-top:8px;font-size:13px;font-weight:600;text-align:right;">Total: 100%</div>' +
+          '</div>' +
+          '<div>' +
+            '<h3 style="margin:0 0 6px;font-size:14px;color:#1a1a2e;">2. Signal reliability (independent)</h3>' +
+            ['title','industry','skills'].map(k => {
+              const labels = {title:'Title-wording reliability', industry:'Industry reliability', skills:'Skills reliability'};
+              const hints  = {title: 'Low = ignore wording (default 40%)', industry: 'High = require industry overlap', skills: 'High = require skill keywords in JD'};
+              const defaults = {title:40, industry:100, skills:100};
+              return '<div style="margin-bottom:14px;">' +
+                     '<label style="display:flex;justify-content:space-between;align-items:baseline;">' +
+                       '<span>' + labels[k] + '</span>' +
+                       '<span style="font-weight:600;color:#5C5CD6;" id="wiz3-stab-' + k + '-val">' + defaults[k] + '%</span>' +
+                     '</label>' +
+                     '<input type="range" id="wiz3-stab-' + k + '" min="0" max="100" step="5" value="' + defaults[k] + '" style="width:100%;">' +
+                     '<div class="hint" style="font-size:11.5px;color:#888;">' + hints[k] + '</div>' +
+                     '</div>';
+            }).join('') +
+          '</div>';
         const p = await getProfile();
-        const prefs = (st.data.companySizePreferences) || p.companySizePreferences || { startup:25, mid:25, large:25, enterprise:25 };
-        ['startup','mid','large','enterprise'].forEach(k => {
-          const el = body.querySelector('#wiz3-sz-' + k);
-          if (el) { el.value = prefs[k] || 25; body.querySelector('#wiz3-sz-' + k + '-val').textContent = (prefs[k] || 25) + '%'; }
-          if (el) el.addEventListener('input', () => { body.querySelector('#wiz3-sz-' + k + '-val').textContent = el.value + '%'; });
-        });
-      },
-      collect(body) {
-        const out = {};
-        ['startup','mid','large','enterprise'].forEach(k => {
-          const el = body.querySelector('#wiz3-sz-' + k);
-          if (el) out[k] = parseInt(el.value, 10) || 0;
-        });
-        return out;
-      },
-      async save(st, ctx) {
-        const prefs = this.collect(ctx.body);
-        st.data.companySizePreferences = prefs;
-        await patchProfile({ companySizePreferences: prefs });
-      },
-    },
-    {
-      key: "match-weights",
-      title: "How should we score job matches?",
-      subtitle: "Weight title fit, industry fit, and skills fit. Must add to 100.",
-      optional: true,
-      async render(body, st) {
-        body.innerHTML =
-          ['titles','industry','skills'].map(k => {
-            const labels = {titles:"Title fit", industry:"Industry fit", skills:"Skills fit"};
-            const defaults = {titles:50, industry:25, skills:25};
-            return '<label>' + labels[k] + ' <span style="float:right;font-weight:500;color:#5C5CD6;" id="wiz3-w-' + k + '-val">' + defaults[k] + '%</span></label>' +
-                   '<input type="range" id="wiz3-w-' + k + '" min="0" max="100" step="5" value="' + defaults[k] + '" style="width:100%;">';
-          }).join('') +
-          '<div id="wiz3-w-total" style="margin-top:8px;font-size:13px;font-weight:600;text-align:right;">Total: 100%</div>';
-        const p = await getProfile();
+        // Match weights
         const w = (st.data.matchWeights) || p.matchWeights || { titles:50, industry:25, skills:25 };
         ['titles','industry','skills'].forEach(k => {
           const el = body.querySelector('#wiz3-w-' + k);
@@ -3296,45 +3286,7 @@ WIZARD_V3_BLOCK = r"""
           if (el) el.addEventListener('input', () => { body.querySelector('#wiz3-w-' + k + '-val').textContent = el.value + '%'; recomputeTotal(); });
         });
         recomputeTotal();
-      },
-      collect(body) {
-        const out = {};
-        ['titles','industry','skills'].forEach(k => { out[k] = parseInt((body.querySelector('#wiz3-w-' + k) || {}).value || 0, 10); });
-        return out;
-      },
-      validate(st, ctx) {
-        const w = this.collect(ctx.body);
-        const t = w.titles + w.industry + w.skills;
-        if (t !== 100) return "Weights must add to 100. Currently: " + t + ".";
-        return "";
-      },
-      async save(st, ctx) {
-        const w = this.collect(ctx.body);
-        st.data.matchWeights = w;
-        await patchProfile({ matchWeights: w });
-      },
-    },
-    {
-      key: "signal-stability",
-      title: "How reliable is each match signal?",
-      subtitle: "Industries and skills are robust — they capture the substance of a role regardless of title wording. Titles vary wildly between companies for the same job. Adjust how much to trust each signal as evidence.",
-      optional: true,
-      async render(body, st) {
-        body.innerHTML =
-          ['title','industry','skills'].map(k => {
-            const labels = {title:'Title-wording reliability', industry:'Industry reliability', skills:'Skills reliability'};
-            const hints  = {title: 'Low = ignore title wording (different companies title the same role differently)', industry: 'High = job\'s industry must overlap your picks', skills: 'High = job\'s description must contain your skill keywords'};
-            const defaults = {title:40, industry:100, skills:100};
-            return '<div style="margin-bottom:14px;">' +
-                   '<label style="display:flex;justify-content:space-between;align-items:baseline;">' +
-                     '<span>' + labels[k] + '</span>' +
-                     '<span style="font-weight:600;color:#5C5CD6;" id="wiz3-stab-' + k + '-val">' + defaults[k] + '%</span>' +
-                   '</label>' +
-                   '<input type="range" id="wiz3-stab-' + k + '" min="0" max="100" step="5" value="' + defaults[k] + '" style="width:100%;">' +
-                   '<div class="hint" style="font-size:11.5px;color:#888;">' + hints[k] + '</div>' +
-                   '</div>';
-          }).join('');
-        const p = await getProfile();
+        // Stability
         const s = (st.data.signalStability) || p.signalStability || { title: 40, industry: 100, skills: 100 };
         ['title','industry','skills'].forEach(k => {
           const el = body.querySelector('#wiz3-stab-' + k);
@@ -3346,168 +3298,87 @@ WIZARD_V3_BLOCK = r"""
           if (el) el.addEventListener('input', () => { body.querySelector('#wiz3-stab-' + k + '-val').textContent = el.value + '%'; });
         });
       },
-      collect(body) {
-        const out = {};
-        ['title','industry','skills'].forEach(k => { out[k] = parseInt((body.querySelector('#wiz3-stab-' + k) || {}).value || 0, 10); });
-        return out;
+      validate(st, ctx) {
+        const w = {};
+        ['titles','industry','skills'].forEach(k => { w[k] = parseInt((ctx.body.querySelector('#wiz3-w-' + k) || {}).value || 0, 10); });
+        const t = w.titles + w.industry + w.skills;
+        if (t !== 100) return "Priority weights must add to 100. Currently: " + t + ".";
+        return "";
       },
       async save(st, ctx) {
-        const s = this.collect(ctx.body);
-        st.data.signalStability = s;
-        await patchProfile({ signalStability: s });
+        const w = {}; ['titles','industry','skills'].forEach(k => { w[k] = parseInt((ctx.body.querySelector('#wiz3-w-' + k) || {}).value || 0, 10); });
+        const s = {}; ['title','industry','skills'].forEach(k => { s[k] = parseInt((ctx.body.querySelector('#wiz3-stab-' + k) || {}).value || 0, 10); });
+        await patchProfile({ matchWeights: w, signalStability: s });
+        st.data.matchWeights = w; st.data.signalStability = s;
       },
     },
     {
-      key: "daily-target",
-      title: "Daily application target",
-      subtitle: "Pick a number. Your dashboard shows a focus list of that many jobs.",
+      key: "daily-workflow",
+      title: "Daily workflow",
+      subtitle: "How many to apply to each day + how fresh jobs need to be.",
       optional: true,
       render(body, st) {
         body.innerHTML =
-          '<label for="wiz3-target">Applications per day</label>' +
-          '<input type="number" id="wiz3-target" min="1" max="50" value="5" style="max-width:140px;">' +
-          '<div class="hint">5 per day is a healthy default. You can change it later in Preferences.</div>';
+          '<div style="margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid #eee;">' +
+            '<label for="wiz3-target"><strong>Applications per day</strong></label>' +
+            '<input type="number" id="wiz3-target" min="1" max="50" value="5" style="max-width:140px;">' +
+            '<div class="hint">5 per day is a healthy default.</div>' +
+          '</div>' +
+          '<div>' +
+            '<label for="wiz3-recency"><strong>Recency window</strong></label>' +
+            '<select id="wiz3-recency">' +
+              '<option value="3">Last 3 days</option>' +
+              '<option value="7" selected>Last 7 days</option>' +
+              '<option value="14">Last 14 days</option>' +
+              '<option value="30">Last 30 days</option>' +
+            '</select>' +
+            '<div class="hint">Older jobs are usually filled or stale.</div>' +
+          '</div>';
         let cur = 5;
         try { cur = parseInt(localStorage.getItem("gmj_daily_target_" + SLUG) || "5", 10); } catch (e) {}
         if (st.data.dailyTarget) cur = st.data.dailyTarget;
         body.querySelector("#wiz3-target").value = cur;
+        let rec = "7"; try { rec = localStorage.getItem("gmj_recency_window_" + SLUG) || "7"; } catch(e) {}
+        if (st.data.recencyWindow) rec = st.data.recencyWindow;
+        body.querySelector("#wiz3-recency").value = rec;
       },
       async save(st, ctx) {
-        const v = parseInt(ctx.body.querySelector("#wiz3-target").value, 10) || 5;
-        try { localStorage.setItem("gmj_daily_target_" + SLUG, String(v)); } catch (e) {}
-        st.data.dailyTarget = v;
+        const target = parseInt((ctx.body.querySelector("#wiz3-target") || {}).value || 5, 10);
+        const recency = (ctx.body.querySelector("#wiz3-recency") || {}).value || "7";
+        st.data.dailyTarget = target;
+        st.data.recencyWindow = recency;
+        try { localStorage.setItem("gmj_daily_target_" + SLUG, String(target)); } catch (e) {}
+        try { localStorage.setItem("gmj_recency_window_" + SLUG, recency); } catch (e) {}
+        await patchProfile({ dailyTarget: target, recencyWindow: recency });
       },
     },
     {
-      key: "recency-window",
-      title: "How recent should jobs be?",
-      subtitle: "Default sort window. You can override later in Preferences.",
+      key: "addons",
+      title: "Optional add-ons",
+      subtitle: "Each is optional. Set up later from the More menu if you skip now.",
       optional: true,
       render(body, st) {
-        const opts = [
-          {v:"0", label:"<strong>Last 24 hours</strong> — only roles posted today"},
-          {v:"7", label:"<strong>Last 7 days</strong> — freshest listings (recommended)"},
-          {v:"14", label:"<strong>Last 2 weeks</strong> — balance"},
-          {v:"30", label:"<strong>Last 30 days</strong> — widest reasonable pool"},
-          {v:"all", label:"<strong>All jobs</strong> — sort handles freshness"},
-        ];
-        body.innerHTML = '<div class="radio-list">' + opts.map(o => {
-          const cur = (st.data.recencyWindow != null ? String(st.data.recencyWindow) : "7");
-          return '<label><input type="radio" name="wiz3-rec" value="' + o.v + '"' + (cur === o.v ? ' checked' : '') + '> <span>' + o.label + '</span></label>';
-        }).join('') + '</div>';
-      },
-      async save(st, ctx) {
-        const v = (ctx.body.querySelector('input[name=wiz3-rec]:checked') || {}).value || "7";
-        try { localStorage.setItem("gmj_recency_window_" + SLUG, v); } catch (e) {}
-        st.data.recencyWindow = v;
-      },
-    },
-    {
-      key: "install-extension",
-      title: "Install the Helper extension",
-      subtitle: "Cuts apply time from ~10 minutes to ~60 seconds per job.",
-      optional: true,
-      render(body, st) {
-        const installed = (document.documentElement.getAttribute("data-gmj-installed") === "1") || window.__gmj_extension_ready === true;
         body.innerHTML =
-          '<p style="margin-bottom:10px;">Without this, you re-type the same 18 fields on every application. With it: click Apply → 18 of 25 fields auto-fill in ~1 second.</p>' +
-          '<div style="background:#F7F7FB;border-radius:8px;padding:14px;margin-bottom:14px;font-size:13px;">' +
-            '<div style="font-weight:700;margin-bottom:6px;">3-step install (Chrome / Edge / Brave):</div>' +
-            '<ol style="margin:0;padding-left:18px;">' +
-              '<li><a href="/extension.zip" download style="color:#5C5CD6;font-weight:700;">⬇ Download getmemyjob-helper.zip</a> &amp; unzip it.</li>' +
-              '<li>Open <a href="chrome://extensions" target="_blank" style="color:#5C5CD6;font-weight:700;">chrome://extensions</a>, toggle <strong>Developer mode</strong> on (top-right).</li>' +
-              '<li>Click <strong>Load unpacked</strong> and select the unzipped folder.</li>' +
-            '</ol>' +
+          '<div style="margin-bottom:22px;padding-bottom:18px;border-bottom:1px solid #eee;">' +
+            '<h3 style="margin:0 0 6px;font-size:14px;color:#1a1a2e;">1. Browser extension (Chrome/Firefox)</h3>' +
+            '<p style="font-size:12px;color:#666;margin:0 0 10px;">Marks jobs across LinkedIn / Indeed / company sites so you do not double-apply.</p>' +
+            '<a href="extension.zip" class="wiz3-btn wiz3-btn-ghost" download>Download Chrome extension</a> ' +
+            '<a href="extension-firefox.zip" class="wiz3-btn wiz3-btn-ghost" download>Download Firefox extension</a>' +
           '</div>' +
-          '<details style="margin-top:10px;font-size:12.5px;color:#444;">' +
-            '<summary style="cursor:pointer;color:#5C5CD6;font-weight:600;">Using Firefox, Safari, or your phone?</summary>' +
-            '<div style="margin-top:8px;padding:10px;background:#fff;border:1px solid #E5E7EE;border-radius:6px;">' +
-              '<p style="margin:0 0 8px;"><strong>Firefox:</strong> <a href="/extension-firefox.zip" download style="color:#5C5CD6;font-weight:600;">⬇ Firefox build</a>, then open <code>about:debugging</code> → This Firefox → Load Temporary Add-on.</p>' +
-              '<p style="margin:0;"><strong>Safari, iOS, mobile:</strong> drag this to your bookmarks bar: <a href="javascript:void(0);" id="wiz3-bookmarklet" style="display:inline-block;margin-left:6px;padding:4px 10px;background:#5C5CD6;color:#fff;border-radius:4px;text-decoration:none;font-weight:700;">📌 getmemyjob Helper</a></p>' +
-            '</div>' +
-          '</details>' +
-          '<div id="wiz3-ext-status" style="margin-top:14px;padding:10px 14px;border-radius:6px;font-size:13.5px;font-weight:600;' +
-            (installed ? 'background:#ECFDF5;color:#0A6B3A;">✅ Helper detected. You can move on.' : 'background:#F7F7FB;color:#666;">⏳ Checking for the helper…') +
+          '<div style="margin-bottom:22px;padding-bottom:18px;border-bottom:1px solid #eee;">' +
+            '<h3 style="margin:0 0 6px;font-size:14px;color:#1a1a2e;">2. Contact / application profile</h3>' +
+            '<p style="font-size:12px;color:#666;margin:0 0 10px;">Used to pre-fill application materials. Edit later from the Account page.</p>' +
+            '<button type="button" class="wiz3-btn wiz3-btn-ghost" id="wiz3-open-app-profile">Open profile editor</button>' +
           '</div>' +
-          '<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">' +
-            '<button type="button" class="wiz3-btn wiz3-btn-ghost" id="wiz3-ext-reload">↻ Reload &amp; re-check</button>' +
+          '<div>' +
+            '<h3 style="margin:0 0 6px;font-size:14px;color:#1a1a2e;">3. LinkedIn Connections (CSV)</h3>' +
+            '<p style="font-size:12px;color:#666;margin:0 0 10px;">Upload your Connections.csv from LinkedIn to surface warm-intro paths for jobs at companies where you know people.</p>' +
+            '<button type="button" class="wiz3-btn wiz3-btn-ghost" id="wiz3-open-contacts">Open LinkedIn Contacts panel</button>' +
           '</div>';
-        // Real bookmarklet href has to be set programmatically because the JS has braces
-        const bm = body.querySelector("#wiz3-bookmarklet");
-        if (bm) bm.setAttribute("href", "javascript:(function(){var s=document.createElement('script');s.src='https://getmemyjob.officebeatllc.com/bookmarklet.js?t='+Date.now();document.body.appendChild(s);})();");
-        const rl = body.querySelector("#wiz3-ext-reload");
-        if (rl) rl.addEventListener("click", () => {
-          try { localStorage.setItem("gmj_wizard_state_v3_pendingStep", "install-extension"); } catch (e) {}
-          location.reload();
-        });
-        // Live re-check
-        const recheck = () => {
-          const ok = (document.documentElement.getAttribute("data-gmj-installed") === "1") || window.__gmj_extension_ready === true;
-          const el = body.querySelector("#wiz3-ext-status");
-          if (!el) return;
-          if (ok) { el.style.background = "#ECFDF5"; el.style.color = "#0A6B3A"; el.innerHTML = "✅ Helper detected. You can move on."; }
-        };
-        if (window._wiz3ExtPoll) clearInterval(window._wiz3ExtPoll);
-        window._wiz3ExtPoll = setInterval(recheck, 1500);
-        document.addEventListener("gmj-extension-ready", () => { window.__gmj_extension_ready = true; recheck(); }, { once: true });
-        window.addEventListener("focus", recheck);
-      },
-      async save(st, ctx) {
-        // Don't block continue: install is optional. Mark complete if installed.
-        const ok = (document.documentElement.getAttribute("data-gmj-installed") === "1") || window.__gmj_extension_ready === true;
-        st.data.extensionInstalled = !!ok;
-      },
-    },
-    {
-      key: "app-profile",
-      title: "Application profile",
-      subtitle: "Stored once, auto-filled on every Greenhouse / Lever / Ashby / Workday form.",
-      optional: true,
-      async render(body, st) {
-        body.innerHTML =
-          '<label for="wiz3-phone">Phone</label><input type="tel" id="wiz3-phone" placeholder="(555) 123-4567">' +
-          '<label for="wiz3-location">City, State</label><input type="text" id="wiz3-location" placeholder="e.g. Allendale, NJ">' +
-          '<label for="wiz3-linkedin">LinkedIn URL</label><input type="url" id="wiz3-linkedin" placeholder="https://www.linkedin.com/in/your-name">' +
-          '<label for="wiz3-workauth">Work authorization</label>' +
-          '<select id="wiz3-workauth">' +
-            '<option value="US Citizen">US Citizen</option>' +
-            '<option value="Green Card">Green Card / Permanent Resident</option>' +
-            '<option value="H1B Visa">H1B Visa</option>' +
-            '<option value="OPT">OPT / STEM OPT</option>' +
-            '<option value="TN Visa">TN Visa</option>' +
-            '<option value="Other">Other</option>' +
-          '</select>' +
-          '<label for="wiz3-sponsor">Need visa sponsorship now or in the future?</label>' +
-          '<select id="wiz3-sponsor"><option value="No">No</option><option value="Yes">Yes</option></select>';
-        const p = await getProfile();
-        body.querySelector("#wiz3-phone").value    = st.data.phone    || p.phone    || "";
-        body.querySelector("#wiz3-location").value = st.data.location || p.location || "";
-        body.querySelector("#wiz3-linkedin").value = st.data.linkedinUrl || p.linkedinUrl || "";
-        body.querySelector("#wiz3-workauth").value = st.data.workAuthorization || p.workAuthorization || "US Citizen";
-        body.querySelector("#wiz3-sponsor").value  = st.data.requiresSponsorship || p.requiresSponsorship || "No";
-      },
-      async save(st, ctx) {
-        const phone = ctx.body.querySelector("#wiz3-phone").value || "";
-        const location = ctx.body.querySelector("#wiz3-location").value || "";
-        const linkedinUrl = ctx.body.querySelector("#wiz3-linkedin").value || "";
-        const workAuthorization = ctx.body.querySelector("#wiz3-workauth").value || "US Citizen";
-        const requiresSponsorship = ctx.body.querySelector("#wiz3-sponsor").value || "No";
-        Object.assign(st.data, { phone, location, linkedinUrl, workAuthorization, requiresSponsorship });
-        await patchProfile({ phone, location, linkedinUrl, workAuthorization, requiresSponsorship });
-      },
-    },
-    {
-      key: "linkedin-contacts",
-      title: "Add your LinkedIn network (optional)",
-      subtitle: "Upload your LinkedIn Connections.csv to see warm-intro badges on jobs.",
-      optional: true,
-      render(body) {
-        body.innerHTML =
-          '<p>Upload your <code>Connections.csv</code> once and the job feed shows <strong>🤝 N contacts</strong> badges on companies where you have a warm intro.</p>' +
-          '<button type="button" class="wiz3-btn wiz3-btn-ghost" id="wiz3-open-contacts">Open LinkedIn Contacts panel</button>' +
-          '<p style="font-size:12px;color:#888;margin-top:12px;">This is optional. You can do it any time from the dashboard.</p>';
-        const btn = body.querySelector("#wiz3-open-contacts");
-        if (btn) btn.addEventListener("click", () => { try { if (typeof openContactsModal === "function") openContactsModal(); } catch (e) {} });
+        const apBtn = body.querySelector("#wiz3-open-app-profile");
+        if (apBtn) apBtn.addEventListener("click", () => { try { if (typeof window.openAccountModal === "function") window.openAccountModal(); else window.open("/account.html", "_blank"); } catch (e) {} });
+        const lkBtn = body.querySelector("#wiz3-open-contacts");
+        if (lkBtn) lkBtn.addEventListener("click", () => { try { if (typeof openContactsModal === "function") openContactsModal(); } catch (e) {} });
       },
       save() { return Promise.resolve(); },
     },
@@ -3757,7 +3628,7 @@ WIZARD_V3_BLOCK = r"""
           state.currentStep = "pick-titles";
           // Don't blow away completed[] — keep their progress on other steps;
           // they only need to re-confirm the 3 picker steps.
-          state.completed = state.completed.filter(k => k !== "pick-titles" && k !== "pick-industries" && k !== "pick-skills");
+          state.completed = state.completed.filter(k => k !== "your-bullseye");
           saveState(state);
           try { console.log("[wizard migration] over-cap profile detected — opening picker"); } catch(e) {}
         }
