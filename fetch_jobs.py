@@ -3276,7 +3276,7 @@ WIZARD_V3_BLOCK = r"""
               return '<label>' + labels[k] + ' <span style="float:right;font-weight:500;color:#5C5CD6;" id="wiz-mix-' + k + '-val">33%</span></label>' +
                      '<input type="range" id="wiz-mix-' + k + '" min="0" max="100" step="5" value="33" oninput="wizMixOnSlide(\'' + k + '\')" style="width:100%;">';
             }).join('') +
-            '<div id="wiz-mix-total" style="margin-top:8px;font-size:13px;font-weight:600;text-align:right;">Total: 99%</div>' +
+            '<div id="wiz-mix-total" style="margin-top:8px;font-size:13px;font-weight:600;text-align:right;">Total: 100%</div>' +
           '</div>';
         const p = await getProfile();
         // Locations
@@ -9010,12 +9010,21 @@ function _wizMixRebalance(changedKey) {{
   }}
   keys.forEach(function(k) {{
     const slider = document.getElementById("wiz-mix-" + k);
-    const num = document.getElementById("wiz-mix-" + k + "-num");
+    const num    = document.getElementById("wiz-mix-" + k + "-num");
+    const valLbl = document.getElementById("wiz-mix-" + k + "-val");
     if (slider) slider.value = vals[k];
-    if (num) num.value = vals[k];
+    if (num)    num.value    = vals[k];
+    if (valLbl) valLbl.textContent = vals[k] + "%";
   }});
-  const sumEl = document.getElementById("wiz-mix-sum-val");
-  if (sumEl) sumEl.textContent = vals.startup + vals.midsize + vals.large;
+  const total = vals.startup + vals.midsize + vals.large;
+  const sumEl   = document.getElementById("wiz-mix-sum-val");      // legacy id, may not exist
+  const totalEl = document.getElementById("wiz-mix-total");        // current id used in primary UI
+  if (sumEl)   sumEl.textContent   = total;
+  if (totalEl) {{
+    totalEl.textContent = "Total: " + total + "%";
+    // Visual cue: red if !=100, normal otherwise
+    totalEl.style.color = (total === 100) ? "" : "#B91C1C";
+  }}
 }}
 function wizMixOnSlide(key) {{ _wizMixRebalance(key); }}
 function wizMixOnNum(key) {{
