@@ -3342,6 +3342,10 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         LIMIT 20000
     """).fetchall()
 
+    # Snapshot for the "why hidden?" debug tool — we'll diff against the
+    # final kept rows after all filters + dedup + top-1000 cutoff run.
+    _original_rows = list(rows)
+
     # PER-USER RE-SCORING (2026-05-26): score_job runs at scrape time with
     # SKILLS_PROFILE=None, so all the per-user title/keyword/stage logic in
     # score_job is dead during the scrape. To make per-user scoring actually
@@ -3585,6 +3589,99 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
 
     rows = rows[:1000]
 
+    # ============================================================
+    # WHY-HIDDEN TOOL — classify each dropped row with a reason code
+    # so the dashboard's debug widget can answer "why isn't X in my feed?"
+    # ============================================================
+    _kept_fps = {r[0] for r in rows}
+    _hidden_classified = []
+    _SENIOR_GUARD_KW = {"vp","svp","evp","chief","cio","cto","cdo","coo","cfo","cro","cpo","ceo",
+                        "principal","director","head","managing","executive","president","partner","lead","leader"}
+    def _classify_hidden(r):
+        title = (r[2] or "")
+        title_l = title.lower()
+        # 1) Hard blocklists
+        if _is_irrelevant_title(title): return ("irrelevant_title", "")
+        try:
+            if _is_never_relevant(title): return ("never_relevant", "")
+        except Exception: pass
+        # 2) Role family mismatch (only if profile loaded)
+        try:
+            if SKILLS_PROFILE and _is_role_family_mismatch(title, SKILLS_PROFILE): return ("role_family_mismatch", "")
+        except Exception: pass
+        # 3) Negative keyword hit (word-boundary + senior-context aware, matches scorer)
+        if SKILLS_PROFILE:
+            neg = SKILLS_PROFILE.get("negativeKeywords") or []
+            if neg:
+                import re as _r2
+                title_tokens = set(_r2.findall(r"\b[a-z]+\b", title_l))
+                title_has_senior = bool(_SENIOR_GUARD_KW & title_tokens)
+                if not title_has_senior:
+                    for n in neg:
+                        if not n: continue
+                        n_tokens = set(_r2.findall(r"\b[a-z]+\b", n.lower()))
+                        if n_tokens and n_tokens.issubset(title_tokens):
+                            return ("negative_keyword", n)
+        # 4) Salary floor
+        salary_str = r[13]
+        try:
+            if SKILLS_PROFILE and not _passes_salary_filter(salary_str, _parse_salary_max(salary_str), SKILLS_PROFILE):
+                return ("salary_floor", "")
+        except Exception: pass
+        # 5) Company size preference
+        try:
+            sz = _company_size((r[1] or "").strip().lower())
+            if SKILLS_PROFILE and sz and 'size_prefs' in dir() and sz not in size_prefs:
+                return ("company_size", sz)
+        except Exception: pass
+        # 6) Industry mismatch (only if not waived by target-company override)
+        job_inds = (r[15] or "").split(",") if r[15] else []
+        if SKILLS_PROFILE:
+            user_inds = (SKILLS_PROFILE.get("industries", []) or []) + (SKILLS_PROFILE.get("specialties", []) or [])
+            tc_names = {(tc.get("name") if isinstance(tc, dict) else tc or "").strip().lower()
+                        for tc in (SKILLS_PROFILE.get("targetCompanies") or [])
+                        if (tc.get("name") if isinstance(tc, dict) else tc)}
+            co = (r[1] or "").strip().lower()
+            if user_inds and job_inds:
+                try:
+                    if not _industry_match(job_inds, user_inds) and (r[10] != 1 or co not in tc_names):
+                        return ("industry_mismatch", "")
+                except Exception: pass
+        # 7) Location / remote preference
+        try:
+            user_locs = (SKILLS_PROFILE.get("preferredLocations") or []) if SKILLS_PROFILE else []
+            rp = (SKILLS_PROFILE.get("remotePreference") or "any") if SKILLS_PROFILE else "any"
+            if (user_locs or rp not in ("any", None, "")) and not _location_remote_ok(r, user_locs, rp):
+                return ("location", rp)
+        except Exception: pass
+        # 8) Ghost (too old)
+        try:
+            posted_at, first_seen = r[5], r[6]
+            ld = _days_old(posted_at) if posted_at else (_days_old(first_seen) if first_seen else 0)
+            if ld is not None and ld > GHOST_DAYS:
+                return ("ghost", str(ld) + "d")
+        except Exception: pass
+        # 9) Default — passed all visible filters but got truncated/deduped
+        return ("dedup_or_truncated", "")
+
+    # Cap at first 2000 hidden rows by score (most "should have been seen") for HTML size
+    _candidates = [r for r in _original_rows if r[0] not in _kept_fps]
+    _candidates.sort(key=lambda r: -(int(r[11] or 0)))
+    for r in _candidates[:2000]:
+        reason, detail = _classify_hidden(r)
+        _hidden_classified.append({
+            "fp": r[0],
+            "company": (r[1] or ""),
+            "title": (r[2] or ""),
+            "location": (r[3] or ""),
+            "score": r[11] or 0,
+            "reason": reason,
+            "detail": detail,
+        })
+
+    hidden_jobs_json = json.dumps(_hidden_classified, separators=(",", ":"))
+    print(f"[why-hidden:{user_slug}] classified {len(_hidden_classified)} hidden jobs (of {len(_original_rows) - len(rows)} total dropped)", flush=True)
+
     # Stats
     total = conn.execute("SELECT COUNT(*) FROM jobs").fetchone()[0]
     senior_remote = conn.execute(
@@ -3750,6 +3847,7 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         user_name=_esc(user_name),
         subtitle=_esc(subtitle),
         has_profile_js=("true" if SKILLS_PROFILE else "false"),
+        hidden_jobs_json=hidden_jobs_json,
     )
     # Some embedded emoji in HTML_TEMPLATE are stored as UTF-16 surrogate
     # pair literals (\ud83c\udfaf etc). Merge them into proper codepoints
@@ -4122,6 +4220,7 @@ HTML_TEMPLATE = """<!doctype html>
       <div class="header-more-menu" role="menu">
         <button id="regen-btn" onclick="regenerateFromHeader(this)" title="Re-run the AI matcher to refresh target companies + skills. Takes 30-60 seconds.">Re-match my profile (slower)</button>
         <button id="regen-companies-btn" onclick="regenerateCompaniesFromHeader(this)" title="Ask AI to rebuild your 15 target companies based on your 5/5/25 bullseye. Shows a diff before saving.">Refresh target companies</button>
+        <button id="why-hidden-btn" onclick="showWhyHiddenModal()" title="Search jobs that exist in our scrape but are hidden from your feed. See the exact filter that's killing each one.">Why isn't [X] in my feed?</button>
         <button id="resume-btn" onclick="openResumeModal()">Resume</button>
         <button id="contacts-btn" onclick="openContactsModal()">LinkedIn Contacts</button>
         <button id="prefs-btn" onclick="replayTour()" title="Re-open the setup wizard">Preferences</button>
@@ -7988,6 +8087,109 @@ function _showCompaniesDiffModal(proposed, diff, headers, btn, origText) {{
   }});
   // Backdrop click closes
   m.addEventListener("click", e => {{ if (e.target === m) {{ m.remove(); btn.textContent = origText; btn.disabled = false; }} }});
+}}
+
+
+// ==============================================================
+// "Why isn't [X] in my feed?" debug tool
+// _hiddenJobs is a JSON blob emitted by fetch_jobs.py at build time:
+// up to 2000 dropped rows, each tagged with reason+detail.
+// ==============================================================
+const _HIDDEN_REASON_LABELS = {{
+  irrelevant_title: 'Title is in the global blocklist (junior / IC / sales-rep / etc.)',
+  never_relevant: 'Universal hard-exclude (back-office, IC engineers, pre-sales)',
+  role_family_mismatch: 'Role family doesn\'t match your primary-role family',
+  negative_keyword: 'Blocked by your "things to never show me" list (word: %d)',
+  salary_floor: 'Salary missing or below your floor',
+  company_size: 'Company size %d is excluded by your size-mix preference',
+  industry_mismatch: 'Industry doesn\'t overlap with your 5 picks, and company isn\'t on your targetCompanies allowlist',
+  location: 'Location/remote preference mismatch (your pref: %d)',
+  ghost: 'Job is stale (listed for %d) — possible ghost listing',
+  dedup_or_truncated: 'Survived filters but truncated by the 1000-card display cap or multi-location dedup',
+}};
+
+function _hiddenReasonText(r) {{
+  let t = _HIDDEN_REASON_LABELS[r.reason] || ('Unknown: ' + r.reason);
+  return t.replace('%d', r.detail || '');
+}}
+
+function _hiddenReasonColor(reason) {{
+  return {{
+    negative_keyword: '#B91C1C',
+    salary_floor: '#9A3412',
+    industry_mismatch: '#7C2D12',
+    role_family_mismatch: '#7C2D12',
+    location: '#6B21A8',
+    company_size: '#6B21A8',
+    irrelevant_title: '#374151',
+    never_relevant: '#374151',
+    ghost: '#888',
+    dedup_or_truncated: '#0EA5E9',
+  }}[reason] || '#666';
+}}
+
+function showWhyHiddenModal() {{
+  let m = document.getElementById('why-hidden-modal');
+  if (m) m.remove();
+  m = document.createElement('div');
+  m.id = 'why-hidden-modal';
+  m.style.cssText = 'position:fixed;inset:0;background:rgba(20,22,40,0.55);z-index:2147483600;display:flex;align-items:center;justify-content:center;padding:24px;font-family:Inter,system-ui,sans-serif;';
+  m.innerHTML = ''
+    + '<div style="background:white;border-radius:12px;max-width:820px;width:100%;max-height:84vh;display:flex;flex-direction:column;box-shadow:0 20px 50px rgba(0,0,0,0.3);">'
+    + '  <div style="padding:18px 22px;border-bottom:1px solid #e6e8eb;display:flex;justify-content:space-between;align-items:center;">'
+    + '    <h2 style="margin:0;font-size:18px;color:#1a1a2e;">Why isn\'t [company or title] in my feed?</h2>'
+    + '    <button onclick="document.getElementById(\'why-hidden-modal\').remove()" style="background:none;border:none;cursor:pointer;font-size:22px;color:#888;">×</button>'
+    + '  </div>'
+    + '  <div style="padding:14px 22px;border-bottom:1px solid #f0f1f5;">'
+    + '    <input type="text" id="why-hidden-input" placeholder="Type a company name or job title (e.g. AuditBoard, VP)" style="width:100%;padding:9px 12px;font-size:14px;border:1px solid #d0d4dc;border-radius:6px;">'
+    + '    <div style="font-size:12px;color:#888;margin-top:6px;">' + (_hiddenJobs ? _hiddenJobs.length : 0) + ' hidden jobs indexed (top 2000 by score). Searches name + title.</div>'
+    + '  </div>'
+    + '  <div id="why-hidden-results" style="padding:8px 22px 18px;overflow-y:auto;flex:1;">'
+    + '    <div style="color:#888;font-size:13px;font-style:italic;padding:10px 0;">Type a company or title above to see what\'s hidden and why.</div>'
+    + '  </div>'
+    + '</div>';
+  document.body.appendChild(m);
+  const inp = document.getElementById('why-hidden-input');
+  const out = document.getElementById('why-hidden-results');
+  const renderResults = (q) => {{
+    const ql = (q || '').toLowerCase().trim();
+    if (!ql) {{
+      out.innerHTML = '<div style="color:#888;font-size:13px;font-style:italic;padding:10px 0;">Type a company or title above to see what\'s hidden and why.</div>';
+      return;
+    }}
+    if (!_hiddenJobs || !_hiddenJobs.length) {{
+      out.innerHTML = '<div style="color:#B91C1C;font-size:13px;">No hidden-jobs data on this page (dashboard built before this feature shipped). Wait for next refresh-jobs run.</div>';
+      return;
+    }}
+    const matches = _hiddenJobs.filter(j => (j.company || '').toLowerCase().includes(ql) || (j.title || '').toLowerCase().includes(ql)).slice(0, 50);
+    if (!matches.length) {{
+      out.innerHTML = '<div style="color:#888;font-size:13px;padding:10px 0;">No hidden jobs match <strong>' + escHtml(q) + '</strong>. Either: (a) no such company in our scrape, (b) all their jobs are visible to you (check the grid).</div>';
+      return;
+    }}
+    // Group by reason for summary at top
+    const byReason = {{}};
+    matches.forEach(j => {{ byReason[j.reason] = (byReason[j.reason] || 0) + 1; }});
+    const summaryChips = Object.entries(byReason).sort((a,b)=>b[1]-a[1]).map(([reason, n]) => {{
+      const color = _hiddenReasonColor(reason);
+      return '<span style="display:inline-block;padding:2px 8px;background:' + color + '22;color:' + color + ';border:1px solid ' + color + '44;border-radius:10px;font-size:11px;margin:2px;">' + reason.replace(/_/g, ' ') + ': ' + n + '</span>';
+    }}).join('');
+    out.innerHTML = ''
+      + '<div style="font-size:12.5px;color:#555;margin:6px 0 12px;"><strong>' + matches.length + '</strong> hidden job' + (matches.length === 1 ? '' : 's') + ' matching <strong>' + escHtml(q) + '</strong>. Breakdown: ' + summaryChips + '</div>'
+      + '<div style="border-top:1px solid #f0f1f5;">' + matches.map(j => {{
+        const c = _hiddenReasonColor(j.reason);
+        return ''
+          + '<div style="padding:9px 0;border-bottom:1px solid #f0f1f5;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">'
+          + '  <div style="flex:1;min-width:0;">'
+          + '    <div style="font-size:13px;font-weight:600;color:#1a1a2e;">' + escHtml(j.title) + '</div>'
+          + '    <div style="font-size:12px;color:#666;margin-top:2px;">' + escHtml(j.company) + (j.location ? ' • ' + escHtml(j.location) : '') + ' • base score ' + j.score + '</div>'
+          + '    <div style="font-size:12px;color:' + c + ';margin-top:4px;">→ ' + _hiddenReasonText(j) + '</div>'
+          + '  </div>'
+          + '</div>';
+      }}).join('') + '</div>';
+  }};
+  inp.addEventListener('input', () => renderResults(inp.value));
+  inp.focus();
+  m.addEventListener('click', e => {{ if (e.target === m) m.remove(); }});
 }}
 
 
