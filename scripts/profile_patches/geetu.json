@@ -1,5 +1,5 @@
 {
-  "_note": "One-off seniority + domain fix. Patches scalar fields directly and REPLACES array fields. Run via .github/workflows/patch-profiles.yml.",
+  "_note": "Bullseye fix v2: 5 titles / 5 industries / 25 skills. Patches scalar fields directly and REPLACES array fields. Note: technologies and frameworks are emptied so the scorer's 25-skill cap is enforced via keywords alone. targetCompanies intentionally NOT touched (object-array schema not patchable via this endpoint).",
   "patchFields": {
     "seniorityLevel": "vp",
     "careerStage": "executive",
@@ -7,35 +7,9 @@
     "targetTitles": [
       "vp of product management",
       "vp of digital transformation",
-      "vp of healthcare technology",
-      "vp of engineering and product",
-      "vp of technology",
-      "vp of platform and product",
-      "vp of program management",
-      "vp of saas product management",
-      "vp of product strategy",
-      "vp of digital health",
-      "senior director of digital solutions",
-      "senior director of product strategy",
-      "senior director, product",
-      "senior director, digital health",
-      "senior director, product management",
-      "director of product portfolio",
       "director of product management",
-      "director of digital health",
-      "director of digital transformation",
-      "director, product",
       "head of digital health",
-      "head of product strategy",
-      "head of innovation",
-      "head of digital operations",
-      "head of product",
-      "group product manager",
-      "senior group product manager",
-      "principal product manager",
-      "senior principal, digital transformation",
-      "principal, digital health",
-      "principal product manager, healthcare"
+      "group product manager"
     ],
     "seniorityTitles": [
       "vp",
@@ -44,18 +18,52 @@
       "senior principal",
       "senior director",
       "director",
-      "group product manager",
-      "senior group product manager"
+      "group product manager"
     ],
     "industries": [
       "healthcare technology",
       "digital health",
       "pharmaceuticals",
-      "laboratory diagnostics",
       "specialty ehr",
-      "health it",
-      "life sciences",
-      "direct-to-consumer health"
-    ]
+      "health it"
+    ],
+    "specialties": [
+      "digital transformation",
+      "product portfolio management",
+      "saas product strategy",
+      "go-to-market strategy",
+      "ehr product management",
+      "patient engagement systems",
+      "demand management"
+    ],
+    "keywords": [
+      "digital transformation",
+      "product portfolio",
+      "saas",
+      "agile",
+      "ehr",
+      "healthcare it",
+      "go-to-market",
+      "product roadmap",
+      "revenue growth",
+      "change management",
+      "ai adoption",
+      "devops",
+      "operating model",
+      "program governance",
+      "stakeholder alignment",
+      "legacy modernization",
+      "cloud infrastructure",
+      "recurring revenue",
+      "patient engagement",
+      "hipaa",
+      "hitrust",
+      "21 cfr part 11",
+      "direct-to-consumer",
+      "product launch",
+      "pmo"
+    ],
+    "technologies": [],
+    "frameworks": []
   }
 }
