@@ -285,7 +285,7 @@
 
 <header>
   <h1>Jobs for Radhika KAlra</h1>
-  <div class="sub" title="Awaiting resume upload — click Resume to get started · Generated 2026-05-27 13:01">Awaiting resume upload — click Resume to get started · Generated 2026-05-27 13:01</div>
+  <div class="sub" title="Awaiting resume upload — click Resume to get started · Generated 2026-05-27 13:13">Awaiting resume upload — click Resume to get started · Generated 2026-05-27 13:13</div>
   <div class="header-actions">
     <button id="refresh-btn" class="header-btn" onclick="refreshData()" title="Pull fresh job listings from all sources. Takes 2-3 minutes.">⟳ Find new jobs</button>
     <div class="header-more-wrap">
@@ -310,9 +310,9 @@
 </header>
 
 <div class="stats">
-  <div class="stat"><b>20211</b>Total jobs tracked</div>
+  <div class="stat"><b>20229</b>Total jobs tracked</div>
   <div class="stat"><b>446</b>Senior + Remote (last 7d)</div>
-  <div class="stat"><b>2405</b>Possible ghost jobs (60d+)</div>
+  <div class="stat"><b>2406</b>Possible ghost jobs (60d+)</div>
   <div class="stat"><b id="shown-counter">0</b>Showing</div>
   <div class="stat goal-stat" id="goal-stat">
     <b><span id="goal-today-count">0</span>/<span id="goal-today-target">5</span></b>
@@ -1580,7 +1580,7 @@ async function showWarmIntroModal(fp, connections) {
       + '<div style="margin-bottom:18px;">'
       + '  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">'
       + '    <div style="font-size:12px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.4px;">LinkedIn DM</div>'
-      + '    <button onclick="navigator.clipboard.writeText(' + JSON.stringify(dm) + '); this.textContent='Copied'; setTimeout(()=>this.textContent='Copy',1500);" style="padding:4px 10px;font-size:11px;background:#5C5CD6;color:white;border:none;border-radius:4px;cursor:pointer;">Copy</button>'
+      + '    <button class="copy-text-btn copy-btn-primary" data-copy-payload="' + escHtml(dm).replace(/"/g, '&quot;') + '" style="padding:4px 10px;font-size:11px;background:#5C5CD6;color:white;border:none;border-radius:4px;cursor:pointer;">Copy</button>'
       + '  </div>'
       + '  <div style="padding:10px 12px;background:#f8f9fb;border:1px solid #e6e8eb;border-radius:6px;font-size:13px;color:#1a1a2e;white-space:pre-wrap;line-height:1.5;">' + dmEsc + '</div>'
       + '</div>'
@@ -1588,9 +1588,9 @@ async function showWarmIntroModal(fp, connections) {
       + '  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">'
       + '    <div style="font-size:12px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.4px;">Email</div>'
       + '    <div style="display:flex;gap:6px;">'
-      + '      <button onclick="navigator.clipboard.writeText(' + JSON.stringify("Subject: " + subj + "
+      + '      <button class="copy-text-btn" data-copy-payload="' + escHtml("Subject: " + subj + "
 
-" + body) + '); this.textContent='Copied'; setTimeout(()=>this.textContent='Copy',1500);" style="padding:4px 10px;font-size:11px;background:white;color:#5C5CD6;border:1px solid #5C5CD6;border-radius:4px;cursor:pointer;">Copy</button>'
+" + body).replace(/"/g, '&quot;') + '" style="padding:4px 10px;font-size:11px;background:white;color:#5C5CD6;border:1px solid #5C5CD6;border-radius:4px;cursor:pointer;">Copy</button>'
       + '      <a href="' + mailtoUrl + '" style="padding:4px 10px;font-size:11px;background:#5C5CD6;color:white;border:none;border-radius:4px;cursor:pointer;text-decoration:none;">Open in mail app</a>'
       + '    </div>'
       + '  </div>'
@@ -1800,11 +1800,29 @@ function _resortByAiScore() {
 (function setupModalCloseDelegate() {
   document.addEventListener('click', function(e) {
     var btn = e.target;
-    if (!btn || !btn.classList || !btn.classList.contains('modal-close-btn')) return;
-    var modalId = btn.getAttribute('data-modal-id');
-    if (modalId) {
-      var modal = document.getElementById(modalId);
-      if (modal) modal.remove();
+    if (!btn || !btn.classList) return;
+    // Modal close buttons
+    if (btn.classList.contains('modal-close-btn')) {
+      var modalId = btn.getAttribute('data-modal-id');
+      if (modalId) {
+        var modal = document.getElementById(modalId);
+        if (modal) modal.remove();
+      }
+      return;
+    }
+    // Copy-to-clipboard buttons
+    if (btn.classList.contains('copy-text-btn')) {
+      var raw = btn.getAttribute('data-copy-payload') || '';
+      // The data-attr value was HTML-escaped; decode common entities
+      var txt = raw.replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&#39;/g, "'");
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(txt).then(function() {
+          var orig = btn.textContent;
+          btn.textContent = 'Copied';
+          setTimeout(function() { btn.textContent = orig || 'Copy'; }, 1500);
+        });
+      }
+      return;
     }
   }, false);
 })();
