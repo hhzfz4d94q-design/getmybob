@@ -93,15 +93,16 @@ check("after JSON roundtrip, matchWeights subtree is intact",
 
 
 # ----------------------------------------------------------------------
-# (b) match-weights validation: must sum to 100
+# (b) scoring-tune step: title/industry/skills weights must sum to 100
+#     (post-consolidation, match-weights lives inside 'scoring-tune')
 # ----------------------------------------------------------------------
-print("\nmatch-weights step:")
+print("\nscoring-tune step (consolidates match-weights + signal-stability):")
 mw_block_re = re.compile(
-    r'key:\s*"match-weights"(.*?)(?=\}\s*,\s*\{\s*key:|\}\s*,?\s*\];?\s*//\s*end of STEPS|\Z)',
+    r'key:\s*"scoring-tune"(.*?)(?=\}\s*,\s*\{\s*key:|\}\s*,?\s*\];?\s*//\s*end of STEPS|\Z)',
     re.DOTALL)
 mw = mw_block_re.search(V3)
-check("'match-weights' step is defined", mw is not None,
-      "the step has been removed from the STEPS array")
+check("'scoring-tune' step is defined", mw is not None,
+      "the consolidated scoring step has been removed from the STEPS array")
 if mw:
     mw_block = mw.group(1)
     check("step keys 'titles', 'industry', 'skills' present in render",
@@ -113,8 +114,8 @@ if mw:
     check("validate() returns an error message mentioning '100'",
           re.search(r'return\s+"[^"]*100[^"]*"', mw_block) is not None,
           "error message no longer mentions the 100 target, hurting user understanding")
-    check("save() calls patchProfile({ matchWeights: w })",
-          "patchProfile({ matchWeights: w })" in mw_block,
+    check("save() calls patchProfile with matchWeights",
+          "matchWeights" in mw_block and "patchProfile" in mw_block,
           "saved weights are no longer persisted to the user profile")
     # Functional simulation of the validate logic in Python — proves the rule is sound
     def simulate_validate(titles, industry, skills):
@@ -132,25 +133,25 @@ if mw:
 
 # ----------------------------------------------------------------------
 # (c) Step inventory + isComplete-style invariants
+#     Wizard consolidated from 12 → 9 steps; see project_first_login_wizard
 # ----------------------------------------------------------------------
-print("\nStep inventory (12 expected):")
+print("\nStep inventory (9 expected after consolidation):")
 
 # Pull ordered step keys out of STEPS array (top-level only, not nested wiz3-* references)
 step_keys = re.findall(r'\{\s*key:\s*"([a-z\-]+)",\s*\n\s+title:', V3)
 expected_steps = [
-    "welcome", "upload-resume", "review-profile", "locations-remote",
-    "company-sizes", "match-weights", "daily-target", "recency-window",
-    "install-extension", "app-profile", "linkedin-contacts", "done",
+    "welcome", "upload-resume", "your-bullseye", "where-you-work",
+    "scoring-tune", "daily-workflow", "addons", "pick-blocks", "done",
 ]
-check(f"exactly 12 steps declared (found {len(step_keys)})",
-      len(step_keys) == 12,
+check(f"exactly 9 steps declared (found {len(step_keys)})",
+      len(step_keys) == 9,
       f"step list drift: got {step_keys}")
-check("step order matches the documented contract",
+check("step order matches the consolidated 9-step contract",
       step_keys == expected_steps,
       f"order/membership diff: expected {expected_steps}, got {step_keys}")
 
 print("\nStep optionality:")
-# Find which steps have 'optional: true' in the 6 lines after their key declaration.
+# Find which steps have 'optional: true' in the 8 lines after their key declaration.
 lines = V3.split("\n")
 key_line_re = re.compile(r'^\s*key:\s*"([a-z\-]+)",\s*$')
 key_lines = [(i, key_line_re.match(ln).group(1)) for i, ln in enumerate(lines) if key_line_re.match(ln)]
@@ -159,14 +160,17 @@ for i, key in key_lines:
     window = "\n".join(lines[i:i + 8])
     optional_map[key] = "optional: true" in window
 
-# Per the parked-state spec: 'done' is the terminus and not optional. Every other
-# step is optional (user can skip via the Skip button) but the wizard considers
-# itself complete only when 'done' has been reached.
-check("'done' is the only non-optional step",
-      [k for k, v in optional_map.items() if not v] == ["done"],
-      f"optional flags drifted: non-optional = {[k for k, v in optional_map.items() if not v]}")
-check("first 11 steps are all marked optional",
-      all(optional_map[k] for k in step_keys[:11]),
+# Required steps after consolidation:
+#   - 'your-bullseye' (titles/industries/skills/companies — the CORE matcher inputs)
+#   - 'done' (terminus)
+# Every other step is optional.
+required_steps = {"your-bullseye", "done"}
+actual_required = {k for k, v in optional_map.items() if not v}
+check("required steps are exactly {'your-bullseye', 'done'}",
+      actual_required == required_steps,
+      f"optionality drift: required={sorted(actual_required)} expected={sorted(required_steps)}")
+check("all non-required steps are explicitly marked optional",
+      all(optional_map[k] for k in step_keys if k not in required_steps),
       "a previously-optional step became required — users hitting Skip will get blocked")
 
 print("\nIsComplete / finished invariant:")
