@@ -4401,19 +4401,30 @@ HTML_TEMPLATE = """<!doctype html>
   /* "More" dropdown menu in header */
   .header-more-wrap {{ position: relative; display: inline-block; }}
   .header-more-menu {{
-    display: none; position: absolute; right: 0; top: calc(100% + 6px);
-    min-width: 230px; background: white; border: 1px solid #ddd; border-radius: 8px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.18); z-index: 1000; overflow: hidden;
+    display: none; position: absolute; right: 0; top: calc(100% + 8px);
+    min-width: 260px; background: white; border: 1px solid #E5E5F0; border-radius: 12px;
+    box-shadow: 0 16px 40px rgba(11,8,40,0.14), 0 4px 12px rgba(11,8,40,0.06);
+    z-index: 1000; overflow: hidden; padding: 6px 0;
+    animation: hmFade .14s ease-out;
   }}
+  @keyframes hmFade {{ from {{ opacity:0; transform:translateY(-4px); }} to {{ opacity:1; transform:none; }} }}
   .header-more-wrap.open .header-more-menu {{ display: flex; flex-direction: column; }}
-  .header-more-menu a, .header-more-menu button {{
-    padding: 11px 14px; color: #333 !important; background: transparent; border: none;
-    text-align: left; font-size: 13.5px; font-weight: 500; cursor: pointer;
-    text-decoration: none; border-bottom: 1px solid #f0f0f0; font-family: inherit;
-    width: 100%; display: block;
+  .header-more-menu .hm-group {{
+    padding: 8px 14px 4px; font-size: 10.5px; font-weight: 700; color: #8A86A6;
+    text-transform: uppercase; letter-spacing: .08em;
   }}
-  .header-more-menu a:last-child, .header-more-menu button:last-child {{ border-bottom: none; }}
-  .header-more-menu a:hover, .header-more-menu button:hover {{ background: #f5f5f7; }}
+  .header-more-menu .hm-group:not(:first-child) {{
+    border-top: 1px solid #F0F0F7; margin-top: 4px; padding-top: 10px;
+  }}
+  .header-more-menu .hm-hint {{ color: #8A86A6; font-weight: 400; font-size: 11.5px; margin-left: 2px; }}
+  .header-more-menu a, .header-more-menu button {{
+    padding: 9px 14px; color: #0B0828 !important; background: transparent; border: none;
+    text-align: left; font-size: 13.5px; font-weight: 500; cursor: pointer;
+    text-decoration: none; font-family: inherit;
+    width: 100%; display: block; transition: background .12s;
+  }}
+  .header-more-menu a:hover, .header-more-menu button:hover {{ background: #F6F6FB; }}
+  .header-more-menu a:active, .header-more-menu button:active {{ background: #EEEEF8; }}
   .stats {{ display: flex; gap: 24px; padding: 14px 28px; background: white; border-bottom: 1px solid #e5e5ea; }}
   .stat {{ font-size: 13px; }}
   .goal-stat {{ background: linear-gradient(135deg, #f8f4ff 0%, #eef0ff 100%) !important; }}
@@ -4661,22 +4672,25 @@ HTML_TEMPLATE = """<!doctype html>
   <div class="sub" title="{subtitle} · Generated {generated}">{subtitle} · Generated {generated}</div>
   <div class="header-actions">
     <button id="refresh-btn" class="header-btn" onclick="refreshData()" title="Pull fresh job listings from all sources. Takes 2-3 minutes.">⟳ Find new jobs</button>
+    <button id="prefs-btn" class="header-btn" onclick="replayTour()" title="Re-open the setup wizard to update your bullseye, locations, scoring, etc.">⚙ Preferences</button>
     <div class="header-more-wrap">
       <button id="account-btn" class="header-btn" onclick="toggleHeaderMore(this)" aria-haspopup="true" aria-expanded="false">Account ⌄</button>
       <div class="header-more-menu" role="menu">
-        <a href="/account.html">Change password</a>
+        <a href="/account.html">Application profile</a>
+        <a href="/account.html#changePwForm">Change password</a>
         <button id="signout-btn" onclick="signOutDashboard(this)">Sign out</button>
       </div>
     </div>
     <div class="header-more-wrap">
       <button class="header-btn" onclick="toggleHeaderMore(this)" aria-haspopup="true" aria-expanded="false">More ⋯</button>
       <div class="header-more-menu" role="menu">
-        <button id="regen-btn" onclick="regenerateFromHeader(this)" title="Re-run the AI matcher to refresh target companies + skills. Takes 30-60 seconds.">Re-match my profile (slower)</button>
-        <button id="regen-companies-btn" onclick="regenerateCompaniesFromHeader(this)" title="Ask AI to rebuild your 15 target companies based on your 5/5/25 bullseye. Shows a diff before saving.">Refresh target companies</button>
-        <button id="why-hidden-btn" onclick="showWhyHiddenModal()" title="Search jobs that exist in our scrape but are hidden from your feed. See the exact filter that's killing each one.">Why isn't [X] in my feed?</button>
-        <button id="resume-btn" onclick="openResumeModal()">Resume</button>
-        <button id="contacts-btn" onclick="openContactsModal()">LinkedIn Contacts</button>
-        <button id="prefs-btn" onclick="replayTour()" title="Re-open the setup wizard">Preferences</button>
+        <div class="hm-group">Matcher</div>
+        <button id="regen-btn" onclick="regenerateFromHeader(this)" title="Re-run the AI matcher to refresh target companies + skills. Takes 30-60 seconds.">↻ Re-match my profile <span class="hm-hint">(slower)</span></button>
+        <button id="regen-companies-btn" onclick="regenerateCompaniesFromHeader(this)" title="Ask AI to rebuild your 15 target companies based on your 5/5/15 bullseye. Shows a diff before saving.">⊕ Refresh target companies</button>
+        <button id="why-hidden-btn" onclick="showWhyHiddenModal()" title="Search jobs that exist in our scrape but are hidden from your feed. See the exact filter that's killing each one.">⌕ Why isn&rsquo;t [X] in my feed?</button>
+        <div class="hm-group">Personal</div>
+        <button id="resume-btn" onclick="openResumeModal()">📄 Resume</button>
+        <button id="contacts-btn" onclick="openContactsModal()">⚭ LinkedIn Contacts</button>
       </div>
     </div>
   </div>
