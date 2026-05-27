@@ -1,20 +1,18 @@
 name: Live dashboard E2E test
 
-# Runs the full end-to-end test suite after every refresh-jobs deploy.
-# Tests every user-facing behavior: page load, function definitions,
-# header button visibility, modal open/close, wizard step navigation,
-# card rendering, scroll behavior. Any regression = CI red.
-
 on:
   workflow_dispatch:
     inputs:
       users:
-        description: "Comma-separated user slugs (default: amit-arora,geetu)"
+        description: "Comma-separated user slugs"
         required: false
         default: 'amit-arora,geetu'
   workflow_run:
     workflows: ["Refresh jobs and deploy dashboard"]
     types: [completed]
+
+permissions:
+  contents: write
 
 jobs:
   e2e:
@@ -27,7 +25,19 @@ jobs:
           node-version: "22"
       - name: Install puppeteer
         run: npm install puppeteer --no-save
-      - name: Run full E2E suite
+      - name: Run E2E suite
         env:
           SITE: https://getmemyjob.officebeatllc.com
+          E2E_RESULTS_DIR: reports
         run: node scripts/e2e_test.js "${{ github.event.inputs.users || 'amit-arora,geetu' }}"
+        continue-on-error: false
+      - name: Commit results JSON (always — even on failure)
+        if: always()
+        run: |
+          git config user.email "actions-bot@getmemyjob.local"
+          git config user.name "E2E-test workflow"
+          git add reports/e2e_*.json 2>/dev/null || true
+          if git diff --staged --quiet; then echo "no results to commit"; else
+            git commit -m "auto: e2e test results"
+            git push || true
+          fi

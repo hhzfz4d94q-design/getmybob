@@ -86,6 +86,17 @@ async function testUser(browser, slug) {
   // Wait for bootstrap
   await new Promise(r => setTimeout(r, 2000));
 
+  // Pre-empt the auto-launched wizard so it doesn't intercept clicks
+  await page.evaluate(() => {
+    try {
+      if (typeof WizV3 === 'object' && WizV3.close) WizV3.close();
+      // Also mark finished so it doesn't re-open during test
+      const k = 'gmj_wizard_state_v3';
+      localStorage.setItem(k, JSON.stringify({ currentStep: 'done', completed: [], skipped: [], data: {}, finished: true }));
+    } catch (e) {}
+  });
+  await new Promise(r => setTimeout(r, 300));
+
   // ── 2. Zero console errors ──
   record(slug, 'zero console errors',
     consoleErrors.length === 0,
@@ -266,6 +277,18 @@ async function testUser(browser, slug) {
     await testUser(browser, u);
   }
   await browser.close();
+
+  // Write results to a JSON file (committed by CI on success or failure)
+  const fs = require('fs');
+  try {
+    const path = require('path');
+    const outDir = process.env.E2E_RESULTS_DIR || 'reports';
+    fs.mkdirSync(outDir, { recursive: true });
+    const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const outFile = path.join(outDir, `e2e_${stamp}.json`);
+    fs.writeFileSync(outFile, JSON.stringify({ ts: new Date().toISOString(), site: SITE, users: USERS, results }, null, 2));
+    console.log(`\n📝 Results written to ${outFile}`);
+  } catch (e) { console.warn('couldn\'t write results file:', e.message); }
 
   // Summary
   console.log(`\n━━━ SUMMARY ━━━`);
