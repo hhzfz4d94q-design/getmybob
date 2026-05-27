@@ -2204,38 +2204,40 @@ def _merge_user_target_companies(companies):
                 added["workday"] += 1
                 continue
 
-            if hint == "wttj":
-                wttj_key = target_slug
-                existing.setdefault("wttj", set())
-                if wttj_key in existing["wttj"]:
-                    continue
-                companies.setdefault("wttj", []).append({
-                    "slug": wttj_key,
-                    "name": name,
-                    "industries": user_industries or DEFAULT_INDUSTRIES,
-                    "_added_by_user": slug,
-                })
-                existing["wttj"].add(wttj_key)
-                added.setdefault("wttj", 0)
-                added["wttj"] += 1
-                continue
-            if hint not in ("greenhouse", "lever", "ashby"):
+            # Multi-ATS fallback (2026-05-27): the AI's atsHint is unreliable —
+            # it defaults to "greenhouse" for ~half the suggestions even when
+            # the company actually uses Lever/Ashby/WTTJ/Workable. So for any
+            # slug-based hint (or "unknown"), we add the target_slug to ALL
+            # four slug-based pools (greenhouse, lever, ashby, wttj). Each
+            # scraper either returns jobs or silently 404s. Whichever wins
+            # gives us coverage; we pay ~3 extra HTTP requests per company.
+            # This is also how WTTJ gets activated for the first time — it
+            # was coded but had 0 companies configured.
+            SLUG_POOLS = ("greenhouse", "lever", "ashby", "wttj")
+            if hint not in SLUG_POOLS and hint != "unknown":
                 skipped += 1
                 continue
-            if target_slug in existing[hint]:
-                continue
 
-            companies.setdefault(hint, []).append({
-                "slug": target_slug,
-                "industries": user_industries or DEFAULT_INDUSTRIES,
-                "_added_by_user": slug,  # debugging breadcrumb
-            })
-            existing[hint].add(target_slug)
-            added[hint] += 1
+            for pool in SLUG_POOLS:
+                existing.setdefault(pool, set())
+                if target_slug in existing[pool]:
+                    continue
+                entry = {
+                    "slug": target_slug,
+                    "industries": user_industries or DEFAULT_INDUSTRIES,
+                    "_added_by_user": slug,
+                    "_ai_hint": hint,  # debugging breadcrumb
+                }
+                if pool == "wttj":
+                    entry["name"] = name
+                companies.setdefault(pool, []).append(entry)
+                existing[pool].add(target_slug)
+                added.setdefault(pool, 0)
+                added[pool] += 1
 
     total = sum(added.values())
     if total:
-        print(f"[user-targets] merged {total} per-user companies (greenhouse={added['greenhouse']}, lever={added['lever']}, ashby={added['ashby']}); skipped {skipped} non-routable", flush=True)
+        print(f"[user-targets] merged {total} per-user companies (greenhouse={added.get('greenhouse',0)}, lever={added.get('lever',0)}, ashby={added.get('ashby',0)}, wttj={added.get('wttj',0)}, workday={added.get('workday',0)}); skipped {skipped} non-routable", flush=True)
     else:
         print(f"[user-targets] no targetCompanies in any user profile yet (Worker prompt may not be updated)", flush=True)
 
