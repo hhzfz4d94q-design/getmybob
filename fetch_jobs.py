@@ -2923,13 +2923,28 @@ WIZARD_V3_BLOCK = r"""
   }
   async function patchProfile(patchFields) {
     const ek = getEditKey();
-    if (!ek) throw new Error("Missing edit key");
+    const adminKey = (function(){ try { return localStorage.getItem("htj_admin_key") || ""; } catch(e){ return ""; } })();
+    if (!ek && !adminKey) throw new Error("Not signed in to this browser");
+    const headers = { "Content-Type": "application/json" };
+    if (ek) headers["X-Edit-Key"] = ek; else headers["X-Admin-Key"] = adminKey;
     const r = await fetch(WORKER + "/skills-profile?user=" + encodeURIComponent(SLUG), {
       method: "POST",
-      headers: { "Content-Type": "application/json", "X-Edit-Key": ek },
+      headers: headers,
       body: JSON.stringify({ patchFields }),
     });
-    if (!r.ok) throw new Error("HTTP " + r.status);
+    if (!r.ok) {
+      // If edit key was sent and rejected, retry with admin key (if we have one)
+      if (r.status === 401 && ek && adminKey) {
+        const r2 = await fetch(WORKER + "/skills-profile?user=" + encodeURIComponent(SLUG), {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "X-Admin-Key": adminKey },
+          body: JSON.stringify({ patchFields }),
+        });
+        if (r2.ok) return r2.json();
+        throw new Error(r2.status === 401 ? "Session expired — please re-authenticate at /account.html" : "HTTP " + r2.status);
+      }
+      throw new Error(r.status === 401 ? "Session expired — please re-authenticate at /account.html" : "HTTP " + r.status);
+    }
     return r.json();
   }
   function escHtml(s) {
@@ -3119,18 +3134,36 @@ WIZARD_V3_BLOCK = r"""
         askBtn.addEventListener("click", async () => {
           askBtn.disabled = true; askBtn.textContent = "Asking AI...";
           const ek = getEditKey();
-          if (!ek) {
+          const adminKey = (function(){ try { return localStorage.getItem("htj_admin_key") || ""; } catch(e){ return ""; } })();
+          if (!ek && !adminKey) {
             out.innerHTML = '<div style="padding:10px 12px;background:#fef3c7;border:1px solid #fcd34d;border-radius:6px;font-size:12.5px;color:#78350f;">⚠ You\'re not signed in to this browser. Open <a href="/account.html" style="color:#5C5CD6;font-weight:600;">your account page</a> to paste your invite key, then come back. Skipping this step keeps your current 20 target companies.</div>';
             askBtn.disabled = false; askBtn.textContent = "Show me what AI would suggest"; return;
           }
+          const authHdr = ek ? { "X-Edit-Key": ek } : { "X-Admin-Key": adminKey };
           try {
-            const r = await fetch(WORKER_BASE + "/regenerate-companies" + USER_QS, {
+            let r = await fetch(WORKER_BASE + "/regenerate-companies" + USER_QS, {
               method: "POST",
-              headers: { "Content-Type": "application/json", "X-Edit-Key": ek },
+              headers: Object.assign({ "Content-Type": "application/json" }, authHdr),
               body: JSON.stringify({ dry_run: true })
             });
+            // 401 with edit key? retry with admin key if available
+            if (r.status === 401 && ek && adminKey) {
+              r = await fetch(WORKER_BASE + "/regenerate-companies" + USER_QS, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "X-Admin-Key": adminKey },
+                body: JSON.stringify({ dry_run: true })
+              });
+            }
             const data = await r.json();
-            if (!r.ok) { out.innerHTML = '<em style="color:#B91C1C;">Failed: ' + (data.error || r.status) + '</em>'; askBtn.disabled = false; askBtn.textContent = "Try again"; return; }
+            if (!r.ok) {
+              if (r.status === 401) {
+                out.innerHTML = '<div style="padding:10px 12px;background:#fef3c7;border:1px solid #fcd34d;border-radius:6px;font-size:12.5px;color:#78350f;">⚠ Your session expired. Open <a href="/account.html" style="color:#5C5CD6;font-weight:600;">your account page</a> to re-enter your invite key, then come back. <strong>You can skip this section</strong> and your current target companies will be kept.</div>';
+              } else {
+                out.innerHTML = '<em style="color:#B91C1C;">Failed: ' + (data.error || r.status) + '</em>';
+              }
+              askBtn.disabled = false; askBtn.textContent = "Try again";
+              return;
+            }
             const removing = (data.diff && data.diff.removing) || [];
             const adding = (data.diff && data.diff.adding) || [];
             const keeping = (data.diff && data.diff.keeping) || [];
@@ -3150,13 +3183,23 @@ WIZARD_V3_BLOCK = r"""
             confirmBtn.addEventListener("click", async () => {
               confirmBtn.disabled = true; confirmBtn.textContent = "Saving...";
               try {
-                const r2 = await fetch(WORKER_BASE + "/regenerate-companies" + USER_QS, {
+                let r2 = await fetch(WORKER_BASE + "/regenerate-companies" + USER_QS, {
                   method: "POST",
-                  headers: { "Content-Type": "application/json", "X-Edit-Key": ek },
+                  headers: Object.assign({ "Content-Type": "application/json" }, authHdr),
                   body: JSON.stringify({ dry_run: false })
                 });
+                if (r2.status === 401 && ek && adminKey) {
+                  r2 = await fetch(WORKER_BASE + "/regenerate-companies" + USER_QS, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", "X-Admin-Key": adminKey },
+                    body: JSON.stringify({ dry_run: false })
+                  });
+                }
                 const d2 = await r2.json();
-                if (!r2.ok) { confirmBtn.textContent = "Failed: " + (d2.error || r2.status); confirmBtn.disabled = false; return; }
+                if (!r2.ok) {
+                  confirmBtn.textContent = r2.status === 401 ? "Session expired — see /account.html" : ("Failed: " + (d2.error || r2.status));
+                  confirmBtn.disabled = false; return;
+                }
                 confirmBtn.textContent = "✓ Saved " + ((d2.profile && d2.profile.targetCompanies || []).length) + " companies";
                 st.data.companies_saved = true;
               } catch (e) { confirmBtn.textContent = "Network error"; }
@@ -3526,7 +3569,19 @@ WIZARD_V3_BLOCK = r"""
       if (!state.completed.includes(s.key)) state.completed.push(s.key);
       state.skipped = state.skipped.filter(k => k !== s.key);
     } catch (e) {
-      setMsg(body, "err", "Couldn't save: " + (e && e.message ? e.message : e));
+      const msg = e && e.message ? e.message : String(e);
+      if (/session expired|HTTP 401|Not signed in/i.test(msg)) {
+        setMsg(body, "err", "Session expired. Open your account page to re-enter your invite key. Your picks are kept here until you do.");
+        // Add a quick link
+        try {
+          let el = body.querySelector(".wiz3-msg");
+          if (el) {
+            el.innerHTML = 'Session expired. <a href="/account.html" target="_blank" style="color:#5C5CD6;font-weight:600;">Open account page</a> to re-enter your invite key. Your picks stay until you do.';
+          }
+        } catch(_) {}
+      } else {
+        setMsg(body, "err", "Couldn't save: " + msg);
+      }
       cont.disabled = false; cont.textContent = "Continue →";
       return;
     }
