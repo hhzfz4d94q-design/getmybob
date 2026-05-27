@@ -285,7 +285,7 @@
 
 <header>
   <h1>Jobs for Ishika Arora</h1>
-  <div class="sub" title="Awaiting resume upload — click Resume to get started · Generated 2026-05-27 02:57">Awaiting resume upload — click Resume to get started · Generated 2026-05-27 02:57</div>
+  <div class="sub" title="Awaiting resume upload — click Resume to get started · Generated 2026-05-27 03:07">Awaiting resume upload — click Resume to get started · Generated 2026-05-27 03:07</div>
   <div class="header-actions">
     <button id="refresh-btn" class="header-btn" onclick="refreshData()" title="Pull fresh job listings from all sources. Takes 2-3 minutes.">⟳ Find new jobs</button>
     <div class="header-more-wrap">
@@ -308,8 +308,8 @@
   </div>
 </header>
 <div class="stats">
-  <div class="stat"><b>19817</b>Total jobs tracked</div>
-  <div class="stat"><b>442</b>Senior + Remote (last 7d)</div>
+  <div class="stat"><b>19958</b>Total jobs tracked</div>
+  <div class="stat"><b>446</b>Senior + Remote (last 7d)</div>
   <div class="stat"><b>2401</b>Possible ghost jobs (60d+)</div>
   <div class="stat"><b id="shown-counter">0</b>Showing</div>
   <div class="stat goal-stat" id="goal-stat">
@@ -4986,7 +4986,7 @@ function wizWtPrefill() {
     <section id="wiz3-main" style="position:relative;">
       <button id="wiz3-close" type="button" aria-label="Close wizard">&times;</button>
       <header id="wiz3-head">
-        <div class="wiz3-step-no" id="wiz3-step-no">Step 1 of 14</div>
+        <div class="wiz3-step-no" id="wiz3-step-no">Step 1 of 15</div>
         <h2 id="wiz3-h2">Welcome</h2>
         <p class="wiz3-sub" id="wiz3-sub"></p>
       </header>
@@ -5232,26 +5232,89 @@ function wizWtPrefill() {
     },
     {
       key: "pick-skills",
-      title: "Pick up to 25 skills",
+      title: "Pick up to 15 skills",
       subtitle: "Distinct, signal-dense terms. Skip generic words like \"leadership\" or \"team player\".",
       async render(body) {
         const p = await getProfile();
         // Combine keywords + technologies + frameworks — they all feed the same scoring axis
         const merged = [].concat(p.keywords || [], p.technologies || [], p.frameworks || []);
         renderBullseye(body, {
-          max: 25,
+          max: 15,
           current: merged,
           placeholder: "e.g. digital transformation",
-          hint: "These boost a job's score when found in its title or description. Tech names, methodologies, outcome areas — specific over generic.",
+          hint: "These boost a job's score when found in its title or description. 15 strong, distinct signals beat 25 mixed ones.",
         });
       },
       async save(st, ctx) {
         const items = (ctx.body.__bullseyeValues || (() => []))();
-        if (items.length > 25) { setMsg(ctx.body, "err", "Pick at most 25 skills — currently " + items.length); throw new Error("over cap"); }
+        if (items.length > 15) { setMsg(ctx.body, "err", "Pick at most 15 skills — currently " + items.length); throw new Error("over cap"); }
         // Skills go entirely into keywords; technologies/frameworks emptied so cap is enforced
         await patchProfile({ keywords: items, technologies: [], frameworks: [] });
         st.data.skills = items;
       },
+    },
+    {
+      key: "pick-companies",
+      title: "Refresh your target companies",
+      subtitle: "AI will re-derive 20 companies from your 5/5/15 bullseye, not your raw resume. Review the diff, then save.",
+      optional: true,
+      async render(body, st) {
+        body.innerHTML = ''
+          + '<p style="font-size:13px;color:#555;margin-bottom:14px;">Your current target list was built from your resume\'s broader history. Now that you\'ve trimmed to a tight bullseye, the AI can suggest companies that match what you actually want.</p>'
+          + '<button type="button" id="pick-co-ask" class="wiz3-btn wiz3-btn-ghost">Show me what AI would suggest</button>'
+          + '<div id="pick-co-result" style="margin-top:14px;"></div>'
+          + '<p style="font-size:12px;color:#888;margin-top:14px;">Optional — skip to keep your current 25 target companies.</p>';
+        const askBtn = body.querySelector("#pick-co-ask");
+        const out = body.querySelector("#pick-co-result");
+        askBtn.addEventListener("click", async () => {
+          askBtn.disabled = true; askBtn.textContent = "Asking AI…";
+          const ek = getEditKey();
+          if (!ek) { out.innerHTML = '<em style="color:#B91C1C;">No edit key — can\'t reach the AI.</em>'; askBtn.disabled = false; askBtn.textContent = "Show me what AI would suggest"; return; }
+          try {
+            const r = await fetch(WORKER_BASE + "/regenerate-companies" + USER_QS, {
+              method: "POST",
+              headers: { "Content-Type": "application/json", "X-Edit-Key": ek },
+              body: JSON.stringify({ dry_run: true })
+            });
+            const data = await r.json();
+            if (!r.ok) { out.innerHTML = '<em style="color:#B91C1C;">Failed: ' + (data.error || r.status) + '</em>'; askBtn.disabled = false; askBtn.textContent = "Try again"; return; }
+            const removing = (data.diff && data.diff.removing) || [];
+            const adding = (data.diff && data.diff.adding) || [];
+            const keeping = (data.diff && data.diff.keeping) || [];
+            const chip = (label, color, bg, border) => '<span style="display:inline-block;padding:3px 9px;background:' + bg + ';color:' + color + ';border:1px solid ' + border + ';border-radius:12px;font-size:12px;margin:2px;">' + label + '</span>';
+            const remHtml = removing.map(c => chip((c && c.name ? c.name : c) + " ✕", "#B91C1C", "#FEF2F2", "#fecaca")).join('') || '<em style="font-size:12px;color:#888;">(nothing)</em>';
+            const addHtml = adding.map(c => chip(c.name + " +", "#0a6b3a", "#ECFDF5", "#a7f3d0")).join('') || '<em style="font-size:12px;color:#888;">(nothing)</em>';
+            const keepHtml = keeping.map(c => chip(c.name, "#3F3F46", "#F4F4F5", "#e4e4e7")).join('') || '<em style="font-size:12px;color:#888;">(no overlap)</em>';
+            out.innerHTML = ''
+              + '<div style="font-size:13px;color:#555;margin-bottom:10px;"><strong>' + data.diff.summary + '</strong></div>'
+              + '<div style="margin-bottom:10px;"><div style="font-size:12px;font-weight:600;color:#B91C1C;margin-bottom:4px;">Removing (' + removing.length + ')</div><div style="line-height:1.7;">' + remHtml + '</div></div>'
+              + '<div style="margin-bottom:10px;"><div style="font-size:12px;font-weight:600;color:#0a6b3a;margin-bottom:4px;">Adding (' + adding.length + ')</div><div style="line-height:1.7;">' + addHtml + '</div></div>'
+              + '<div style="margin-bottom:14px;"><div style="font-size:12px;font-weight:600;color:#3F3F46;margin-bottom:4px;">Keeping (' + keeping.length + ')</div><div style="line-height:1.7;">' + keepHtml + '</div></div>'
+              + '<button type="button" id="pick-co-confirm" class="wiz3-btn wiz3-btn-primary" style="background:#5C5CD6;color:white;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;">Save these ' + ((data.proposed || []).length) + ' companies</button>';
+            askBtn.textContent = "Re-ask AI";
+            askBtn.disabled = false;
+            // Hand the proposed array to the confirm button
+            const confirmBtn = out.querySelector("#pick-co-confirm");
+            confirmBtn.addEventListener("click", async () => {
+              confirmBtn.disabled = true; confirmBtn.textContent = "Saving…";
+              try {
+                const r2 = await fetch(WORKER_BASE + "/regenerate-companies" + USER_QS, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json", "X-Edit-Key": ek },
+                  body: JSON.stringify({ dry_run: false })
+                });
+                const d2 = await r2.json();
+                if (!r2.ok) { confirmBtn.textContent = "Failed: " + (d2.error || r2.status); confirmBtn.disabled = false; return; }
+                confirmBtn.textContent = "✓ Saved " + ((d2.profile && d2.profile.targetCompanies || []).length) + " companies";
+                st.data.companies_saved = true;
+              } catch (e) {
+                confirmBtn.textContent = "Network error";
+              }
+            });
+          } catch (e) { out.innerHTML = '<em style="color:#B91C1C;">' + (e.message || e) + '</em>'; askBtn.disabled = false; askBtn.textContent = "Try again"; }
+        });
+      },
+      save() { return Promise.resolve(); }
     },
     {
       key: "locations-remote",
@@ -5733,7 +5796,7 @@ function wizWtPrefill() {
         const skills = ((p && p.keywords) || []).length
                      + ((p && p.technologies) || []).length
                      + ((p && p.frameworks) || []).length;
-        if (titles > 5 || inds > 5 || skills > 25) {
+        if (titles > 5 || inds > 5 || skills > 15) {
           needsMigration = true;
           state.finished = false;
           state.currentStep = "pick-titles";
