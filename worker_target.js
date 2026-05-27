@@ -74,6 +74,7 @@ export default {
     if (url.pathname === '/parse-resume') return handleParseResume(request, env, cors, slug);
     if (url.pathname === '/skills-profile') return handleSkillsProfile(request, env, cors, slug);
     if (url.pathname === '/regenerate-profile') return handleRegenerateProfile(request, env, cors, slug);
+    if (url.pathname === '/regenerate-companies') return handleRegenerateCompanies(request, env, cors, slug);
     if (url.pathname === '/rerank-titles') return handleRerankTitles(request, env, cors, slug);
     if (url.pathname === '/prep') return handlePrep(request, env, cors, slug);
     if (url.pathname === '/tracker') return handleTracker(request, env, cors, slug);
@@ -83,7 +84,7 @@ export default {
     if (url.pathname === '/admin/digest-trigger') return handleDigestTrigger(request, env, cors);
     if (url.pathname === '/notes') return handleNotes(request, env, cors, slug);
     return new Response(
-      'Endpoints: /api/auth/{signup,login,logout,me,change-password}, /prep, /resume, /resume-versions, /parse-resume, /skills-profile, /regenerate-profile, /rerank-titles, /tracker, /draft-followup, /interview-prep, /generate-digest, /refresh, /admin/users, /notes.',
+      'Endpoints: /api/auth/{signup,login,logout,me,change-password}, /prep, /resume, /resume-versions, /parse-resume, /skills-profile, /regenerate-profile, /regenerate-companies, /rerank-titles, /tracker, /draft-followup, /interview-prep, /generate-digest, /refresh, /admin/users, /notes.',
       { status: 404, headers: cors }
     );
   },
@@ -772,6 +773,140 @@ async function handleRegenerateProfile(request, env, cors, slug) {
   const profile = await regenerateSkillsProfile(env, slug);
   if (!profile) return Response.json({ error: 'Regeneration failed (Anthropic API error or JSON parse failure)' }, { status: 502, headers: cors });
   return Response.json({ status: 'regenerated', profile }, { headers: cors });
+}
+
+// --- /regenerate-companies ---------------------------------------------
+// Decoupled from the resume — uses ONLY the user's bullseye (5 titles /
+// 5 industries / 25 skills / sizeMix) to suggest 20 companies. Pure
+// instruction-based prompt, no hardcoded company lists.
+//
+// Modes:
+//   POST  body {dry_run: true}  → returns {proposed, diff} but does NOT save
+//   POST  body {dry_run: false} → saves to profile.targetCompanies and returns it
+// Auth: admin key OR per-user edit key (same as /regenerate-profile).
+async function handleRegenerateCompanies(request, env, cors, slug) {
+  if (request.method !== 'POST') return new Response('POST only', { status: 405, headers: cors });
+  if (!env.ANTHROPIC_API_KEY) return Response.json({ error: 'Missing ANTHROPIC_API_KEY secret' }, { status: 500, headers: cors });
+  if (!env.RESUMES) return Response.json({ error: 'RESUMES KV binding missing' }, { status: 500, headers: cors });
+  const adminKey = request.headers.get('X-Admin-Key') || '';
+  const isAdmin = env.ADMIN_KEY && adminKey === env.ADMIN_KEY;
+  if (!isAdmin && !(await checkEditKey(request, env, slug))) {
+    return Response.json({ error: 'Invalid X-Edit-Key (or use X-Admin-Key)' }, { status: 401, headers: cors });
+  }
+
+  let body = {};
+  try { body = await request.json(); } catch (e) { body = {}; }
+  const dryRun = body.dry_run !== false;  // default: dry-run
+
+  const raw = await env.RESUMES.get(uk(slug, 'skills_profile'));
+  if (!raw) return Response.json({ error: 'No profile stored for ' + slug }, { status: 404, headers: cors });
+  let profile;
+  try { profile = JSON.parse(raw); } catch (e) { return Response.json({ error: 'Profile JSON invalid' }, { status: 500, headers: cors }); }
+
+  const titles = profile.targetTitles || [];
+  const industries = profile.industries || [];
+  const keywords = profile.keywords || [];
+  if (titles.length === 0 || industries.length === 0) {
+    return Response.json({ error: 'Bullseye incomplete — need targetTitles and industries set first (run the wizard)' }, { status: 400, headers: cors });
+  }
+
+  const seniority = profile.seniorityLevel || 'senior';
+  const careerStage = profile.careerStage || 'senior';
+  const sizeMix = profile.companySizeMix || { startup: 33, midsize: 33, large: 34 };
+  const negKw = profile.negativeKeywords || [];
+  const summary = (profile.summary || '').slice(0, 400);
+
+  const prompt = `You are recommending real, currently-hiring companies for a job-seeker. Use ONLY their bullseye below — do not draw on any other source. Return a JSON array of 20 companies.
+
+CANDIDATE BULLSEYE:
+- Target titles (max 5): ${JSON.stringify(titles)}
+- Target industries (max 5): ${JSON.stringify(industries)}
+- Skills/keywords: ${JSON.stringify(keywords.slice(0, 25))}
+- Seniority level: ${seniority}
+- Career stage: ${careerStage}
+- Size mix preference: startup ${sizeMix.startup}% / midsize ${sizeMix.midsize}% / large ${sizeMix.large}%
+- Negative keywords (avoid roles containing these as standalone words): ${JSON.stringify(negKw)}
+- Background summary: ${summary}
+
+SELECTION RULES:
+1. Each company must currently hire for at least one of the candidate's target titles at the right seniority. If unsure, skip — quality over quantity.
+2. Each company must be in or directly adjacent to one of the 5 industries.
+3. Respect the size mix: across the 20 suggestions, roughly that proportion of startups (under 500 employees / Series A-D), midsize (500-10k employees / Series E+ or PE-backed), and large (10k+ employees / Fortune 500). If any size is 0%, exclude that bucket entirely.
+4. Prefer companies known to use scrape-able ATSes: Greenhouse, Lever, Ashby, or Workday. Set atsHint accordingly.
+5. For workday entries, include atsUrl as the full public Workday careers URL if you know it (e.g. https://moodys.wd5.myworkdayjobs.com/Careers). If unsure of the exact URL, set atsHint="unknown".
+6. Mix it up: don't list 20 of the same archetype. For a banking-tech candidate, include super-regional banks AND fintech infrastructure AND GRC SaaS AND consulting firms — not 20 banks. For a healthtech candidate, include EHR vendors AND payer tech AND DTC health AND clinical platforms.
+7. AVOID giant Fortune 100 firms for senior+ candidates unless their niche genuinely demands them. Prefer mid-market and scale-up firms where the candidate would have outsized impact.
+8. AVOID companies that have been acquired into bigger entities, are in known hiring freezes, or have well-publicized layoff cycles in the last 12 months.
+9. Each suggestion must be a real, current company name (not a generic "any consulting firm" placeholder).
+
+Return shape (no prose, no markdown, just the JSON array):
+[{"name":"string","atsHint":"greenhouse|lever|ashby|workday|unknown","atsUrl":"optional full url","why":"one-sentence reason this fits the bullseye"}, ...]`;
+
+  let claudeResp;
+  try {
+    claudeResp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-5-20250929',
+        max_tokens: 4096,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+  } catch (e) {
+    return Response.json({ error: 'Anthropic call failed: ' + String(e) }, { status: 502, headers: cors });
+  }
+  if (!claudeResp.ok) {
+    const errText = await claudeResp.text().catch(()=> '');
+    return Response.json({ error: 'Anthropic returned ' + claudeResp.status, detail: errText.slice(0, 300) }, { status: 502, headers: cors });
+  }
+  const claudeData = await claudeResp.json();
+  const text = ((claudeData.content && claudeData.content[0] && claudeData.content[0].text) || '').trim();
+  let proposed;
+  try {
+    proposed = JSON.parse(text);
+  } catch (e) {
+    const m = text.match(/\[[\s\S]*\]/);
+    if (m) { try { proposed = JSON.parse(m[0]); } catch (ee) { proposed = null; } }
+  }
+  if (!Array.isArray(proposed)) {
+    return Response.json({ error: 'Claude returned non-array', raw: text.slice(0, 400) }, { status: 502, headers: cors });
+  }
+  // Normalize each entry
+  proposed = proposed.filter(x => x && x.name).map(x => ({
+    name: String(x.name).trim(),
+    atsHint: (String(x.atsHint || 'unknown').toLowerCase()),
+    atsUrl: x.atsUrl ? String(x.atsUrl) : undefined,
+    why: x.why ? String(x.why) : '',
+  }));
+
+  // Build diff vs existing
+  const existing = Array.isArray(profile.targetCompanies) ? profile.targetCompanies : [];
+  const existingNames = new Set(existing.map(c => (c && c.name ? c.name : String(c)).toLowerCase().trim()));
+  const proposedNames = new Set(proposed.map(c => c.name.toLowerCase().trim()));
+  const removing = existing.filter(c => !proposedNames.has((c && c.name ? c.name : String(c)).toLowerCase().trim()));
+  const adding = proposed.filter(c => !existingNames.has(c.name.toLowerCase().trim()));
+  const keeping = proposed.filter(c => existingNames.has(c.name.toLowerCase().trim()));
+
+  if (dryRun) {
+    return Response.json({
+      status: 'preview',
+      dry_run: true,
+      proposed,
+      diff: { removing, adding, keeping, summary: `Will remove ${removing.length}, add ${adding.length}, keep ${keeping.length}` }
+    }, { headers: cors });
+  }
+
+  // Commit: replace targetCompanies
+  profile.targetCompanies = proposed;
+  profile.editedAt = new Date().toISOString();
+  await env.RESUMES.put(uk(slug, 'skills_profile'), JSON.stringify(profile));
+  return Response.json({
+    status: 'saved',
+    dry_run: false,
+    profile,
+    diff: { removing, adding, keeping, summary: `Removed ${removing.length}, added ${adding.length}, kept ${keeping.length}` }
+  }, { headers: cors });
 }
 
 // --- users:list helpers -------------------------------------------------

@@ -4001,6 +4001,7 @@ HTML_TEMPLATE = """<!doctype html>
       <button class="header-btn" onclick="toggleHeaderMore(this)" aria-haspopup="true" aria-expanded="false">More ⋯</button>
       <div class="header-more-menu" role="menu">
         <button id="regen-btn" onclick="regenerateFromHeader(this)" title="Re-run the AI matcher to refresh target companies + skills. Takes 30-60 seconds.">Re-match my profile (slower)</button>
+        <button id="regen-companies-btn" onclick="regenerateCompaniesFromHeader(this)" title="Ask AI to rebuild your 15 target companies based on your 5/5/25 bullseye. Shows a diff before saving.">Refresh target companies</button>
         <button id="resume-btn" onclick="openResumeModal()">Resume</button>
         <button id="contacts-btn" onclick="openContactsModal()">LinkedIn Contacts</button>
         <button id="prefs-btn" onclick="replayTour()" title="Re-open the setup wizard">Preferences</button>
@@ -7761,6 +7762,112 @@ async function regenerateFromHeader(btn) {{
   wizBanner("Regen failed: " + lastErr);
   btn.textContent = orig;
   btn.disabled = false;
+}}
+
+
+// ==============================================================
+// Header "Refresh target companies" — bullseye-driven regen with
+// a diff preview modal. Calls /regenerate-companies (dry_run first),
+// shows what'll change, user confirms, then commits + triggers refresh.
+// ==============================================================
+async function regenerateCompaniesFromHeader(btn) {{
+  const orig = btn.textContent;
+  const editKey = (typeof getEditKey === "function")
+    ? getEditKey()
+    : (localStorage.getItem("htj_resume_key_" + USER_SLUG) || localStorage.getItem("htj_resume_key"));
+  const adminKey = localStorage.getItem("htj_admin_key");
+  if (!editKey && !adminKey) {{
+    wizBanner("Can't refresh — no auth in this browser. Re-open your invite link with ?key=….");
+    return;
+  }}
+  const headers = editKey ? {{ "X-Edit-Key": editKey }} : {{ "X-Admin-Key": adminKey }};
+
+  btn.disabled = true;
+  btn.textContent = "Asking AI…";
+  try {{
+    const r = await fetch(WORKER_BASE + "/regenerate-companies" + USER_QS, {{
+      method: "POST",
+      headers: Object.assign({{ "Content-Type": "application/json" }}, headers),
+      body: JSON.stringify({{ dry_run: true }})
+    }});
+    const data = await r.json();
+    if (!r.ok) {{
+      wizBanner("Regen failed: " + (data.error || ("HTTP " + r.status)));
+      btn.textContent = orig; btn.disabled = false; return;
+    }}
+    _showCompaniesDiffModal(data.proposed, data.diff, headers, btn, orig);
+  }} catch (e) {{
+    wizBanner("Network error: " + (e.message || e));
+    btn.textContent = orig; btn.disabled = false;
+  }}
+}}
+
+function _showCompaniesDiffModal(proposed, diff, headers, btn, origText) {{
+  // Build/replace modal
+  let m = document.getElementById("companies-diff-modal");
+  if (m) m.remove();
+  m = document.createElement("div");
+  m.id = "companies-diff-modal";
+  m.style.cssText = "position:fixed;inset:0;background:rgba(20,22,40,0.55);z-index:2147483600;display:flex;align-items:center;justify-content:center;padding:24px;font-family:Inter,system-ui,sans-serif;";
+
+  const chip = (label, color, bg, border) =>
+    '<span style="display:inline-block;padding:3px 9px;background:' + bg + ';color:' + color + ';border:1px solid ' + border + ';border-radius:12px;font-size:12px;margin:2px;">' + label + '</span>';
+
+  const removingHtml = (diff.removing || []).map(c => chip((c && c.name ? c.name : c) + " ✕", "#B91C1C", "#FEF2F2", "#fecaca")).join('') || '<em style="color:#888;font-size:12px;">(nothing being removed)</em>';
+  const addingHtml = (diff.adding || []).map(c => chip(c.name + " +", "#0a6b3a", "#ECFDF5", "#a7f3d0")).join('') || '<em style="color:#888;font-size:12px;">(nothing new being added)</em>';
+  const keepingHtml = (diff.keeping || []).map(c => chip(c.name, "#3F3F46", "#F4F4F5", "#e4e4e7")).join('') || '<em style="color:#888;font-size:12px;">(no overlap with existing)</em>';
+
+  m.innerHTML = ''
+    + '<div style="background:white;border-radius:12px;max-width:780px;width:100%;max-height:80vh;display:flex;flex-direction:column;box-shadow:0 20px 50px rgba(0,0,0,0.3);">'
+    + '  <div style="padding:18px 22px;border-bottom:1px solid #e6e8eb;display:flex;justify-content:space-between;align-items:center;">'
+    + '    <h2 style="margin:0;font-size:18px;color:#1a1a2e;">Bullseye-driven target companies</h2>'
+    + '    <button onclick="document.getElementById(\'companies-diff-modal\').remove()" style="background:none;border:none;cursor:pointer;font-size:22px;color:#888;">×</button>'
+    + '  </div>'
+    + '  <div style="padding:16px 22px;overflow-y:auto;flex:1;">'
+    + '    <div style="font-size:13px;color:#555;margin-bottom:12px;">AI re-derived ' + proposed.length + ' companies using only your 5/5/25 bullseye — not your raw resume. <strong>' + diff.summary + '.</strong></div>'
+    + '    <div style="margin-bottom:14px;"><div style="font-size:13px;font-weight:600;color:#B91C1C;margin-bottom:6px;">Removing (' + (diff.removing || []).length + ')</div><div style="line-height:1.8;">' + removingHtml + '</div></div>'
+    + '    <div style="margin-bottom:14px;"><div style="font-size:13px;font-weight:600;color:#0a6b3a;margin-bottom:6px;">Adding (' + (diff.adding || []).length + ')</div><div style="line-height:1.8;">' + addingHtml + '</div></div>'
+    + '    <div style="margin-bottom:14px;"><div style="font-size:13px;font-weight:600;color:#3F3F46;margin-bottom:6px;">Keeping (' + (diff.keeping || []).length + ')</div><div style="line-height:1.8;">' + keepingHtml + '</div></div>'
+    + '  </div>'
+    + '  <div style="padding:14px 22px;border-top:1px solid #e6e8eb;display:flex;justify-content:flex-end;gap:10px;">'
+    + '    <button id="companies-diff-cancel" style="padding:8px 18px;background:white;border:1px solid #d0d4dc;border-radius:6px;cursor:pointer;font-size:13px;">Cancel</button>'
+    + '    <button id="companies-diff-confirm" style="padding:8px 18px;background:#5C5CD6;color:white;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;">Confirm — save and refresh</button>'
+    + '  </div>'
+    + '</div>';
+
+  document.body.appendChild(m);
+  document.getElementById("companies-diff-cancel").addEventListener("click", () => {{
+    m.remove();
+    btn.textContent = origText;
+    btn.disabled = false;
+  }});
+  document.getElementById("companies-diff-confirm").addEventListener("click", async () => {{
+    const confirmBtn = document.getElementById("companies-diff-confirm");
+    confirmBtn.disabled = true; confirmBtn.textContent = "Saving…";
+    try {{
+      const r = await fetch(WORKER_BASE + "/regenerate-companies" + USER_QS, {{
+        method: "POST",
+        headers: Object.assign({{ "Content-Type": "application/json" }}, headers),
+        body: JSON.stringify({{ dry_run: false }})
+      }});
+      const data = await r.json();
+      if (!r.ok) {{
+        confirmBtn.textContent = "Failed: " + (data.error || r.status);
+        confirmBtn.disabled = false;
+        return;
+      }}
+      // Trigger refresh-jobs via the Worker /refresh endpoint
+      try {{ fetch(WORKER_BASE + "/refresh", {{ method: "POST" }}); }} catch (e) {{}}
+      m.remove();
+      wizBanner("Saved " + (data.profile.targetCompanies || []).length + " new target companies. Job feed will refresh in ~5 min.");
+      btn.textContent = "Refreshing…";
+      setTimeout(() => {{ btn.textContent = origText; btn.disabled = false; }}, 10000);
+    }} catch (e) {{
+      confirmBtn.textContent = "Network error";
+    }}
+  }});
+  // Backdrop click closes
+  m.addEventListener("click", e => {{ if (e.target === m) {{ m.remove(); btn.textContent = origText; btn.disabled = false; }} }});
 }}
 
 
