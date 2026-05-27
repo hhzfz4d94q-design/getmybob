@@ -2420,7 +2420,7 @@ WIZARD_V3_BLOCK = r"""
     <section id="wiz3-main" style="position:relative;">
       <button id="wiz3-close" type="button" aria-label="Close wizard">&times;</button>
       <header id="wiz3-head">
-        <div class="wiz3-step-no" id="wiz3-step-no">Step 1 of 14</div>
+        <div class="wiz3-step-no" id="wiz3-step-no">Step 1 of 15</div>
         <h2 id="wiz3-h2">Welcome</h2>
         <p class="wiz3-sub" id="wiz3-sub"></p>
       </header>
@@ -2686,6 +2686,69 @@ WIZARD_V3_BLOCK = r"""
         await patchProfile({ keywords: items, technologies: [], frameworks: [] });
         st.data.skills = items;
       },
+    },
+    {
+      key: "pick-companies",
+      title: "Refresh your target companies",
+      subtitle: "AI will re-derive 20 companies from your 5/5/15 bullseye, not your raw resume. Review the diff, then save.",
+      optional: true,
+      async render(body, st) {
+        body.innerHTML = ''
+          + '<p style="font-size:13px;color:#555;margin-bottom:14px;">Your current target list was built from your resume\'s broader history. Now that you\'ve trimmed to a tight bullseye, the AI can suggest companies that match what you actually want.</p>'
+          + '<button type="button" id="pick-co-ask" class="wiz3-btn wiz3-btn-ghost">Show me what AI would suggest</button>'
+          + '<div id="pick-co-result" style="margin-top:14px;"></div>'
+          + '<p style="font-size:12px;color:#888;margin-top:14px;">Optional — skip to keep your current 25 target companies.</p>';
+        const askBtn = body.querySelector("#pick-co-ask");
+        const out = body.querySelector("#pick-co-result");
+        askBtn.addEventListener("click", async () => {
+          askBtn.disabled = true; askBtn.textContent = "Asking AI…";
+          const ek = getEditKey();
+          if (!ek) { out.innerHTML = '<em style="color:#B91C1C;">No edit key — can\'t reach the AI.</em>'; askBtn.disabled = false; askBtn.textContent = "Show me what AI would suggest"; return; }
+          try {
+            const r = await fetch(WORKER_BASE + "/regenerate-companies" + USER_QS, {
+              method: "POST",
+              headers: { "Content-Type": "application/json", "X-Edit-Key": ek },
+              body: JSON.stringify({ dry_run: true })
+            });
+            const data = await r.json();
+            if (!r.ok) { out.innerHTML = '<em style="color:#B91C1C;">Failed: ' + (data.error || r.status) + '</em>'; askBtn.disabled = false; askBtn.textContent = "Try again"; return; }
+            const removing = (data.diff && data.diff.removing) || [];
+            const adding = (data.diff && data.diff.adding) || [];
+            const keeping = (data.diff && data.diff.keeping) || [];
+            const chip = (label, color, bg, border) => '<span style="display:inline-block;padding:3px 9px;background:' + bg + ';color:' + color + ';border:1px solid ' + border + ';border-radius:12px;font-size:12px;margin:2px;">' + label + '</span>';
+            const remHtml = removing.map(c => chip((c && c.name ? c.name : c) + " ✕", "#B91C1C", "#FEF2F2", "#fecaca")).join('') || '<em style="font-size:12px;color:#888;">(nothing)</em>';
+            const addHtml = adding.map(c => chip(c.name + " +", "#0a6b3a", "#ECFDF5", "#a7f3d0")).join('') || '<em style="font-size:12px;color:#888;">(nothing)</em>';
+            const keepHtml = keeping.map(c => chip(c.name, "#3F3F46", "#F4F4F5", "#e4e4e7")).join('') || '<em style="font-size:12px;color:#888;">(no overlap)</em>';
+            out.innerHTML = ''
+              + '<div style="font-size:13px;color:#555;margin-bottom:10px;"><strong>' + data.diff.summary + '</strong></div>'
+              + '<div style="margin-bottom:10px;"><div style="font-size:12px;font-weight:600;color:#B91C1C;margin-bottom:4px;">Removing (' + removing.length + ')</div><div style="line-height:1.7;">' + remHtml + '</div></div>'
+              + '<div style="margin-bottom:10px;"><div style="font-size:12px;font-weight:600;color:#0a6b3a;margin-bottom:4px;">Adding (' + adding.length + ')</div><div style="line-height:1.7;">' + addHtml + '</div></div>'
+              + '<div style="margin-bottom:14px;"><div style="font-size:12px;font-weight:600;color:#3F3F46;margin-bottom:4px;">Keeping (' + keeping.length + ')</div><div style="line-height:1.7;">' + keepHtml + '</div></div>'
+              + '<button type="button" id="pick-co-confirm" class="wiz3-btn wiz3-btn-primary" style="background:#5C5CD6;color:white;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;">Save these ' + ((data.proposed || []).length) + ' companies</button>';
+            askBtn.textContent = "Re-ask AI";
+            askBtn.disabled = false;
+            // Hand the proposed array to the confirm button
+            const confirmBtn = out.querySelector("#pick-co-confirm");
+            confirmBtn.addEventListener("click", async () => {
+              confirmBtn.disabled = true; confirmBtn.textContent = "Saving…";
+              try {
+                const r2 = await fetch(WORKER_BASE + "/regenerate-companies" + USER_QS, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json", "X-Edit-Key": ek },
+                  body: JSON.stringify({ dry_run: false })
+                });
+                const d2 = await r2.json();
+                if (!r2.ok) { confirmBtn.textContent = "Failed: " + (d2.error || r2.status); confirmBtn.disabled = false; return; }
+                confirmBtn.textContent = "✓ Saved " + ((d2.profile && d2.profile.targetCompanies || []).length) + " companies";
+                st.data.companies_saved = true;
+              } catch (e) {
+                confirmBtn.textContent = "Network error";
+              }
+            });
+          } catch (e) { out.innerHTML = '<em style="color:#B91C1C;">' + (e.message || e) + '</em>'; askBtn.disabled = false; askBtn.textContent = "Try again"; }
+        });
+      },
+      save() { return Promise.resolve(); }
     },
     {
       key: "locations-remote",
