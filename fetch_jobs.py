@@ -2020,6 +2020,51 @@ def fingerprint(job):
     return sha256(base.encode()).hexdigest()[:16]
 
 
+# Heuristic company-type classifier (2026-05-27).
+# Result is one of: 'consulting' | 'staffing' | 'in-house' | 'unknown'
+# Used as a SOFT multiplier on score (consulting 0.45, staffing 0.0, in-house 1.0, unknown 1.0)
+# instead of a hard binary exclude. Cheap + cacheable per company per session.
+_CONSULTING_NAME_PATTERNS = (
+    "consulting", "consultancy", "advisory", "advisors",
+    "& co", "and partners", "partners llp",
+)
+_CONSULTING_JD_PHRASES = (
+    "client engagement", "client engagements", "our clients", "client base", "client portfolio",
+    "billable hours", "billable work", "billability", "utilization rate",
+    "advisory services", "consulting services", "practice area",
+    "client-facing", "client facing", "client deliverable",
+)
+_STAFFING_NAME_PATTERNS = (
+    "staffing", "staffing solutions", "talent solutions", "talent network",
+    "recruitment", "recruiters", "talent acquisition partners",
+    "executive search", "personnel services", "workforce solutions",
+)
+
+def classify_company_type(company_name, description):
+    name = (company_name or "").lower()
+    desc = (description or "")[:3000].lower()
+    # Staffing signals are strongest — check first
+    for p in _STAFFING_NAME_PATTERNS:
+        if p in name:
+            return "staffing"
+    # Explicit consulting in name
+    for p in _CONSULTING_NAME_PATTERNS:
+        if p in name:
+            return "consulting"
+    # JD-language fallback: 3+ consulting phrases in JD → consulting
+    hits = sum(1 for ph in _CONSULTING_JD_PHRASES if ph in desc)
+    if hits >= 3:
+        return "consulting"
+    # If we have positive in-house signals
+    if any(s in desc for s in ("our product", "our platform", "our team", "our mission", "we build", "we ship")):
+        return "in-house"
+    return "unknown"
+
+
+def company_type_multiplier(kind):
+    return {"consulting": 0.45, "staffing": 0.0, "in-house": 1.0, "unknown": 1.0}.get(kind, 1.0)
+
+
 def is_remote(job):
     blob = f"{job['location']} {job['title']} {job['description'][:500]}".lower()
     if "remote" in blob or "anywhere" in blob or "work from home" in blob:
@@ -2551,6 +2596,18 @@ def score_job(job):
             s += 6
         elif traj == "down":
             s -= 8
+
+    # E7 (2026-05-27): company-type soft multiplier. Catches the long tail
+    # of consulting/staffing firms not in the hard-block list. Multiplier
+    # applied to the signal portion only (score above the 50 base).
+    try:
+        ctype = classify_company_type(job.get("company_name") or "", job.get("description") or "")
+        ctype_mult = company_type_multiplier(ctype)
+        if s > 50 and ctype_mult < 1.0:
+            signal = s - 50
+            s = 50 + signal * ctype_mult
+    except Exception:
+        pass
 
     # E6 (2026-05-27): smooth freshness decay — multiplies the post-base
     # signal score by exp(-days/21). Replaces the prior binary recency boost.
@@ -4532,6 +4589,26 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
     else:
         cards_html = "<p style='padding:24px;color:#666;'>No matches in the last 30 days. Click Refresh data to look again.</p>"
 
+    # Auto-learn surface banner (2026-05-27): if the worker recently added
+    # something to the user's blocklist via engagement learning, tell them.
+    auto_learn_html = ''
+    try:
+        al = SKILLS_PROFILE and SKILLS_PROFILE.get('lastAutoLearn')
+        if al and al.get('kind') == 'excludeCompany':
+            _val = _esc(str(al.get('value') or ''))
+            _ct = int(al.get('dismissCount') or 0)
+            auto_learn_html = (
+                '<div style="background:#EEEEF8;border:1px solid #BFBFEA;border-radius:8px;'
+                'padding:10px 14px;margin:0 auto 10px;max-width:1400px;font-size:12.5px;'
+                'color:#1F1B45;font-family:Inter,system-ui,sans-serif;">'
+                f'<strong>↻ We auto-added <em>{_val}</em> to your blocklist</strong> '
+                f'after {_ct} dismisses in 30 days. '
+                '<a href="/account.html" style="color:#1817B5;font-weight:600;">Manage</a>'
+                '</div>'
+            )
+    except Exception:
+        pass
+
     # Relevance floor warning: if we couldn't fill 50 strong matches today,
     # surface a banner suggesting the user broaden the bullseye.
     RELEVANCE_FLOOR = 60
@@ -4558,7 +4635,7 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         subtitle=_esc(subtitle),
         has_profile_js=("true" if SKILLS_PROFILE else "false"),
         hidden_jobs_json=hidden_jobs_json,
-        low_match_warning=low_match_warning_html,
+        low_match_warning=(auto_learn_html + low_match_warning_html),
     )
     # Some embedded emoji in HTML_TEMPLATE are stored as UTF-16 surrogate
     # pair literals (\ud83c\udfaf etc). Merge them into proper codepoints
