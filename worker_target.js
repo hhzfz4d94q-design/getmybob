@@ -578,7 +578,17 @@ async function handleSkillsProfile(request, env, cors, slug) {
     catch (e) { return Response.json({ profile: null }, { headers: cors }); }
   }
   if (request.method === 'POST') {
-    if (!(await checkEditKey(request, env, slug))) return Response.json({ error: 'Invalid X-Edit-Key' }, { status: 401, headers: cors });
+    // Accept either X-Edit-Key / X-Admin-Key (legacy) OR a session Bearer
+    // token for this slug (the new auth surface so logged-in users can
+    // edit their own profile from /account.html without copying keys).
+    let authed = await checkEditKey(request, env, slug);
+    if (!authed) {
+      try {
+        const sess = await sessionFromRequest(request, env);
+        if (sess && sess.slug === slug) authed = true;
+      } catch (e) {}
+    }
+    if (!authed) return Response.json({ error: 'Invalid X-Edit-Key (or sign in)' }, { status: 401, headers: cors });
     const body = await request.json().catch(() => ({}));
     // Patch mode: merge user-supplied additions into the existing profile (manual edits)
     if (body && body.patchFields && typeof body.patchFields === 'object') {

@@ -22,7 +22,7 @@
   .nav-right .who b { color: var(--ink); }
   .nav-btn { font-size:13px; color:var(--navy); background:transparent; border:1px solid var(--navy); border-radius:6px; padding:6px 12px; cursor:pointer; font-family:inherit; font-weight:500; text-decoration:none; }
   .nav-btn:hover { background:var(--navy); color:#fff; }
-  .container { max-width:560px; margin:0 auto; padding:60px 28px; }
+  .container { max-width:720px; margin:0 auto; padding:60px 28px; display:flex; flex-direction:column; gap:24px; }
   .card { background:#fff; border:1px solid var(--hairline); border-radius:12px; padding:32px; box-shadow:0 4px 24px rgba(60,60,120,0.04); }
   h1 { margin:0 0 6px 0; font-size:24px; font-weight:700; letter-spacing:-0.01em; }
   .sub { color:var(--muted); margin:0 0 24px 0; font-size:14px; }
@@ -37,6 +37,13 @@
   .msg { padding:10px 14px; border-radius:6px; font-size:13px; margin-top:14px; display:none; }
   .msg.ok { background:var(--ok-bg); color:var(--ok); display:block; }
   .msg.err { background:var(--err-bg); color:var(--err); display:block; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:14px 18px; margin-bottom:8px; }
+  @media (max-width:560px) { .grid2 { grid-template-columns:1fr; } }
+  .grid2 .full { grid-column:1 / -1; }
+  select { width:100%; padding:10px 12px; font-size:14px; font-family:inherit; border:1px solid var(--hairline); border-radius:6px; margin-bottom:14px; background:#fff; color:var(--ink); }
+  select:focus { outline:none; border-color:var(--navy); }
+  .saved-pulse { animation: pulse 0.4s ease-out; }
+  @keyframes pulse { 0%{background:#fff} 50%{background:var(--ok-bg)} 100%{background:#fff} }
 </style>
 </head>
 <body>
@@ -54,6 +61,53 @@
 </nav>
 
 <div class="container">
+  <div class="card">
+    <h1>Application profile</h1>
+    <p class="sub">Used to pre-fill job applications (Greenhouse, Lever, Ashby, Workday). All optional &mdash; fill in what you want auto-filled.</p>
+    <form id="profileForm">
+      <div class="grid2">
+        <div><label for="pf-firstName">First name</label><input type="text" id="pf-firstName"></div>
+        <div><label for="pf-lastName">Last name</label><input type="text" id="pf-lastName"></div>
+        <div><label for="pf-email">Email (contact)</label><input type="email" id="pf-email"></div>
+        <div><label for="pf-phone">Phone</label><input type="tel" id="pf-phone" placeholder="+1 555 555 5555"></div>
+        <div class="full"><label for="pf-location">Location</label><input type="text" id="pf-location" placeholder="New York, NY"></div>
+        <div><label for="pf-linkedinUrl">LinkedIn URL</label><input type="url" id="pf-linkedinUrl" placeholder="https://linkedin.com/in/..."></div>
+        <div><label for="pf-githubUrl">GitHub URL</label><input type="url" id="pf-githubUrl" placeholder="https://github.com/..."></div>
+        <div><label for="pf-websiteUrl">Website</label><input type="url" id="pf-websiteUrl"></div>
+        <div><label for="pf-currentCompany">Current company</label><input type="text" id="pf-currentCompany"></div>
+        <div><label for="pf-currentTitle">Current title</label><input type="text" id="pf-currentTitle"></div>
+        <div>
+          <label for="pf-workAuthorization">Work authorization</label>
+          <select id="pf-workAuthorization">
+            <option value="">&mdash; select &mdash;</option>
+            <option>US Citizen</option>
+            <option>Green Card</option>
+            <option>H1-B</option>
+            <option>TN visa</option>
+            <option>OPT / EAD</option>
+            <option>L1 visa</option>
+            <option>Need sponsorship</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div>
+          <label for="pf-requiresSponsorship">Requires sponsorship?</label>
+          <select id="pf-requiresSponsorship">
+            <option value="">&mdash; select &mdash;</option>
+            <option>No</option>
+            <option>Yes</option>
+            <option>Now &mdash; but not in 2 yrs</option>
+          </select>
+        </div>
+        <div><label for="pf-school">School</label><input type="text" id="pf-school"></div>
+        <div><label for="pf-degree">Degree</label><input type="text" id="pf-degree" placeholder="BS, MS, MBA, etc."></div>
+        <div><label for="pf-graduationYear">Graduation year</label><input type="number" id="pf-graduationYear" min="1960" max="2035"></div>
+      </div>
+      <button type="submit" class="btn primary" id="saveProfileBtn">Save profile</button>
+    </form>
+    <div id="profileMsg" class="msg"></div>
+  </div>
+
   <div class="card">
     <h1>Change password</h1>
     <p class="sub">Update the password you use to sign in.</p>
@@ -147,6 +201,61 @@ $('signOutBtn').addEventListener('click', async () => {
   clearSession();
   location.replace('/login.html');
 });
+
+// === Application profile load + save ============================
+const PROFILE_FIELDS = ['firstName','lastName','email','phone','location','linkedinUrl','githubUrl','websiteUrl','currentCompany','currentTitle','workAuthorization','requiresSponsorship','school','degree','graduationYear'];
+
+async function loadProfile() {
+  const slug = localStorage.getItem('gmj_user_slug');
+  if (!slug) return;
+  try {
+    const r = await fetch(WORKER + '/skills-profile?user=' + encodeURIComponent(slug));
+    if (!r.ok) return;
+    const j = await r.json();
+    const p = j.profile || {};
+    PROFILE_FIELDS.forEach(f => {
+      const el = document.getElementById('pf-' + f);
+      if (el && p[f] != null) el.value = p[f];
+    });
+  } catch (e) {}
+}
+
+document.getElementById('profileForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const slug = localStorage.getItem('gmj_user_slug');
+  const tok  = localStorage.getItem(TOKEN_KEY);
+  if (!slug || !tok) { showProfileMsg('err', 'Not signed in.'); return; }
+  const btn = document.getElementById('saveProfileBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  const patchFields = {};
+  PROFILE_FIELDS.forEach(f => {
+    const v = (document.getElementById('pf-' + f) || {}).value;
+    if (v != null && v !== '') patchFields[f] = v;
+  });
+  try {
+    const r = await fetch(WORKER + '/skills-profile?user=' + encodeURIComponent(slug), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tok },
+      body: JSON.stringify({ patchFields }),
+    });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) { showProfileMsg('err', j.error || ('Save failed: HTTP ' + r.status)); return; }
+    showProfileMsg('ok', 'Profile saved. We will use these fields to pre-fill application materials.');
+    document.querySelector('#profileForm').closest('.card').classList.add('saved-pulse');
+    setTimeout(() => document.querySelector('#profileForm').closest('.card').classList.remove('saved-pulse'), 600);
+  } catch (err) {
+    showProfileMsg('err', 'Network error: ' + (err && err.message ? err.message : err));
+  } finally {
+    btn.disabled = false; btn.textContent = 'Save profile';
+  }
+});
+function showProfileMsg(kind, text) {
+  const m = document.getElementById('profileMsg');
+  m.className = 'msg ' + kind;
+  m.textContent = text;
+}
+loadProfile();
+
 </script>
 </body>
 </html>
