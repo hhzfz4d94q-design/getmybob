@@ -3049,8 +3049,24 @@ WIZARD_V3_BLOCK = r"""
           '<p style="font-size:12px;color:#888;margin-top:12px;">When you close the panel, we\'ll move you to the next step automatically.</p>';
         const btn = body.querySelector("#wiz3-open-resume");
         if (btn) btn.addEventListener("click", () => {
-          try { if (typeof openResumeModal === "function") openResumeModal(); } catch (e) {}
-          // We don't auto-advance: user can come back. Continue button handles advancement.
+          try {
+            // Hide the wizard overlay so the resume modal isn't visually blocked
+            const wiz = document.getElementById("wiz3-overlay");
+            if (wiz) wiz.classList.remove("show");
+            if (typeof openResumeModal === "function") openResumeModal();
+            // When the resume modal closes, re-open the wizard. The modal's close
+            // calls closeResumeModal — observe its display change.
+            const rm = document.getElementById("resume-modal");
+            if (rm) {
+              const obs = new MutationObserver(() => {
+                if (rm.style.display === "none" || !rm.classList.contains("show")) {
+                  obs.disconnect();
+                  if (wiz) wiz.classList.add("show");
+                }
+              });
+              obs.observe(rm, { attributes: true, attributeFilter: ["style", "class"] });
+            }
+          } catch (e) { console.warn("open resume from wizard:", e); }
         });
       },
       async save() {
@@ -4380,7 +4396,7 @@ HTML_TEMPLATE = """<!doctype html>
   body.apps-mode .card[data-status="phonescreen"] {{ order: 3; }}
   body.apps-mode .card[data-status="applied"] {{ order: 4; }}
   body.apps-mode .card[data-status="rejected"] {{ order: 5; }}
-  .modal-overlay {{ display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center; padding: 20px; }}
+  .modal-overlay {{ display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2147483700; align-items: center; justify-content: center; padding: 20px; }}
   .modal-overlay.show {{ display: flex; }}
   .modal {{ background: white; border-radius: 12px; padding: 24px; max-width: 600px; width: 100%; max-height: 80vh; overflow-y: auto; }}
   .modal h3 {{ margin: 0 0 12px 0; color: #5C5CD6; }}
