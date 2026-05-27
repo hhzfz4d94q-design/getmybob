@@ -1863,11 +1863,29 @@ async function handleAdminResetPassword(request, env, cors) {
   let body;
   try { body = await request.json(); } catch (e) { return _json({ error: 'Bad JSON' }, 400, cors); }
   const email = String(body.email || '').trim().toLowerCase();
+  let slug = String(body.slug || '').trim().toLowerCase();
   const newPassword = String(body.newPassword || '');
-  if (!email) return _json({ error: 'Body must include {email, newPassword}' }, 400, cors);
+  if (!email && !slug) return _json({ error: 'Body must include {email or slug, newPassword}' }, 400, cors);
   if (newPassword.length < 8) return _json({ error: 'New password must be at least 8 characters' }, 400, cors);
-  const slug = await env.RESUMES.get(`auth:email:${email}`);
-  if (!slug) return _json({ error: `No account found for ${email}` }, 404, cors);
+
+  // 1. Primary lookup: email index
+  if (!slug && email) {
+    slug = (await env.RESUMES.get(`auth:email:${email}`)) || '';
+  }
+  // 2. Fallback: scan /users list for matching email (handles legacy accounts
+  //    where the email index wasn't populated at signup time)
+  if (!slug && email) {
+    const usersRaw = await env.RESUMES.get('users:list');
+    if (usersRaw) {
+      try {
+        const users = JSON.parse(usersRaw);
+        const match = users.find(u => String(u.email || '').toLowerCase() === email);
+        if (match && match.slug) slug = match.slug;
+      } catch (e) {}
+    }
+  }
+  if (!slug) return _json({ error: `No account found for ${email || '(no email/slug)'}` }, 404, cors);
+
   const authRaw = await env.RESUMES.get(uk(slug, 'auth'));
   if (!authRaw) return _json({ error: `Auth record missing for slug ${slug}` }, 404, cors);
   const auth = JSON.parse(authRaw);
@@ -1878,7 +1896,13 @@ async function handleAdminResetPassword(request, env, cors) {
   auth.passwordUpdatedAt = new Date().toISOString();
   auth.lastResetBy = 'admin';
   await env.RESUMES.put(uk(slug, 'auth'), JSON.stringify(auth));
-  return _json({ ok: true, slug, email, resetAt: auth.passwordUpdatedAt }, 200, cors);
+
+  // 3. Heal the email index so future logins/resets work via email
+  const effEmail = email || (auth.email || '').toLowerCase();
+  if (effEmail) {
+    try { await env.RESUMES.put(`auth:email:${effEmail}`, slug); } catch (e) {}
+  }
+  return _json({ ok: true, slug, email: effEmail, resetAt: auth.passwordUpdatedAt, healedEmailIndex: !!effEmail }, 200, cors);
 }
 
 
