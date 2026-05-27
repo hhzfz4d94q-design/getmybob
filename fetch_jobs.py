@@ -3931,7 +3931,7 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
     # wizard-pick weighting + recency bonus, the top 50 are the only jobs
     # that genuinely matter today. If user wants more, they can broaden
     # the bullseye via the wizard.
-    TOP_N = 50
+    TOP_N = 20  # was 50 — user asked for tighter feed
     rows = rows[:TOP_N]
 
     # ============================================================
@@ -4187,7 +4187,7 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
     RELEVANCE_FLOOR = 60
     strong_count = sum(1 for r in rows if (int(r[11] or 0) >= RELEVANCE_FLOOR))
     low_match_warning_html = ''
-    if SKILLS_PROFILE and strong_count < 15 and len(rows) > 0:
+    if SKILLS_PROFILE and strong_count < 8 and len(rows) > 0:
         low_match_warning_html = (
             '<div style="background:#fef3c7;border:1px solid #fbbf24;border-radius:8px;padding:12px 16px;margin:0 auto 14px;max-width:1400px;font-size:13px;color:#78350f;font-family:Inter,system-ui,sans-serif;">'
             f'<strong>⚠️ Only {strong_count} strong match{"" if strong_count == 1 else "es"} today (score \u2265 {RELEVANCE_FLOOR}).</strong> '
