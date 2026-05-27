@@ -1,0 +1,43 @@
+name: Dump user profile (admin one-off)
+on:
+  workflow_dispatch:
+    inputs:
+      user_slug:
+        description: 'User slug (e.g. amit-arora)'
+        required: true
+        default: 'amit-arora'
+permissions:
+  contents: write
+jobs:
+  dump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch profile + write to reports
+        env:
+          ADMIN_KEY: ${{ secrets.WORKER_ADMIN_KEY }}
+          SLUG: ${{ github.event.inputs.user_slug }}
+        run: |
+          set -e
+          mkdir -p reports
+          TS=$(date -u +%Y%m%dT%H%M%SZ)
+          OUT="reports/profile_${SLUG}_${TS}.json"
+          curl -sS -H "X-Admin-Key: $ADMIN_KEY" \
+            "https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/skills-profile?user=$SLUG" \
+            > "$OUT"
+          python3 -c "
+          import json
+          d = json.load(open('$OUT'))
+          p = d.get('profile') or {}
+          for k in ['targetTitles','industries','keywords','technologies','frameworks','negativeKeywords','targetCompanies','matchWeights','signalStability','seniorityLevel','careerStage']:
+              v = p.get(k)
+              if isinstance(v, list):
+                  print(f'{k:20s} ({len(v):2d}): {v[:10]}{\"...\" if len(v)>10 else \"\"}')
+              else:
+                  print(f'{k:20s}: {v}')
+          "
+          git config user.email "dump-bot@getmemyjob.local"
+          git config user.name "dump-bot"
+          git add "$OUT"
+          git commit -m "auto: profile dump $SLUG $TS" || true
+          git push
