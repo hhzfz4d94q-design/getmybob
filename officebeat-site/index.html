@@ -1,20 +1,84 @@
 <!doctype html>
 <html lang="en">
 <head>
-<title>OfficeBeat LLC — ERM, Program Management &amp; M&amp;A Advisory</title>
-<meta name="description" content="Practitioner-led ERM, program management, and M&A advisory for U.S. financial institutions and healthcare organizations. Four decades finance, three decades healthcare.">
+<title>OfficeBeat LLC — Where it matters, with rigour</title>
+<meta name="description" content="Practitioner-led advisory in financial services and healthcare. Risk, regulation, and operating models, delivered by people who built them. Four decades finance, three decades healthcare.">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#1E146E">
+<meta name="theme-color" content="#1817B5">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/style.css">
 <script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/51502417.js"></script>
 <meta property="og:type" content="website">
-<meta property="og:title" content="OfficeBeat LLC — ERM, Program Management &amp; M&amp;A Advisory">
-<meta property="og:description" content="Practitioner-led ERM, program management, and M&A advisory for U.S. financial institutions and healthcare organizations. Four decades finance, three decades healthcare.">
+<meta property="og:title" content="OfficeBeat LLC — Where it matters, with rigour">
+<meta property="og:description" content="Practitioner-led advisory in financial services and healthcare. Risk, regulation, and operating models, delivered by people who built them.">
+<style>
+/* Page-local additions on top of /assets/style.css */
+.hero-grid { display: grid; grid-template-columns: 1.15fr 1fr; gap: 64px; align-items: center; max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
+@media (max-width: 980px) { .hero-grid { grid-template-columns: 1fr; gap: 32px; padding: 16px 24px; } }
+.hero-grid h1 { font-size: 60px; line-height: 1.05; font-weight: 800; letter-spacing: -.025em; margin: 0 0 20px; color: #fff; }
+@media (max-width: 980px) { .hero-grid h1 { font-size: 40px; } }
+.hero-grid h1 .grad-on-dark { background: linear-gradient(90deg, #fff 0%, #D1DEFF 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hero-grid p.sub { color: rgba(255,255,255,.82); font-size: 18px; max-width: 520px; margin: 0 0 28px; }
+.hero-grid .eyebrow-on-dark { font-size: 11px; font-weight: 700; color: var(--mist); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 18px; display: inline-flex; align-items: center; gap: 10px; }
+.hero-grid .eyebrow-on-dark::before { content: ''; width: 28px; height: 1.5px; background: var(--mist); border-radius: 1px; }
+.hero-art { display: flex; justify-content: center; align-items: center; }
+.hero-art svg { width: 100%; max-width: 440px; height: auto; }
+@keyframes pulse { 0% { opacity: 1; } 50% { opacity: .55; } 100% { opacity: 1; } }
+.hero-art .focal { animation: pulse 2.6s ease-in-out infinite; }
 
+.trust-bar { background: var(--surface-tint); padding: 24px; border-block: 1px solid var(--hairline-soft); }
+.trust-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 24px; }
+.trust-label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+.trust-stats { display: flex; gap: 40px; flex-wrap: wrap; }
+.trust-stat .v { font-size: 24px; font-weight: 800; color: var(--ink); letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.trust-stat .l { font-size: 12px; color: var(--muted); font-weight: 500; }
+
+.verticals-wrap { padding: 80px 24px; max-width: 1200px; margin: 0 auto; }
+.verticals-head { margin-bottom: 36px; max-width: 720px; }
+.verticals-head h2 { font-size: 40px; line-height: 1.15; font-weight: 800; letter-spacing: -.02em; margin: 8px 0 12px; color: var(--ink); }
+@media (max-width: 820px) { .verticals-head h2 { font-size: 30px; } }
+.verticals-head p { font-size: 17px; color: var(--muted); }
+.vcards { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+@media (max-width: 820px) { .vcards { grid-template-columns: 1fr; } }
+.vcard { position: relative; border-radius: 20px; overflow: hidden; color: #fff; padding: 36px; min-height: 380px; display: flex; flex-direction: column; justify-content: space-between; transition: transform .3s, box-shadow .3s; text-decoration: none; }
+.vcard:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); text-decoration: none; }
+.vcard.finance { background: var(--vertical-finance); }
+.vcard.health { background: var(--vertical-health); }
+.vcard .vcard-art { position: absolute; inset: 0; opacity: .2; pointer-events: none; }
+.vcard .vcard-art svg { width: 100%; height: 100%; }
+.vcard .vcard-tag { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; opacity: .85; margin-bottom: 10px; position: relative; }
+.vcard h3 { font-size: 30px; line-height: 1.1; font-weight: 800; letter-spacing: -.02em; margin: 0 0 14px; position: relative; color: #fff; }
+.vcard p { font-size: 14px; opacity: .9; position: relative; line-height: 1.55; margin: 0; max-width: 340px; }
+.vcard .vcard-foot { display: flex; justify-content: space-between; align-items: flex-end; position: relative; margin-top: 24px; }
+.vcard .practices { display: flex; gap: 8px; flex-wrap: wrap; font-size: 11px; font-weight: 600; letter-spacing: .04em; opacity: .9; }
+.vcard .practices span { padding: 4px 10px; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.18); border-radius: 999px; }
+.vcard .arrow { width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,.18); display: flex; align-items: center; justify-content: center; font-size: 18px; transition: background .2s; }
+.vcard:hover .arrow { background: rgba(255,255,255,.32); }
+
+.products-strip { background: var(--off-white); padding: 80px 24px; border-block: 1px solid var(--hairline-soft); }
+.products-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1.3fr 1fr; gap: 64px; align-items: center; }
+@media (max-width: 820px) { .products-grid { grid-template-columns: 1fr; gap: 28px; } }
+.products-grid h2 { font-size: 36px; line-height: 1.15; font-weight: 800; letter-spacing: -.02em; margin: 8px 0 14px; color: var(--ink); }
+@media (max-width: 820px) { .products-grid h2 { font-size: 26px; } }
+.products-grid p { color: var(--muted); font-size: 16px; margin-bottom: 22px; max-width: 540px; }
+.pp { background: #fff; border: 1px solid var(--hairline); border-radius: 16px; padding: 24px; box-shadow: var(--shadow-md); }
+.pp-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+.pp-head .live { display: inline-flex; align-items: center; gap: 6px; color: var(--vertical-health); }
+.pp-head .live::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--vertical-health); }
+.pp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.pp-card { background: var(--surface-tint); border: 1px solid var(--hairline); border-radius: 10px; padding: 12px; }
+.pp-card .rank { font-size: 9px; color: var(--muted-soft); font-weight: 700; }
+.pp-card .title { font-size: 12px; font-weight: 700; margin: 4px 0 2px; line-height: 1.2; }
+.pp-card .co { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 8px; }
+.pp-card .score { display: inline-block; padding: 2px 8px; background: var(--blue); color: #fff; font-size: 11px; font-weight: 700; border-radius: 999px; font-variant-numeric: tabular-nums; }
+.pp-card.cool .score { background: var(--lilac-soft); color: var(--blue); }
+
+.eyebrow-pill { display: inline-flex; align-items: center; gap: 10px; font-size: 11px; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: .08em; }
+.eyebrow-pill::before { content: ''; width: 28px; height: 1.5px; background: var(--grad); border-radius: 1px; }
+</style>
 </head>
 <body>
 
@@ -77,82 +141,122 @@
 </nav>
 
 <header class="page-header hero">
-  <div class="container">
-    <span class="eyebrow-tag on-dark">OfficeBeat LLC</span>
-    <h1>Navigate complexity. Secure your future.</h1>
-    <p class="sub">
-      Practitioner-led ERM, program management, and M&amp;A advisory for U.S. financial institutions and healthcare organizations. No SDRs. No slideware. Senior partners on every call.
-    </p>
-    <div class="cta-row" style="margin-top:24px;">
-      <a href="assess.html" class="btn on-dark-primary">Take the 10-question Risk Maturity Assessment</a>
-      <a href="contact.html" class="btn ghost-light">Talk to a practitioner</a>
+  <div class="hero-grid">
+    <div>
+      <div class="eyebrow-on-dark">Practitioner-led advisory · NYC</div>
+      <h1>Navigate complexity.<br><span class="grad-on-dark">Secure your future.</span></h1>
+      <p class="sub">Risk, regulation, and operating models — delivered by people who&rsquo;ve built them. No SDRs. No slideware. Senior partners on every call.</p>
+      <div class="cta-row" style="margin-top:8px;">
+        <a href="assess.html" class="btn on-dark-primary">Take the 10-question Risk Maturity Assessment</a>
+        <a href="contact.html" class="btn ghost-light">Talk to a practitioner</a>
+      </div>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <svg viewBox="0 0 440 440" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5C5CE0"/><stop offset="1" stop-color="#fff"/></linearGradient></defs>
+        <g transform="translate(220 220)">
+          <g fill="#fff" opacity=".22">
+            <circle cx="-140" cy="-70" r="1.5"/><circle cx="110" cy="-130" r="1.5"/><circle cx="160" cy="30" r="1.5"/>
+            <circle cx="-90" cy="140" r="1.5"/><circle cx="-175" cy="50" r="1.5"/><circle cx="150" cy="-50" r="1.5"/>
+            <circle cx="50" cy="160" r="1.5"/><circle cx="-140" cy="-140" r="1.5"/><circle cx="195" cy="90" r="1.5"/>
+            <circle cx="-195" cy="-25" r="1.5"/><circle cx="30" cy="-165" r="1.5"/><circle cx="180" cy="-155" r="1.5"/>
+            <circle cx="-160" cy="160" r="1.5"/><circle cx="210" cy="-15" r="1.5"/>
+          </g>
+          <circle r="190" fill="none" stroke="#fff" stroke-width=".8" opacity=".15"/>
+          <circle r="150" fill="none" stroke="#fff" stroke-width=".8" opacity=".18"/>
+          <circle r="105" fill="none" stroke="#fff" stroke-width=".8" opacity=".22"/>
+          <circle r="60" fill="none" stroke="#D1DEFF" stroke-width="1.3" opacity=".5"/>
+          <circle r="32" fill="none" stroke="#fff" stroke-width="1.8"/>
+          <circle cx="-10" cy="-12" r="4" fill="#D1DEFF"/><circle cx="14" cy="-6" r="4" fill="#fff"/>
+          <circle cx="-16" cy="10" r="4" fill="#D1DEFF"/><circle cx="8" cy="16" r="4" fill="#fff"/>
+          <circle r="10" fill="#fff" class="focal"/>
+          <circle r="6" fill="url(#hg)"/>
+          <g stroke="#fff" stroke-width="1.2" opacity=".8">
+            <line x1="-24" y1="0" x2="-14" y2="0"/><line x1="14" y1="0" x2="24" y2="0"/>
+            <line x1="0" y1="-24" x2="0" y2="-14"/><line x1="0" y1="14" x2="0" y2="24"/>
+          </g>
+        </g>
+      </svg>
     </div>
   </div>
 </header>
 
-<section>
-  <div class="container" style="max-width:980px;">
-    <h2 style="text-align:center;">Two verticals. Six practices. One team.</h2>
-    <p class="lead" style="text-align:center;margin:0 auto 40px auto;">Pick your vertical to see the three practice groups, or jump straight to a practice page.</p>
-
-    <div class="grid-2" style="gap:32px;">
-      <div class="card" style="border-top:6px solid var(--indigo);">
-        <span class="eyebrow-tag" style="color:var(--indigo);background:var(--lilac-soft);">Finance &amp; Banking</span>
-        <h2 style="font-size:28px;margin-top:10px;">Finance &amp; Banking</h2>
-        <p style="color:var(--muted);margin-bottom:18px;">Four decades across U.S. banks, capital markets, and regulated fintechs. Led by Amit Arora.</p>
-        <ul style="margin-left:20px;line-height:2;">
-          <li><a href="erm.html"><strong>ERM &amp; Risk Practice</strong></a> — Credit, Operational, Cyber, TPRM, Treasury</li>
-          <li><a href="programs-finance.html"><strong>Program Management</strong></a> — Large delivery, PMO</li>
-          <li><a href="manda-finance.html"><strong>M&amp;A Practice</strong></a> — Diligence, Integration, Restructuring</li>
-        </ul>
-        <p style="margin-top:18px;"><a href="finance.html" class="btn primary">Explore the Finance vertical →</a></p>
-      </div>
-
-      <div class="card" style="border-top:6px solid var(--indigo);">
-        <span class="eyebrow-tag" style="color:var(--indigo);background:var(--lilac-soft);">Healthcare &amp; Life Sciences</span>
-        <h2 style="font-size:28px;margin-top:10px;">Healthcare &amp; Life Sciences</h2>
-        <p style="color:var(--muted);margin-bottom:18px;">Three decades across EHR, healthcare-SaaS, AI, and patient experience. Led by Geetanjali Arora.</p>
-        <ul style="margin-left:20px;line-height:2;">
-          <li><a href="digital-transformation.html"><strong>Digital Transformation</strong></a> — EHR, AI Governance, Patient Experience</li>
-          <li><a href="programs-healthcare.html"><strong>Program Management</strong></a> — Clinical, Vendor Integration</li>
-          <li><a href="manda-healthcare.html"><strong>M&amp;A Practice</strong></a> — Diligence, Vendor Consolidation</li>
-        </ul>
-        <p style="margin-top:18px;"><a href="healthcare.html" class="btn primary">Explore the Healthcare vertical →</a></p>
-      </div>
+<section class="trust-bar">
+  <div class="trust-inner">
+    <div class="trust-label">Practitioner-led · senior on every call</div>
+    <div class="trust-stats">
+      <div class="trust-stat"><div class="v">4</div><div class="l">Decades · Finance</div></div>
+      <div class="trust-stat"><div class="v">3</div><div class="l">Decades · Healthcare</div></div>
+      <div class="trust-stat"><div class="v">60</div><div class="l">Minute first call</div></div>
+      <div class="trust-stat"><div class="v">2</div><div class="l">Regulated verticals</div></div>
     </div>
   </div>
 </section>
 
-<section style="background:var(--off-white);">
-  <div class="container" style="max-width:920px;">
-    <h2 style="text-align:center;">Practitioner-led. Always.</h2>
-    <p class="lead" style="text-align:center;margin:0 auto 28px auto;">
-      You will speak to Amit or Geetanjali. Not an SDR. Not a chatbot. Not a junior who "owns the account."
-    </p>
-    <div class="grid-3" style="margin-top:24px;">
-      <div class="card"><div class="icon">4</div><h3>Decades in Finance</h3><p>U.S. banks, capital markets firms, and regulated fintechs.</p></div>
-      <div class="card"><div class="icon">3</div><h3>Decades in Healthcare</h3><p>EHR, SaaS, AI, and patient experience — from inside the role.</p></div>
-      <div class="card"><div class="icon">60</div><h3>Minute first call</h3><p>A practitioner takes it. No obligation.</p></div>
-    </div>
+<section class="verticals-wrap">
+  <div class="verticals-head">
+    <div class="eyebrow-pill">What we do</div>
+    <h2>Two verticals. Six practices. One team.</h2>
+    <p>Risk-first thinking applied to the two industries where it bites hardest — and where lazy generalist advice is dangerous.</p>
+  </div>
+  <div class="vcards">
+    <a class="vcard finance" href="finance.html">
+      <svg class="vcard-art" viewBox="0 0 400 380" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <g stroke="#fff" fill="none" stroke-width="1.2">
+          <path d="M 0 240 Q 80 200, 120 220 T 240 230 T 400 200" opacity=".9"/>
+          <path d="M 0 250 Q 80 220, 120 240 T 240 250 T 400 220" opacity=".4"/>
+          <path d="M 0 260 Q 80 240, 120 260 T 240 270 T 400 240" opacity=".3"/>
+        </g>
+      </svg>
+      <div>
+        <div class="vcard-tag">Vertical · F · Led by Amit Arora</div>
+        <h3>Finance &amp; Banking</h3>
+        <p>Four decades across U.S. banks, capital markets, and regulated fintechs. ERM, credit, treasury, operational risk, M&amp;A integration.</p>
+      </div>
+      <div class="vcard-foot">
+        <div class="practices"><span>ERM</span><span>Credit</span><span>Treasury</span><span>M&amp;A</span></div>
+        <div class="arrow">→</div>
+      </div>
+    </a>
+    <a class="vcard health" href="healthcare.html">
+      <svg class="vcard-art" viewBox="0 0 400 380" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <g stroke="#fff" fill="none" stroke-width="1.2">
+          <path d="M 0 220 Q 60 170, 100 220 T 200 220 T 300 220 T 400 220" opacity=".9"/>
+          <path d="M 0 220 Q 60 270, 100 220 T 200 220 T 300 220 T 400 220" opacity=".4"/>
+        </g>
+        <g fill="#fff" opacity=".8"><circle cx="60" cy="195" r="4"/><circle cx="160" cy="195" r="4"/><circle cx="260" cy="195" r="4"/><circle cx="360" cy="195" r="4"/></g>
+      </svg>
+      <div>
+        <div class="vcard-tag">Vertical · H · Led by Geetanjali Arora</div>
+        <h3>Healthcare &amp; Life Sciences</h3>
+        <p>Three decades across EHR, SaaS, AI program governance, and patient experience — from inside the role.</p>
+      </div>
+      <div class="vcard-foot">
+        <div class="practices"><span>Digital Tx</span><span>AI Gov</span><span>EHR</span><span>M&amp;A</span></div>
+        <div class="arrow">→</div>
+      </div>
+    </a>
   </div>
 </section>
 
-<section id="products">
-  <div class="container" style="max-width:920px;">
-    <h2 style="text-align:center;">Products</h2>
-    <p class="lead" style="text-align:center;">In addition to the consulting practices, we build software.</p>
-    <div class="grid-2" style="margin-top:24px;gap:32px;">
-      <div class="card">
-        <span class="eyebrow-tag" style="color:var(--indigo);background:var(--lilac-soft);">An OfficeBeat Product</span>
-        <h3 style="margin-top:10px;">getmemyjob</h3>
-        <p>An AI-assisted job-search workflow. Built and operated under OfficeBeat. Currently in alpha.</p>
-        <p style="margin-top:14px;"><a href="https://getmemyjob.officebeatllc.com/" target="_blank" class="btn ghost">Open getmemyjob ↗</a></p>
-      </div>
-      <div class="card">
-        <span class="eyebrow-tag" style="color:var(--muted);background:var(--hairline);">Coming soon</span>
-        <h3 style="margin-top:10px;">Risk Maturity Tools</h3>
-        <p>A productized version of our risk maturity assessment, with benchmarking and ongoing monitoring.</p>
-        <p style="margin-top:14px;"><a href="assess.html" class="btn ghost">Try the free version →</a></p>
+<section class="products-strip" id="products">
+  <div class="products-grid">
+    <div>
+      <div class="eyebrow-pill">Products</div>
+      <h2>We ship internal tools as products — like <span class="brand-text-grad">getmemyjob</span>.</h2>
+      <p>An invite-only matcher we built for senior leaders. Curate your bullseye — 5 titles, 5 industries, 15 skills — and we surface 20 jobs each morning that are actually worth your attention.</p>
+      <a href="https://getmemyjob.officebeatllc.com/" target="_blank" rel="noopener" class="btn primary">Try getmemyjob →</a>
+      &nbsp;<a href="assess.html" class="btn ghost">Or, take the Risk Maturity Assessment →</a>
+    </div>
+    <div class="pp">
+      <div class="pp-head"><span>Today&rsquo;s top 20 · for you</span><span class="live">Live</span></div>
+      <div class="pp-grid">
+        <div class="pp-card"><div class="rank">01</div><div class="title">VP, Risk Strategy</div><div class="co">Stripe</div><div class="score">94</div></div>
+        <div class="pp-card"><div class="rank">02</div><div class="title">Director, TPRM</div><div class="co">Ramp</div><div class="score">91</div></div>
+        <div class="pp-card"><div class="rank">03</div><div class="title">Head of GRC</div><div class="co">Plaid</div><div class="score">89</div></div>
+        <div class="pp-card cool"><div class="rank">04</div><div class="title">VP, ERM</div><div class="co">Brex</div><div class="score">86</div></div>
+        <div class="pp-card cool"><div class="rank">05</div><div class="title">Dir, Reg Compliance</div><div class="co">Mercury</div><div class="score">83</div></div>
+        <div class="pp-card cool"><div class="rank">06</div><div class="title">Director, Risk</div><div class="co">Modern T.</div><div class="score">82</div></div>
       </div>
     </div>
   </div>

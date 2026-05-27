@@ -2,387 +2,298 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>getmemyjob — by OfficeBeat</title>
-<meta name="description" content="A curated job search, tailored to your skills. Real openings from real companies, AI-matched, with warm intros from your LinkedIn network. By OfficeBeat LLC.">
-
-<!-- Open Graph / social previews -->
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://getmemyjob.officebeatllc.com/landing.html">
-<meta property="og:title" content="getmemyjob — A curated job search, tailored to your skills">
-<meta property="og:description" content="Real openings from real companies, AI-matched, with warm intros from your LinkedIn network. By OfficeBeat LLC.">
-<meta property="og:image" content="https://getmemyjob.officebeatllc.com/og-card.png">
-<meta property="og:site_name" content="getmemyjob">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="getmemyjob — A curated job search, tailored to your skills">
-<meta name="twitter:description" content="Real openings from real companies, AI-matched, with warm intros from your LinkedIn network.">
-<meta name="twitter:image" content="https://getmemyjob.officebeatllc.com/og-card.png">
-
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>getmemyjob — Find the signal in the noise</title>
+<meta name="description" content="An invite-only matcher for senior leaders. Curate your bullseye, wake up to 20 jobs worth your attention. A product of OfficeBeat LLC.">
+<meta name="theme-color" content="#0B0828">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<meta property="og:type" content="website">
+<meta property="og:title" content="getmemyjob — Find the signal in the noise">
+<meta property="og:description" content="An invite-only matcher for senior leaders. Curate your bullseye, wake up to 20 jobs worth your attention.">
 <style>
-  :root {
-    --navy: #5C5CD6;
-    --navy-deep: #4B4BBE;
-    --indigo: #3F3FBA;
-    --accent: #5C6BC0;
-    --lilac: #E2E2F2;
-    --lilac-soft: #EEEEF8;
-    --off-white: #FAFAFC;
-    --ink: #1A1A2E;
-    --muted: #666680;
-    --hairline: #E5E7EE;
-  }
-  * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; }
-  body {
-    font: 15px/1.55 'Inter', -apple-system, system-ui, sans-serif;
-    color: var(--ink);
-    background: var(--off-white);
-    -webkit-font-smoothing: antialiased;
-  }
-  a { color: var(--accent); text-decoration: none; }
-  a:hover { text-decoration: underline; }
+:root{
+  --midnight:#0B0828; --royal:#1E146E; --blue:#1817B5; --periwinkle:#5C5CE0; --mist:#D1DEFF;
+  --grad:linear-gradient(90deg,#1817B5 0%,#5C5CE0 100%);
+  --grad-hero:linear-gradient(135deg,#0B0828 0%,#1E146E 40%,#1817B5 100%);
+  --ink:#0B0828; --muted:#5F5A7E; --muted-soft:#8A86A6;
+  --hairline:#E5E5F0; --hairline-soft:#F0F0F7;
+  --surface:#fff; --surface-soft:#FAFAFD; --surface-tint:#F6F6FB; --brand-50:#EEEEF8;
+  --shadow-sm:0 2px 4px rgba(11,8,40,.07),0 1px 2px rgba(11,8,40,.04);
+  --shadow-md:0 6px 16px rgba(11,8,40,.09),0 2px 4px rgba(11,8,40,.05);
+  --shadow-lg:0 16px 40px rgba(11,8,40,.14),0 4px 12px rgba(11,8,40,.06);
+  --shadow-brand:0 12px 32px rgba(24,23,181,.22);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',-apple-system,system-ui,sans-serif;color:var(--ink);background:var(--surface);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:6px}
 
-  /* Layout */
-  .container { max-width: 1080px; margin: 0 auto; padding: 0 28px; }
-  section { padding: 80px 0; }
-  section h2 { font-size: 30px; font-weight: 700; margin: 0 0 12px 0; letter-spacing: -0.01em; }
-  section .lead { font-size: 16px; color: var(--muted); max-width: 640px; margin: 0 0 44px 0; }
+/* Nav */
+.nav{padding:14px 24px;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--hairline-soft);position:sticky;top:0;z-index:100}
+.nav-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;letter-spacing:-.02em}
+.brand-mark{width:34px;height:34px;border-radius:50%;background:var(--grad-hero);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;letter-spacing:.05em}
+.brand-wrap{display:flex;align-items:baseline}
+.brand-wrap .a{color:var(--ink)}
+.brand-wrap .b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.parent{font-size:11px;color:var(--muted-soft);margin-left:8px;font-weight:600;letter-spacing:.04em}
+@media (max-width:520px){.parent{display:none}}
+.nav-cta-row{display:flex;gap:10px;align-items:center}
+.btn-ghost{padding:9px 16px;border-radius:8px;font-weight:600;font-size:13px;color:var(--ink);background:transparent;border:1px solid var(--hairline);cursor:pointer;font-family:inherit;text-decoration:none;display:inline-block}
+.btn-ghost:hover{border-color:var(--ink)}
+.btn-grad{padding:9px 16px;border-radius:8px;font-weight:600;font-size:13px;color:#fff;background:var(--grad);box-shadow:var(--shadow-sm);cursor:pointer;border:none;font-family:inherit;transition:transform .2s,box-shadow .2s;text-decoration:none;display:inline-block}
+.btn-grad:hover{transform:translateY(-1px);box-shadow:var(--shadow-brand)}
 
-  /* Nav */
-  nav.top {
-    position: sticky; top: 0; z-index: 10;
-    background: rgba(250,250,252,0.92);
-    backdrop-filter: blur(8px);
-    border-bottom: 1px solid var(--hairline);
-  }
-  nav.top .row { display: flex; align-items: center; justify-content: space-between; padding: 14px 28px; max-width: 1080px; margin: 0 auto; }
-  .logo { display: inline-flex; align-items: center; text-decoration: none; }
-  .logo:hover { text-decoration: none; }
-  .logo img { height: 38px; width: auto; display: block; }
-  @media (max-width: 720px) {
-    .logo img { height: 30px; }
-  }
-  nav.top .signin {
-    font-size: 14px; font-weight: 500; color: var(--navy);
-    padding: 8px 16px; border-radius: 6px; border: 1px solid var(--navy);
-    background: transparent; cursor: pointer;
-  }
-  nav.top .signin:hover { background: var(--navy); color: #fff; }
+/* HERO */
+.hero{background:var(--grad-hero);color:#fff;padding:96px 24px 120px;position:relative;overflow:hidden}
+.hero-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1.2fr 1fr;gap:64px;align-items:center;position:relative}
+@media (max-width:920px){.hero-inner{grid-template-columns:1fr;gap:32px}}
+.hero .eyebrow{font-size:11px;font-weight:700;color:var(--mist);letter-spacing:.08em;text-transform:uppercase;margin-bottom:20px;display:inline-flex;align-items:center;gap:10px}
+.hero .eyebrow::before{content:'';width:32px;height:1.5px;background:var(--mist);border-radius:1px}
+.hero h1{font-size:72px;line-height:1.02;font-weight:800;letter-spacing:-.03em;margin-bottom:24px;color:#fff}
+@media (max-width:920px){.hero h1{font-size:44px}}
+.hero h1 em{font-style:normal;background:linear-gradient(90deg,#fff 0%,#D1DEFF 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p.sub{font-size:19px;color:rgba(255,255,255,.78);max-width:540px;margin-bottom:32px}
+.hero-cta-row{display:flex;gap:14px;flex-wrap:wrap}
+.btn-light{padding:14px 24px;border-radius:10px;background:#fff;color:var(--midnight);font-weight:700;font-size:15px;box-shadow:var(--shadow-sm);transition:transform .2s,box-shadow .2s;border:none;cursor:pointer;font-family:inherit;text-decoration:none;display:inline-block}
+.btn-light:hover{transform:translateY(-1px);box-shadow:var(--shadow-lg)}
+.btn-outline{padding:14px 24px;border-radius:10px;background:transparent;color:#fff;font-weight:600;font-size:15px;border:1px solid rgba(255,255,255,.3);transition:all .2s;cursor:pointer;font-family:inherit;text-decoration:none;display:inline-block}
+.btn-outline:hover{border-color:#fff;background:rgba(255,255,255,.08)}
+.signal-line{margin-top:32px;display:flex;gap:24px;font-size:13px;color:rgba(255,255,255,.65);flex-wrap:wrap}
+.signal-line span{display:inline-flex;align-items:center;gap:8px}
+.signal-line span::before{content:'';width:6px;height:6px;border-radius:50%;background:#10B981}
+.hero-art{display:flex;justify-content:center;align-items:center}
+.hero-art svg{width:100%;max-width:440px;height:auto}
+@keyframes pulse{0%{opacity:1}50%{opacity:.55}100%{opacity:1}}
+.hero-art .focal{animation:pulse 2.6s ease-in-out infinite}
 
-  /* Hero */
-  .hero { background: linear-gradient(180deg, var(--navy-deep) 0%, var(--indigo) 100%); color: #fff; padding: 110px 0 120px 0; position: relative; overflow: hidden; }
-  .hero::after {
-    content: ''; position: absolute; right: -100px; top: -80px;
-    width: 540px; height: 540px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .hero h1 { font-size: 54px; font-weight: 800; margin: 0 0 18px 0; line-height: 1.05; letter-spacing: -0.025em; max-width: 760px; }
-  .hero h1 em { font-style: normal; color: #C5C7F1; }
-  .hero .sub { font-size: 18px; color: rgba(255,255,255,0.85); margin: 0 0 36px 0; max-width: 600px; line-height: 1.55; }
-  .hero .ctas { display: flex; gap: 12px; flex-wrap: wrap; }
-  .btn {
-    display: inline-flex; align-items: center; justify-content: center;
-    padding: 13px 22px; border-radius: 7px; font-weight: 600; font-size: 15px;
-    cursor: pointer; border: 1px solid transparent; transition: all 0.15s;
-    text-decoration: none;
-  }
-  .btn.primary { background: #fff; color: var(--navy); }
-  .btn.primary:hover { background: #E2E2F2; }
-  .btn.ghost { background: transparent; color: #fff; border-color: rgba(255,255,255,0.4); }
-  .btn.ghost:hover { background: rgba(255,255,255,0.08); border-color: #fff; }
-  .hero .tag { display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #C5C7F1; padding: 5px 11px; border: 1px solid rgba(255,255,255,0.25); border-radius: 999px; margin-bottom: 22px; }
+/* Match-board */
+.matchboard-section{padding:80px 24px;background:var(--surface-soft)}
+.matchboard{max-width:1200px;margin:0 auto;background:#fff;border:1px solid var(--hairline);border-radius:24px;box-shadow:var(--shadow-lg);overflow:hidden;margin-top:-72px;position:relative;z-index:5}
+.mb-head{padding:20px 28px;border-bottom:1px solid var(--hairline-soft);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.mb-head .l{font-weight:700;font-size:15px}
+.mb-head .l .grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.mb-head .r{font-size:12px;color:var(--muted);display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.mb-head .live{display:inline-flex;align-items:center;gap:6px;color:#0A6B3A;font-weight:600}
+.mb-head .live::before{content:'';width:6px;height:6px;border-radius:50%;background:#10B981;box-shadow:0 0 0 3px rgba(16,185,129,.18)}
+.mb-grid{padding:24px 28px;display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+@media (max-width:920px){.mb-grid{grid-template-columns:repeat(2,1fr)}}
+.mb-card{border:1px solid var(--hairline);border-radius:12px;padding:14px 14px 12px;background:#fff;transition:transform .2s,box-shadow .2s,border-color .2s}
+.mb-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);border-color:var(--periwinkle)}
+.mb-card .row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.mb-card .rank{font-size:10px;color:var(--muted-soft);font-weight:700;letter-spacing:.04em}
+.mb-card .score{padding:3px 9px;background:var(--blue);color:#fff;font-size:11px;font-weight:700;border-radius:999px;font-variant-numeric:tabular-nums}
+.mb-card.medium .score{background:var(--brand-50);color:var(--blue)}
+.mb-card h4{font-size:14px;font-weight:700;margin-bottom:4px;line-height:1.2}
+.mb-card .co{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px}
+.mb-bars{display:flex;flex-direction:column;gap:4px}
+.mb-bars .bar{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--muted-soft)}
+.mb-bars .bar .label{width:8px;font-weight:700}
+.mb-bars .bar .track{flex:1;height:4px;background:var(--hairline-soft);border-radius:999px;overflow:hidden}
+.mb-bars .bar .fill{height:100%;background:var(--blue);border-radius:inherit}
+.mb-card.medium .mb-bars .bar .fill{background:var(--periwinkle)}
+.mb-foot{padding:16px 28px;background:var(--surface-tint);border-top:1px solid var(--hairline-soft);font-size:12px;color:var(--muted);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
 
-  /* How it works */
-  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-  .step { padding: 24px; background: #fff; border: 1px solid var(--hairline); border-radius: 12px; }
-  .step .num {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 32px; height: 32px; border-radius: 50%;
-    background: var(--lilac); color: var(--navy); font-weight: 700; font-size: 14px;
-    margin-bottom: 14px;
-  }
-  .step h3 { font-size: 16px; font-weight: 700; margin: 0 0 6px 0; color: var(--ink); }
-  .step p { font-size: 14px; color: var(--muted); margin: 0; line-height: 1.5; }
+/* Features */
+.features{padding:96px 24px;max-width:1200px;margin:0 auto}
+.features-head{text-align:center;margin-bottom:56px;max-width:680px;margin-inline:auto}
+.features-head .eyebrow{font-size:11px;font-weight:700;color:var(--blue);letter-spacing:.08em;text-transform:uppercase;margin-bottom:16px}
+.features-head h2{font-size:44px;font-weight:800;letter-spacing:-.025em;line-height:1.1;margin-bottom:14px}
+@media (max-width:820px){.features-head h2{font-size:32px}}
+.features-head p{font-size:17px;color:var(--muted)}
+.f-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+@media (max-width:820px){.f-grid{grid-template-columns:1fr}}
+.fcard{padding:32px;border:1px solid var(--hairline);border-radius:18px;background:#fff;transition:transform .2s,box-shadow .2s,border-color .2s}
+.fcard:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);border-color:var(--periwinkle)}
+.fcard-icon{width:48px;height:48px;border-radius:12px;background:var(--brand-50);display:flex;align-items:center;justify-content:center;color:var(--blue);margin-bottom:18px}
+.fcard h3{font-size:18px;font-weight:700;letter-spacing:-.01em;margin-bottom:8px}
+.fcard p{color:var(--muted);font-size:14px;line-height:1.55}
 
-  /* Features */
-  .features-section { background: var(--lilac-soft); }
-  .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
-  .feature {
-    background: #fff; padding: 28px; border-radius: 12px;
-    border: 1px solid var(--hairline);
-  }
-  .feature .icon {
-    width: 44px; height: 44px; border-radius: 10px;
-    background: var(--lilac); color: var(--navy);
-    display: inline-flex; align-items: center; justify-content: center;
-    font-size: 22px; margin-bottom: 14px;
-  }
-  .feature h3 { font-size: 17px; font-weight: 700; margin: 0 0 6px 0; color: var(--ink); }
-  .feature p { font-size: 14px; color: var(--muted); margin: 0; line-height: 1.55; }
+/* CTA */
+.cta{background:var(--grad-hero);color:#fff;padding:80px 24px}
+.cta-inner{max-width:900px;margin:0 auto;text-align:center}
+.cta h2{font-size:48px;line-height:1.05;font-weight:800;letter-spacing:-.025em;margin-bottom:20px;color:#fff}
+@media (max-width:820px){.cta h2{font-size:32px}}
+.cta p{font-size:18px;color:rgba(255,255,255,.78);margin-bottom:32px}
 
-  /* Industries */
-  .industries-section { text-align: center; padding-bottom: 60px; }
-  .industries { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 18px; }
-  .pill {
-    padding: 8px 16px; border: 1px solid var(--navy); color: var(--navy);
-    border-radius: 999px; font-weight: 500; font-size: 14px;
-  }
-  .pill.dim { color: var(--muted); border-color: var(--hairline); }
-
-  /* Waitlist */
-  .waitlist-section { background: var(--navy); color: #fff; }
-  .waitlist-section h2 { color: #fff; }
-  .waitlist-section .lead { color: rgba(255,255,255,0.8); }
-  .waitlist {
-    background: rgba(255,255,255,0.05); padding: 32px;
-    border: 1px solid rgba(255,255,255,0.12); border-radius: 14px;
-    max-width: 580px;
-  }
-  .waitlist label { display: block; font-size: 12px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: rgba(255,255,255,0.7); margin-bottom: 6px; }
-  .waitlist input, .waitlist textarea, .waitlist select {
-    width: 100%; padding: 11px 14px; border-radius: 7px; border: 1px solid rgba(255,255,255,0.18);
-    background: rgba(255,255,255,0.06); color: #fff; font-size: 15px; font-family: inherit;
-    margin-bottom: 16px; box-sizing: border-box;
-  }
-  .waitlist input::placeholder, .waitlist textarea::placeholder { color: rgba(255,255,255,0.4); }
-  .waitlist input:focus, .waitlist textarea:focus, .waitlist select:focus { outline: none; border-color: #fff; background: rgba(255,255,255,0.1); }
-  .waitlist textarea { min-height: 72px; resize: vertical; }
-  .waitlist .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .waitlist .row2 > div { margin: 0; }
-  .waitlist button {
-    width: 100%; padding: 13px 22px; background: #fff; color: var(--navy);
-    border: 0; border-radius: 7px; font-weight: 700; font-size: 15px;
-    cursor: pointer; margin-top: 4px;
-  }
-  .waitlist button:hover { background: var(--lilac); }
-  .waitlist .ok { display: none; padding: 20px; background: rgba(255,255,255,0.1); border-radius: 8px; font-size: 15px; text-align: center; }
-  .waitlist.submitted .form { display: none; }
-  .waitlist.submitted .ok { display: block; }
-
-  /* Footer */
-  footer { background: var(--navy-deep); color: rgba(255,255,255,0.7); padding: 40px 0; font-size: 13px; }
-  footer .row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
-  footer .brand { color: #fff; font-weight: 600; }
-  footer a { color: rgba(255,255,255,0.8); }
-
-  /* Mobile */
-  @media (max-width: 720px) {
-    section { padding: 56px 0; }
-    .hero { padding: 60px 0 70px 0; }
-    .hero h1 { font-size: 36px; }
-    .hero .sub { font-size: 16px; }
-    .steps, .features { grid-template-columns: 1fr; }
-    .waitlist .row2 { grid-template-columns: 1fr; }
-  }
-
-  /* Sign-in modal */
-  .modal-overlay { position: fixed; inset: 0; background: rgba(20,30,50,0.55); display: none; align-items: center; justify-content: center; z-index: 100; }
-  .modal-overlay.show { display: flex; }
-  .modal { background: #fff; padding: 28px; border-radius: 12px; max-width: 420px; width: calc(100% - 28px); box-shadow: 0 24px 60px rgba(0,0,0,0.25); }
-  .modal h3 { margin: 0 0 10px 0; font-size: 18px; color: var(--ink); }
-  .modal p { margin: 0 0 18px 0; font-size: 14px; color: var(--muted); }
-  .modal input { width: 100%; padding: 11px 14px; border-radius: 7px; border: 1px solid var(--hairline); font-size: 15px; box-sizing: border-box; margin-bottom: 12px; font-family: inherit; }
-  .modal .btn-row { display: flex; gap: 10px; }
-  .modal .btn.primary { background: var(--navy); color: #fff; flex: 1; }
-  .modal .btn.primary:hover { background: var(--navy-deep); }
-  .modal .btn.ghost { background: transparent; color: var(--muted); border-color: var(--hairline); }
-  .modal .modal-close { position: absolute; }
-  .modal .lost-link { font-size: 13px; margin-top: 12px; text-align: center; }
+/* Footer */
+footer{background:var(--midnight);color:#fff;padding:48px 24px 32px}
+.footer-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:24px;font-size:13px;color:rgba(255,255,255,.6)}
+.footer-inner a:hover{color:#fff}
+.footer-inner .brand .a{color:#fff}
+.footer-inner .brand-mark{background:#fff;color:var(--royal)}
 </style>
 </head>
 <body>
 
-<nav class="top">
-  <div class="row">
-    <a href="/" class="logo">
-      <img src="officebeat-logo.png" alt="OfficeBeat LLC">
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="/">
+      <div class="brand-mark">G</div>
+      <div class="brand-wrap"><span class="a">getme</span><span class="b">myjob</span></div>
+      <span class="parent">an OfficeBeat product</span>
     </a>
-    <a class="signin" href="/login.html" style="text-decoration:none;display:inline-block;">Sign in</a> <a class="signin" href="/signup.html" style="text-decoration:none;display:inline-block;background:var(--navy);color:#fff;margin-left:8px;">Create account</a>
+    <div class="nav-cta-row">
+      <a class="btn-ghost" href="/account.html">Sign in</a>
+      <a class="btn-grad" href="#request">Request access →</a>
+    </div>
   </div>
 </nav>
 
 <section class="hero">
-  <div class="container">
-    <span class="tag">Closed alpha · By invitation</span>
-    <h1>Get me my job — <em>without the noise.</em></h1>
-    <p class="sub">A curated job search tailored to your skills. Real openings from real companies, AI-matched to your profile, with warm intros from your LinkedIn network.</p>
-    <div class="ctas">
-      <a href="#waitlist" class="btn primary">Request alpha access</a>
-      <a href="#how" class="btn ghost">How it works</a>
+  <div class="hero-inner">
+    <div>
+      <div class="eyebrow">Invite-only · For senior leaders</div>
+      <h1>Find the signal<br><em>in the noise.</em></h1>
+      <p class="sub">20,000+ open roles flow past your inbox every day. We tune the matcher around your bullseye — 5 titles, 5 industries, 15 skills — and surface twenty each morning that are worth your attention.</p>
+      <div class="hero-cta-row">
+        <a class="btn-light" href="#request">Request alpha access →</a>
+        <a class="btn-outline" href="#how">See how it works</a>
+      </div>
+      <div class="signal-line">
+        <span>87 ATSes scraped daily</span>
+        <span>AI-tuned to your bullseye</span>
+        <span>Warm intros, not cold drafts</span>
+      </div>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <svg viewBox="0 0 440 440" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5C5CE0"/><stop offset="1" stop-color="#fff"/></linearGradient></defs>
+        <g transform="translate(220 220)">
+          <g fill="#fff" opacity=".22">
+            <circle cx="-140" cy="-70" r="1.5"/><circle cx="110" cy="-130" r="1.5"/><circle cx="160" cy="30" r="1.5"/>
+            <circle cx="-90" cy="140" r="1.5"/><circle cx="-175" cy="50" r="1.5"/><circle cx="150" cy="-50" r="1.5"/>
+            <circle cx="50" cy="160" r="1.5"/><circle cx="-140" cy="-140" r="1.5"/><circle cx="195" cy="90" r="1.5"/>
+            <circle cx="-195" cy="-25" r="1.5"/><circle cx="30" cy="-165" r="1.5"/><circle cx="180" cy="-155" r="1.5"/>
+            <circle cx="-160" cy="160" r="1.5"/><circle cx="210" cy="-15" r="1.5"/>
+          </g>
+          <circle r="190" fill="none" stroke="#fff" stroke-width=".8" opacity=".15"/>
+          <circle r="150" fill="none" stroke="#fff" stroke-width=".8" opacity=".18"/>
+          <circle r="105" fill="none" stroke="#fff" stroke-width=".8" opacity=".22"/>
+          <circle r="60" fill="none" stroke="#D1DEFF" stroke-width="1.3" opacity=".5"/>
+          <circle r="32" fill="none" stroke="#fff" stroke-width="1.8"/>
+          <circle cx="-10" cy="-12" r="4" fill="#D1DEFF"/><circle cx="14" cy="-6" r="4" fill="#fff"/>
+          <circle cx="-16" cy="10" r="4" fill="#D1DEFF"/><circle cx="8" cy="16" r="4" fill="#fff"/>
+          <circle r="10" fill="#fff" class="focal"/>
+          <circle r="6" fill="url(#hg)"/>
+          <g stroke="#fff" stroke-width="1.2" opacity=".8">
+            <line x1="-24" y1="0" x2="-14" y2="0"/><line x1="14" y1="0" x2="24" y2="0"/>
+            <line x1="0" y1="-24" x2="0" y2="-14"/><line x1="0" y1="14" x2="0" y2="24"/>
+          </g>
+        </g>
+      </svg>
     </div>
   </div>
 </section>
 
-<section id="how">
-  <div class="container">
-    <h2>How it works</h2>
-    <p class="lead">From "I need a job" to "applying with a warm intro" in four steps.</p>
-    <div class="steps">
-      <div class="step">
-        <div class="num">1</div>
-        <h3>Join the waitlist</h3>
-        <p>Tell us who you are and what you're looking for. We invite in batches.</p>
-      </div>
-      <div class="step">
-        <div class="num">2</div>
-        <h3>Upload your resume</h3>
-        <p>One click. AI extracts your skills profile — titles, industries, frameworks, certifications.</p>
-      </div>
-      <div class="step">
-        <div class="num">3</div>
-        <h3>Customise your profile</h3>
-        <p>Add or remove skill chips. Set target titles, industries, seniority, and salary floor.</p>
-      </div>
-      <div class="step">
-        <div class="num">4</div>
-        <h3>Apply with warm intros</h3>
-        <p>Browse curated openings. Upload your LinkedIn connections — see who you know inside each company.</p>
+<section class="matchboard-section">
+  <div class="matchboard">
+    <div class="mb-head">
+      <div class="l">Today&rsquo;s <span class="grad">Top 20</span></div>
+      <div class="r">
+        <span class="live">Refreshed daily at 6 AM</span>
+        <span>Avg score 88</span>
       </div>
     </div>
-  </div>
-</section>
-
-<section class="features-section">
-  <div class="container">
-    <h2>What you get</h2>
-    <p class="lead">Built for senior leaders who are tired of scraping LinkedIn, fighting ghost jobs, and ignoring recruiter spam.</p>
-    <div class="features">
-      <div class="feature">
-        <div class="icon">📋</div>
-        <h3>Real openings only</h3>
-        <p>Pulled directly from companies' ATS feeds (Greenhouse, Lever, Ashby, Workday). No staffing agencies. No reposts. Ghost jobs flagged automatically.</p>
-      </div>
-      <div class="feature">
-        <div class="icon">🤖</div>
-        <h3>AI skills matching</h3>
-        <p>Your resume becomes a structured profile — industries, frameworks, certifications, target titles. Jobs are scored against it; you see the best matches first.</p>
-      </div>
-      <div class="feature">
-        <div class="icon">🤝</div>
-        <h3>Warm intros, automatically</h3>
-        <p>Upload your LinkedIn connections once. Job cards show who you know at each company, with pre-drafted outreach messages ready to send.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="industries-section">
-  <div class="container">
-    <h2>Currently supporting</h2>
-    <p class="lead" style="margin: 0 auto 22px auto;">We start with the industries we know best. More coming as the alpha expands.</p>
-    <div class="industries">
-      <span class="pill">Healthcare IT</span>
-      <span class="pill">Fintech</span>
-      <span class="pill">Cyber / GRC</span>
-      <span class="pill">Banking</span>
-      <span class="pill dim">+ more soon</span>
-    </div>
-  </div>
-</section>
-
-<section id="waitlist" class="waitlist-section">
-  <div class="container">
-    <h2>Request alpha access</h2>
-    <p class="lead">Tell us a bit about yourself. We're inviting in small batches and reading every response.</p>
-    <div class="waitlist" id="waitlistCard">
-      <form class="form" onsubmit="submitWaitlist(event)">
-        <div class="row2">
-          <div>
-            <label for="wl-name">Name</label>
-            <input id="wl-name" name="name" required placeholder="Jane Doe" autocomplete="name">
-          </div>
-          <div>
-            <label for="wl-email">Email</label>
-            <input id="wl-email" name="email" type="email" required placeholder="you@example.com" autocomplete="email">
-          </div>
+    <div class="mb-grid">
+      <div class="mb-card">
+        <div class="row"><span class="rank">01</span><span class="score">94</span></div>
+        <h4>VP, Risk Strategy</h4><div class="co">Stripe · NYC</div>
+        <div class="mb-bars">
+          <div class="bar"><span class="label">T</span><div class="track"><div class="fill" style="width:92%"></div></div></div>
+          <div class="bar"><span class="label">I</span><div class="track"><div class="fill" style="width:88%"></div></div></div>
+          <div class="bar"><span class="label">S</span><div class="track"><div class="fill" style="width:85%"></div></div></div>
         </div>
-        <label for="wl-role">Current role / title</label>
-        <input id="wl-role" name="role" placeholder="Director, Product Operations" autocomplete="organization-title">
-        <label for="wl-target">Target role or industry</label>
-        <input id="wl-target" name="target" placeholder="VP Digital Transformation in healthcare or fintech">
-        <label for="wl-notes">Anything else? (optional)</label>
-        <textarea id="wl-notes" name="notes" placeholder="What's your search horizon, must-haves, anything we should know."></textarea>
-        <button type="submit">Request access</button>
-      </form>
-      <div class="ok">
-        <strong>Thanks — your request is on its way.</strong><br>
-        Your default mail app should have just opened with the message pre-filled. Hit send and we'll be in touch within a few days.
+      </div>
+      <div class="mb-card">
+        <div class="row"><span class="rank">02</span><span class="score">91</span></div>
+        <h4>Director, TPRM</h4><div class="co">Ramp · Remote</div>
+        <div class="mb-bars">
+          <div class="bar"><span class="label">T</span><div class="track"><div class="fill" style="width:85%"></div></div></div>
+          <div class="bar"><span class="label">I</span><div class="track"><div class="fill" style="width:90%"></div></div></div>
+          <div class="bar"><span class="label">S</span><div class="track"><div class="fill" style="width:88%"></div></div></div>
+        </div>
+      </div>
+      <div class="mb-card">
+        <div class="row"><span class="rank">03</span><span class="score">89</span></div>
+        <h4>Head of GRC</h4><div class="co">Plaid · SF</div>
+        <div class="mb-bars">
+          <div class="bar"><span class="label">T</span><div class="track"><div class="fill" style="width:82%"></div></div></div>
+          <div class="bar"><span class="label">I</span><div class="track"><div class="fill" style="width:88%"></div></div></div>
+          <div class="bar"><span class="label">S</span><div class="track"><div class="fill" style="width:80%"></div></div></div>
+        </div>
+      </div>
+      <div class="mb-card medium">
+        <div class="row"><span class="rank">04</span><span class="score">86</span></div>
+        <h4>VP, ERM</h4><div class="co">Brex · NYC</div>
+        <div class="mb-bars">
+          <div class="bar"><span class="label">T</span><div class="track"><div class="fill" style="width:78%"></div></div></div>
+          <div class="bar"><span class="label">I</span><div class="track"><div class="fill" style="width:82%"></div></div></div>
+          <div class="bar"><span class="label">S</span><div class="track"><div class="fill" style="width:75%"></div></div></div>
+        </div>
+      </div>
+      <div class="mb-card medium">
+        <div class="row"><span class="rank">05</span><span class="score">83</span></div>
+        <h4>Dir, Reg Compliance</h4><div class="co">Mercury · Remote</div>
+        <div class="mb-bars">
+          <div class="bar"><span class="label">T</span><div class="track"><div class="fill" style="width:72%"></div></div></div>
+          <div class="bar"><span class="label">I</span><div class="track"><div class="fill" style="width:78%"></div></div></div>
+          <div class="bar"><span class="label">S</span><div class="track"><div class="fill" style="width:70%"></div></div></div>
+        </div>
       </div>
     </div>
+    <div class="mb-foot">
+      <span>+ 15 more matches today, every day</span>
+      <a href="/account.html" style="color:var(--blue);font-weight:600">Open dashboard →</a>
+    </div>
+  </div>
+</section>
+
+<section class="features" id="how">
+  <div class="features-head">
+    <div class="eyebrow">How it works</div>
+    <h2>Curate once. Wake up to twenty.</h2>
+    <p>No more endless scrolling. Tell the matcher exactly what you want, and we do the work.</p>
+  </div>
+  <div class="f-grid">
+    <div class="fcard">
+      <div class="fcard-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg></div>
+      <h3>1 · Set your bullseye</h3>
+      <p>5 titles · 5 industries · 15 skills · 15 target companies. The wizard walks you through it in under 10 minutes.</p>
+    </div>
+    <div class="fcard">
+      <div class="fcard-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div>
+      <h3>2 · We scrape 87 ATSes</h3>
+      <p>Greenhouse, Lever, Ashby, Workday, Workable, iCIMS, SmartRecruiters and more — daily. Each role scored against your bullseye.</p>
+    </div>
+    <div class="fcard">
+      <div class="fcard-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+      <h3>3 · Top 20 by 6 AM</h3>
+      <p>With LinkedIn warm-intro drafts for companies where you already know someone. Apply when you&rsquo;re ready.</p>
+    </div>
+  </div>
+</section>
+
+<section class="cta" id="request">
+  <div class="cta-inner">
+    <h2>Stop scrolling. Start shipping applications that matter.</h2>
+    <p>Currently invite-only for senior leaders in financial services and healthcare.</p>
+    <a class="btn-light" href="mailto:info@officebeatllc.com?subject=getmemyjob%20alpha%20access&body=Hi%20%E2%80%94%20I%27d%20like%20alpha%20access%20to%20getmemyjob.%0A%0AName%3A%0ACurrent%20role%3A%0ALinkedIn%3A">Request alpha access →</a>
   </div>
 </section>
 
 <footer>
-  <div class="container">
-    <div class="row">
-      <div>
-        <span class="brand">getmemyjob</span> · A product by <a href="mailto:info@officebeatllc.com">OfficeBeat LLC</a>
-      </div>
-      <div>
-        <a href="mailto:info@officebeatllc.com">info@officebeatllc.com</a> · +1 (201) 446-2837 · New York, NY
-      </div>
-    </div>
-    <div class="row" style="margin-top: 12px; font-size: 12px; opacity: 0.6;">© 2026 OfficeBeat LLC. All rights reserved.</div>
+  <div class="footer-inner">
+    <a class="brand" href="https://officebeatllc.com">
+      <div class="brand-mark">OB</div>
+      <div class="brand-wrap"><span class="a">getme</span><span class="b" style="background:linear-gradient(90deg,#fff 0%,#D1DEFF 100%);-webkit-background-clip:text;background-clip:text;color:transparent">myjob</span></div>
+    </a>
+    <span>© 2026 OfficeBeat LLC · A product by <a href="https://officebeatllc.com">OfficeBeat</a></span>
+    <span><a href="mailto:info@officebeatllc.com">info@officebeatllc.com</a> · +1 (201) 446-2837</span>
   </div>
 </footer>
 
-<!-- Sign-in modal -->
-<div class="modal-overlay" id="signinModal" onclick="if (event.target.id==='signinModal') closeSignin()">
-  <div class="modal">
-    <h3>Sign in</h3>
-    <p>Already have a dashboard? Paste the full link from your invite email below.</p>
-    <input id="signinUrl" type="text" placeholder="https://getmemyjob.officebeatllc.com/your-slug.html?key=...">
-    <div class="btn-row">
-      <button class="btn ghost" onclick="closeSignin()">Cancel</button>
-      <button class="btn primary" onclick="goToDashboard()">Go to my dashboard</button>
-    </div>
-    <div class="lost-link">
-      Lost your link? <a href="mailto:info@officebeatllc.com?subject=Lost%20my%20dashboard%20link">Email us</a> and we'll resend it.
-    </div>
-  </div>
-</div>
-
-<script>
-  function openSignin() { document.getElementById('signinModal').classList.add('show'); }
-  function closeSignin() { document.getElementById('signinModal').classList.remove('show'); }
-  function goToDashboard() {
-    const url = document.getElementById('signinUrl').value.trim();
-    if (!url) return;
-    try {
-      const u = new URL(url);
-      if (u.hostname.endsWith('officebeatllc.com')) {
-        window.location.href = url;
-      } else {
-        alert('That doesn\'t look like a getmemyjob dashboard link.');
-      }
-    } catch (e) {
-      alert('That doesn\'t look like a valid URL.');
-    }
-  }
-  function submitWaitlist(e) {
-    e.preventDefault();
-    const f = e.target;
-    const name = f.name.value.trim();
-    const email = f.email.value.trim();
-    const role = f.role.value.trim();
-    const target = f.target.value.trim();
-    const notes = f.notes.value.trim();
-    const subject = encodeURIComponent('Alpha access request — ' + name);
-    const body = encodeURIComponent(
-      'Name: ' + name + '\n' +
-      'Email: ' + email + '\n' +
-      'Current role: ' + role + '\n' +
-      'Target: ' + target + '\n' +
-      'Notes: ' + notes + '\n\n' +
-      '— Sent from getmemyjob landing page'
-    );
-    window.location.href = 'mailto:info@officebeatllc.com?subject=' + subject + '&body=' + body;
-    document.getElementById('waitlistCard').classList.add('submitted');
-  }
-</script>
 </body>
 </html>
