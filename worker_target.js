@@ -75,6 +75,7 @@ export default {
     if (url.pathname === '/skills-profile') return handleSkillsProfile(request, env, cors, slug);
     if (url.pathname === '/regenerate-profile') return handleRegenerateProfile(request, env, cors, slug);
     if (url.pathname === '/regenerate-companies') return handleRegenerateCompanies(request, env, cors, slug);
+    if (url.pathname === '/draft-warm-intro') return handleDraftWarmIntro(request, env, cors, slug);
     if (url.pathname === '/rerank-titles') return handleRerankTitles(request, env, cors, slug);
     if (url.pathname === '/prep') return handlePrep(request, env, cors, slug);
     if (url.pathname === '/tracker') return handleTracker(request, env, cors, slug);
@@ -84,7 +85,7 @@ export default {
     if (url.pathname === '/admin/digest-trigger') return handleDigestTrigger(request, env, cors);
     if (url.pathname === '/notes') return handleNotes(request, env, cors, slug);
     return new Response(
-      'Endpoints: /api/auth/{signup,login,logout,me,change-password}, /prep, /resume, /resume-versions, /parse-resume, /skills-profile, /regenerate-profile, /regenerate-companies, /rerank-titles, /tracker, /draft-followup, /interview-prep, /generate-digest, /refresh, /admin/users, /notes.',
+      'Endpoints: /api/auth/{signup,login,logout,me,change-password}, /prep, /resume, /resume-versions, /parse-resume, /skills-profile, /regenerate-profile, /regenerate-companies, /draft-warm-intro, /rerank-titles, /tracker, /draft-followup, /interview-prep, /generate-digest, /refresh, /admin/users, /notes.',
       { status: 404, headers: cors }
     );
   },
@@ -906,6 +907,97 @@ Return shape (no prose, no markdown, just the JSON array):
     dry_run: false,
     profile,
     diff: { removing, adding, keeping, summary: `Removed ${removing.length}, added ${adding.length}, kept ${keeping.length}` }
+  }, { headers: cors });
+}
+
+// --- /draft-warm-intro -------------------------------------------------
+// Drafts a personalized LinkedIn DM + email asking a connection for a
+// warm intro to a specific job. Body shape:
+//   { fp, job: {title, company, url, desc}, connection: {first, last, position, company, url} }
+async function handleDraftWarmIntro(request, env, cors, slug) {
+  if (request.method !== 'POST') return new Response('POST only', { status: 405, headers: cors });
+  if (!env.ANTHROPIC_API_KEY) return Response.json({ error: 'Missing ANTHROPIC_API_KEY' }, { status: 500, headers: cors });
+
+  let body;
+  try { body = await request.json(); } catch (e) { return Response.json({ error: 'Bad JSON' }, { status: 400, headers: cors }); }
+  const job = body.job || {};
+  const conn = body.connection || {};
+  if (!job.title || !job.company || !conn.first) {
+    return Response.json({ error: 'Body must include job{title,company} and connection{first}' }, { status: 400, headers: cors });
+  }
+
+  // Load user profile for personalization
+  const raw = await env.RESUMES.get(uk(slug, 'skills_profile'));
+  const profile = raw ? (JSON.parse(raw) || {}) : {};
+  const userFirstName = profile.firstName || (slug.split('-')[0] || 'me');
+  const userName = (profile.firstName && profile.lastName) ? `${profile.firstName} ${profile.lastName}` : userFirstName;
+  const userRole = profile.primaryRole || profile.currentTitle || 'a job seeker';
+  const userSummary = (profile.summary || '').slice(0, 400);
+  const userIndustries = (profile.industries || []).slice(0, 3).join(', ');
+
+  const connName = `${conn.first} ${conn.last || ''}`.trim();
+  const connPos = conn.position || '';
+  const connCompany = conn.company || '';
+  const jobDesc = (job.desc || '').slice(0, 600);
+
+  const prompt = `You're drafting a warm-intro request on behalf of ${userName}. They want to apply for "${job.title}" at ${job.company} and have a LinkedIn connection at the company. Generate TWO short, professional messages: a LinkedIn DM (max 300 characters) and an email (subject + 4-6 sentence body).
+
+USER (sender):
+- Name: ${userName}
+- Role: ${userRole}
+- Industries: ${userIndustries}
+- Background: ${userSummary}
+
+CONNECTION (recipient):
+- Name: ${connName}
+- Position when last connected: ${connPos}${connCompany ? ' @ ' + connCompany : ''}
+
+JOB:
+- Title: ${job.title}
+- Company: ${job.company}
+- URL: ${job.url || '(not provided)'}
+- JD snippet: ${jobDesc}
+
+RULES:
+- Be warm but not gushing. Acknowledge it's been a while (assume they may not remember).
+- Be specific about the job and why it fits the sender.
+- Ask explicitly if they'd be open to a brief intro/referral. Don't demand.
+- LinkedIn DM: max 300 chars, conversational. Start "Hi ${conn.first},".
+- Email subject: under 60 chars, action-oriented (e.g., "Quick referral ask: ${job.title} at ${job.company}").
+- Email body: 4-6 sentences. Same warm tone. Mention the job by name + paste the URL near the end.
+- Don't sign with full address blocks. Just first name.
+
+Return ONLY a JSON object, no prose, no markdown:
+{"linkedin_dm": "...", "email_subject": "...", "email_body": "..."}`;
+
+  let resp;
+  try {
+    resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 1024, messages: [{ role: 'user', content: prompt }] })
+    });
+  } catch (e) {
+    return Response.json({ error: 'Anthropic call failed: ' + String(e) }, { status: 502, headers: cors });
+  }
+  if (!resp.ok) {
+    return Response.json({ error: 'Anthropic ' + resp.status }, { status: 502, headers: cors });
+  }
+  const data = await resp.json();
+  const text = ((data.content && data.content[0] && data.content[0].text) || '').trim();
+  let parsed;
+  try { parsed = JSON.parse(text); }
+  catch (e) {
+    const m = text.match(/\{[\s\S]*\}/);
+    if (m) { try { parsed = JSON.parse(m[0]); } catch (ee) {} }
+  }
+  if (!parsed || !parsed.linkedin_dm) {
+    return Response.json({ error: 'AI returned malformed', raw: text.slice(0, 300) }, { status: 502, headers: cors });
+  }
+  return Response.json({
+    linkedin_dm: parsed.linkedin_dm,
+    email_subject: parsed.email_subject || ('Referral request: ' + job.title + ' at ' + job.company),
+    email_body: parsed.email_body || ''
   }, { headers: cors });
 }
 

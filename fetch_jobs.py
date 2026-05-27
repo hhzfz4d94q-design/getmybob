@@ -5506,6 +5506,143 @@ function _hideDismissedCards() {{
 }}
 
 // ==============================================================
+// LinkedIn-connection boost: if user has uploaded their Connections.csv
+// and a card's company matches a connection, give it a +15 score boost
+// AND attach a "🤝 N connections here" badge that opens a warm-intro modal.
+// ==============================================================
+function _decorateContactBadges() {{
+  if (typeof _findContactsForCompany !== 'function') return;
+  const cards = document.querySelectorAll('.card[data-fp]');
+  let boostedCount = 0;
+  cards.forEach(function(card) {{
+    if (card.getAttribute('data-contact-boost') === '1') return; // already done
+    const coEl = card.querySelector('.company');
+    if (!coEl) return;
+    const co = coEl.textContent.trim();
+    const matches = _findContactsForCompany(co);
+    if (!matches.length) return;
+    // Score boost: +15 to data-ai-score (capped at 100)
+    const cur = parseInt(card.getAttribute('data-ai-score') || card.getAttribute('data-score') || '0', 10);
+    const boosted = Math.min(100, cur + 15);
+    card.setAttribute('data-ai-score', String(boosted));
+    card.setAttribute('data-contact-boost', '1');
+    // Update the visible score number too
+    const scoreEl = card.querySelector('.score');
+    if (scoreEl) {{ scoreEl.textContent = String(boosted); scoreEl.title = 'AI ' + boosted + '/100 (+15 connection boost)'; scoreEl.style.color = '#0a6b3a'; }}
+    // Badge
+    const actions = card.querySelector('.actions');
+    if (actions && !actions.querySelector('.contact-badge')) {{
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'btn ghost-btn small contact-badge';
+      btn.style.cssText = 'background:#ecfdf5;color:#0a6b3a;border-color:#a7f3d0;font-weight:600;';
+      btn.textContent = '🤝 ' + matches.length + ' connection' + (matches.length === 1 ? '' : 's') + ' — Warm intro';
+      btn.title = matches.map(function(c) {{ return c.first + ' ' + c.last + (c.position ? ' (' + c.position + ')' : ''); }}).join('\n') + '\nClick to draft personalized intro';
+      btn.addEventListener('click', function() {{ showWarmIntroModal(card.getAttribute('data-fp'), matches); }});
+      const dismiss = actions.querySelector('.dismiss');
+      if (dismiss) actions.insertBefore(btn, dismiss);
+      else actions.appendChild(btn);
+    }}
+    boostedCount++;
+  }});
+  if (boostedCount > 0) {{
+    try {{ _resortByAiScore(); }} catch (e) {{}}
+    console.log('[contacts-boost] +15 applied to ' + boostedCount + ' cards');
+  }}
+}}
+
+async function showWarmIntroModal(fp, connections) {{
+  const card = document.querySelector('.card[data-fp="' + fp + '"]');
+  if (!card) return;
+  const title = ((card.querySelector('.title a') || {{}}).textContent || '').trim();
+  const company = ((card.querySelector('.company') || {{}}).textContent || '').trim();
+  const descEl = card.querySelector('.desc');
+  const descSnippet = descEl ? descEl.innerText.trim().slice(0, 1200) : '';
+  const jobUrl = (card.querySelector('.title a') || {{}}).href || '';
+
+  // Build/replace modal
+  let m = document.getElementById('warm-intro-modal');
+  if (m) m.remove();
+  m = document.createElement('div');
+  m.id = 'warm-intro-modal';
+  m.style.cssText = 'position:fixed;inset:0;background:rgba(20,22,40,0.55);z-index:2147483600;display:flex;align-items:center;justify-content:center;padding:24px;font-family:Inter,system-ui,sans-serif;';
+  const connList = connections.map(function(c) {{
+    const name = (c.first + ' ' + c.last).trim();
+    const pos = c.position ? c.position + (c.company ? ' @ ' + c.company : '') : (c.company || '');
+    const li = c.url ? '<a href="' + c.url + '" target="_blank" rel="noopener" style="color:#5C5CD6;">' + escHtml(name) + '</a>' : escHtml(name);
+    return '<div style="padding:6px 0;font-size:13px;color:#444;"><strong>' + li + '</strong> — <span style="color:#666;">' + escHtml(pos) + '</span></div>';
+  }}).join('');
+
+  m.innerHTML = ''
+    + '<div style="background:white;border-radius:12px;max-width:700px;width:100%;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 20px 50px rgba(0,0,0,0.3);">'
+    + '  <div style="padding:18px 22px;border-bottom:1px solid #e6e8eb;display:flex;justify-content:space-between;align-items:center;">'
+    + '    <h2 style="margin:0;font-size:18px;color:#1a1a2e;">🤝 Warm intro for ' + escHtml(title) + ' @ ' + escHtml(company) + '</h2>'
+    + '    <button onclick="document.getElementById(\'warm-intro-modal\').remove()" style="background:none;border:none;cursor:pointer;font-size:22px;color:#888;">×</button>'
+    + '  </div>'
+    + '  <div style="padding:14px 22px 6px;border-bottom:1px solid #f0f1f5;">'
+    + '    <div style="font-size:12px;font-weight:600;color:#666;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.4px;">Your connections at this company</div>'
+    + '    ' + connList
+    + '  </div>'
+    + '  <div id="warm-intro-content" style="padding:14px 22px 18px;overflow-y:auto;flex:1;">'
+    + '    <div style="display:flex;align-items:center;gap:10px;color:#666;font-size:13px;"><div style="width:14px;height:14px;border:2px solid #5C5CD6;border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite;"></div> Drafting personalized intro via AI…</div>'
+    + '    <style>@keyframes spin { to { transform: rotate(360deg); } }</style>'
+    + '  </div>'
+    + '</div>';
+  document.body.appendChild(m);
+  m.addEventListener('click', function(e) {{ if (e.target === m) m.remove(); }});
+
+  const content = document.getElementById('warm-intro-content');
+  try {{
+    const ek = (typeof getEditKey === 'function') ? getEditKey() : null;
+    const headers = ek ? {{ 'X-Edit-Key': ek }} : {{}};
+    headers['Content-Type'] = 'application/json';
+    const r = await fetch(WORKER_BASE + '/draft-warm-intro' + USER_QS, {{
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify({{
+        fp: fp,
+        job: {{ title: title, company: company, url: jobUrl, desc: descSnippet }},
+        connection: connections[0]  // primary; we'll show one draft, user can adapt
+      }})
+    }});
+    const data = await r.json();
+    if (!r.ok) {{
+      content.innerHTML = '<div style="color:#B91C1C;font-size:13px;">Failed: ' + (data.error || r.status) + '</div>';
+      return;
+    }}
+    const dm = data.linkedin_dm || '';
+    const subj = data.email_subject || '';
+    const body = data.email_body || '';
+    const dmEsc = escHtml(dm);
+    const subjEsc = escHtml(subj);
+    const bodyEsc = escHtml(body);
+    const mailtoUrl = 'mailto:?subject=' + encodeURIComponent(subj) + '&body=' + encodeURIComponent(body);
+    content.innerHTML = ''
+      + '<div style="margin-bottom:18px;">'
+      + '  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">'
+      + '    <div style="font-size:12px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.4px;">LinkedIn DM</div>'
+      + '    <button onclick="navigator.clipboard.writeText(' + JSON.stringify(dm) + '); this.textContent=\'Copied\'; setTimeout(()=>this.textContent=\'Copy\',1500);" style="padding:4px 10px;font-size:11px;background:#5C5CD6;color:white;border:none;border-radius:4px;cursor:pointer;">Copy</button>'
+      + '  </div>'
+      + '  <div style="padding:10px 12px;background:#f8f9fb;border:1px solid #e6e8eb;border-radius:6px;font-size:13px;color:#1a1a2e;white-space:pre-wrap;line-height:1.5;">' + dmEsc + '</div>'
+      + '</div>'
+      + '<div>'
+      + '  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">'
+      + '    <div style="font-size:12px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.4px;">Email</div>'
+      + '    <div style="display:flex;gap:6px;">'
+      + '      <button onclick="navigator.clipboard.writeText(' + JSON.stringify("Subject: " + subj + "\n\n" + body) + '); this.textContent=\'Copied\'; setTimeout(()=>this.textContent=\'Copy\',1500);" style="padding:4px 10px;font-size:11px;background:white;color:#5C5CD6;border:1px solid #5C5CD6;border-radius:4px;cursor:pointer;">Copy</button>'
+      + '      <a href="' + mailtoUrl + '" style="padding:4px 10px;font-size:11px;background:#5C5CD6;color:white;border:none;border-radius:4px;cursor:pointer;text-decoration:none;">Open in mail app</a>'
+      + '    </div>'
+      + '  </div>'
+      + '  <div style="padding:6px 12px;font-size:12px;color:#666;border-top:1px solid #f0f1f5;border-left:1px solid #e6e8eb;border-right:1px solid #e6e8eb;background:#fafbff;"><strong>Subject:</strong> ' + subjEsc + '</div>'
+      + '  <div style="padding:10px 12px;background:#f8f9fb;border:1px solid #e6e8eb;border-top:none;border-radius:0 0 6px 6px;font-size:13px;color:#1a1a2e;white-space:pre-wrap;line-height:1.5;">' + bodyEsc + '</div>'
+      + '</div>'
+      + '<div style="font-size:11px;color:#888;margin-top:14px;font-style:italic;">AI-drafted from your profile + their LinkedIn position. Edit before sending.</div>';
+  }} catch (e) {{
+    content.innerHTML = '<div style="color:#B91C1C;font-size:13px;">Network error: ' + (e.message || e) + '</div>';
+  }}
+}}
+
+// ==============================================================
 // F5: Why-was-this-shown tooltip + cross-company cluster badge
 // ==============================================================
 function showWhyMatched(fp, btn) {{
@@ -5683,6 +5820,8 @@ function _resortByAiScore() {{
     try {{ hydratePrefsFromProfile(); }} catch (e) {{}}
     // F1: hide jobs the user has already dismissed in this browser.
     try {{ _hideDismissedCards(); }} catch (e) {{}}
+    // LinkedIn-connection boost + warm-intro badges (no-op if no contacts uploaded yet)
+    try {{ _decorateContactBadges(); }} catch (e) {{}}
     // F5: render cross-company "Also at" badges.
     try {{ _renderClusterBadges(); }} catch (e) {{}}
     // F2: AI re-rank the visible cards in the background.
@@ -7005,6 +7144,8 @@ async function parseUploadedContacts(btn) {{
       return;
     }}
     saveLinkedInContacts(contacts, _pendingContactsFile.name);
+    // Decorate cards now that contacts are loaded
+    try {{ _decorateContactBadges(); }} catch (e) {{}}
     statusEl.textContent = 'Saved ' + contacts.length + ' contacts. Badges will appear on matching jobs.';
     btn.textContent = orig;
     btn.disabled = false;
