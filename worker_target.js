@@ -1886,15 +1886,43 @@ async function handleAdminResetPassword(request, env, cors) {
   }
   if (!slug) return _json({ error: `No account found for ${email || '(no email/slug)'}` }, 404, cors);
 
+  // Load existing auth record OR create a fresh one (for legacy users
+  // who exist in users:list but never set a password)
   const authRaw = await env.RESUMES.get(uk(slug, 'auth'));
-  if (!authRaw) return _json({ error: `Auth record missing for slug ${slug}` }, 404, cors);
-  const auth = JSON.parse(authRaw);
   const newSalt = _b64(_randomBytes(16));
   const newHash = await hashPasswordPbkdf2(newPassword, newSalt);
-  auth.salt = newSalt;
-  auth.hash = newHash;
-  auth.passwordUpdatedAt = new Date().toISOString();
-  auth.lastResetBy = 'admin';
+  const nowIso = new Date().toISOString();
+  let auth;
+  let created = false;
+  if (authRaw) {
+    auth = JSON.parse(authRaw);
+    auth.salt = newSalt;
+    auth.hash = newHash;
+    auth.passwordUpdatedAt = nowIso;
+    auth.lastResetBy = 'admin';
+  } else {
+    // Fresh auth record. Pull email + name from users:list if we can.
+    let userMeta = {};
+    try {
+      const usersRaw = await env.RESUMES.get('users:list');
+      if (usersRaw) {
+        const users = JSON.parse(usersRaw);
+        userMeta = users.find(u => u.slug === slug) || {};
+      }
+    } catch (e) {}
+    auth = {
+      slug,
+      email: email || userMeta.email || '',
+      name: userMeta.name || '',
+      salt: newSalt,
+      hash: newHash,
+      createdAt: nowIso,
+      passwordUpdatedAt: nowIso,
+      createdBy: 'admin-reset',
+      lastResetBy: 'admin',
+    };
+    created = true;
+  }
   await env.RESUMES.put(uk(slug, 'auth'), JSON.stringify(auth));
 
   // 3. Heal the email index so future logins/resets work via email
@@ -1902,7 +1930,7 @@ async function handleAdminResetPassword(request, env, cors) {
   if (effEmail) {
     try { await env.RESUMES.put(`auth:email:${effEmail}`, slug); } catch (e) {}
   }
-  return _json({ ok: true, slug, email: effEmail, resetAt: auth.passwordUpdatedAt, healedEmailIndex: !!effEmail }, 200, cors);
+  return _json({ ok: true, slug, email: effEmail, resetAt: auth.passwordUpdatedAt, healedEmailIndex: !!effEmail, created }, 200, cors);
 }
 
 
