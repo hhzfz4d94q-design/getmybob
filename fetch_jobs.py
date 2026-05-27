@@ -2342,27 +2342,32 @@ def score_job(job):
             sen_titles = profile.get("seniorityTitles", []) or SENIOR_TITLE_TERMS
             if any(t in title for t in sen_titles if t and len(t) > 1):
                 title_strength = 0.10
-        # RELEVANCE-FIRST (2026-05-27): wizard picks now dominate the score.
-        # Tight title match alone can drive 50+ points. Industry +20, skills +20.
-        # Goal: a job perfectly matching the bullseye scores ~95+ before fresh bonus.
-        s += int(title_strength * w_t * 1.0)  # was 0.75, now 1.0 — title pick is king
+        # RELEVANCE-FIRST (2026-05-27, v2): industry + skills are the dominant
+        # signals. Titles vary wildly between companies for the same role
+        # ("Head of GRC" vs "Director, Risk Strategy" vs "VP Compliance") so
+        # title-matching is brittle. Industry + skill keywords are robust —
+        # they capture the substantive fit regardless of titling convention.
+        s += int(title_strength * w_t * 0.4)   # was 1.0 — title is now a tiebreaker, not the driver
 
-        # INDUSTRY component: cap at 2 hits = full credit (was 3 — tighter)
+        # INDUSTRY component: cap at 2 hits = full credit. Dominant signal.
         ind_hits = sum(1 for i in profile.get("industries", []) if i and i in blob)
         ind_strength = min(ind_hits / 2.0, 1.0)
-        s += int(ind_strength * w_i * 0.8)  # was 0.5, now 0.8
+        s += int(ind_strength * w_i * 1.0)     # was 0.8 — full weight
 
-        # SKILLS component: keywords + technologies + frameworks; cap at 5 hits (was 8)
+        # SKILLS component: keywords + technologies + frameworks; cap at 5 hits.
+        # Dominant signal alongside industry.
         skl_terms = (profile.get("keywords", []) or []) + \
                     (profile.get("technologies", []) or []) + \
                     (profile.get("frameworks", []) or [])
         kw_hits = sum(1 for k in skl_terms if k and k in blob)
         skl_strength = min(kw_hits / 5.0, 1.0)
-        s += int(skl_strength * w_s * 0.8)  # was 0.5, now 0.8
+        s += int(skl_strength * w_s * 1.0)     # was 0.8 — full weight
 
-        # PERFECT-MATCH BONUS: if title_strength == 1.0 AND industry hit, this is
-        # a bullseye. Add +15 so it lands at the absolute top.
-        if title_strength >= 1.0 and ind_hits >= 1:
+        # PERFECT-MATCH BONUS (v2): fires when industry AND skills both hit
+        # at high strength. Title is no longer required for the bonus —
+        # if a job hits 2+ industries AND 5+ skills, it's a strong match
+        # regardless of what they happen to call the role.
+        if ind_strength >= 1.0 and skl_strength >= 1.0:
             s += 15
 
         # Penalty (2026-05-26): if NEITHER the title matched a targetTitle
