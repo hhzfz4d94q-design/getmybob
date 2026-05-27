@@ -2470,33 +2470,18 @@ def score_job(job):
 
     profile = SKILLS_PROFILE
     if profile:
-        # E5 (2026-05-27): hard-block companies the user has explicitly
-        # excluded. Default list catches consulting + staffing firms whose
-        # JDs match user industries+skills (because they SERVE those
-        # industries) but the user wants in-house roles, not consulting.
-        # See also: in-house heuristic below.
-        DEFAULT_EXCLUDE = {
-            "capco", "accenture", "deloitte", "kpmg", "ey", "pwc",
-            "pricewaterhousecoopers", "ernst & young", "ernst and young",
-            "cognizant", "infosys", "tcs", "tata consultancy services",
-            "wipro", "mindtree", "ltimindtree", "hcl", "hcltech",
-            "mckinsey", "bcg", "boston consulting", "bain & company",
-            "booz allen", "slalom", "ibm consulting", "ibm services",
-            "genpact", "publicis sapient", "thoughtworks", "epam",
-            "globant", "syntel", "mphasis", "tech mahindra", "ust global",
-            "ust", "concentrix", "altimetrik", "synechron",
-        }
+        # E5 (2026-05-27, v2): hard-block ONLY user's explicit excludeCompanies.
+        # The old default consulting list (Capco, Accenture, etc.) is now
+        # surfaced as suggestions in the wizard rather than hard-coded — users
+        # control consulting visibility via companySizeMix.consulting %.
         user_excl = set()
         for c in (profile.get("excludeCompanies") or []):
             if isinstance(c, str) and c.strip():
                 user_excl.add(c.strip().lower())
-        # Merge: defaults always on; user list extends (additive)
-        excl = DEFAULT_EXCLUDE | user_excl
         co = (job.get("company_name") or job.get("company_slug") or "").strip().lower()
-        if co and co in excl:
+        if co and co in user_excl:
             return 0
-        # Also catch slug-y variants (e.g. "capco-llc", "capco-careers")
-        for blocked in excl:
+        for blocked in user_excl:
             if blocked and len(blocked) >= 4 and co.startswith(blocked + "-"):
                 return 0
 
@@ -2678,15 +2663,28 @@ def score_job(job):
         # enrich-companies workflow (weekly).
         s += recently_funded_boost(job.get("company_name") or "")
 
-    # E7 (2026-05-27): company-type soft multiplier. Catches the long tail
-    # of consulting/staffing firms not in the hard-block list. Multiplier
-    # applied to the signal portion only (score above the 50 base).
+    # E7 (2026-05-27, v2): consulting visibility is now user-controlled via
+    # companySizeMix.consulting (0-100). Staffing stays hard-blocked (no one
+    # asks for staffing-agency listings). In-house gets full credit.
     try:
         ctype = classify_company_type(job.get("company_name") or "", job.get("description") or "")
-        ctype_mult = company_type_multiplier(ctype)
-        if s > 50 and ctype_mult < 1.0:
-            signal = s - 50
-            s = 50 + signal * ctype_mult
+        if ctype == "staffing":
+            return 0  # staffing-agency listings are blanket-blocked
+        elif ctype == "consulting":
+            # User-controlled multiplier: 0% = blocked, 100% = full credit.
+            consulting_pct = 0
+            try:
+                mix = profile.get("companySizeMix") or {}
+                consulting_pct = max(0, min(100, int(mix.get("consulting", 0) or 0)))
+            except Exception:
+                pass
+            # Map 0..100 → 0.0..1.0 multiplier. At 0% behaves like the old hard-block.
+            ctype_mult = consulting_pct / 100.0
+            if s > 50:
+                signal = s - 50
+                s = 50 + signal * ctype_mult
+            if ctype_mult == 0.0:
+                return 0  # respect 0% as a true block
     except Exception:
         pass
 
@@ -3648,11 +3646,18 @@ WIZARD_V3_BLOCK = r"""
           '</div>' +
           '<div>' +
             '<h3 style="margin:0 0 6px;font-size:14px;color:#1a1a2e;">2. Company size mix (must add to 100)</h3>' +
-            ['startup','midsize','large'].map(k => {
-              const labels = {startup:'Startups (under 500)', midsize:'Mid-size (500-10k)', large:'Large (10k+ / F500)'};
-              return '<label>' + labels[k] + ' <span style="float:right;font-weight:500;color:#5C5CD6;" id="wiz-mix-' + k + '-val">33%</span></label>' +
-                     '<input type="range" id="wiz-mix-' + k + '" min="0" max="100" step="5" value="33" oninput="wizMixOnSlide(\'' + k + '\')" style="width:100%;">';
+            ['startup','midsize','large','consulting'].map(k => {
+              const labels = {
+                startup:    'Startups (under 500)',
+                midsize:    'Mid-size (500-10k)',
+                large:      'Large (10k+ / F500)',
+                consulting: 'Consulting firms (Accenture, Capco, Deloitte, etc.)'
+              };
+              const defaults = {startup:33, midsize:33, large:34, consulting:0};
+              return '<label>' + labels[k] + ' <span style="float:right;font-weight:500;color:#5C5CD6;" id="wiz-mix-' + k + '-val">' + defaults[k] + '%</span></label>' +
+                     '<input type="range" id="wiz-mix-' + k + '" min="0" max="100" step="5" value="' + defaults[k] + '" oninput="wizMixOnSlide(\'' + k + '\')" style="width:100%;">';
             }).join('') +
+            '<div style="font-size:11px;color:#888;margin-top:4px;">Consulting at 0% blocks consulting firms entirely. Above 0%, they appear softer down-ranked. Set to ~30% if you actively want consulting roles (they hire faster).</div>' +
             '<div id="wiz-mix-total" style="margin-top:8px;font-size:13px;font-weight:600;text-align:right;">Total: 100%</div>' +
           '</div>';
         const p = await getProfile();
@@ -3666,9 +3671,11 @@ WIZARD_V3_BLOCK = r"""
           if (st.data.remotePreference) rp = st.data.remotePreference;
           remoteEl.value = rp;
         }
-        // Size mix
-        const mix = (st.data.companySizeMix) || p.companySizeMix || { startup:33, midsize:33, large:34 };
-        ['startup','midsize','large'].forEach(k => {
+        // Size mix (now 4-way including consulting)
+        const mix = (st.data.companySizeMix) || p.companySizeMix || { startup:33, midsize:33, large:34, consulting:0 };
+        // Heal legacy 3-way mix: if consulting is missing, default to 0 (preserves user's existing intent)
+        if (mix.consulting == null) mix.consulting = 0;
+        ['startup','midsize','large','consulting'].forEach(k => {
           const el = body.querySelector('#wiz-mix-' + k);
           if (el) { el.value = mix[k] || 0; body.querySelector('#wiz-mix-' + k + '-val').textContent = (mix[k] || 0) + '%'; }
         });
@@ -3679,9 +3686,9 @@ WIZARD_V3_BLOCK = r"""
         const locs = (ctx.body.querySelector("#wiz3-locs") || {}).value || "";
         const remote = (ctx.body.querySelector("#wiz3-remote") || {}).value || "any";
         const preferredLocations = locs.split(",").map(s => s.trim()).filter(Boolean);
-        // Sizes
+        // Sizes (4-way: startup / midsize / large / consulting)
         const mix = {};
-        ['startup','midsize','large'].forEach(k => { mix[k] = parseInt((ctx.body.querySelector('#wiz-mix-' + k) || {}).value || 0, 10); });
+        ['startup','midsize','large','consulting'].forEach(k => { mix[k] = parseInt((ctx.body.querySelector('#wiz-mix-' + k) || {}).value || 0, 10); });
         await patchProfile({
           preferredLocations: preferredLocations,
           remotePreference: remote,
@@ -9453,7 +9460,12 @@ async function _applyRefinement(suggestion, chipEl) {{
 // Drag any slider; the other two auto-adjust proportionally so the
 // total stays at 100. Same when a number input is typed.
 function _wizMixRebalance(changedKey) {{
-  const keys = ["startup", "midsize", "large"];
+  // Rebalance N-way mix (currently 4-way: startup/midsize/large/consulting).
+  // Scales the OTHER sliders proportionally so the total stays at 100.
+  const KEYS = ["startup", "midsize", "large", "consulting"];
+  // Only operate on keys present in the DOM (back-compat with legacy 3-way render)
+  const keys = KEYS.filter(function(k) {{ return !!document.getElementById("wiz-mix-" + k); }});
+  if (keys.length < 2) return;
   const vals = {{}};
   keys.forEach(function(k) {{
     const el = document.getElementById("wiz-mix-" + k);
@@ -9465,14 +9477,24 @@ function _wizMixRebalance(changedKey) {{
     vals[changedKey] = 100;
     others.forEach(function(k) {{ vals[k] = 0; }});
   }} else {{
-    const otherSum = vals[others[0]] + vals[others[1]];
+    const otherSum = others.reduce(function(a, k) {{ return a + vals[k]; }}, 0);
     if (otherSum === 0) {{
-      const half = Math.floor(remaining / 2);
-      vals[others[0]] = half;
-      vals[others[1]] = remaining - half;
+      // Distribute evenly when all others are at 0
+      const base = Math.floor(remaining / others.length);
+      const rem = remaining - base * others.length;
+      others.forEach(function(k, i) {{ vals[k] = base + (i < rem ? 1 : 0); }});
     }} else {{
-      vals[others[0]] = Math.round(vals[others[0]] / otherSum * remaining);
-      vals[others[1]] = remaining - vals[others[0]];
+      // Proportional rebalance, then snap the LAST other so total is exact
+      let allocated = 0;
+      others.forEach(function(k, i) {{
+        if (i === others.length - 1) {{
+          vals[k] = remaining - allocated;
+        }} else {{
+          const share = Math.round(vals[k] / otherSum * remaining);
+          vals[k] = share;
+          allocated += share;
+        }}
+      }});
     }}
   }}
   keys.forEach(function(k) {{

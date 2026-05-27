@@ -155,13 +155,33 @@ GOLDENS = [
                      "Padded out to reach the 200-char floor so we don't get the -10 penalty."},
      None, 40, 100),
 
-    # 11. Consulting firm hard-block (Capco) — even a perfect-match JD scores 0
-    ("Capco hard-block: consulting firm in default excludeCompanies",
+    # 11. Consulting firm (Capco) — user controls visibility via companySizeMix.consulting %
+    #     At 0% (default), consulting firms are blocked.
+    ("Capco at 0% consulting (default): blocked",
      {"title": "VP of Risk",
       "company_name": "Capco",
       "description": "Lead GRC and TPRM engagements across our fintech and banking client base. "
-                     "Third-party risk, regulatory compliance, vendor management. Capital markets advisory."},
+                     "Third-party risk, regulatory compliance, vendor management. Capital markets advisory. "
+                     "Client engagements across our practice area, advisory services to clients."},
      AMIT_PROFILE, 0, 0),
+
+    # 11b. Same Capco JD, but user set consulting=30% — partial score
+    ("Capco at 30% consulting: partial score",
+     {"title": "VP of Risk",
+      "company_name": "Capco",
+      "description": "Lead GRC and TPRM engagements across our fintech and banking client base. "
+                     "Third-party risk, regulatory compliance, vendor management. Capital markets advisory. "
+                     "Client engagements across our practice area, advisory services to clients."},
+     {**AMIT_PROFILE, "companySizeMix": {"startup":25, "midsize":25, "large":20, "consulting":30}}, 50, 80),
+
+    # 11c. Same Capco JD, user set consulting=100% — full score (treated as normal)
+    ("Capco at 100% consulting: full score",
+     {"title": "VP of Risk",
+      "company_name": "Capco",
+      "description": "Lead GRC and TPRM engagements across our fintech and banking client base. "
+                     "Third-party risk, regulatory compliance, vendor management. Capital markets advisory. "
+                     "Client engagements across our practice area, advisory services to clients."},
+     {**AMIT_PROFILE, "companySizeMix": {"startup":0, "midsize":0, "large":0, "consulting":100}}, 60, 100),
 
     # 12. User-extended excludeCompanies blocks too
     ("user excludeCompanies extends defaults",
