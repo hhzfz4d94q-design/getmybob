@@ -1,0 +1,63 @@
+name: Push contacts to worker (per user)
+
+# Reads scripts/contact_uploads/<slug>.json and POSTs to /admin/contacts
+# using WORKER_ADMIN_KEY. Used to seed a user's LinkedIn connections into
+# KV so the dashboard hydrates them automatically and the Resend sprint
+# reminder can compute warm-intro priorities server-side.
+
+on:
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: 'User slug (e.g. geetu)'
+        required: true
+        default: 'geetu'
+
+env:
+  WORKER_URL: https://cool-darkness-dce5.tr6jz6v7wg.workers.dev
+
+permissions:
+  contents: read
+
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Push contacts
+        env:
+          ADMIN_KEY: ${{ secrets.WORKER_ADMIN_KEY }}
+          SLUG: ${{ github.event.inputs.slug }}
+        run: |
+          set -e
+          if [ -z "$ADMIN_KEY" ]; then
+            echo "::error::WORKER_ADMIN_KEY secret missing"
+            exit 1
+          fi
+          FILE="scripts/contact_uploads/${SLUG}.json"
+          if [ ! -f "$FILE" ]; then
+            echo "::error::$FILE not found"
+            exit 1
+          fi
+          COUNT=$(python3 -c "import json,sys;print(len(json.load(open('$FILE'))))")
+          echo "Pushing $COUNT contacts for $SLUG"
+          BODY=$(python3 -c "
+          import json
+          data = json.load(open('$FILE'))
+          payload = {'slug': '$SLUG', 'contacts': data, 'filename': 'Connections.csv', 'source': 'admin-csv-upload'}
+          print(json.dumps(payload))
+          ")
+          # POST via curl
+          HTTP=$(echo "$BODY" | curl -sS -o /tmp/resp.json -w "%{http_code}" \
+            -X POST \
+            -H "X-Admin-Key: $ADMIN_KEY" \
+            -H "Content-Type: application/json" \
+            --data-binary @- \
+            "$WORKER_URL/admin/contacts")
+          echo "HTTP: $HTTP"
+          cat /tmp/resp.json
+          echo ""
+          if [ "$HTTP" != "200" ]; then
+            echo "::error::Push failed"
+            exit 1
+          fi

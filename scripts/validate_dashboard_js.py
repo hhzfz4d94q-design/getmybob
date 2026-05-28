@@ -42,7 +42,7 @@ def main():
             total=0, senior_remote=0, ghost=0, generated="x", shown=0,
             cards="", user_slug="x", user_name="x", subtitle="x",
             has_profile_js="true", hidden_jobs_json="[]", low_match_warning="",
-            sprint_strip="", sprint_active="false",
+            sprint_strip="", sprint_active="false", sprint_start_cta="",
         )
     except KeyError as e:
         print(f"FATAL: HTML_TEMPLATE.format() missing kwarg {e}", file=sys.stderr)

@@ -4824,8 +4824,25 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
     # Counter values are hydrated client-side after /tracker loads.
     sprint_strip_html = ''
     sprint_active_attr = 'false'
+    sprint_start_cta_html = ''
     try:
         sp = (SKILLS_PROFILE or {}).get('sprintStart')
+        if not sp:
+            sprint_start_cta_html = (
+                '<div id="sprint-start-cta" '
+                'style="background:linear-gradient(135deg,#0B0828 0%,#1E146E 40%,#1817B5 100%);'
+                'color:#fff;padding:18px 22px;border-radius:12px;margin:0 auto 14px;max-width:1400px;'
+                'font-family:Inter,system-ui,sans-serif;box-shadow:0 4px 14px rgba(11,8,40,0.18);'
+                'display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;">'
+                '<div>'
+                '<div style="font-size:15px;font-weight:700;letter-spacing:0.3px;">🎯 Ready to sprint?</div>'
+                '<div style="font-size:13px;opacity:0.92;margin-top:4px;">10 days, 3 applications a day, warm-intro picks first. We\u2019ll email you a daily nudge with the 3 best matches.</div>'
+                '</div>'
+                '<button onclick="startSprintNow(this)" '
+                'style="background:#fff;color:#1817B5;border:none;padding:12px 20px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,0.18);">'
+                'Start my 10-day sprint →</button>'
+                '</div>'
+            )
         if sp:
             from datetime import datetime as _spdt, timezone as _sptz
             start_dt = _spdt.fromisoformat(str(sp).replace('Z','+00:00'))
@@ -4856,7 +4873,7 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
                 '</div>'
                 '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:12px;opacity:0.9;">'
                 f'<span>Today: <span id="sprint-today-count">0</span> of {daily_quota}</span>'
-                '<span><span id="sprint-pct">0</span>% to goal</span>'
+                '<span><span id="sprint-pct">0</span>% to goal · <a href="/sprint.html?user=' + user_slug + '" style="color:#fff;text-decoration:underline;opacity:0.9;">live view →</a></span>'
                 '</div>'
                 '</div>'
             )
@@ -4879,6 +4896,7 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         low_match_warning=(auto_learn_html + low_match_warning_html),
         sprint_strip=sprint_strip_html,
         sprint_active=sprint_active_attr,
+        sprint_start_cta=sprint_start_cta_html,
     )
     # Some embedded emoji in HTML_TEMPLATE are stored as UTF-16 surrogate
     # pair literals (\ud83c\udfaf etc). Merge them into proper codepoints
@@ -5275,6 +5293,7 @@ HTML_TEMPLATE = """<!doctype html>
     </div>
   </div>
 </header>
+{sprint_start_cta}
 {sprint_strip}
 {low_match_warning}
 <div class="stats">
@@ -6160,8 +6179,14 @@ function sortCards() {{
   }}
   function _sprintPriority(card) {{
     let p = 0;
+    // Warm-intro wins big — connection at a hiring company = 5–10x callback rate vs cold
+    const contactBadge = card.querySelector('.contact-badge');
+    if (contactBadge) {{
+      p += 200;
+      // Hiring-role contacts (recruiter/HR) score even higher
+      if (contactBadge.classList.contains('hiring')) p += 50;
+    }}
     if (card.querySelector('.just-posted-badge')) p += 100;
-    if (card.querySelector('.contact-badge')) p += 50;
     p += parseInt(card.dataset.score || '0', 10);
     const statusBtn = card.querySelector('[data-status-for]');
     if (statusBtn && /applied|phone|onsite|offer|rejected|dismissed/i.test(statusBtn.textContent || '')) p -= 20;
@@ -10430,6 +10455,125 @@ function wizWtPrefill() {{
   // Re-hydrate after status changes (tracker mutates)
   document.addEventListener('tracker:updated', _hydrateSprint);
 }})();
+
+async function startSprintNow(btn) {{
+  if (btn) {{ btn.disabled = true; btn.textContent = 'Starting…'; }}
+  try {{
+    const r = await fetch(WORKER_BASE + '/api/sprint/start' + USER_QS, {{
+      method: 'POST',
+      headers: {{ 'Content-Type': 'application/json', 'X-Edit-Key': EDIT_KEY }},
+      credentials: 'include',
+      body: JSON.stringify({{ sprintDays: 10, sprintDailyQuota: 3 }})
+    }});
+    if (r.ok) {{
+      try {{
+        const burst = document.createElement('div');
+        burst.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:9999;background:radial-gradient(circle at 50% 50%,rgba(124,124,240,0.45),transparent 60%);opacity:0;transition:opacity .35s;';
+        document.body.appendChild(burst);
+        requestAnimationFrame(() => {{ burst.style.opacity='1'; }});
+        setTimeout(() => {{ burst.style.opacity='0'; setTimeout(() => burst.remove(), 400); }}, 600);
+      }} catch(e) {{}}
+      setTimeout(() => location.reload(), 700);
+    }} else {{
+      const j = await r.json().catch(()=>({{}}));
+      alert('Could not start sprint: ' + (j.error || r.status));
+      if (btn) {{ btn.disabled = false; btn.textContent = 'Start my 10-day sprint →'; }}
+    }}
+  }} catch (e) {{
+    alert('Network error: ' + (e.message || e));
+    if (btn) {{ btn.disabled = false; btn.textContent = 'Start my 10-day sprint →'; }}
+  }}
+}}
+
+// --- Tier 2: p5.js-style particle burst on Mark Applied --------------
+function _sprintParticleBurst(originEl) {{
+  try {{
+    const strip = document.getElementById('sprint-strip');
+    if (!strip) return;
+    const cvs = document.createElement('canvas');
+    const rect = strip.getBoundingClientRect();
+    cvs.width = Math.max(300, Math.round(rect.width));
+    cvs.height = Math.round(rect.height);
+    cvs.style.cssText = 'position:absolute;left:0;top:0;pointer-events:none;z-index:5;';
+    strip.style.position = 'relative';
+    strip.appendChild(cvs);
+    const ctx = cvs.getContext('2d');
+    const fill = document.getElementById('sprint-progress-fill');
+    const startX = fill ? (fill.getBoundingClientRect().right - rect.left) : (cvs.width * 0.55);
+    const startY = fill ? (fill.getBoundingClientRect().top - rect.top + (fill.offsetHeight || 8) / 2) : (cvs.height * 0.55);
+    const palette = ['#7C7CF0','#A4A4FF','#FFD580','#F0A0FF','#FFFFFF'];
+    const N = 36;
+    const parts = [];
+    for (let i = 0; i < N; i++) {{
+      const a = (Math.PI * 2 * i) / N + Math.random() * 0.3;
+      const v = 2 + Math.random() * 4;
+      parts.push({{
+        x: startX, y: startY,
+        vx: Math.cos(a) * v, vy: Math.sin(a) * v - 1,
+        life: 0, maxLife: 38 + Math.random() * 22,
+        size: 2 + Math.random() * 4,
+        color: palette[(Math.random() * palette.length) | 0]
+      }});
+    }}
+    let raf = 0;
+    function step() {{
+      ctx.clearRect(0, 0, cvs.width, cvs.height);
+      let alive = 0;
+      for (const p of parts) {{
+        if (p.life >= p.maxLife) continue;
+        alive++;
+        p.x += p.vx; p.y += p.vy; p.vy += 0.08; p.life++;
+        const alpha = 1 - (p.life / p.maxLife);
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * (0.4 + alpha * 0.6), 0, Math.PI * 2);
+        ctx.fill();
+      }}
+      ctx.globalAlpha = 1;
+      if (alive > 0) {{ raf = requestAnimationFrame(step); }}
+      else {{ cvs.remove(); }}
+    }}
+    raf = requestAnimationFrame(step);
+  }} catch (e) {{}}
+}}
+
+// Hook tracker:updated → if status was applied, burst confetti and re-hydrate
+document.addEventListener('tracker:updated', function(ev) {{
+  try {{
+    const detail = ev && ev.detail || {{}};
+    if (!detail || !detail.status) return;
+    if (/applied|phone|onsite|offer/i.test(detail.status)) {{
+      _sprintParticleBurst();
+    }}
+  }} catch(e) {{}}
+}});
+
+// --- Contacts hydration from KV (server-side mirror) ----------------
+(async function _hydrateContactsFromServer(){{
+  try {{
+    if (typeof LINKEDIN_CONTACTS_KEY === 'undefined') return;
+    const existing = localStorage.getItem(LINKEDIN_CONTACTS_KEY);
+    if (existing) {{
+      try {{
+        const arr = JSON.parse(existing);
+        if (Array.isArray(arr) && arr.length > 0) return;
+      }} catch(e) {{}}
+    }}
+    const r = await fetch(WORKER_BASE + '/contacts' + USER_QS, {{
+      headers: {{ 'X-Edit-Key': EDIT_KEY }},
+      credentials: 'include'
+    }});
+    if (!r.ok) return;
+    const j = await r.json();
+    if (!j || !Array.isArray(j.contacts) || !j.contacts.length) return;
+    localStorage.setItem(LINKEDIN_CONTACTS_KEY, JSON.stringify(j.contacts));
+    if (j.meta) localStorage.setItem(LINKEDIN_CONTACTS_META_KEY, JSON.stringify(j.meta));
+    if (typeof _contactsByCompany !== 'undefined') _contactsByCompany = null;
+    if (typeof injectContactBadgesOnCards === 'function') injectContactBadgesOnCards();
+  }} catch (e) {{}}
+}})();
+
 </script>
 </body></html>"""
 

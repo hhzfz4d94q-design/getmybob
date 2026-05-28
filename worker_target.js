@@ -30,9 +30,10 @@ export default {
   // of their top-5 picks. Set CF cron to "0 11 * * *" (11am UTC = 7am ET).
   async scheduled(event, env, ctx) {
     try {
-      await sendDailyDigestToAll(env);
+      // Sprint-mode users get the sprint reminder; others get the regular digest.
+      await sendDailyMixedToAll(env);
     } catch (e) {
-      console.error("[digest] scheduled failed:", e && e.message ? e.message : e);
+      console.error("[scheduled] failed:", e && e.message ? e.message : e);
     }
   },
 
@@ -89,6 +90,10 @@ export default {
     if (url.pathname === '/generate-digest') return handleGenerateDigest(request, env, cors, slug);
     if (url.pathname === '/admin/digest-trigger') return handleDigestTrigger(request, env, cors);
     if (url.pathname === '/notes') return handleNotes(request, env, cors, slug);
+    if (url.pathname === '/contacts') return handleContacts(request, env, cors, slug);
+    if (url.pathname === '/admin/contacts') return handleAdminContacts(request, env, cors);
+    if (url.pathname === '/api/sprint/start') return handleSprintStart(request, env, cors, slug);
+    if (url.pathname === '/api/sprint/reset') return handleSprintReset(request, env, cors, slug);
     return new Response(
       'Endpoints: /api/auth/{signup,login,logout,me,change-password}, /prep, /resume, /resume-versions, /parse-resume, /skills-profile, /regenerate-profile, /regenerate-companies, /draft-warm-intro, /suggest-refinements, /rerank-titles, /tracker, /draft-followup, /interview-prep, /generate-digest, /refresh, /admin/users, /notes.',
       { status: 404, headers: cors }
@@ -1389,6 +1394,108 @@ Return as: {"results": {"CompanyName": {...}, ...}}`;
 
 
 // --- /admin/users — full CRUD ------------------------------------------
+
+// --- /contacts (per-user LinkedIn connections) -------------------------
+async function handleContacts(request, env, cors, slug) {
+  if (!env.RESUMES) return Response.json({ error: 'RESUMES KV binding missing' }, { status: 500, headers: cors });
+  if (request.method === 'GET') {
+    // Auth: edit key OR own session
+    let authed = await checkEditKey(request, env, slug);
+    if (!authed) {
+      const sess = await sessionFromRequest(request, env);
+      if (sess && sess.slug === slug) authed = true;
+    }
+    if (!authed) return Response.json({ error: 'Auth required' }, { status: 401, headers: cors });
+    const raw = await env.RESUMES.get(uk(slug, 'contacts'));
+    const metaRaw = await env.RESUMES.get(uk(slug, 'contacts:meta'));
+    return Response.json({
+      contacts: raw ? JSON.parse(raw) : [],
+      meta: metaRaw ? JSON.parse(metaRaw) : null,
+    }, { headers: cors });
+  }
+  if (request.method === 'POST') {
+    let authed = await checkEditKey(request, env, slug);
+    if (!authed) {
+      const sess = await sessionFromRequest(request, env);
+      if (sess && sess.slug === slug) authed = true;
+    }
+    if (!authed) return Response.json({ error: 'Auth required' }, { status: 401, headers: cors });
+    const body = await request.json().catch(() => ({}));
+    const contacts = Array.isArray(body && body.contacts) ? body.contacts : null;
+    if (!contacts) return Response.json({ error: 'Body must be { contacts: [...] }' }, { status: 400, headers: cors });
+    const meta = {
+      count: contacts.length,
+      uploadedAt: new Date().toISOString(),
+      filename: (body.filename || 'Connections.csv'),
+      source: (body.source || 'manual'),
+    };
+    await env.RESUMES.put(uk(slug, 'contacts'), JSON.stringify(contacts));
+    await env.RESUMES.put(uk(slug, 'contacts:meta'), JSON.stringify(meta));
+    return Response.json({ status: 'saved', meta }, { headers: cors });
+  }
+  return new Response('Use GET or POST', { status: 405, headers: cors });
+}
+
+// --- /admin/contacts (admin push for any user) -------------------------
+async function handleAdminContacts(request, env, cors) {
+  if (request.method !== 'POST') return new Response('POST only', { status: 405, headers: cors });
+  if (!env.RESUMES) return Response.json({ error: 'RESUMES KV binding missing' }, { status: 500, headers: cors });
+  const adminKey = request.headers.get('X-Admin-Key');
+  if (!adminKey || adminKey !== env.WORKER_ADMIN_KEY) return Response.json({ error: 'Invalid X-Admin-Key' }, { status: 401, headers: cors });
+  const body = await request.json().catch(() => ({}));
+  const slug = (body && body.slug || '').trim().toLowerCase();
+  const contacts = Array.isArray(body && body.contacts) ? body.contacts : null;
+  if (!slug || !contacts) return Response.json({ error: 'Body must be { slug, contacts: [...] }' }, { status: 400, headers: cors });
+  const meta = {
+    count: contacts.length,
+    uploadedAt: new Date().toISOString(),
+    filename: (body.filename || 'Connections.csv'),
+    source: (body.source || 'admin'),
+  };
+  await env.RESUMES.put(uk(slug, 'contacts'), JSON.stringify(contacts));
+  await env.RESUMES.put(uk(slug, 'contacts:meta'), JSON.stringify(meta));
+  return Response.json({ status: 'saved', slug, meta }, { headers: cors });
+}
+
+// --- /api/sprint/start (user-controlled sprint start) ------------------
+async function handleSprintStart(request, env, cors, slug) {
+  if (request.method !== 'POST') return new Response('POST only', { status: 405, headers: cors });
+  let authed = await checkEditKey(request, env, slug);
+  if (!authed) {
+    const sess = await sessionFromRequest(request, env);
+    if (sess && sess.slug === slug) authed = true;
+  }
+  if (!authed) return Response.json({ error: 'Auth required' }, { status: 401, headers: cors });
+  const body = await request.json().catch(() => ({}));
+  const sprintDays = Math.max(1, Math.min(30, parseInt(body.sprintDays || 10, 10)));
+  const sprintDailyQuota = Math.max(1, Math.min(20, parseInt(body.sprintDailyQuota || 3, 10)));
+  const raw = await env.RESUMES.get(uk(slug, 'skills_profile'));
+  const profile = raw ? JSON.parse(raw) : {};
+  profile.sprintStart = new Date().toISOString();
+  profile.sprintDays = sprintDays;
+  profile.sprintDailyQuota = sprintDailyQuota;
+  profile.user = slug;
+  profile.editedAt = new Date().toISOString();
+  await env.RESUMES.put(uk(slug, 'skills_profile'), JSON.stringify(profile));
+  return Response.json({ status: 'started', sprintStart: profile.sprintStart, sprintDays, sprintDailyQuota }, { headers: cors });
+}
+
+async function handleSprintReset(request, env, cors, slug) {
+  if (request.method !== 'POST') return new Response('POST only', { status: 405, headers: cors });
+  let authed = await checkEditKey(request, env, slug);
+  if (!authed) {
+    const sess = await sessionFromRequest(request, env);
+    if (sess && sess.slug === slug) authed = true;
+  }
+  if (!authed) return Response.json({ error: 'Auth required' }, { status: 401, headers: cors });
+  const raw = await env.RESUMES.get(uk(slug, 'skills_profile'));
+  const profile = raw ? JSON.parse(raw) : {};
+  profile.sprintStart = '';
+  profile.editedAt = new Date().toISOString();
+  await env.RESUMES.put(uk(slug, 'skills_profile'), JSON.stringify(profile));
+  return Response.json({ status: 'reset' }, { headers: cors });
+}
+
 async function handleAdminUsers(request, env, cors) {
   if (!env.RESUMES) return Response.json({ error: 'RESUMES KV binding missing' }, { status: 500, headers: cors });
   if (!env.ADMIN_KEY) return Response.json({ error: 'Worker missing ADMIN_KEY secret' }, { status: 500, headers: cors });
@@ -2508,6 +2615,136 @@ async function handleAdminRejectUser(request, env, cors) {
 
 // G2: Daily digest email functions
 // =====================================================================
+
+// --- Sprint reminder (overrides digest during active sprint) -----------
+async function sendDailyMixedToAll(env) {
+  if (!env.RESEND_API_KEY || !env.DIGEST_FROM) {
+    console.log("[scheduled] RESEND_API_KEY or DIGEST_FROM missing — skipping");
+    return { sent: 0, skipped: "missing-secrets" };
+  }
+  const users = await readUsersList(env);
+  let sprintSent = 0, digestSent = 0;
+  for (const u of users) {
+    if (!u || !u.slug || !u.email) continue;
+    try {
+      // Read profile to check sprint state
+      const profRaw = await env.RESUMES.get(uk(u.slug, 'skills_profile'));
+      const prof = profRaw ? JSON.parse(profRaw) : {};
+      const sp = prof.sprintStart;
+      let inSprint = false;
+      if (sp) {
+        const start = new Date(sp);
+        const now = new Date();
+        const days = parseInt(prof.sprintDays || 10, 10);
+        const dayN = Math.floor((now - start) / 86400000) + 1;
+        if (dayN >= 1 && dayN <= days) inSprint = true;
+      }
+      if (inSprint) {
+        const r = await sendSprintReminderForUser(env, u, prof);
+        if (r && r.ok) sprintSent++;
+      } else {
+        const r = await sendDigestForUser(env, u);
+        if (r && r.ok) digestSent++;
+      }
+    } catch (e) {
+      console.error("[scheduled]", u.slug, "failed:", e && e.message);
+    }
+  }
+  console.log(`[scheduled] sprint=${sprintSent} digest=${digestSent} of ${users.length}`);
+  return { sprintSent, digestSent, total: users.length };
+}
+
+async function sendSprintReminderForUser(env, user, profile) {
+  const slug = user.slug;
+  const userName = user.name || slug;
+  const start = new Date(profile.sprintStart);
+  const now = new Date();
+  const sprintDays = parseInt(profile.sprintDays || 10, 10);
+  const dailyQuota = parseInt(profile.sprintDailyQuota || 3, 10);
+  const dayN = Math.floor((now - start) / 86400000) + 1;
+  const quotaTotal = sprintDays * dailyQuota;
+  // Tracker rollup
+  const trackerRaw = await env.RESUMES.get(uk(slug, 'tracker'));
+  const tracker = trackerRaw ? JSON.parse(trackerRaw) : {};
+  let applied = 0, todayApplied = 0, yesterdayApplied = 0;
+  const todayStr = now.toISOString().slice(0, 10);
+  const yesterdayStr = new Date(now.getTime() - 86400000).toISOString().slice(0, 10);
+  Object.values(tracker).forEach(e => {
+    if (!e || typeof e !== 'object') return;
+    const st = (e.status || '').toLowerCase();
+    if (!['applied','phone','onsite','offer','rejected'].includes(st)) return;
+    const ts = e.appliedAt || e.updatedAt || '';
+    if (!ts) return;
+    const dt = new Date(ts);
+    if (dt < start) return;
+    applied++;
+    const ds = dt.toISOString().slice(0, 10);
+    if (ds === todayStr) todayApplied++;
+    if (ds === yesterdayStr) yesterdayApplied++;
+  });
+  // Read contacts for warm-intro tagging
+  const contactsRaw = await env.RESUMES.get(uk(slug, 'contacts'));
+  const contacts = contactsRaw ? JSON.parse(contactsRaw) : [];
+  const contactsByCo = {};
+  contacts.forEach(c => {
+    const k = (c.company || '').toLowerCase().trim();
+    if (!k) return;
+    if (!contactsByCo[k]) contactsByCo[k] = 0;
+    contactsByCo[k]++;
+  });
+  // Fetch dashboard HTML to extract top picks (warm-intro first)
+  let html = '';
+  try {
+    const r = await fetch(`https://getmemyjob.officebeatllc.com/${slug}.html`, { headers: { 'Accept':'text/html' } });
+    if (r.ok) html = await r.text();
+  } catch (e) {}
+  // Extract cards
+  const cardRx = /<div class="card"[^>]*data-fp="([^"]+)"[^>]*data-score="(\d+)"[^>]*>[\s\S]*?<div class="title"><a href="([^"]+)"[^>]*>([^<]+)<\/a>[\s\S]*?<span class="company">([^<]+)<\/span>/g;
+  const picks = [];
+  let m;
+  while ((m = cardRx.exec(html)) !== null) {
+    const [, fp, score, applyUrl, title, company] = m;
+    const rec = tracker[fp];
+    if (rec && rec.status && ['applied','phone','onsite','offer'].includes(rec.status)) continue;
+    const co = (company || '').trim();
+    const warmCount = contactsByCo[co.toLowerCase()] || 0;
+    picks.push({ fp, score: parseInt(score, 10), applyUrl, title: title.trim(), company: co, warmCount });
+  }
+  picks.sort((a, b) => {
+    const wa = a.warmCount > 0 ? 1 : 0;
+    const wb = b.warmCount > 0 ? 1 : 0;
+    if (wa !== wb) return wb - wa;
+    return b.score - a.score;
+  });
+  const top = picks.slice(0, dailyQuota);
+  // Day-3-miss escalation
+  let ccList = [];
+  if (dayN >= 4 && yesterdayApplied === 0) {
+    if (env.SPRINT_CC_EMAIL) ccList.push(env.SPRINT_CC_EMAIL);
+  }
+  const pct = Math.min(100, Math.round((applied / quotaTotal) * 100));
+  const subj = `Day ${dayN} of ${sprintDays} · ${todayApplied}/${dailyQuota} today · ${applied}/${quotaTotal} total`;
+  let listHtml = '';
+  top.forEach((p, i) => {
+    const badge = p.warmCount > 0 ? `<span style="background:#fbbf24;color:#78350f;padding:2px 6px;border-radius:4px;font-size:11px;font-weight:600;margin-right:6px;">🤝 ${p.warmCount} contact${p.warmCount===1?'':'s'}</span>` : '';
+    listHtml += `<li style="margin:10px 0;line-height:1.4;">${badge}<a href="${p.applyUrl}" style="color:#1817B5;font-weight:600;text-decoration:none;">${p.title}</a> · ${p.company} <span style="color:#666;">(${p.score})</span></li>`;
+  });
+  const bodyHtml = `<!doctype html><html><body style="font-family:Inter,system-ui,sans-serif;color:#222;max-width:600px;margin:0 auto;padding:24px;">
+    <div style="background:linear-gradient(135deg,#0B0828,#1817B5);color:#fff;padding:20px;border-radius:12px;margin-bottom:20px;">
+      <div style="font-size:18px;font-weight:700;letter-spacing:0.3px;">🎯 Sprint Day ${dayN} of ${sprintDays}</div>
+      <div style="font-size:14px;margin-top:6px;opacity:0.92;">${applied} of ${quotaTotal} applications · ${pct}% to goal</div>
+      <div style="margin-top:12px;height:6px;background:rgba(255,255,255,0.18);border-radius:4px;overflow:hidden;">
+        <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,#7C7CF0,#A4A4FF);"></div>
+      </div>
+    </div>
+    <p style="font-size:15px;">Hi ${userName.split(' ')[0]}, here are <b>${top.length} jobs</b> to apply to today. Warm-intro picks (where you have LinkedIn contacts) come first — those callbacks beat cold applies 5×.</p>
+    <ol style="padding-left:18px;">${listHtml}</ol>
+    <p style="font-size:13px;color:#666;margin-top:24px;">Mark them applied on your dashboard so tomorrow's email knows. <a href="https://getmemyjob.officebeatllc.com/${slug}.html" style="color:#1817B5;">Open dashboard →</a></p>
+    <p style="font-size:11px;color:#888;margin-top:18px;">This is a sprint reminder, not a regular digest. Sprint ends ${new Date(start.getTime() + sprintDays*86400000).toISOString().slice(0,10)}.</p>
+  </body></html>`;
+  return await sendEmailViaResend(env, user.email, subj, bodyHtml, ccList);
+}
+
 async function sendDailyDigestToAll(env) {
   if (!env.RESEND_API_KEY || !env.DIGEST_FROM) {
     console.log("[digest] RESEND_API_KEY or DIGEST_FROM missing — skipping");
@@ -2611,7 +2848,7 @@ async function sendDigestForUser(env, user) {
   }
 }
 
-async function sendEmailViaResend(env, toEmail, subject, htmlBody) {
+async function sendEmailViaResend(env, toEmail, subject, htmlBody, ccList) {
   const r = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
@@ -2622,8 +2859,7 @@ async function sendEmailViaResend(env, toEmail, subject, htmlBody) {
       from: env.DIGEST_FROM,
       to: [toEmail],
       subject,
-      html: htmlBody,
-    }),
+      html: htmlBody,, cc: (Array.isArray(ccList) && ccList.length ? ccList : undefined) }),
   });
   if (!r.ok) {
     const err = await r.text().catch(() => "");
