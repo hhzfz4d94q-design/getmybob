@@ -1,6 +1,6 @@
 {
   "_note": "Curated Healthcare IT / digital health catalog. Used for: (a) scoring boost when company appears in feed AND user has healthcare industries (+3, all entries), (b) auto-scraping (only ATS=greenhouse/lever/ashby/workable). Workday/Google/Amazon entries are catalog-only (scored boost when found, not scraped). Slugs are canonical for matching.",
-  "version": "2026-05-29-v3+discovered+discovered+dream-list",
+  "version": "2026-05-29-v3+discovered+discovered+dream-list+from-contacts",
   "companies": [
     {
       "name": "Doximity",
@@ -1589,6 +1589,36 @@
       "dreamList": true,
       "dreamListFor": "geetu",
       "note": "Proprietary careers portal \u2014 needs custom scraper (Apify candidate)"
+    },
+    {
+      "name": "Slalom",
+      "category": "from-contacts",
+      "atsHint": "greenhouse",
+      "slug": "slalomconsulting"
+    },
+    {
+      "name": "EliseAI",
+      "category": "from-contacts",
+      "atsHint": "lever",
+      "slug": "eliseai"
+    },
+    {
+      "name": "Rewst",
+      "category": "from-contacts",
+      "atsHint": "greenhouse",
+      "slug": "rewst"
+    },
+    {
+      "name": "Klara",
+      "category": "from-contacts",
+      "atsHint": "greenhouse",
+      "slug": "klara"
+    },
+    {
+      "name": "LaserAway",
+      "category": "from-contacts",
+      "atsHint": "greenhouse",
+      "slug": "laseraway"
     }
   ]
 }
