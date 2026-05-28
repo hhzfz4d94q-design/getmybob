@@ -431,7 +431,7 @@ HTML_TEMPLATE = """<!doctype html>
 <div id="focus-panel" style="margin: 0 0 16px 0; padding:18px 22px; background:linear-gradient(135deg,#eef0ff 0%,#fef8e8 100%); border:1px solid #d0d4dc; border-radius:12px; display:none;">
   <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
     <div style="font-size:16px; font-weight:700; color:#1817B5;">
-      🎯 Today’s picks: apply to <span id="focus-n">3</span>
+      🎯 Today’s picks: apply to <span id="focus-n">3</span> <span style="font-weight:400;color:#5C5CD6;font-size:13px;">(of <span id="focus-pool">5</span> shown)</span>
       <button id="focus-refresh-btn" onclick="refreshPicks()" title="Recompute today’s picks from your latest feed" style="background:none;border:1px solid rgba(24,23,181,0.3);color:#1817B5;padding:2px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;margin-left:10px;vertical-align:middle;">↻ refresh</button>
     </div>
     <div style="font-size:13px; color:#444;">
@@ -4674,8 +4674,9 @@ async function refreshFocusPanel() {{
         if (typeof _sprintPriority === "function") return _sprintPriority(b) - _sprintPriority(a);
         return (parseInt(b.dataset.score || "0", 10)) - (parseInt(a.dataset.score || "0", 10));
       }});
+      const POOL_TOPUP = (typeof loadFocusPoolSize === "function") ? loadFocusPoolSize() : N;
       for (const c of candidates) {{
-        if (picks.length >= N) break;
+        if (picks.length >= POOL_TOPUP) break;
         const fp = c.getAttribute("data-fp");
         if (used.has(fp)) continue;
         const ce = c.querySelector(".company");
@@ -4696,6 +4697,9 @@ async function refreshFocusPanel() {{
     picks = [];
     const MAX_CO = (typeof loadMaxPerCompany === "function") ? loadMaxPerCompany() : 1;
     const perCompanyCount = {{}};
+    // Show the user a CHOICE of up to N+2 (capped 5) candidates. They pick
+    // any N to apply to — extras stay visible as bonus options.
+    const POOL = (typeof loadFocusPoolSize === "function") ? loadFocusPoolSize() : N;
     for (const c of candidates) {{
       const compEl = c.querySelector(".company");
       const co = compEl ? compEl.textContent.trim().toLowerCase() : "";
@@ -4704,7 +4708,7 @@ async function refreshFocusPanel() {{
       if (cnt >= MAX_CO) continue;
       perCompanyCount[co] = cnt + 1;
       picks.push(c);
-      if (picks.length >= N) break;
+      if (picks.length >= POOL) break;
     }}
     // Best-effort stamp — fire and forget
     if (picks.length > 0) {{
@@ -4723,8 +4727,10 @@ async function refreshFocusPanel() {{
   // Update header counts
   const ne = document.getElementById("focus-n");
   const ne2 = document.getElementById("focus-n-2");
+  const np = document.getElementById("focus-pool");
   if (ne) ne.textContent = N;
   if (ne2) ne2.textContent = N;
+  if (np) np.textContent = picks.length;
 
   // Applied-today counter
   let appliedToday = 0;
@@ -4790,10 +4796,13 @@ async function refreshFocusPanel() {{
       const applyUrl = cardLink ? cardLink.href : "#";
 
       const row = document.createElement("div");
-      row.style.cssText = "background:#fff;border:1px solid #d8dbe6;border-radius:10px;padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,0.04);display:flex;flex-direction:column;gap:8px;";
+      const isBonus = idx >= N;
+      row.style.cssText = "background:" + (isBonus ? "#fafbff" : "#fff") + ";border:1px " + (isBonus ? "dashed" : "solid") + " #d8dbe6;border-radius:10px;padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,0.04);display:flex;flex-direction:column;gap:8px;opacity:" + (isBonus ? "0.85" : "1") + ";";
       let html = '';
       html += '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">';
-      html += '<span style="display:inline-block;min-width:24px;height:24px;line-height:24px;text-align:center;background:#5C5CD6;color:#fff;border-radius:50%;font-weight:700;font-size:12px;">' + (idx+1) + '</span>';
+      const badgeColor = isBonus ? '#9999bb' : '#5C5CD6';
+      const badgeLabel = isBonus ? '+' : String(idx+1);
+      html += '<span title="' + (isBonus ? 'Bonus pick (beyond today goal)' : 'Pick #' + (idx+1)) + '" style="display:inline-block;min-width:24px;height:24px;line-height:24px;text-align:center;background:' + badgeColor + ';color:#fff;border-radius:50%;font-weight:700;font-size:12px;">' + badgeLabel + '</span>';
       html += '<a href="' + applyUrl + '" target="_blank" rel="noopener" style="flex:1;color:#1817B5;text-decoration:none;font-weight:700;font-size:15px;line-height:1.3;">' + _esc(titleTxt) + '</a>';
       html += '<span style="background:' + fit.bg + ';color:' + fit.color + ';padding:3px 9px;border-radius:10px;font-size:11px;font-weight:700;white-space:nowrap;">' + fit.label + '</span>';
       html += '</div>';
@@ -4931,8 +4940,25 @@ function wizPickDailyTarget(n) {{
   if (input) input.value = n;
 }}
 function loadDailyApplyTarget() {{
-  // Clamped to 3-5: focused picks, not a long list. (2026-05-28)
+  // When a sprint is active, the sprint quota is the source of truth — no
+  // min-3 floor. The sprint strip's data-sprint-daily-quota attr is the
+  // canonical value (server-rendered from profile.sprintDailyQuota).
+  try {{
+    const strip = document.getElementById('sprint-strip');
+    if (strip) {{
+      const sq = parseInt(strip.getAttribute('data-sprint-daily-quota') || '', 10);
+      if (Number.isFinite(sq) && sq >= 1 && sq <= 10) return sq;
+    }}
+  }} catch (e) {{}}
+  // No active sprint — fall back to localStorage with the original 3-5 clamp.
   try {{ const n = parseInt(localStorage.getItem(DAILY_TARGET_KEY) || "3", 10); return Math.max(3, Math.min(5, n)); }} catch (e) {{ return 3; }}
+}}
+// Pool size for the focus panel — show the user N+2 picks (capped at 5) so
+// they can CHOOSE which to apply to rather than being assigned. Hitting N
+// counts as today's goal; extras stay visible as bonus options.
+function loadFocusPoolSize() {{
+  const N = loadDailyApplyTarget();
+  return Math.max(N, Math.min(5, N + 2));
 }}
 
 // --- Max per company for today's picks (2026-05-28) -------------------
@@ -6532,6 +6558,11 @@ async function startConfiguredSprint(btn) {{
       }})
     }});
     if (r.ok) {{
+      const resp = await r.json().catch(() => ({{}}));
+      try {{ console.log('[startConfiguredSprint] OK', resp); }} catch(_) {{}}
+      // Immediate visible acknowledgment so the user doesn't think the
+      // click did nothing during the 700ms before reload.
+      if (btn) {{ btn.textContent = '✓ Sprint started — reloading…'; btn.style.background = '#0a6b3a'; }}
       try {{
         const burst = document.createElement('div');
         burst.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:9999;background:radial-gradient(circle at 50% 50%,rgba(124,124,240,0.45),transparent 60%);opacity:0;transition:opacity .35s;';
@@ -6539,11 +6570,11 @@ async function startConfiguredSprint(btn) {{
         requestAnimationFrame(() => {{ burst.style.opacity='1'; }});
         setTimeout(() => {{ burst.style.opacity='0'; setTimeout(() => burst.remove(), 400); }}, 600);
       }} catch(e) {{}}
-      closeSprintConfigModal();
-      setTimeout(() => location.reload(), 700);
+      setTimeout(() => {{ try {{ location.reload(); }} catch(_) {{ alert('Sprint started, but auto-reload failed. Refresh the page manually.'); }} }}, 800);
     }} else {{
       const j = await r.json().catch(()=>({{}}));
-      alert('Could not start sprint: ' + (j.error || r.status));
+      try {{ console.error('[startConfiguredSprint] FAIL', r.status, j); }} catch(_) {{}}
+      alert('Could not start sprint (HTTP ' + r.status + '): ' + (j.error || 'see console'));
       if (btn) {{ btn.disabled = false; btn.textContent = 'Start sprint →'; }}
     }}
   }} catch (e) {{
