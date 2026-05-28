@@ -2,11 +2,32 @@
 [healthtech] loaded 137 curated companies
 [regen] imported ok
 [regen] db connected
-[regen] FATAL: NameError("name 'COMPANY_INDUSTRIES' is not defined")
-Traceback (most recent call last):
-  File "/tmp/regen.py", line 8, in <module>
-    generate_all_dashboards(conn)
-  File "/home/runner/work/getmybob/getmybob/fetch_jobs.py", line 1639, in generate_all_dashboards
-    if not COMPANY_INDUSTRIES:
-           ^^^^^^^^^^^^^^^^^^
-NameError: name 'COMPANY_INDUSTRIES' is not defined
+[industries] mapped 263 companies; default=['healthcare', 'healthcare-it', 'digital-health', 'health-saas', 'pharma', 'pharmaceuticals', 'biotech', 'life-sciences', 'diagnostics', 'telehealth', 'mental-health', 'clinical-ai']
+[users] loaded 4 from Worker
+
+[multi-user] generating dashboards for 4 users
+[diag:geetu] loaded profile, targetCompanies len=20, first={'name': 'Zocdoc', 'atsHint': 'greenhouse', 'why': 'Digital health marketplace actively hiring VP Product roles to scale their SaaS platform connecting patients and providers.'}
+[skills-profile:geetu] Senior digital transformation & product leader (Healthcare / Life Sciences) — targeting Director / Senior Director / Principal / VP / Group PM roles (NOT C-suite) · 15 keywords
+[velocity] 138 actively-scaling companies (3+ senior roles in 30d)
+[location-remote:geetu] filter pref='hybrid' locs=['Allendale, NJ', 'New York City', 'New Jersey'] kept 2860/2860
+[why-hidden:geetu] classified 2000 hidden jobs (of 19980 total dropped)
+
+Dashboard written: /home/runner/work/getmybob/getmybob/geetu.html
+[diag:amit-arora] loaded profile, targetCompanies len=25, first={'name': 'Webster Bank', 'atsHint': 'workday', 'atsUrl': 'https://websterbank.wd1.myworkdayjobs.com/WebsterBankCareers', 'why': 'super-regional commercial bank actively scaling GRC and digital transformation leadership after its Sterling Bancorp merger'}
+[skills-profile:amit-arora] Senior technology and GRC executive specializing in digital transformation, enterprise risk, and IT strategy for financial institutions · 15 keywords
+[velocity] 138 actively-scaling companies (3+ senior roles in 30d)
+[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 4266/4266
+[why-hidden:amit-arora] classified 2000 hidden jobs (of 19980 total dropped)
+
+Dashboard written: /home/runner/work/getmybob/getmybob/amit-arora.html
+[skills-profile:ishika-arora] not available — using fallback themes only
+[velocity] 138 actively-scaling companies (3+ senior roles in 30d)
+[why-hidden:ishika-arora] classified 2000 hidden jobs (of 20000 total dropped)
+
+Dashboard written: /home/runner/work/getmybob/getmybob/ishika-arora.html
+[skills-profile:radhika-kalra] not available — using fallback themes only
+[velocity] 138 actively-scaling companies (3+ senior roles in 30d)
+[why-hidden:radhika-kalra] classified 2000 hidden jobs (of 20000 total dropped)
+
+Dashboard written: /home/runner/work/getmybob/getmybob/radhika-kalra.html
+[regen] DONE
