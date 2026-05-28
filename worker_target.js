@@ -651,7 +651,7 @@ async function handleSkillsProfile(request, env, cors, slug) {
       const raw = await env.RESUMES.get(uk(slug, 'skills_profile'));
       const existing = raw ? JSON.parse(raw) : {};
       const updated = Object.assign({}, existing);
-      const SCALAR_FIELDS = new Set(['salaryFloor', 'remotePreferred', 'seniorityLevel', 'careerStage', 'primaryRole', 'summary', 'companySizeMix', 'companySizePreferences', 'dailyTarget', 'recencyWindow', 'defaultSort', 'hideNoSalary', 'negativeTitles', 'matchWeights', 'signalStability', 'phone', 'email', 'location', 'linkedinUrl', 'githubUrl', 'websiteUrl', 'workAuthorization', 'requiresSponsorship', 'currentCompany', 'currentTitle', 'school', 'degree', 'graduationYear', 'firstName', 'lastName', 'excludeCompanies', 'sprintStart', 'sprintDays', 'sprintDailyQuota', 'networkCompanies']);
+      const SCALAR_FIELDS = new Set(['salaryFloor', 'remotePreferred', 'seniorityLevel', 'careerStage', 'primaryRole', 'summary', 'companySizeMix', 'companySizePreferences', 'dailyTarget', 'recencyWindow', 'defaultSort', 'hideNoSalary', 'negativeTitles', 'matchWeights', 'signalStability', 'phone', 'email', 'location', 'linkedinUrl', 'githubUrl', 'websiteUrl', 'workAuthorization', 'requiresSponsorship', 'currentCompany', 'currentTitle', 'school', 'degree', 'graduationYear', 'firstName', 'lastName', 'excludeCompanies', 'sprintStart', 'sprintDays', 'sprintDailyQuota', 'sprintDaysOfWeek', 'sprintNudgeTime', 'networkCompanies']);
       for (const [field, items] of Object.entries(body.patchFields)) {
         if (SCALAR_FIELDS.has(field)) {
           updated[field] = items;
@@ -1529,15 +1529,46 @@ async function handleSprintStart(request, env, cors, slug) {
   const body = await request.json().catch(() => ({}));
   const sprintDays = Math.max(1, Math.min(30, parseInt(body.sprintDays || 10, 10)));
   const sprintDailyQuota = Math.max(1, Math.min(20, parseInt(body.sprintDailyQuota || 3, 10)));
+
+  // Days-of-week: array of integers 0-6 (0=Sun, 1=Mon, ..., 6=Sat).
+  // Default Mon-Fri ([1,2,3,4,5]) if missing or invalid.
+  let sprintDaysOfWeek = [1,2,3,4,5];
+  if (Array.isArray(body.sprintDaysOfWeek)) {
+    const filtered = body.sprintDaysOfWeek
+      .map(d => parseInt(d, 10))
+      .filter(d => Number.isInteger(d) && d >= 0 && d <= 6);
+    if (filtered.length > 0) {
+      // Dedupe + sort for stable storage
+      sprintDaysOfWeek = Array.from(new Set(filtered)).sort((a, b) => a - b);
+    }
+  }
+
+  // Nudge time: HH:MM string (24h). Default 07:00. Validated by regex.
+  let sprintNudgeTime = '07:00';
+  if (typeof body.sprintNudgeTime === 'string' && /^([01]?\d|2[0-3]):[0-5]\d$/.test(body.sprintNudgeTime)) {
+    // Normalize to HH:MM
+    const [h, m] = body.sprintNudgeTime.split(':');
+    sprintNudgeTime = String(h).padStart(2, '0') + ':' + m;
+  }
+
   const raw = await env.RESUMES.get(uk(slug, 'skills_profile'));
   const profile = raw ? JSON.parse(raw) : {};
   profile.sprintStart = new Date().toISOString();
   profile.sprintDays = sprintDays;
   profile.sprintDailyQuota = sprintDailyQuota;
+  profile.sprintDaysOfWeek = sprintDaysOfWeek;
+  profile.sprintNudgeTime = sprintNudgeTime;
   profile.user = slug;
   profile.editedAt = new Date().toISOString();
   await env.RESUMES.put(uk(slug, 'skills_profile'), JSON.stringify(profile));
-  return Response.json({ status: 'started', sprintStart: profile.sprintStart, sprintDays, sprintDailyQuota }, { headers: cors });
+  return Response.json({
+    status: 'started',
+    sprintStart: profile.sprintStart,
+    sprintDays,
+    sprintDailyQuota,
+    sprintDaysOfWeek,
+    sprintNudgeTime
+  }, { headers: cors });
 }
 
 async function handleSprintReset(request, env, cors, slug) {
@@ -2784,7 +2815,22 @@ async function sendDailyMixedToAll(env) {
         const dayN = Math.floor((now - start) / 86400000) + 1;
         if (dayN >= 1 && dayN <= days) inSprint = true;
       }
+      // Days-of-week gate (2026-05-28): an in-sprint user can pick which
+      // weekdays they want nudges on (e.g. M-F only). The cron fires every
+      // day; we skip on days the user excluded. UTC day-of-week is a good
+      // approximation for US-ET users at the 11 UTC = 7am ET cron time.
+      // Default is Mon-Fri when sprintDaysOfWeek is missing/empty.
+      // NOTE: sprintNudgeTime is stored but NOT yet honored — that needs
+      // an hourly cron + per-user hour filter (planned follow-up).
       if (inSprint) {
+        const allowedDays = Array.isArray(prof.sprintDaysOfWeek) && prof.sprintDaysOfWeek.length
+          ? prof.sprintDaysOfWeek
+          : [1, 2, 3, 4, 5];
+        const todayDow = new Date().getUTCDay(); // 0=Sun..6=Sat
+        if (!allowedDays.map(Number).includes(todayDow)) {
+          console.log('[scheduled]', u.slug, 'skipped — sprintDaysOfWeek does not include', todayDow);
+          continue;
+        }
         const r = await sendSprintReminderForUser(env, u, prof);
         if (r && r.ok) sprintSent++;
       } else {

@@ -5936,10 +5936,13 @@ function _scWirePills() {{
   const nt = document.getElementById('sc-nudge-time');
   if (nt) nt.oninput = _scUpdatePreview;
 }}
-function openSprintConfigModal() {{
+async function openSprintConfigModal() {{
   const modal = document.getElementById('sprint-config-modal');
   if (!modal) return;
-  const c = _scLoadConfig();
+  // Start with locally-stored prefs as the optimistic seed so the modal
+  // opens instantly. Then quietly fetch /skills-profile and let server
+  // values override if present (server is canonical once a sprint exists).
+  let c = _scLoadConfig();
   _scActivatePill('duration', c.duration);
   _scActivatePill('quota', c.quota);
   _scActivateDays(c.days);
@@ -5948,6 +5951,24 @@ function openSprintConfigModal() {{
   _scWirePills();
   _scUpdatePreview();
   modal.classList.add('show');
+  try {{
+    const r = await fetch(WORKER_BASE + '/skills-profile' + USER_QS, {{ cache: 'no-store' }});
+    if (r.ok) {{
+      const j = await r.json();
+      const p = (j && j.profile) || {{}};
+      const merged = {{
+        duration: parseInt(p.sprintDays || c.duration, 10),
+        quota: parseInt(p.sprintDailyQuota || c.quota, 10),
+        days: Array.isArray(p.sprintDaysOfWeek) && p.sprintDaysOfWeek.length ? p.sprintDaysOfWeek : c.days,
+        nudgeTime: (typeof p.sprintNudgeTime === 'string' && p.sprintNudgeTime) ? p.sprintNudgeTime : c.nudgeTime
+      }};
+      _scActivatePill('duration', merged.duration);
+      _scActivatePill('quota', merged.quota);
+      _scActivateDays(merged.days);
+      if (nt) nt.value = merged.nudgeTime;
+      _scUpdatePreview();
+    }}
+  }} catch (e) {{}}
 }}
 function closeSprintConfigModal() {{
   const modal = document.getElementById('sprint-config-modal');
@@ -5977,7 +5998,12 @@ async function startConfiguredSprint(btn) {{
       method: 'POST',
       headers: _headers,
       credentials: 'include',
-      body: JSON.stringify({{ sprintDays: c.duration, sprintDailyQuota: c.quota }})
+      body: JSON.stringify({{
+        sprintDays: c.duration,
+        sprintDailyQuota: c.quota,
+        sprintDaysOfWeek: c.days,
+        sprintNudgeTime: c.nudgeTime
+      }})
     }});
     if (r.ok) {{
       try {{
