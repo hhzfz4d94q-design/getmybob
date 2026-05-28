@@ -81,6 +81,9 @@ export default {
     if (url.pathname === '/parse-resume') return handleParseResume(request, env, cors, slug);
     if (url.pathname === '/resume-health') return handleResumeHealth(request, env, cors, slug);
     if (url.pathname === '/resume-health-suggest') return handleResumeHealthSuggest(request, env, cors, slug);
+    if (url.pathname === '/api/tuning/save')    return handleTuningSave(request, env, cors, slug);
+    if (url.pathname === '/api/tuning/outcome') return handleTuningOutcome(request, env, cors, slug);
+    if (url.pathname === '/api/tuning/list')    return handleTuningList(request, env, cors, slug);
     if (url.pathname === '/skills-profile') return handleSkillsProfile(request, env, cors, slug);
     if (url.pathname === '/regenerate-profile') return handleRegenerateProfile(request, env, cors, slug);
     if (url.pathname === '/regenerate-companies') return handleRegenerateCompanies(request, env, cors, slug);
@@ -657,7 +660,7 @@ async function handleSkillsProfile(request, env, cors, slug) {
       const raw = await env.RESUMES.get(uk(slug, 'skills_profile'));
       const existing = raw ? JSON.parse(raw) : {};
       const updated = Object.assign({}, existing);
-      const SCALAR_FIELDS = new Set(['salaryFloor', 'remotePreferred', 'seniorityLevel', 'careerStage', 'primaryRole', 'summary', 'companySizeMix', 'companySizePreferences', 'dailyTarget', 'recencyWindow', 'defaultSort', 'hideNoSalary', 'negativeTitles', 'matchWeights', 'signalStability', 'phone', 'email', 'location', 'linkedinUrl', 'githubUrl', 'websiteUrl', 'workAuthorization', 'requiresSponsorship', 'currentCompany', 'currentTitle', 'school', 'degree', 'graduationYear', 'firstName', 'lastName', 'excludeCompanies', 'sprintStart', 'sprintDays', 'sprintDailyQuota', 'sprintDaysOfWeek', 'sprintNudgeTime', 'sprintRecapTime', 'sprintTimezone', 'sprintSnoozedDays', 'networkCompanies', 'resumeHealth', 'resumeHealthHistory']);
+      const SCALAR_FIELDS = new Set(['salaryFloor', 'remotePreferred', 'seniorityLevel', 'careerStage', 'primaryRole', 'summary', 'companySizeMix', 'companySizePreferences', 'dailyTarget', 'recencyWindow', 'defaultSort', 'hideNoSalary', 'negativeTitles', 'matchWeights', 'signalStability', 'phone', 'email', 'location', 'linkedinUrl', 'githubUrl', 'websiteUrl', 'workAuthorization', 'requiresSponsorship', 'currentCompany', 'currentTitle', 'school', 'degree', 'graduationYear', 'firstName', 'lastName', 'excludeCompanies', 'sprintStart', 'sprintDays', 'sprintDailyQuota', 'sprintDaysOfWeek', 'sprintNudgeTime', 'sprintRecapTime', 'sprintTimezone', 'sprintSnoozedDays', 'networkCompanies', 'resumeHealth', 'resumeHealthHistory', 'lastMonthlyReportAt']);
       for (const [field, items] of Object.entries(body.patchFields)) {
         if (SCALAR_FIELDS.has(field)) {
           updated[field] = items;
@@ -1077,6 +1080,75 @@ ${resumeJson.slice(0, 12000)}`;
     catch (e) { return Response.json({ error: 'AI did not return valid JSON', raw: text }, { status: 502, headers: cors }); }
     return Response.json(parsed, { headers: cors });
   } catch (e) { return Response.json({ error: 'Worker error', message: String(e) }, { status: 500, headers: cors }); }
+}
+
+// --- /api/tuning (Week 5 — store + score per-job customizations) ------
+// save:    POST { fp, jobMeta:{title,company}, keywordDiff, sixSecondScan, coverParagraph }
+// outcome: POST { fp, status:'applied'|'phonescreen'|'rejected'|'onsite'|'offer' }
+// list:    GET  → { tunings: [...] }
+async function _readTunings(env, slug) {
+  try {
+    const raw = await env.RESUMES.get(uk(slug, 'tunings'));
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) { return []; }
+}
+async function _writeTunings(env, slug, arr) {
+  await env.RESUMES.put(uk(slug, 'tunings'), JSON.stringify(arr.slice(-50)));
+}
+async function _tuningAuth(request, env, slug) {
+  if (await checkEditKey(request, env, slug)) return true;
+  try { const s = await sessionFromRequest(request, env); if (s && s.slug === slug) return true; } catch(e) {}
+  const ak = request.headers.get('X-Admin-Key');
+  if (ak && env.ADMIN_KEY && ak === env.ADMIN_KEY) return true;
+  return false;
+}
+async function handleTuningSave(request, env, cors, slug) {
+  if (request.method !== 'POST') return new Response('POST only', { status: 405, headers: cors });
+  if (!await _tuningAuth(request, env, slug)) return Response.json({ error: 'Auth required' }, { status: 401, headers: cors });
+  const body = await request.json().catch(() => ({}));
+  if (!body.fp || typeof body.fp !== 'string') return Response.json({ error: 'Missing fp' }, { status: 400, headers: cors });
+  const list = await _readTunings(env, slug);
+  // Dedupe — replace any prior tuning for the same fp
+  const filtered = list.filter(t => t.fp !== body.fp);
+  filtered.push({
+    fp: body.fp,
+    jobMeta: body.jobMeta || {},
+    createdAt: new Date().toISOString(),
+    keywordChanges: ((body.keywordDiff || {}).missing || []).map(m => ({ required: m.required, alternative: m.alternative || null })),
+    titleSuggested: (body.sixSecondScan || {}).titleSuggestion || '',
+    bulletRewriteCount: Array.isArray((body.sixSecondScan || {}).rewrites) ? body.sixSecondScan.rewrites.length : 0,
+    coverParagraphUsed: !!(body.coverParagraph && body.coverParagraph.trim()),
+    outcome: null,
+    outcomeAt: null
+  });
+  await _writeTunings(env, slug, filtered);
+  return Response.json({ status: 'saved', count: filtered.length }, { headers: cors });
+}
+async function handleTuningOutcome(request, env, cors, slug) {
+  if (request.method !== 'POST') return new Response('POST only', { status: 405, headers: cors });
+  if (!await _tuningAuth(request, env, slug)) return Response.json({ error: 'Auth required' }, { status: 401, headers: cors });
+  const body = await request.json().catch(() => ({}));
+  if (!body.fp || !body.status) return Response.json({ error: 'Missing fp or status' }, { status: 400, headers: cors });
+  const list = await _readTunings(env, slug);
+  const t = list.find(x => x.fp === body.fp);
+  if (!t) return Response.json({ status: 'no-tuning-for-fp' }, { headers: cors });
+  t.outcome = String(body.status).toLowerCase();
+  t.outcomeAt = new Date().toISOString();
+  await _writeTunings(env, slug, list);
+  return Response.json({ status: 'updated', outcome: t.outcome }, { headers: cors });
+}
+async function handleTuningList(request, env, cors, slug) {
+  if (request.method !== 'GET') return new Response('GET only', { status: 405, headers: cors });
+  const list = await _readTunings(env, slug);
+  // Lightweight win-rate rollup
+  const summary = { total: list.length, applied: 0, advanced: 0, rejected: 0 };
+  list.forEach(t => {
+    const o = (t.outcome || '').toLowerCase();
+    if (['applied','phonescreen','onsite','offer','rejected'].includes(o)) summary.applied++;
+    if (['phonescreen','onsite','offer'].includes(o)) summary.advanced++;
+    if (o === 'rejected') summary.rejected++;
+  });
+  return Response.json({ tunings: list, summary }, { headers: cors });
 }
 
 // --- /regenerate-profile -----------------------------------------------
@@ -3307,10 +3379,26 @@ async function sendDailyMixedToAll(env, event) {
         }
       } else {
         // Non-sprint users get the daily digest in THEIR local 7am slot.
-        if (localHour !== 7) { skipped++; continue; }
-        const r = await sendDigestForUser(env, u);
-        if (r && r.ok) digestSent++;
+        if (localHour === 7) {
+          const r = await sendDigestForUser(env, u);
+          if (r && r.ok) digestSent++;
+        }
       }
+      // Week 5: monthly resume-health report (separate from sprint nudges)
+      // Fires once per month at the user's local 9am on the 1st.
+      try {
+        const localDay = parseInt(localDate.slice(8, 10), 10);
+        if (localDay === 1 && localHour === 9) {
+          const lastSent = prof.lastMonthlyReportAt || '';
+          if (lastSent.slice(0, 7) !== localDate.slice(0, 7)) {
+            const r = await sendMonthlyHealthReport(env, u, prof);
+            if (r && r.ok) {
+              prof.lastMonthlyReportAt = new Date().toISOString();
+              await env.RESUMES.put(uk(u.slug, 'skills_profile'), JSON.stringify(prof));
+            }
+          }
+        }
+      } catch (e) { console.error('[monthly-report]', u.slug, e && e.message); }
     } catch (e) {
       console.error("[scheduled]", u.slug, "failed:", e && e.message);
     }
@@ -3498,6 +3586,51 @@ async function sendSprintRecapForUser(env, user, profile) {
       <a href="${dashUrl}" style="background:#1817B5;color:#fff;padding:10px 18px;border-radius:6px;text-decoration:none;font-weight:600;display:inline-block;">Open dashboard</a>
     </p>
     <p style="margin:24px 0 0;font-size:11px;color:#888;">You're getting this because you started a 10-day sprint on getmemyjob. Change the recap time or end the sprint anytime from the dashboard.</p>
+  </body></html>`;
+  return await sendEmailViaResend(env, user.email, subject, bodyHtml, []);
+}
+
+// === Week 5: monthly resume-health report ============================
+async function sendMonthlyHealthReport(env, user, profile) {
+  const slug = user.slug;
+  const tuningsRaw = await env.RESUMES.get(uk(slug, 'tunings'));
+  const tunings = tuningsRaw ? JSON.parse(tuningsRaw) : [];
+  const lastMonthCutoff = Date.now() - 30 * 86400000;
+  const recent = tunings.filter(t => new Date(t.createdAt).getTime() >= lastMonthCutoff);
+  const advanced = recent.filter(t => ['phonescreen','onsite','offer'].includes(String(t.outcome || '').toLowerCase()));
+  const applied = recent.filter(t => t.outcome).length;
+  const winRate = applied > 0 ? Math.round(100 * advanced.length / applied) : 0;
+  const health = profile.resumeHealth || {};
+  const hist = Array.isArray(profile.resumeHealthHistory) ? profile.resumeHealthHistory.slice(-2) : [];
+  let delta = 0;
+  if (hist.length === 2) delta = (hist[1].score || 0) - (hist[0].score || 0);
+  const userName = (user.name || slug).split(/\s+/)[0];
+  const arrow = delta > 0 ? '↑' : (delta < 0 ? '↓' : '→');
+  const dColor = delta > 0 ? '#0a6b3a' : (delta < 0 ? '#B91C1C' : '#666');
+  const dashUrl = `https://getmemyjob.officebeatllc.com/${slug}.html`;
+  const subject = `Your resume + applications — monthly check-in (score ${health.score || '—'})`;
+  const bodyHtml = `<!doctype html><html><body style="font-family:Inter,system-ui,sans-serif;color:#1a1a2e;line-height:1.55;max-width:600px;margin:0 auto;padding:24px;">
+    <h2 style="margin:0 0 4px;font-size:18px;">Hi ${escHtmlSafe(userName)} —</h2>
+    <p style="margin:0 0 18px;color:#555;font-size:14px;">Your monthly resume + applications snapshot.</p>
+    <table cellpadding="0" cellspacing="0" style="width:100%;border-collapse:separate;border-spacing:8px 0;margin-bottom:18px;">
+      <tr>
+        ${_recapTile('Resume score', String(health.score || '—'), '#5C5CD6')}
+        ${_recapTile('Δ vs prior', arrow + ' ' + (delta >= 0 ? '+' : '') + delta, dColor)}
+        ${_recapTile('Tuned apps (30d)', String(recent.length), '#5C5CD6')}
+        ${_recapTile('Advanced', String(advanced.length) + ' (' + winRate + '%)', '#0a6b3a')}
+      </tr>
+    </table>
+    <p style="margin:0 0 6px;font-size:14px;">${
+      recent.length === 0
+        ? 'No tuned applications in the last 30 days. The Prep Application kit can boost recruiter-keyword match — give it a try next time.'
+        : (winRate >= 30
+            ? 'Solid hit-rate. Keep using the keyword check + cover paragraph; they\'re carrying their weight.'
+            : 'Your tuned applications converted at ' + winRate + '%. Open the dashboard\'s resume modal — \"Show me what to fix\" surfaces concrete bullet rewrites.')
+    }</p>
+    <p style="margin:14px 0;">
+      <a href="${dashUrl}" style="background:#1817B5;color:#fff;padding:10px 18px;border-radius:6px;text-decoration:none;font-weight:600;display:inline-block;">Open dashboard</a>
+    </p>
+    <p style="margin:24px 0 0;font-size:11px;color:#888;">Monthly check-in from getmemyjob. Adjust nudge times in /account.html.</p>
   </body></html>`;
   return await sendEmailViaResend(env, user.email, subject, bodyHtml, []);
 }

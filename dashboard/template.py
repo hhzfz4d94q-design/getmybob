@@ -1009,6 +1009,17 @@ async function cycleStatus(fp, btn) {{
     const r = await _trackerAction('setStatus', {{ fp, status: next, jobMeta }});
     if (!r) return;
     _trackerCache[fp] = r.record;
+    // Week 5: also stamp the tuning record's outcome so we can later
+    // correlate which tuning recipes led to phone screens.
+    try {{
+      const _ek = getEditKey();
+      const _h = {{ 'Content-Type': 'application/json' }};
+      if (_ek) _h['X-Edit-Key'] = _ek;
+      fetch(WORKER_BASE + '/api/tuning/outcome' + USER_QS, {{
+        method: 'POST', headers: _h,
+        body: JSON.stringify({{ fp, status: next }})
+      }}).catch(() => {{}});
+    }} catch(_) {{}}
     try {{ document.dispatchEvent(new CustomEvent('tracker:updated', {{ detail: {{ fp, status: next }} }})); }} catch(e) {{}}
   }}
   refreshTrackerUI();
@@ -2192,12 +2203,56 @@ async function _renderResumeHealth() {{
       html += '</ul></div>';
     }}
     html += '<div style="font-size:11px;color:#888;margin-top:8px;">Computed ' + new Date(h.computedAt).toLocaleString() + '. Re-uploading your resume re-runs this check.</div>';
+    // Week 5 — score trend sparkline from profile.resumeHealthHistory
+    html += '<div id="resume-health-trend" style="margin-top:10px;font-size:12px;color:#555;"></div>';
     html += '<button class="btn primary" id="resume-health-fix-btn" style="margin-top:10px;" onclick="_loadResumeHealthFixes(this)">Show me what to fix</button>';
     html += '<div id="resume-health-fixes" style="display:none;margin-top:14px;"></div>';
     widget.innerHTML = html;
+    // Week 5: paint the trend sparkline from history
+    try {{ await _paintResumeHealthTrend(); }} catch(_) {{}}
   }} catch (e) {{
     widget.innerHTML = '<div style="font-size:13px;color:#a55;">Couldn\\'t compute health (' + ((e && e.message) || e) + ')</div>';
   }}
+}}
+
+// === Week 5: score history trend sparkline ============================
+async function _paintResumeHealthTrend() {{
+  const el = document.getElementById('resume-health-trend');
+  if (!el) return;
+  try {{
+    const r = await fetch(WORKER_BASE + '/skills-profile' + USER_QS, {{ cache: 'no-store' }});
+    if (!r.ok) return;
+    const j = await r.json();
+    const hist = ((j && j.profile && j.profile.resumeHealthHistory) || []).slice(-8);
+    if (hist.length < 2) {{ el.textContent = 'No trend yet — your score will graph here once you have 2+ saved checks.'; return; }}
+    const min = Math.min(...hist.map(h => h.score));
+    const max = Math.max(...hist.map(h => h.score));
+    const span = Math.max(1, max - min);
+    const W = 220, H = 26, pad = 2;
+    const dx = (W - pad*2) / (hist.length - 1);
+    const pts = hist.map((h, i) => {{
+      const x = pad + i * dx;
+      const y = pad + (H - pad*2) * (1 - (h.score - min) / span);
+      return x.toFixed(1) + ',' + y.toFixed(1);
+    }}).join(' ');
+    const last = hist[hist.length-1].score;
+    const prev = hist[hist.length-2].score;
+    const delta = last - prev;
+    const arrow = delta > 0 ? '↑' : (delta < 0 ? '↓' : '→');
+    const dColor = delta > 0 ? '#0a6b3a' : (delta < 0 ? '#B91C1C' : '#666');
+    el.innerHTML =
+      '<span style="vertical-align:middle;">Trend (last ' + hist.length + '): </span>' +
+      '<svg width="' + W + '" height="' + H + '" style="vertical-align:middle;margin:0 6px;">' +
+      '<polyline fill="none" stroke="#5C5CD6" stroke-width="1.5" points="' + pts + '"/>' +
+      hist.map((h, i) => {{
+        const x = pad + i * dx;
+        const y = pad + (H - pad*2) * (1 - (h.score - min) / span);
+        return '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="2" fill="#5C5CD6"/>';
+      }}).join('') +
+      '</svg>' +
+      '<span style="vertical-align:middle;color:' + dColor + ';font-weight:600;">' + arrow + ' ' + (delta >= 0 ? '+' : '') + delta + '</span>' +
+      ' <span style="color:#888;">vs. previous (range ' + min + '–' + max + ')</span>';
+  }} catch (e) {{}}
 }}
 
 // === Week 4: LLM-powered "Show me what to fix" ========================
