@@ -1427,17 +1427,23 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
                 # No overlap — strong negative signal UNLESS user wants remote
                 # AND job is flagged remote.
                 wants_remote = any("remote" in p for p in preferred) or remote_pref in ("remote-only", "hybrid", "any")
+                # Far-country detection — international locations a US-targeted
+                # user almost certainly does NOT want (unless they explicitly
+                # stated that city).
+                _FAR = {"bangkok","thailand","singapore","kuala","lumpur","malaysia","manila","philippines","mumbai","delhi","bengaluru","bangalore","india","hong","kong","tokyo","japan","sydney","australia","london","paris","berlin","dubai","tel","aviv","frankfurt","amsterdam","madrid","barcelona","milan","zurich","stockholm"}
+                # US-state detection — if the job is in a US state, the user
+                # likely tolerates it (esp. with remote/hybrid pref). This
+                # avoids dropping all-US jobs to borderline just because the
+                # user's preferred city is different (Charlotte ≠ New York).
+                _US_HINTS = {"united","states","us","usa","ny","nyc","ca","tx","fl","il","ga","nc","va","ma","wa","pa","oh","mi","nj","co","az","or","mn","mo","tn","sf","la","chicago","boston","atlanta","austin","dallas","denver","seattle","miami","houston","philadelphia","phoenix","charlotte","portland","detroit","minneapolis","baltimore","raleigh","columbus","nashville","kansas","indianapolis","jacksonville","sacramento","providence","richmond","milwaukee","memphis","oklahoma","cleveland","cincinnati","pittsburgh","tampa","orlando"}
                 if remote_flag and wants_remote:
-                    loc_fit = 75  # remote-acceptable, but not their stated city
+                    loc_fit = 80  # remote-acceptable
+                elif _FAR & job_tokens:
+                    loc_fit = 10  # explicit far-country, kill
+                elif _US_HINTS & job_tokens:
+                    loc_fit = 55  # US location not user's city — neutral
                 else:
-                    # Penalty heavy for non-overlap + non-remote.
-                    # Heuristic: if job location names a country known to not
-                    # match the user's preferred set, drive loc_fit very low.
-                    _FAR = {"bangkok","thailand","singapore","kuala","lumpur","malaysia","manila","philippines","mumbai","delhi","bengaluru","bangalore","india","hong","kong","tokyo","japan","sydney","australia","london","paris","berlin","dubai","tel","aviv"}
-                    if _FAR & job_tokens:
-                        loc_fit = 10
-                    else:
-                        loc_fit = 35
+                    loc_fit = 30  # unknown / can't tell
         elif remote_pref == "remote-only" and not remote_flag:
             loc_fit = 30
         elif remote_pref == "onsite" and remote_flag:
