@@ -1457,17 +1457,24 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
     #   borderline — everything else that still passed score thresholds
     def _tier(subs):
         t, i, k, s, l = subs
-        # Location fit < 30 is a strong veto.
+        # Location fit < 30 is a strong veto. Bangkok for a US user = no.
         if l < 30:
             return 'borderline'
+        # TITLE is a HARD gate, not interchangeable with industry/keywords.
+        # A 'Lead Legal Counsel' or 'Support Process Manager' at a fintech
+        # gets industry=100 but is the WRONG KIND of role. Don't let
+        # industry alone promote them.
+        if t < 50:
+            return 'borderline'  # title fundamentally off
+        # Strong: title clearly matches targetTitles AND industry + seniority
+        # are solid AND location is acceptable.
         if t >= 70 and i >= 60 and s >= 60 and l >= 60:
             return 'strong'
-        passed = sum(1 for v in (t, i, k, s) if v >= 50)
-        # 'good' relaxed from 3 of 4 to 2 of 4 (with loc>=50 still required).
-        # Three perfect signals was too tight — given location is already a
-        # gate, two strong signals + acceptable location is a reasonable
-        # 'good' for a candidate-pool with imperfect profile data.
-        if passed >= 2 and l >= 50:
+        # Good: title at least partially matches AND 2 of the other 3
+        # dimensions clear 50. Note: t already known ≥50 by the gate above,
+        # so we only require 2 of {i, k, s} ≥ 50 here.
+        passed_other = sum(1 for v in (i, k, s) if v >= 50)
+        if passed_other >= 2 and l >= 50:
             return 'good'
         return 'borderline'
 

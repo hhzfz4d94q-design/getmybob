@@ -4805,12 +4805,23 @@ async function _refreshFocusPanelBody(panel) {{
   const fill = document.getElementById("focus-progress-fill");
   if (fill) fill.style.width = Math.min(100, Math.round(appliedToday * 100 / Math.max(1, N))) + "%";
 
-  // Confidence band labels
-  function fitLabel(score) {{
-    const n = parseInt(score, 10) || 0;
-    if (n >= 85) return {{ label: "Very high fit", color: "#0a6b3a", bg: "#d1fae5" }};
-    if (n >= 70) return {{ label: "Good fit",      color: "#1817B5", bg: "#dbeafe" }};
-    return                {{ label: "Possible fit",  color: "#78350f", bg: "#fef3c7" }};
+  // Confidence band labels — tier-aware (tier from fetch_jobs.py is the
+  // single source of truth). Score is a fallback for cards without tier.
+  function fitLabel(scoreOrCard, maybeScore) {{
+    let tier = null, score;
+    if (scoreOrCard && typeof scoreOrCard === 'object' && scoreOrCard.getAttribute) {{
+      tier = scoreOrCard.getAttribute('data-tier');
+      score = parseInt(scoreOrCard.getAttribute('data-score') || '0', 10);
+    }} else {{
+      score = parseInt(scoreOrCard, 10) || 0;
+    }}
+    if (tier === 'strong')     return {{ label: "Strong match",   color: "#0a6b3a", bg: "#d1fae5" }};
+    if (tier === 'good')       return {{ label: "Good match",     color: "#1817B5", bg: "#dbeafe" }};
+    if (tier === 'borderline') return {{ label: "Borderline",     color: "#78350f", bg: "#fef3c7" }};
+    // No tier attr — pre-Week-1 regen card. Score-based fallback.
+    if (score >= 85) return {{ label: "Very high fit", color: "#0a6b3a", bg: "#d1fae5" }};
+    if (score >= 70) return {{ label: "Good fit",      color: "#1817B5", bg: "#dbeafe" }};
+    return              {{ label: "Possible fit",  color: "#78350f", bg: "#fef3c7" }};
   }}
 
   // Why-this-pick reason
@@ -4874,7 +4885,7 @@ async function _refreshFocusPanelBody(panel) {{
       const fp = c.getAttribute("data-fp");
       const titleTxt = titleA ? titleA.textContent.trim() : "?";
       const compTxt = compEl ? compEl.textContent.trim() : "?";
-      const fit = fitLabel(score);
+      const fit = fitLabel(c, score);
       const why = whyPick(c);
       const cardLink = c.querySelector('.title a, a[href][target="_blank"]');
       const applyUrl = cardLink ? cardLink.href : "#";
