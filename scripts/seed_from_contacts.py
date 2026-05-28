@@ -13,9 +13,16 @@ WORKER = "https://cool-darkness-dce5.tr6jz6v7wg.workers.dev"
 
 
 def fetch_json(url, headers=None, timeout=30):
-    req = urllib.request.Request(url, headers=headers or {})
-    with urllib.request.urlopen(req, timeout=timeout) as r:
-        return json.loads(r.read().decode())
+    h = dict(headers or {})
+    h.setdefault("User-Agent", "getmemyjob-seed/1.0 (+github.com/hhzfz4d94q-design/getmybob)")
+    h.setdefault("Accept", "application/json")
+    req = urllib.request.Request(url, headers=h)
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            return json.loads(r.read().decode())
+    except urllib.error.HTTPError as e:
+        body = e.read().decode("utf-8", errors="replace")[:300]
+        raise Exception(f"HTTP {e.code} on {url}: {body}") from None
 
 
 def main():
