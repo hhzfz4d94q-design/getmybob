@@ -175,6 +175,71 @@ def main():
         except Exception as e:
             all_ok &= expect("/draft-warm-intro parses", False, str(e))
 
+        # === New endpoints (Sprint Mode v2 + healthcare expansion) ============
+
+        # GET /contacts — public read with auth, returns {contacts, meta}
+        s, t = req(f"/contacts?user={TEST_SLUG}",
+                   headers={"X-Admin-Key": ADMIN_KEY})
+        all_ok &= expect("GET /contacts (admin key) returns 200", s == 200, f"status {s}")
+        try:
+            d = json.loads(t)
+            all_ok &= expect("  has 'contacts' array", isinstance(d.get("contacts"), list))
+        except Exception as e:
+            all_ok &= expect("/contacts parses", False, str(e))
+
+        # GET /contacts without auth → 401
+        s, _ = req(f"/contacts?user={TEST_SLUG}")
+        all_ok &= expect("GET /contacts no auth returns 401", s == 401, f"status {s}")
+
+        # POST /admin/contacts with bad admin key → 401
+        s, _ = req("/admin/contacts", method="POST",
+                   headers={"X-Admin-Key": "wrong-key-zzz"},
+                   body={"slug": TEST_SLUG, "contacts": []})
+        all_ok &= expect("POST /admin/contacts bad key returns 401", s == 401, f"status {s}")
+
+        # POST /admin/contacts with malformed body → 400
+        s, _ = req("/admin/contacts", method="POST",
+                   headers={"X-Admin-Key": ADMIN_KEY},
+                   body={"slug": TEST_SLUG})  # missing contacts
+        all_ok &= expect("POST /admin/contacts missing contacts returns 400", s == 400, f"status {s}")
+
+        # POST /api/sprint/reset (safe — non-destructive test, clears sprintStart)
+        # Run reset first so subsequent /api/sprint/start test starts from clean state.
+        s, t = req(f"/api/sprint/reset?user={TEST_SLUG}", method="POST",
+                   headers={"X-Admin-Key": ADMIN_KEY}, body={})
+        all_ok &= expect("POST /api/sprint/reset returns 200", s == 200, f"status {s}")
+
+        # Verify sprintStart actually cleared
+        s, t = req(f"/skills-profile?user={TEST_SLUG}")
+        try:
+            d = json.loads(t)
+            sp = (d.get("profile") or {}).get("sprintStart", "")
+            all_ok &= expect("  sprintStart cleared after reset", not sp,
+                             f"got {sp!r}")
+        except Exception as e:
+            all_ok &= expect("/skills-profile parses after reset", False, str(e))
+
+        # POST /api/sprint/start with admin key
+        s, t = req(f"/api/sprint/start?user={TEST_SLUG}", method="POST",
+                   headers={"X-Admin-Key": ADMIN_KEY},
+                   body={"sprintDays": 10, "sprintDailyQuota": 3})
+        all_ok &= expect("POST /api/sprint/start returns 200", s == 200, f"status {s}")
+        try:
+            d = json.loads(t)
+            all_ok &= expect("  start response has sprintStart", bool(d.get("sprintStart")))
+            all_ok &= expect("  sprintDays defaulted to 10", d.get("sprintDays") == 10)
+            all_ok &= expect("  sprintDailyQuota defaulted to 3", d.get("sprintDailyQuota") == 3)
+        except Exception as e:
+            all_ok &= expect("/api/sprint/start parses", False, str(e))
+
+        # Sprint-start with no auth → 401
+        s, _ = req(f"/api/sprint/start?user={TEST_SLUG}", method="POST", body={})
+        all_ok &= expect("POST /api/sprint/start no auth returns 401", s == 401, f"status {s}")
+
+        # Reset again so this test run is idempotent
+        req(f"/api/sprint/reset?user={TEST_SLUG}", method="POST",
+            headers={"X-Admin-Key": ADMIN_KEY}, body={})
+
         # /regenerate-profile (dry_run) — admin-only safety check
         s, t = req(f"/regenerate-profile?user={TEST_SLUG}", method="POST",
                    headers={"X-Admin-Key": ADMIN_KEY}, body={"dry_run": True}, timeout=90)

@@ -469,7 +469,47 @@ async function testUser(browser, slug) {
   });
   record(slug, 'skill picker has working state', capTest.ok, capTest.why || `count=${capTest.beforeCount}/max=${capTest.max} inputDisabled=${capTest.inputDisabled}`);
 
-  // ── 16. Close wizard via × button (programmatic click) ──
+  // ── 15a. Sprint mode UI (sprint_start_cta OR sprint_strip must render) ──
+  // After our v2 ship, geetu has sprintStart='', amit may or may not.
+  // Either the "Start my 10-day sprint" CTA OR the day-N strip should be in DOM.
+  const sprintUi = await page.evaluate(() => {
+    const cta = document.getElementById('sprint-start-cta');
+    const strip = document.getElementById('sprint-strip');
+    return {
+      ctaVisible: cta ? (cta.offsetParent !== null) : false,
+      stripVisible: strip ? (strip.offsetParent !== null) : false,
+      hasOneOrOther: !!(cta || strip),
+      ctaHasStartButton: cta ? !!cta.querySelector('button[onclick*="startSprintNow"]') : false,
+      stripHasDayCounter: strip ? !!document.getElementById('sprint-day-n') : false,
+      stripHasProgressFill: strip ? !!document.getElementById('sprint-progress-fill') : false,
+      stripLinksToSprintHtml: strip ? !!strip.querySelector('a[href*="/sprint.html"]') : false,
+    };
+  });
+  record(slug, 'sprint UI present (either CTA or strip)', sprintUi.hasOneOrOther,
+         JSON.stringify(sprintUi));
+  // If CTA shows, it must have the Start button wired to startSprintNow
+  if (sprintUi.ctaVisible) {
+    record(slug, 'sprint CTA has Start button wired to startSprintNow', sprintUi.ctaHasStartButton);
+  }
+  // If strip shows, it must have day counter + progress fill + live-view link
+  if (sprintUi.stripVisible) {
+    record(slug, 'sprint strip has day-N span', sprintUi.stripHasDayCounter);
+    record(slug, 'sprint strip has progress-fill', sprintUi.stripHasProgressFill);
+    record(slug, 'sprint strip links to /sprint.html', sprintUi.stripLinksToSprintHtml);
+  }
+  // Sort dropdown should include 'sprint' option
+  const sortOpts = await page.evaluate(() => {
+    const sel = document.getElementById('sortBy');
+    if (!sel) return [];
+    return Array.from(sel.options).map(o => o.value);
+  });
+  record(slug, 'sortBy dropdown has "sprint" option', sortOpts.includes('sprint'),
+         `options: ${sortOpts.join(',')}`);
+  // startSprintNow function must exist on window
+  const fnExists = await page.evaluate(() => typeof window.startSprintNow === 'function');
+  record(slug, 'startSprintNow() defined globally', fnExists);
+
+    // ── 16. Close wizard via × button (programmatic click) ──
   const wizClosed = await page.evaluate(() => {
     const x = document.getElementById('wiz3-close');
     if (!x) return { ok: false, why: 'no close button' };

@@ -27,7 +27,26 @@ jobs:
         run: |
           python3 fetch_jobs.py
 
+      - name: Pre-deploy smoke gate (blocks bad output from shipping)
+        run: |
+          set -e
+          # 1. Generated dashboards must have valid JS syntax
+          python3 scripts/validate_dashboard_js.py
+          # 2. Scoring goldens must still pass (catches scoring regressions
+          #    that would degrade users' Top-20 without a JS error)
+          python3 tests/test_scoring.py
+          # 3. Catalog integrity (no dupe / bad slug / unknown ATS)
+          python3 tests/test_catalog_integrity.py
+          # 4. Sprint reminder pure-builder tests (catches email generation bugs
+          #    before the 7am cron sends a broken email to every user)
+          if command -v node >/dev/null 2>&1; then
+            node tests/test_sprint_reminder.mjs
+          else
+            echo "node not available — skipping sprint reminder tests"
+          fi
+
       - name: Commit updated per-user dashboards and jobs.db
+        if: success()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
