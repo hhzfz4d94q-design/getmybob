@@ -5,8 +5,7 @@ name: Seed catalog from user LinkedIn contacts
 # into the catalog so the scraper picks them up next refresh.
 #
 # Why: every company where a user has a LinkedIn contact is by definition
-# a relevant candidate for the warm-intro pipeline. If we're not scraping
-# it, we can't show those warm-intro jobs.
+# a relevant candidate for the warm-intro pipeline.
 #
 # Trigger: Actions → "Seed catalog from user LinkedIn contacts" → Run.
 
@@ -26,19 +25,66 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+
       - name: Pull contacts + ask Claude for ATS hints
+        id: seed
+        shell: bash
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           ADMIN_KEY: ${{ secrets.WORKER_ADMIN_KEY }}
-        run: python3 scripts/seed_from_contacts.py
-      - name: Commit seeded companies
+        run: |
+          export PYTHONUNBUFFERED=1
+          set +e
+          python3 scripts/seed_from_contacts.py > /tmp/seed.log 2>&1
+          PYEXIT=$?
+          echo "Python exit code: $PYEXIT"
+          echo "::group::Seed output"
+          cat /tmp/seed.log
+          echo "::endgroup::"
+          if [ "$PYEXIT" = "0" ]; then
+            echo "status=ok" >> "$GITHUB_OUTPUT"
+          else
+            echo "status=fail" >> "$GITHUB_OUTPUT"
+          fi
+          # Mirror to a tracked file for read-back via git pull
+          mkdir -p .seed-debug
+          cp /tmp/seed.log .seed-debug/LAST_RUN.log
+          echo "$PYEXIT" > .seed-debug/LAST_EXIT_CODE
+          # Surface secret-presence (length only, never the value)
+          echo "ANTHROPIC_API_KEY_len=${#ANTHROPIC_API_KEY}" > .seed-debug/SECRET_STATUS
+          echo "ADMIN_KEY_len=${#ADMIN_KEY}" >> .seed-debug/SECRET_STATUS
+
+      - name: Commit seed log so we can read it back
+        if: always()
+        run: |
+          mkdir -p .seed-debug
+          [ -f .seed-debug/LAST_RUN.log ] || echo "no log produced" > .seed-debug/LAST_RUN.log
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .seed-debug/LAST_RUN.log .seed-debug/LAST_EXIT_CODE .seed-debug/SECRET_STATUS 2>/dev/null
+          if git diff --cached --quiet; then
+            echo "Log file unchanged."
+          else
+            git commit -m "seed-debug: capture LAST_RUN.log (auto)"
+            git pull --rebase origin main 2>/dev/null || true
+            git push origin main || echo "push failed (non-fatal)"
+          fi
+
+      - name: Commit seeded companies (only if scrape succeeded)
+        if: steps.seed.outputs.status == 'ok'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add healthtech_companies.json companies.json
           if git diff --cached --quiet; then
-            echo "No new companies from contacts — nothing to commit."
+            echo "No new companies from contacts."
           else
             git commit -m "Seed catalog from user LinkedIn contacts (weekly)"
             git push origin main
           fi
+
+      - name: Surface failure (so the run goes red)
+        if: steps.seed.outputs.status != 'ok'
+        run: |
+          echo "::error::Seed did not complete — see .seed-debug/LAST_RUN.log on main."
+          exit 1
