@@ -28,11 +28,17 @@ jobs:
       - name: Sanity-check JS in current template
         run: python3 scripts/validate_dashboard_js.py
 
-      - name: Regenerate every user dashboard
+      - name: Snapshot existing dashboard size (for diff sanity)
         run: |
-          set -e
+          echo "BEFORE: amit-arora.html = $(wc -c < amit-arora.html 2>/dev/null || echo MISSING) bytes"
+          echo "BEFORE: has new marker? $(grep -c maxPerCompanyFilter amit-arora.html 2>/dev/null || echo 0)"
+
+      - name: Regenerate every user dashboard
+        shell: bash
+        run: |
+          set -eo pipefail
           export PYTHONUNBUFFERED=1
-          python3 - <<'PY' 2>&1 | tee /tmp/regen.log
+          python3 - <<'PY'
           import sys, os, traceback
           sys.path.insert(0, '.')
           try:
@@ -48,9 +54,17 @@ jobs:
               traceback.print_exc()
               sys.exit(1)
           PY
-          echo "::group::Last 80 lines of regen output"
-          tail -n 80 /tmp/regen.log || true
-          echo "::endgroup::"
+
+      - name: Verify amit-arora.html got regenerated with new template
+        run: |
+          echo "AFTER: amit-arora.html = $(wc -c < amit-arora.html) bytes"
+          echo "AFTER: has new marker? $(grep -c maxPerCompanyFilter amit-arora.html || echo 0)"
+          if ! grep -q maxPerCompanyFilter amit-arora.html; then
+            echo "::error::amit-arora.html was NOT regenerated with the new template — the regen step ran but produced stale output. Aborting commit."
+            ls -la *.html | head -20
+            exit 1
+          fi
+          echo "::notice::Template markers present — regen succeeded."
 
 
       - name: Commit + push regenerated dashboards
