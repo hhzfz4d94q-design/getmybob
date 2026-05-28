@@ -433,6 +433,7 @@ HTML_TEMPLATE = """<!doctype html>
     <div style="font-size:16px; font-weight:700; color:#1817B5;">
       🎯 Today’s picks: apply to <span id="focus-n">3</span> <span style="font-weight:400;color:#5C5CD6;font-size:13px;">(of <span id="focus-pool">5</span> shown)</span>
       <button id="focus-refresh-btn" onclick="refreshPicks()" title="Recompute today’s picks from your latest feed" style="background:none;border:1px solid rgba(24,23,181,0.3);color:#1817B5;padding:2px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;margin-left:10px;vertical-align:middle;">↻ refresh</button>
+      <button id="focus-rerank-btn" onclick="rerankPicks(this)" title="Re-rank today's picks with Claude reading each JD body. Stamped daily." style="background:#1817B5;color:#fff;border:none;padding:2px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;margin-left:6px;vertical-align:middle;">✨ AI re-rank</button>
     </div>
     <div style="font-size:13px; color:#444;">
       <strong id="focus-applied">0</strong> of <span id="focus-n-2">3</span> done today

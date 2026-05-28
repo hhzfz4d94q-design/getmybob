@@ -85,6 +85,7 @@ export default {
     if (url.pathname === '/api/tuning/outcome') return handleTuningOutcome(request, env, cors, slug);
     if (url.pathname === '/api/tuning/list')    return handleTuningList(request, env, cors, slug);
     if (url.pathname === '/api/dismiss')         return handleDismiss(request, env, cors, slug);
+    if (url.pathname === '/api/rerank')          return handleRerank(request, env, cors, slug);
     if (url.pathname === '/skills-profile') return handleSkillsProfile(request, env, cors, slug);
     if (url.pathname === '/regenerate-profile') return handleRegenerateProfile(request, env, cors, slug);
     if (url.pathname === '/regenerate-companies') return handleRegenerateCompanies(request, env, cors, slug);
@@ -1217,6 +1218,130 @@ async function handleDismiss(request, env, cors, slug) {
   } catch (e) { /* tolerate */ }
 
   return Response.json({ status: 'recorded', reason, totalDismissals: profile.dismissalPatterns.length }, { headers: cors });
+}
+
+// --- /api/rerank (Week 3 — LLM re-rank against JD body) ---------------
+// Two methods:
+//   GET  → returns today's stamped re-rank (or {} if none)
+//   POST { jobs: [{fp,title,company,description}] } → re-runs Claude
+//        against the top-15 candidates the client provides + the user's
+//        profile + last 14 days of dismissalPatterns. Stamps result.
+//   DELETE → clears today's stamp (used by user-triggered refresh)
+async function handleRerank(request, env, cors, slug) {
+  if (!env.RESUMES) return Response.json({ error: 'RESUMES KV binding missing' }, { status: 500, headers: cors });
+  const today = new Date().toISOString().slice(0, 10);
+  const key = uk(slug, 'rerank:today');
+
+  if (request.method === 'GET') {
+    const raw = await env.RESUMES.get(key);
+    if (!raw) return Response.json({}, { headers: cors });
+    let p; try { p = JSON.parse(raw); } catch (e) { return Response.json({}, { headers: cors }); }
+    if (!p || p.date !== today) return Response.json({}, { headers: cors });
+    return Response.json(p, { headers: cors });
+  }
+  if (request.method === 'DELETE') {
+    await env.RESUMES.delete(key);
+    return Response.json({ status: 'cleared' }, { headers: cors });
+  }
+  if (request.method !== 'POST') return new Response('GET / POST / DELETE only', { status: 405, headers: cors });
+
+  // Auth — re-rank costs Claude tokens, gate by edit key or session.
+  let authed = await checkEditKey(request, env, slug);
+  if (!authed) {
+    const sess = await sessionFromRequest(request, env);
+    if (sess && sess.slug === slug) authed = true;
+  }
+  if (!authed) {
+    const ak = request.headers.get('X-Admin-Key');
+    if (ak && env.ADMIN_KEY && ak === env.ADMIN_KEY) authed = true;
+  }
+  if (!authed) return Response.json({ error: 'Auth required' }, { status: 401, headers: cors });
+  if (!env.ANTHROPIC_API_KEY) return Response.json({ error: 'Missing ANTHROPIC_API_KEY' }, { status: 500, headers: cors });
+
+  const body = await request.json().catch(() => ({}));
+  const jobs = Array.isArray(body.jobs) ? body.jobs.slice(0, 15) : [];
+  if (jobs.length === 0) return Response.json({ error: 'No jobs to rerank' }, { status: 400, headers: cors });
+
+  const profRaw = await env.RESUMES.get(uk(slug, 'skills_profile'));
+  const profile = profRaw ? JSON.parse(profRaw) : {};
+  const profSlim = {
+    targetTitles: profile.targetTitles || [],
+    industries:   profile.industries   || [],
+    keywords:     profile.keywords     || [],
+    careerStage:  profile.careerStage  || '',
+    primaryRole:  profile.primaryRole  || '',
+    remotePreference: profile.remotePreference || 'any',
+    salaryFloor:  profile.salaryFloor  || null
+  };
+
+  // Week 4 will inject dismissalPatterns into the prompt; for now we set
+  // up the variable so the wiring is in place.
+  const dismissals = (Array.isArray(profile.dismissalPatterns) ? profile.dismissalPatterns : [])
+    .filter(d => {
+      const ts = Date.parse(d.ts || '');
+      return Number.isFinite(ts) && (Date.now() - ts) < 14 * 86400000;
+    })
+    .slice(-20);
+
+  const jobsForPrompt = jobs.map(j => ({
+    fp: j.fp,
+    title: (j.title || '').slice(0, 120),
+    company: (j.company || '').slice(0, 80),
+    description: (j.description || '').slice(0, 1200)  // bound per-job to keep prompt small
+  }));
+
+  const prompt = `You are re-ranking job candidates for a specific user. You will receive: (1) a slim user profile, (2) a list of up to 15 candidate jobs already pre-filtered by per-dimension gates, (3) a short history of the user's recent dismissals + their stated reasons.
+
+Your job: for EACH candidate, output a confidence score 0-100 (how likely the user should apply), a one-sentence primary reason, and an explicit deal-breaker (string) if the job has any single fatal issue — null otherwise.
+
+Confidence guide:
+  90-100 — strong fit on title + industry + level; user has direct experience for the JD's must-haves
+  70-89  — solid fit with 1 minor mismatch
+  50-69  — partial fit, JD has some real misalignment
+  <50    — should not be shown to user; explain why in dealBreaker
+
+Use the dismissal patterns as STRONG SIGNAL. If a user has dismissed 3+ jobs labeled 'too-junior' from a company / level, downweight similar jobs aggressively.
+
+Return ONLY a JSON object with this exact shape:
+
+{
+  "ranked": [
+    { "fp": "...", "confidence": 92, "primaryReason": "VP banking tech with GRC + Basel III exposure — direct match to the JD's must-haves and your last role at Mercury", "dealBreaker": null }
+  ]
+}
+
+PROFILE:
+${JSON.stringify(profSlim).slice(0, 1500)}
+
+RECENT DISMISSALS (last 14d, oldest first):
+${JSON.stringify(dismissals).slice(0, 2500)}
+
+CANDIDATES (${jobsForPrompt.length}):
+${JSON.stringify(jobsForPrompt).slice(0, 14000)}`;
+
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 3500, messages: [{ role: 'user', content: prompt }] }),
+    });
+    if (!r.ok) { const err = await r.text(); return Response.json({ error: 'Anthropic API error', details: err.slice(0, 500) }, { status: 502, headers: cors }); }
+    const data = await r.json();
+    const text = data.content?.[0]?.text || '';
+    const cleaned = text.replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/\s*```$/, '').trim();
+    let parsed;
+    try { parsed = JSON.parse(cleaned); }
+    catch (e) { return Response.json({ error: 'AI did not return valid JSON', raw: text.slice(0, 500) }, { status: 502, headers: cors }); }
+    const record = {
+      date: today,
+      stampedAt: new Date().toISOString(),
+      jobCount: jobs.length,
+      dismissalCount: dismissals.length,
+      ranked: Array.isArray(parsed.ranked) ? parsed.ranked.slice(0, 15) : []
+    };
+    await env.RESUMES.put(key, JSON.stringify(record));
+    return Response.json(record, { headers: cors });
+  } catch (e) { return Response.json({ error: 'Worker error', message: String(e) }, { status: 500, headers: cors }); }
 }
 
 // --- /regenerate-profile -----------------------------------------------
