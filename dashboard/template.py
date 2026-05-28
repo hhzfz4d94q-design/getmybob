@@ -410,23 +410,28 @@ HTML_TEMPLATE = """<!doctype html>
 <div id="contacts-priority-indicator" style="margin: 0 0 12px 0; min-height: 18px;"></div>
 
 <!-- Daily focus panel (E6 / 2026-05-26): pin the top-N where N = dailyTarget -->
-<div id="focus-panel" style="margin: 0 0 16px 0; padding:14px 16px; background:linear-gradient(135deg,#eef0ff 0%,#fef8e8 100%); border:1px solid #d0d4dc; border-radius:10px; display:none;">
+<div id="focus-panel" style="margin: 0 0 16px 0; padding:18px 22px; background:linear-gradient(135deg,#eef0ff 0%,#fef8e8 100%); border:1px solid #d0d4dc; border-radius:12px; display:none;">
   <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
-    <div style="font-size:15px; font-weight:700; color:#22223b;">
-      🎯 Today’s targets: apply to <span id="focus-n">5</span>
+    <div style="font-size:16px; font-weight:700; color:#1817B5;">
+      🎯 Today’s picks: apply to <span id="focus-n">3</span>
     </div>
     <div style="font-size:13px; color:#444;">
-      <strong id="focus-applied">0</strong> of <span id="focus-n-2">5</span> done today
+      <strong id="focus-applied">0</strong> of <span id="focus-n-2">3</span> done today
       <span id="focus-progress-bar" style="display:inline-block;width:120px;height:6px;background:#dcdfe6;border-radius:3px;margin-left:8px;overflow:hidden;vertical-align:middle;">
         <span id="focus-progress-fill" style="display:block;height:100%;width:0%;background:#5C5CD6;border-radius:3px;transition:width 0.3s;"></span>
       </span>
     </div>
   </div>
-  <div style="font-size:12px;color:#666; margin-top:6px;">
-    These are your highest-fit roles to apply to right now. Done one? Mark it applied on the card. Skip if it’s not a fit.
+  <div style="font-size:12.5px;color:#666; margin-top:6px;">
+    Hand-picked from your feed: <strong>max 1 job per company</strong>, no jobs you’ve already applied to, and we suppress companies you’ve dismissed multiple times. Done one? Mark applied on the card.
   </div>
-  <div id="focus-list" style="margin-top:10px; display:flex; flex-direction:column; gap:6px; font-size:13.5px;">
+  <div id="focus-list" style="margin-top:14px; display:flex; flex-direction:column; gap:10px; font-size:13.5px;">
     <!-- populated by JS -->
+  </div>
+  <div id="focus-feed-toggle" style="margin-top:14px; text-align:center;">
+    <button onclick="toggleFullFeed()" id="focus-feed-toggle-btn" style="background:rgba(24,23,181,0.08);border:1px solid rgba(24,23,181,0.2);color:#1817B5;padding:8px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">
+      View more matches ↓
+    </button>
   </div>
 </div>
 
@@ -4022,27 +4027,61 @@ function openInterviewPrepFromCard(fp) {{
 function refreshFocusPanel() {{
   const panel = document.getElementById("focus-panel");
   if (!panel) return;
-  const N = (typeof loadDailyApplyTarget === "function") ? loadDailyApplyTarget() : 5;
+  // Clamp dailyTarget to 3-5 range — focused picks, not a long list.
+  let N = (typeof loadDailyApplyTarget === "function") ? loadDailyApplyTarget() : 3;
+  N = Math.max(3, Math.min(5, parseInt(N, 10) || 3));
+
   const grid = document.getElementById("grid");
   if (!grid) return;
-  // Get all visible cards (after filter), sorted by score desc.
-  // The grid already sorts by data-score so the first N cards in DOM
-  // that aren't already applied today are our picks.
   const today = new Date().toISOString().slice(0,10);
   const tracker = (typeof getTracker === "function") ? getTracker() : {{}};
-  const cards = Array.from(grid.querySelectorAll(".card")).filter(function(c) {{
-    // Exclude cards already applied/saved today (let user see fresh picks)
+
+  // Build company → dismissed-count map (for engagement-aware penalty)
+  const dismissedByCompany = {{}};
+  Object.values(tracker || {{}}).forEach(function(r) {{
+    if (!r || (r.status !== "dismissed" && r.status !== "rejected")) return;
+    const co = ((r.jobMeta && r.jobMeta.company) || "").trim().toLowerCase();
+    if (!co) return;
+    dismissedByCompany[co] = (dismissedByCompany[co] || 0) + 1;
+  }});
+
+  // Get all visible cards, exclude already-applied jobs entirely (not just today)
+  const candidates = Array.from(grid.querySelectorAll(".card")).filter(function(c) {{
     const fp = c.getAttribute("data-fp");
     const rec = tracker[fp];
-    if (!rec) return true;
-    const when = (rec.statusChangedAt || rec.appliedAt || rec.updatedAt || "").slice(0,10);
-    const st = rec.status || "";
-    if (st === "rejected" || st === "skipped") return false;
-    if (st && when === today) return false; // applied or saved today — counts toward goal
+    if (rec) {{
+      const st = (rec.status || "").toLowerCase();
+      // Hard-exclude these statuses — these are decisions made
+      if (["applied","phone","onsite","offer","rejected","dismissed","skipped"].indexOf(st) !== -1) {{
+        return false;
+      }}
+    }}
+    // Penalize companies with 3+ dismissals in last 30d — drop entirely if 5+
+    const compEl = c.querySelector(".company");
+    const co = compEl ? compEl.textContent.trim().toLowerCase() : "";
+    if (dismissedByCompany[co] && dismissedByCompany[co] >= 5) return false;
     return true;
   }});
 
-  const picks = cards.slice(0, N);
+  // Sort by sprint priority if available, else by score desc
+  candidates.sort(function(a, b) {{
+    if (typeof _sprintPriority === "function") {{
+      return _sprintPriority(b) - _sprintPriority(a);
+    }}
+    return (parseInt(b.dataset.score || "0", 10)) - (parseInt(a.dataset.score || "0", 10));
+  }});
+
+  // DIVERSITY: strict max 1 job per company across the whole pick set.
+  const picks = [];
+  const seenCompanies = new Set();
+  for (const c of candidates) {{
+    const compEl = c.querySelector(".company");
+    const co = compEl ? compEl.textContent.trim().toLowerCase() : "";
+    if (!co || seenCompanies.has(co)) continue;
+    seenCompanies.add(co);
+    picks.push(c);
+    if (picks.length >= N) break;
+  }}
 
   // Update header counts
   const ne = document.getElementById("focus-n");
@@ -4050,7 +4089,7 @@ function refreshFocusPanel() {{
   if (ne) ne.textContent = N;
   if (ne2) ne2.textContent = N;
 
-  // Applied-today counter (reuses the streak widget calc style)
+  // Applied-today counter
   let appliedToday = 0;
   Object.values(tracker || {{}}).forEach(function(r) {{
     if (!r) return;
@@ -4064,10 +4103,45 @@ function refreshFocusPanel() {{
   const fill = document.getElementById("focus-progress-fill");
   if (fill) fill.style.width = Math.min(100, Math.round(appliedToday * 100 / Math.max(1, N))) + "%";
 
-  // Render the list of picks
+  // Confidence band labels
+  function fitLabel(score) {{
+    const n = parseInt(score, 10) || 0;
+    if (n >= 85) return {{ label: "Very high fit", color: "#0a6b3a", bg: "#d1fae5" }};
+    if (n >= 70) return {{ label: "Good fit",      color: "#1817B5", bg: "#dbeafe" }};
+    return                {{ label: "Possible fit",  color: "#78350f", bg: "#fef3c7" }};
+  }}
+
+  // Why-this-pick reason — assemble from existing badges + match-reason
+  function whyPick(c) {{
+    const parts = [];
+    if (c.querySelector(".contact-badge")) {{
+      const cb = c.querySelector(".contact-badge");
+      const isHiring = cb.classList.contains("hiring");
+      parts.push(isHiring ? "warm intro to a recruiter here" : "warm-intro (you have a LinkedIn contact here)");
+    }}
+    if (c.querySelector(".just-posted-badge")) parts.push("posted in last 3 days");
+    // Pull match reason from existing match-reason element
+    const mr = c.querySelector(".match-reason, .why-match");
+    if (mr) {{
+      const txt = (mr.textContent || "").replace(/^→ Match:\s*/, "").trim();
+      if (txt) {{
+        // Trim long match strings — first 90 chars max, end on word boundary
+        let snippet = txt.length > 90 ? txt.slice(0, 90).replace(/\s+\S*$/, "") + "…" : txt;
+        parts.push(snippet);
+      }}
+    }}
+    return parts.length ? parts.join(" · ") : null;
+  }}
+
+  // Render the list of picks — bigger, richer cards now
   const list = document.getElementById("focus-list");
   if (list) {{
     list.innerHTML = "";
+    if (picks.length === 0) {{
+      list.innerHTML = '<div style="padding:20px;text-align:center;color:#666;font-size:13.5px;">' +
+        '✨ You’ve applied to everything in the top picks today. Check the feed below for more, or come back tomorrow for fresh jobs.' +
+        '</div>';
+    }}
     picks.forEach(function(c, idx) {{
       const titleA = c.querySelector(".title a");
       const compEl = c.querySelector(".company");
@@ -4075,47 +4149,97 @@ function refreshFocusPanel() {{
       const fp = c.getAttribute("data-fp");
       const titleTxt = titleA ? titleA.textContent.trim() : "?";
       const compTxt = compEl ? compEl.textContent.trim() : "?";
-      const row = document.createElement("div");
-      row.style.cssText = "display:flex; align-items:center; gap:10px; padding:5px 0; border-bottom:1px dashed #d0d4dc;";
-      // Pull the actual job apply URL from the card's primary <a>
+      const fit = fitLabel(score);
+      const why = whyPick(c);
       const cardLink = c.querySelector('.title a, a[href][target="_blank"]');
       const applyUrl = cardLink ? cardLink.href : "#";
-      row.innerHTML =
-        '<span style="display:inline-block;min-width:26px;text-align:center;background:#5C5CD6;color:#fff;border-radius:4px;font-weight:700;font-size:11px;padding:2px 6px;">' + (idx+1) + '</span>' +
-        '<a href="' + applyUrl + '" target="_blank" rel="noopener" style="flex:1; color:#22223b; text-decoration:none; font-weight:600;">' + _esc(titleTxt) + '</a>' +
-        '<span style="color:#666;font-size:12.5px;">' + _esc(compTxt) + '</span>' +
-        '<span style="color:#5C5CD6;font-weight:700;font-size:12px;min-width:30px;text-align:right;">' + score + '</span>' +
-        '<a href="#" data-jump-fp="' + fp + '" title="Jump to card" style="color:#5C5CD6;text-decoration:none;font-size:13px;margin-left:6px;">↓</a>';
+
+      const row = document.createElement("div");
+      row.style.cssText = "background:#fff;border:1px solid #d8dbe6;border-radius:10px;padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,0.04);display:flex;flex-direction:column;gap:8px;";
+      let html = '';
+      // Header row: # + title + fit pill
+      html += '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">';
+      html += '<span style="display:inline-block;min-width:24px;height:24px;line-height:24px;text-align:center;background:#5C5CD6;color:#fff;border-radius:50%;font-weight:700;font-size:12px;">' + (idx+1) + '</span>';
+      html += '<a href="' + applyUrl + '" target="_blank" rel="noopener" style="flex:1;color:#1817B5;text-decoration:none;font-weight:700;font-size:15px;line-height:1.3;">' + _esc(titleTxt) + '</a>';
+      html += '<span style="background:' + fit.bg + ';color:' + fit.color + ';padding:3px 9px;border-radius:10px;font-size:11px;font-weight:700;white-space:nowrap;">' + fit.label + '</span>';
+      html += '</div>';
+      // Company line
+      html += '<div style="color:#444;font-size:13px;font-weight:500;">' + _esc(compTxt) + '</div>';
+      // Why-this-pick
+      if (why) {{
+        html += '<div style="color:#5C5CD6;font-size:12.5px;font-style:italic;line-height:1.4;">→ ' + _esc(why) + '</div>';
+      }}
+      // Actions row
+      html += '<div style="display:flex;gap:8px;align-items:center;margin-top:2px;">';
+      html += '<a href="' + applyUrl + '" target="_blank" rel="noopener" style="background:linear-gradient(135deg,#1817B5,#7C7CF0);color:#fff;padding:7px 14px;border-radius:6px;font-size:13px;font-weight:600;text-decoration:none;">Apply →</a>';
+      html += '<button data-jump-fp="' + fp + '" style="background:none;border:1px solid #d0d4dc;color:#666;padding:6px 12px;border-radius:6px;font-size:12.5px;cursor:pointer;">View full card</button>';
+      html += '<span style="margin-left:auto;color:#888;font-size:11px;">score ' + score + '</span>';
+      html += '</div>';
+
+      row.innerHTML = html;
       list.appendChild(row);
     }});
-    // Wire clicks to scroll to the card
-    list.querySelectorAll("[data-jump-fp]").forEach(function(a) {{
-      a.addEventListener("click", function(e) {{
+    // Wire "View full card" buttons via event delegation
+    list.querySelectorAll('[data-jump-fp]').forEach(function(b) {{
+      b.addEventListener('click', function(e) {{
         e.preventDefault();
-        const fp = a.getAttribute("data-jump-fp");
-        const card = document.querySelector('.card[data-fp="' + fp + '"]');
-        if (card) {{
-          card.scrollIntoView({{ behavior: "smooth", block: "center" }});
-          card.style.boxShadow = "0 0 0 3px #5C5CD6";
-          setTimeout(function() {{ card.style.boxShadow = ""; }}, 2400);
-        }}
+        const fp = b.getAttribute('data-jump-fp');
+        if (typeof window._focusJumpTo === 'function') window._focusJumpTo(fp);
       }});
     }});
   }}
-
-  // Add a "TODAY N" badge to each of the top-N cards in the grid for visual scanning
-  Array.from(grid.querySelectorAll(".card .focus-badge")).forEach(function(el) {{ el.remove(); }});
-  picks.forEach(function(c, idx) {{
-    const badge = document.createElement("span");
-    badge.className = "focus-badge";
-    badge.style.cssText = "display:inline-block;background:#5C5CD6;color:#fff;border-radius:4px;padding:2px 7px;font-size:10.5px;font-weight:700;margin-right:6px;vertical-align:middle;";
-    badge.textContent = "TODAY " + (idx+1);
-    const row1 = c.querySelector(".row1");
-    if (row1) row1.insertBefore(badge, row1.firstChild);
-  }});
-
-  panel.style.display = "";
 }}
+
+// Helper used by the pick-card "View full card" button
+window._focusJumpTo = function(fp) {{
+  const card = document.querySelector('.card[data-fp="' + fp + '"]');
+  if (card) {{
+    card.scrollIntoView({{ behavior: "smooth", block: "center" }});
+    card.style.boxShadow = "0 0 0 3px #5C5CD6";
+    setTimeout(function() {{ card.style.boxShadow = ""; }}, 2400);
+  }}
+}};
+
+// Stage 2: concierge mode — when sprint is active, collapse the full feed under
+// the focus panel so the picks are the hero. Toggle re-expands it.
+window.toggleFullFeed = function() {{
+  const grid = document.getElementById("grid");
+  const btn = document.getElementById("focus-feed-toggle-btn");
+  if (!grid || !btn) return;
+  const isCollapsed = grid.dataset.feedCollapsed === "true";
+  if (isCollapsed) {{
+    grid.style.display = "";
+    grid.dataset.feedCollapsed = "false";
+    btn.innerHTML = "Hide more matches ↑";
+  }} else {{
+    grid.style.display = "none";
+    grid.dataset.feedCollapsed = "true";
+    const total = grid.querySelectorAll(".card").length;
+    btn.innerHTML = "View " + Math.max(0, total - 3) + " more matches ↓";
+  }}
+}};
+
+// Auto-collapse the feed on first load when sprint is active.
+(function autoCollapseFeedInSprintMode() {{
+  if (document.readyState === "loading") {{
+    document.addEventListener("DOMContentLoaded", function() {{ setTimeout(autoCollapseFeedInSprintMode, 200); }});
+    return;
+  }}
+  setTimeout(function() {{
+    const ha = document.querySelector(".header-actions");
+    if (!ha || ha.dataset.sprintActive !== "true") return;
+    const grid = document.getElementById("grid");
+    if (!grid) return;
+    if (grid.dataset.feedCollapsed === "true") return;
+    grid.style.display = "none";
+    grid.dataset.feedCollapsed = "true";
+    const btn = document.getElementById("focus-feed-toggle-btn");
+    if (btn) {{
+      const total = grid.querySelectorAll(".card").length;
+      btn.innerHTML = "View " + Math.max(0, total - 3) + " more matches ↓";
+    }}
+  }}, 500);
+}})();
 
 // Light helper for HTML-escaping used in the panel rows
 function _esc(s) {{
@@ -4134,7 +4258,8 @@ function wizPickDailyTarget(n) {{
   if (input) input.value = n;
 }}
 function loadDailyApplyTarget() {{
-  try {{ const n = parseInt(localStorage.getItem(DAILY_TARGET_KEY) || "5", 10); return (n > 0 && n < 100) ? n : 5; }} catch (e) {{ return 5; }}
+  // Clamped to 3-5: focused picks, not a long list. (2026-05-28)
+  try {{ const n = parseInt(localStorage.getItem(DAILY_TARGET_KEY) || "3", 10); return Math.max(3, Math.min(5, n)); }} catch (e) {{ return 3; }}
 }}
 // --- Hiring-role detection in LinkedIn contacts -----------------------
 // A contact whose Position contains words like "recruiter", "talent",
