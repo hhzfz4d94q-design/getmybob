@@ -326,6 +326,8 @@ HTML_TEMPLATE = """<!doctype html>
         <div class="hm-group">Personal</div>
         <button id="resume-btn" onclick="openResumeModal()">📄 Resume</button>
         <button id="contacts-btn" onclick="openContactsModal()">⚭ LinkedIn Contacts</button>
+        <div class="hm-group">Help</div>
+        <button id="show-tour-btn" onclick="if(window.gmjStartTour)gmjStartTour()">🎓 Show me around</button>
       </div>
     </div>
   </div>

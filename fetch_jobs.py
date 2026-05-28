@@ -892,6 +892,7 @@ def _location_remote_ok(r, user_locations, remote_pref):
 # ---------------------------------------------------------------------------
 
 from dashboard.wizard import WIZARD_V3_BLOCK  # extracted Phase 3
+from dashboard.help import render_help_overlay  # Stage 1+2 onboarding
 
 
 def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", output_path=None):
@@ -1615,11 +1616,12 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
     # the page's main <script> at that </script>, leaving the template literal
     # unclosed → "Unexpected end of input" → ALL event handlers dead.
     # rsplit on the LAST </body> targets the actual page body close.
+    _help_overlay = render_help_overlay()
     if "</body>" in html:
         parts = html.rsplit("</body>", 1)
-        html = parts[0] + WIZARD_V3_BLOCK + "\n</body>" + parts[1]
+        html = parts[0] + WIZARD_V3_BLOCK + _help_overlay + "\n</body>" + parts[1]
     else:
-        html += WIZARD_V3_BLOCK
+        html += WIZARD_V3_BLOCK + _help_overlay
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(html)
     print(f"\nDashboard written: {output_path}")
