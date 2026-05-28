@@ -23,7 +23,17 @@ from matcher.scoring import (
     is_remote, is_senior, hiring_velocity_boost, recently_funded_boost,
     parse_jd_sections,
     SENIOR_TITLE_TERMS, RELEVANCE_TERMS, SCAM_TERMS, AGENCY_TERMS,
+    # Phase 2.5: constants moved out of fetch_jobs.py into scoring.py
+    IRRELEVANT_TITLE_TERMS, RECRUITER_BLURBS, RECRUITING_FIRMS_SET,
+    SINGLE_WORD_FILTERS, STAGE_ORDER,
+    TITLE_STAGE_EARLY, TITLE_STAGE_EXEC, TITLE_STAGE_INTERN,
+    TITLE_STAGE_MID, TITLE_STAGE_NEWGRAD, TITLE_STAGE_SENIOR_IC,
 )
+# Underscore-prefixed re-exports
+_CONSULTING_JD_PHRASES = _scoring._CONSULTING_JD_PHRASES
+_CONSULTING_NAME_PATTERNS = _scoring._CONSULTING_NAME_PATTERNS
+_JD_SECTION_HEADERS = _scoring._JD_SECTION_HEADERS
+_STAFFING_NAME_PATTERNS = _scoring._STAFFING_NAME_PATTERNS
 # Backward-compat aliases for underscore-prefixed names
 _is_irrelevant_title = _scoring._is_irrelevant_title
 _get_company_stage = _scoring._get_company_stage
@@ -1344,193 +1354,13 @@ STOP_WORDS = {"of", "the", "and", "for", "a", "an", "to", "with", "in", "on", "a
 # Titles that look healthcare-y but aren't a fit for Geetanjali's profile
 # (senior product / digital transformation / IT in healthcare — NOT a clinician,
 # pharmacist, nurse, medical affairs, or pure sales/marketing role).
-IRRELEVANT_TITLE_TERMS = [
-    # Clinical practice roles (not IT/product)
-    "clinical trial", "clinical research", "clinical operations",
-    "clinical success", "clinical quality", "clinical educator",
-    "clinical pharmacist", "clinical psychologist", "clinical specialist",
-    "clinical lead", "clinical excellence", "clinical education",
-    "clinical informatics nurse",
-    # Healthcare practitioners
-    "pharmacy", "pharmacist", "nursing", "nurse practitioner",
-    "registered nurse", "physician", "psychiatrist", "psychologist",
-    "social worker", "behavioral therapist", "case manager",
-    "care coordinator", "care manager", "therapist",
-    "physical therapist", "occupational therapist", "dietitian",
-    "respiratory therapist",
-    # Medical affairs (separate from product/IT)
-    "medical affairs", "medical director", "medical writer",
-    "medical science liaison",
-    # Pure sales — Geetanjali is product/IT, NOT a sales/BD/GTM leader
-    "director of sales", "head of sales", "vp of sales",
-    "vice president of sales", "vice president, sales",
-    "sales director", "regional sales manager", "enterprise sales",
-    "account executive", "account manager", "inside sales",
-    "sales lead", "sales engineer", "sales operations",
-    "sales enablement", "revenue enablement", "head of revenue",
-    "head of partnerships", "partnerships lead", "partnership lead",
-    "business development lead", "business development manager",
-    "business development representative", "bdr", "sdr",
-    "head of growth", "growth lead", "growth marketing",
-    "lead generation", "demand generation", "field sales",
-    "channel sales", "commercial lead", "commercial director",
-    "head of commercial", "vp commercial",
-    # Marketing (different focus from product)
-    "marketing director", "head of marketing", "vp of marketing",
-    "vp, marketing", "marketing manager", "marketing lead",
-    "product marketing", "brand marketing", "content marketing",
-    "performance marketing", "marketing operations",
-    "community manager", "community lead", "social media",
-    # Customer support / care ops (not Geetanjali's profile)
-    "customer success", "customer care", "customer support",
-    "customer experience", "client success", "client services",
-    # HR / Talent / People
-    "talent acquisition", "talent partner", "talent operations",
-    "recruiter", "people operations", "people partner",
-    "head of people", "vp people", "people business partner",
-    # Finance / Pricing / Ops (non-product)
-    "pricing", "pricing strategy", "financial analyst",
-    "fp&a", "controller", "treasurer", "tax manager",
-    "general counsel", "compliance officer", "chief financial officer",
-    "human resources",
-    # Engineering IC roles (she's a program/product leader, not a hands-on engineer)
-    "software engineer", "data engineer", "data scientist", "data science",
-    "machine learning engineer", "ml engineer", "ai engineer",
-    "devops engineer", "site reliability", "backend engineer",
-    "frontend engineer", "full stack engineer", "qa engineer",
-    "security engineer", "platform engineer",
-    # Design roles (different discipline from product management)
-    "product design", "ux design", "ui design", "design lead",
-    "head of design", "vp design", "design director", "creative director",
-    # Research / clinical research (academic / lab, not IT)
-    "clinical research", "clinical experience", "translational research",
-    "research scientist", "research director", "research fellow",
-    # GTM / Go-to-market (sales/marketing function)
-    "gtm", "go-to-market", "go to market",
-    # Government / policy / regulatory affairs (separate function)
-    "government affairs", "federal affairs", "regulatory affairs",
-    "public policy", "policy director", "policy lead",
-    # HR / Talent (bare "talent" catches "Head of Talent" etc.)
-    "head of talent", "vp talent", "director of talent", "chief people officer",
-    "people experience", "talent management",
-    # Risk / Audit / Privacy / Legal compliance (not Geetanjali's lane)
-    "risk officer", "head of risk", "internal audit", "privacy officer",
-    "security officer", "chief information security",
-    # Generic IC analyst roles
-    "data analyst", "business analyst i", "research analyst",
-    # Strategic initiatives / partnerships (community-y BD)
-    "head of strategic initiatives", "strategic initiatives",
-    "partnerships & community", "community lead",
-    "head of community", "vp community",
-    # Member / patient growth / engagement (marketing-flavoured)
-    "member growth", "head of member", "member engagement",
-    "patient growth", "patient marketing", "provider marketing",
-    "user growth", "user acquisition",
-    # Member / provider services (operational support)
-    "member services", "provider services", "member experience",
-    # Clinical documentation / coding (specialist, not product)
-    "clinical documentation", "documentation integrity",
-    "clinical coding", "medical coding", "icd",
-    # Customer engineering / sales engineering
-    "customer engineering", "solution engineering", "solutions engineer",
-    "implementation engineer",
-    # InfoSec / chief of staff
-    "information security", "chief information security",
-    "security architect", "security analyst", "vp of information",
-    "chief of staff", "executive assistant", "executive coordinator",
-    # Strategic ops at non-product orgs (too generic)
-    "strategic operations", "field operations", "operations associate",
-    # IT-security (her core IS healthcare-IT, but pure IT/Sec is too narrow)
-    "it & security", "it and security", "it security",
-    "it operations", "system administrator", "sysadmin",
-    # Misc HR / talent variations
-    "talent strategy", "talent program", "head of recruiting",
-    "director of recruiting",
-    # Strategic accounts / partnerships sales (sales-adjacent)
-    "strategic account", "strategic accounts", "account director",
-    "key account", "named accounts", "enterprise accounts",
-    "strategic partnerships", "channel partnerships",
-    "payor partnerships", "payer partnerships",
-    "vp partnerships", "vp, partnerships",
-    "director, partnerships", "director of partnerships",
-    "bd lead", "bd director",
-    # Revenue ops / biz ops (sales-adjacent functions)
-    "revenue operations", "rev ops", "biz ops",
-    "business operations", "business operations -", "business operations,",
-    "deal desk", "deal operations",
-    # Procurement / finance / accounting / audit
-    "controller", "treasurer", "tax director",
-    "chief accounting", "head of accounting",
-    # Medical / clinical operations / informatics (specialist clinical IT)
-    "medical excellence", "medical operations",
-    "clinical ops", "clinical analytics", "clinical informatics",
-    "clinical product", "clinical solutions",
-    # Data engineering / architecture
-    "data architect", "data solutions", "data engineering",
-    "solutions architect", "enterprise architect",
-    # Application / IT operations / support
-    "application support", "application operations",
-    "service desk", "help desk", "desktop support",
-    # GRC / risk / governance
-    "grc", "governance, risk", "governance risk", "risk management",
-    "internal controls", "model risk",
-    # Internal comms / brand / pr (now also caught by bare "communications")
-    "head of brand", "brand director",
-    "public relations", "investor relations", "ir lead",
-    # Specialty insurance / product solutions (insurance product mgmt is its own world)
-    "insurance product solutions",
-    # Client / patient engagement (sales-side or care-team)
-    "client engagement", "client services", "client success",
-    "client partner", "patient engagement", "patient experience",
-    # Talent community (recruiting funnel — not a real role)
-    "talent community", "talent pool",
-    # Coach / counsellor / specialist (clinician-flavoured)
-    "mental health coach", "online coach", "online mental",
-    "wellness coach", "health coach", "behavioral coach",
-    "career coach",
-    # Clinical-trial site / regulatory affairs niche
-    "site start up", "site start-up", "study start up", "study start-up",
-    "site activation", "clinical site",
-    # Engineering management (line-managing engineers, not Geetanjali's lane)
-    "engineering manager", "manager, engineering",
-    "engineering team lead", "head of platform engineering",
-    "adoption and value realization", "adoption manager",
-    "value realization",
-    # Manufacturing / production / lab ops
-    "production operations", "manufacturing", "lab operations",
-    "laboratory operations", "process development", "qa manager",
-    "quality assurance manager", "facilities", "facility manager",
-    # Generic IC analyst roles
-    "data analyst", "business analyst i", "research analyst",
-    # Junior / entry
-    "junior", "intern", "internship", "associate ", "coordinator",
-    "specialist i", "analyst i", "level i",
-]
 
 
 # Single tokens that should match on word boundary only (so "sales" doesn't catch "salesforce")
-SINGLE_WORD_FILTERS = [
-    "sales", "marketing", "recruiting", "recruiter", "staffing",
-    "clinician", "underwriter", "underwriting", "auditor",
-    "procurement", "communications", "comms",
-    "security",  # info-sec / GRC roles — Geetanjali is product/transformation, not InfoSec
-    "regulatory",  # regulatory affairs — clinical-research adjacent
-    "supervisor",  # too junior
-    "coach",  # health coaches, wellness coaches — non-IT roles
-    "neuroscience",  # bench/lab research
-    "materials",  # supply-chain / procurement
-]
 
 
 # --- E1: Career-stage detection from job title --------------------------
-TITLE_STAGE_INTERN = ["intern", "internship", "co-op", "coop"]
-TITLE_STAGE_NEWGRAD = ["new grad", "new-grad", "new graduate", "entry level", "entry-level", "graduate program", "graduate trainee", "rotational program", "analyst program"]
-TITLE_STAGE_EARLY = ["associate", "analyst", "junior", "jr.", "engineer i", "engineer ii", "developer i", " i,", " ii,"]
-TITLE_STAGE_MID = ["senior associate", "senior analyst", "senior consultant", "sr. ", "senior ", "mid-level", "mid level", "engineer iii", "lead engineer"]
-TITLE_STAGE_SENIOR_IC = ["principal", "staff", "senior staff", "director,", "director of", "director ", "head of", "senior director", "sr. director", "sr director"]
-TITLE_STAGE_EXEC = ["vp,", "vp of", "vice president", "vice-president", "svp", "evp", "chief ", "cto", "cfo", "cio", "ceo", "coo", "chro", "ciso", "general manager,", "president,", "president of"]
 
-STAGE_ORDER = {"internship": 0, "new-grad": 1, "early-career": 2, "mid-career": 3, "senior": 4, "executive": 5}
 
 def stage_compatible(user_stage, job_stage):
     """A job is compatible if it's within 1 step of the user's stage on either side.
@@ -1553,13 +1383,6 @@ def _load_recruiting_firms_set():
     except Exception:
         return set()
 
-RECRUITING_FIRMS_SET = _load_recruiting_firms_set()
-RECRUITER_BLURBS = [
-    "our client", "our fortune 500 client", "leading financial services client",
-    "our client is", "fortune 500 client", "confidential client",
-    "global investment bank client", "our banking client", "our healthcare client",
-    "we are partnering with", "on behalf of our client",
-]
 
 def _build_positive_re():
     """Build a word-boundary regex from POSITIVE_TITLE_THEMES so substring bleed-through
@@ -1886,21 +1709,6 @@ def fingerprint(job):
 # Result is one of: 'consulting' | 'staffing' | 'in-house' | 'unknown'
 # Used as a SOFT multiplier on score (consulting 0.45, staffing 0.0, in-house 1.0, unknown 1.0)
 # instead of a hard binary exclude. Cheap + cacheable per company per session.
-_CONSULTING_NAME_PATTERNS = (
-    "consulting", "consultancy", "advisory", "advisors",
-    "& co", "and partners", "partners llp",
-)
-_CONSULTING_JD_PHRASES = (
-    "client engagement", "client engagements", "our clients", "client base", "client portfolio",
-    "billable hours", "billable work", "billability", "utilization rate",
-    "advisory services", "consulting services", "practice area",
-    "client-facing", "client facing", "client deliverable",
-)
-_STAFFING_NAME_PATTERNS = (
-    "staffing", "staffing solutions", "talent solutions", "talent network",
-    "recruitment", "recruiters", "talent acquisition partners",
-    "executive search", "personnel services", "workforce solutions",
-)
 
 def company_type_multiplier(kind):
     return {"consulting": 0.45, "staffing": 0.0, "in-house": 1.0, "unknown": 1.0}.get(kind, 1.0)
@@ -2489,16 +2297,6 @@ def run():
     conn.close()
 
 
-_JD_SECTION_HEADERS = {
-    "responsibilities": ("responsibilities", "what you'll do", "what you will do", "the role",
-                         "the opportunity", "your role", "in this role", "key responsibilities",
-                         "your impact", "what you'll own", "what we need you to do", "day to day"),
-    "requirements":     ("requirements", "qualifications", "what you bring", "what we're looking for",
-                         "what we are looking for", "you have", "you should have", "you'll need",
-                         "minimum qualifications", "basic qualifications", "must have", "required"),
-    "nice_to_have":     ("nice to have", "nice-to-have", "bonus", "bonus points", "preferred qualifications",
-                         "preferred", "plus", "even better", "we'd love"),
-}
 
 def _parse_salary_from_jd_body(description):
     """Extract salary range from common JD-body patterns when the ATS didn't
