@@ -414,6 +414,7 @@ HTML_TEMPLATE = """<!doctype html>
   <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
     <div style="font-size:16px; font-weight:700; color:#1817B5;">
       🎯 Today’s picks: apply to <span id="focus-n">3</span>
+      <button id="focus-refresh-btn" onclick="refreshPicks()" title="Recompute today’s picks from your latest feed" style="background:none;border:1px solid rgba(24,23,181,0.3);color:#1817B5;padding:2px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;margin-left:10px;vertical-align:middle;">↻ refresh</button>
     </div>
     <div style="font-size:13px; color:#444;">
       <strong id="focus-applied">0</strong> of <span id="focus-n-2">3</span> done today
@@ -4024,10 +4025,9 @@ function openInterviewPrepFromCard(fp) {{
 // === Daily Focus Panel (E6 / 2026-05-26) =========================
 // Shows top-N highest-scoring cards as the "apply today" picks. N = the user's
 // dailyTarget. Updates as the user marks jobs applied via the existing tracker.
-function refreshFocusPanel() {{
+async function refreshFocusPanel() {{
   const panel = document.getElementById("focus-panel");
   if (!panel) return;
-  // Clamp dailyTarget to 3-5 range — focused picks, not a long list.
   let N = (typeof loadDailyApplyTarget === "function") ? loadDailyApplyTarget() : 3;
   N = Math.max(3, Math.min(5, parseInt(N, 10) || 3));
 
@@ -4036,7 +4036,7 @@ function refreshFocusPanel() {{
   const today = new Date().toISOString().slice(0,10);
   const tracker = (typeof getTracker === "function") ? getTracker() : {{}};
 
-  // Build company → dismissed-count map (for engagement-aware penalty)
+  // Build company → dismissed-count map (engagement-aware penalty)
   const dismissedByCompany = {{}};
   Object.values(tracker || {{}}).forEach(function(r) {{
     if (!r || (r.status !== "dismissed" && r.status !== "rejected")) return;
@@ -4045,42 +4045,96 @@ function refreshFocusPanel() {{
     dismissedByCompany[co] = (dismissedByCompany[co] || 0) + 1;
   }});
 
-  // Get all visible cards, exclude already-applied jobs entirely (not just today)
-  const candidates = Array.from(grid.querySelectorAll(".card")).filter(function(c) {{
+  // STAGE 3: fetch today's stamped picks. If present, lock the picks to that
+  // exact fingerprint set so they don't shift through the day.
+  let stampedFps = null;
+  try {{
+    const r = await fetch(WORKER_BASE + "/api/picks" + USER_QS);
+    if (r.ok) {{
+      const j = await r.json();
+      if (j && Array.isArray(j.fingerprints) && j.fingerprints.length > 0 && j.date === today) {{
+        stampedFps = j.fingerprints;
+      }}
+    }}
+  }} catch (e) {{}}
+
+  // Get all visible cards, exclude already-decided + heavy-dismissed-company jobs
+  const allCards = Array.from(grid.querySelectorAll(".card"));
+  const candidates = allCards.filter(function(c) {{
     const fp = c.getAttribute("data-fp");
     const rec = tracker[fp];
     if (rec) {{
       const st = (rec.status || "").toLowerCase();
-      // Hard-exclude these statuses — these are decisions made
-      if (["applied","phone","onsite","offer","rejected","dismissed","skipped"].indexOf(st) !== -1) {{
-        return false;
-      }}
+      if (["applied","phone","onsite","offer","rejected","dismissed","skipped"].indexOf(st) !== -1) return false;
     }}
-    // Penalize companies with 3+ dismissals in last 30d — drop entirely if 5+
     const compEl = c.querySelector(".company");
     const co = compEl ? compEl.textContent.trim().toLowerCase() : "";
     if (dismissedByCompany[co] && dismissedByCompany[co] >= 5) return false;
     return true;
   }});
 
-  // Sort by sprint priority if available, else by score desc
-  candidates.sort(function(a, b) {{
-    if (typeof _sprintPriority === "function") {{
-      return _sprintPriority(b) - _sprintPriority(a);
+  let picks;
+  if (stampedFps) {{
+    // Use stamped picks IF they're still in the live feed AND haven't been
+    // applied to since the stamp. Maintain stamped order, fall through to
+    // unstamped overflow only if some stamped picks have been applied.
+    const stampedSet = new Set(stampedFps);
+    const candidateByFp = {{}};
+    candidates.forEach(c => {{ candidateByFp[c.getAttribute("data-fp")] = c; }});
+    picks = [];
+    for (const fp of stampedFps) {{
+      if (candidateByFp[fp]) picks.push(candidateByFp[fp]);
     }}
-    return (parseInt(b.dataset.score || "0", 10)) - (parseInt(a.dataset.score || "0", 10));
-  }});
-
-  // DIVERSITY: strict max 1 job per company across the whole pick set.
-  const picks = [];
-  const seenCompanies = new Set();
-  for (const c of candidates) {{
-    const compEl = c.querySelector(".company");
-    const co = compEl ? compEl.textContent.trim().toLowerCase() : "";
-    if (!co || seenCompanies.has(co)) continue;
-    seenCompanies.add(co);
-    picks.push(c);
-    if (picks.length >= N) break;
+    // If user has applied to some stamped picks, top up from candidates
+    if (picks.length < N) {{
+      const used = new Set(picks.map(c => c.getAttribute("data-fp")));
+      const usedCompanies = new Set(picks.map(c => {{
+        const ce = c.querySelector(".company");
+        return ce ? ce.textContent.trim().toLowerCase() : "";
+      }}));
+      candidates.sort(function(a, b) {{
+        if (typeof _sprintPriority === "function") return _sprintPriority(b) - _sprintPriority(a);
+        return (parseInt(b.dataset.score || "0", 10)) - (parseInt(a.dataset.score || "0", 10));
+      }});
+      for (const c of candidates) {{
+        if (picks.length >= N) break;
+        const fp = c.getAttribute("data-fp");
+        if (used.has(fp)) continue;
+        const ce = c.querySelector(".company");
+        const co = ce ? ce.textContent.trim().toLowerCase() : "";
+        if (!co || usedCompanies.has(co)) continue;
+        usedCompanies.add(co);
+        picks.push(c);
+      }}
+    }}
+  }} else {{
+    // No stamp for today — compute fresh + stamp.
+    candidates.sort(function(a, b) {{
+      if (typeof _sprintPriority === "function") return _sprintPriority(b) - _sprintPriority(a);
+      return (parseInt(b.dataset.score || "0", 10)) - (parseInt(a.dataset.score || "0", 10));
+    }});
+    picks = [];
+    const seenCompanies = new Set();
+    for (const c of candidates) {{
+      const compEl = c.querySelector(".company");
+      const co = compEl ? compEl.textContent.trim().toLowerCase() : "";
+      if (!co || seenCompanies.has(co)) continue;
+      seenCompanies.add(co);
+      picks.push(c);
+      if (picks.length >= N) break;
+    }}
+    // Best-effort stamp — fire and forget
+    if (picks.length > 0) {{
+      const ek = (typeof getEditKey === 'function') ? getEditKey() : null;
+      const ak = (typeof getAdminKey === 'function') ? getAdminKey() : null;
+      const headers = {{ 'Content-Type': 'application/json' }};
+      if (ek) headers['X-Edit-Key'] = ek;
+      else if (ak) headers['X-Admin-Key'] = ak;
+      fetch(WORKER_BASE + "/api/picks" + USER_QS, {{
+        method: 'POST', credentials: 'include', headers,
+        body: JSON.stringify({{ fingerprints: picks.map(c => c.getAttribute("data-fp")) }})
+      }}).catch(() => {{}});
+    }}
   }}
 
   // Update header counts
@@ -4111,7 +4165,7 @@ function refreshFocusPanel() {{
     return                {{ label: "Possible fit",  color: "#78350f", bg: "#fef3c7" }};
   }}
 
-  // Why-this-pick reason — assemble from existing badges + match-reason
+  // Why-this-pick reason
   function whyPick(c) {{
     const parts = [];
     if (c.querySelector(".contact-badge")) {{
@@ -4120,12 +4174,10 @@ function refreshFocusPanel() {{
       parts.push(isHiring ? "warm intro to a recruiter here" : "warm-intro (you have a LinkedIn contact here)");
     }}
     if (c.querySelector(".just-posted-badge")) parts.push("posted in last 3 days");
-    // Pull match reason from existing match-reason element
     const mr = c.querySelector(".match-reason, .why-match");
     if (mr) {{
       const txt = (mr.textContent || "").replace(/^→ Match:\s*/, "").trim();
       if (txt) {{
-        // Trim long match strings — first 90 chars max, end on word boundary
         let snippet = txt.length > 90 ? txt.slice(0, 90).replace(/\s+\S*$/, "") + "…" : txt;
         parts.push(snippet);
       }}
@@ -4133,13 +4185,13 @@ function refreshFocusPanel() {{
     return parts.length ? parts.join(" · ") : null;
   }}
 
-  // Render the list of picks — bigger, richer cards now
+  // Render
   const list = document.getElementById("focus-list");
   if (list) {{
     list.innerHTML = "";
     if (picks.length === 0) {{
       list.innerHTML = '<div style="padding:20px;text-align:center;color:#666;font-size:13.5px;">' +
-        '✨ You’ve applied to everything in the top picks today. Check the feed below for more, or come back tomorrow for fresh jobs.' +
+        '✨ You’ve applied to everything in today’s picks. Check the feed below for more, or come back tomorrow for fresh jobs.' +
         '</div>';
     }}
     picks.forEach(function(c, idx) {{
@@ -4157,29 +4209,23 @@ function refreshFocusPanel() {{
       const row = document.createElement("div");
       row.style.cssText = "background:#fff;border:1px solid #d8dbe6;border-radius:10px;padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,0.04);display:flex;flex-direction:column;gap:8px;";
       let html = '';
-      // Header row: # + title + fit pill
       html += '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">';
       html += '<span style="display:inline-block;min-width:24px;height:24px;line-height:24px;text-align:center;background:#5C5CD6;color:#fff;border-radius:50%;font-weight:700;font-size:12px;">' + (idx+1) + '</span>';
       html += '<a href="' + applyUrl + '" target="_blank" rel="noopener" style="flex:1;color:#1817B5;text-decoration:none;font-weight:700;font-size:15px;line-height:1.3;">' + _esc(titleTxt) + '</a>';
       html += '<span style="background:' + fit.bg + ';color:' + fit.color + ';padding:3px 9px;border-radius:10px;font-size:11px;font-weight:700;white-space:nowrap;">' + fit.label + '</span>';
       html += '</div>';
-      // Company line
       html += '<div style="color:#444;font-size:13px;font-weight:500;">' + _esc(compTxt) + '</div>';
-      // Why-this-pick
       if (why) {{
         html += '<div style="color:#5C5CD6;font-size:12.5px;font-style:italic;line-height:1.4;">→ ' + _esc(why) + '</div>';
       }}
-      // Actions row
       html += '<div style="display:flex;gap:8px;align-items:center;margin-top:2px;">';
       html += '<a href="' + applyUrl + '" target="_blank" rel="noopener" style="background:linear-gradient(135deg,#1817B5,#7C7CF0);color:#fff;padding:7px 14px;border-radius:6px;font-size:13px;font-weight:600;text-decoration:none;">Apply →</a>';
       html += '<button data-jump-fp="' + fp + '" style="background:none;border:1px solid #d0d4dc;color:#666;padding:6px 12px;border-radius:6px;font-size:12.5px;cursor:pointer;">View full card</button>';
       html += '<span style="margin-left:auto;color:#888;font-size:11px;">score ' + score + '</span>';
       html += '</div>';
-
       row.innerHTML = html;
       list.appendChild(row);
     }});
-    // Wire "View full card" buttons via event delegation
     list.querySelectorAll('[data-jump-fp]').forEach(function(b) {{
       b.addEventListener('click', function(e) {{
         e.preventDefault();
@@ -4189,6 +4235,25 @@ function refreshFocusPanel() {{
     }});
   }}
 }}
+
+// Stage 3: explicit "refresh today's picks" — clears the stamp + recomputes.
+window.refreshPicks = async function() {{
+  const btn = document.getElementById("focus-refresh-btn");
+  if (btn) {{ btn.disabled = true; btn.textContent = "…"; }}
+  try {{
+    const ek = (typeof getEditKey === 'function') ? getEditKey() : null;
+    const ak = (typeof getAdminKey === 'function') ? getAdminKey() : null;
+    const headers = {{}};
+    if (ek) headers['X-Edit-Key'] = ek;
+    else if (ak) headers['X-Admin-Key'] = ak;
+    await fetch(WORKER_BASE + "/api/picks" + USER_QS, {{
+      method: 'DELETE', credentials: 'include', headers
+    }}).catch(() => {{}});
+    if (typeof refreshFocusPanel === 'function') await refreshFocusPanel();
+  }} finally {{
+    if (btn) {{ btn.disabled = false; btn.textContent = "↻ refresh"; }}
+  }}
+}};
 
 // Helper used by the pick-card "View full card" button
 window._focusJumpTo = function(fp) {{

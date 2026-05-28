@@ -41,7 +41,7 @@ export default {
     const url = new URL(request.url);
     const cors = {
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, X-Edit-Key, X-Admin-Key, Authorization',
     };
     if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type, X-Admin-Key, X-Edit-Key, Authorization', 'Access-Control-Max-Age': '86400' } });
@@ -94,6 +94,7 @@ export default {
     if (url.pathname === '/admin/contacts') return handleAdminContacts(request, env, cors);
     if (url.pathname === '/api/sprint/start') return handleSprintStart(request, env, cors, slug);
     if (url.pathname === '/api/sprint/reset') return handleSprintReset(request, env, cors, slug);
+    if (url.pathname === '/api/picks') return handlePicks(request, env, cors, slug);
     return new Response(
       'Endpoints: /api/auth/{signup,login,logout,me,change-password}, /prep, /resume, /resume-versions, /parse-resume, /skills-profile, /regenerate-profile, /regenerate-companies, /draft-warm-intro, /suggest-refinements, /rerank-titles, /tracker, /draft-followup, /interview-prep, /generate-digest, /refresh, /admin/users, /notes.',
       { status: 404, headers: cors }
@@ -1510,6 +1511,61 @@ async function handleSprintReset(request, env, cors, slug) {
   profile.editedAt = new Date().toISOString();
   await env.RESUMES.put(uk(slug, 'skills_profile'), JSON.stringify(profile));
   return Response.json({ status: 'reset' }, { headers: cors });
+}
+
+
+// --- /api/picks (per-day pick stability) -------------------------------
+// GET  → returns { date, fingerprints[] } for today, or {} if not stamped.
+// POST { fingerprints: [...] } → stamps today's picks. Idempotent: re-stamping
+//   the same day overwrites.
+// DELETE → clears today's stamp so dashboard recomputes on next load.
+// Stored at uk(slug, 'picks:today') = { date: 'YYYY-MM-DD', fingerprints: [...], stampedAt }
+async function handlePicks(request, env, cors, slug) {
+  if (!env.RESUMES) return Response.json({ error: 'RESUMES KV binding missing' }, { status: 500, headers: cors });
+
+  // 3-tier auth: edit key OR own session OR admin key
+  async function authorize() {
+    if (await checkEditKey(request, env, slug)) return true;
+    const sess = await sessionFromRequest(request, env);
+    if (sess && sess.slug === slug) return true;
+    const ak = request.headers.get('X-Admin-Key');
+    if (ak && env.ADMIN_KEY && ak === env.ADMIN_KEY) return true;
+    return false;
+  }
+  if (!(await authorize())) {
+    return Response.json({ error: 'Auth required' }, { status: 401, headers: cors });
+  }
+
+  const today = new Date().toISOString().slice(0, 10);
+  const key = uk(slug, 'picks:today');
+
+  if (request.method === 'GET') {
+    const raw = await env.RESUMES.get(key);
+    if (!raw) return Response.json({}, { headers: cors });
+    let parsed;
+    try { parsed = JSON.parse(raw); } catch (e) { return Response.json({}, { headers: cors }); }
+    // Auto-expire stale stamps — return empty if not from today
+    if (!parsed || parsed.date !== today) return Response.json({}, { headers: cors });
+    return Response.json(parsed, { headers: cors });
+  }
+
+  if (request.method === 'POST') {
+    const body = await request.json().catch(() => ({}));
+    const fps = Array.isArray(body && body.fingerprints) ? body.fingerprints : null;
+    if (!fps) return Response.json({ error: 'Body must be { fingerprints: [...] }' }, { status: 400, headers: cors });
+    // Cap at 10 to prevent abuse
+    const fpsLimited = fps.filter(f => typeof f === 'string').slice(0, 10);
+    const record = { date: today, fingerprints: fpsLimited, stampedAt: new Date().toISOString() };
+    await env.RESUMES.put(key, JSON.stringify(record));
+    return Response.json(record, { headers: cors });
+  }
+
+  if (request.method === 'DELETE') {
+    await env.RESUMES.delete(key);
+    return Response.json({ status: 'cleared' }, { headers: cors });
+  }
+
+  return new Response('Use GET / POST / DELETE', { status: 405, headers: cors });
 }
 
 async function handleAdminUsers(request, env, cors) {
