@@ -1388,7 +1388,54 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         elif remote_pref == "onsite" and remote_flag: loc_fit = 60
         return (title_fit, ind_fit, kw_fit, sen_fit, loc_fit)
 
+    # ---- Tier classifier (Week 7 / grid precision) -------------------
+    # Three buckets so the UI can group + collapse borderline matches.
+    #   strong     — title>=70 AND industry>=60 AND seniority>=60
+    #   good       — at least 3 of {title,industry,keywords,seniority}>=50
+    #   borderline — everything else that still passed score thresholds
+    def _tier(subs):
+        t, i, k, s, _l = subs
+        if t >= 70 and i >= 60 and s >= 60:
+            return 'strong'
+        passed = sum(1 for v in (t, i, k, s) if v >= 50)
+        if passed >= 3:
+            return 'good'
+        return 'borderline'
+
+    # Honest match-reason builder — derived from subscores, not a fallback.
+    # Format: "title: <obs> ✗ (target: <X>) · industry ✓ · Capco on target list"
+    def _honest_why(rrow, subs):
+        t, i, k, s, _l = subs
+        title = (rrow[2] or "").strip()
+        company = (rrow[1] or "").strip()
+        parts = []
+        # Title fit
+        if t >= 70: parts.append(f"title ✓ ({title})")
+        elif t >= 40: parts.append(f"title ~ ({title})")
+        else:
+            tgts = (SKILLS_PROFILE.get("targetTitles") or [])[:2]
+            tgt_short = " / ".join(tgts) if tgts else "your targets"
+            parts.append(f"title ✗ ({title} ≠ {tgt_short})")
+        # Industry fit
+        if i >= 60: parts.append("industry ✓")
+        elif i >= 30: parts.append("industry ~")
+        else: parts.append("industry ✗")
+        # Keywords
+        if k >= 60: parts.append("skill keywords ✓")
+        elif k >= 30: parts.append("skill keywords ~")
+        else: parts.append("skill keywords ✗")
+        # Seniority
+        if s >= 70: parts.append("level ✓")
+        elif s < 40: parts.append("level ✗")
+        # Target company callout
+        tco = {c.get("name", "").lower() for c in (SKILLS_PROFILE.get("targetCompanies") or [])}
+        if company.lower() in tco:
+            parts.append(f"{company} on target list")
+        return " · ".join(parts) if parts else "passed default gates"
+
     cards = []
+    # Track tier counts for the "borderline matches" expander logic.
+    _tier_counts = {'strong': 0, 'good': 0, 'borderline': 0}
     for r in rows:
         (fp, company, title, loc, url, posted_at, first_seen, last_seen,
          sightings, remote, senior, score, desc, salary, employment_type, _industries) = r
@@ -1464,9 +1511,15 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
             pass
         _repost_badge = f' · <span class="repost-badge" title="Re-posted {_repost_days} days after we first saw this job — you may have already seen / applied to it.">↻ re-posted {_repost_days}d after first sighting</span>' if _repost_days else ''
 
-        _fit_t, _fit_i, _fit_k, _fit_s, _fit_l = _subscores(r)
+        _subs = _subscores(r)
+        _fit_t, _fit_i, _fit_k, _fit_s, _fit_l = _subs
+        _tier_name = _tier(_subs)
+        _tier_counts[_tier_name] = _tier_counts.get(_tier_name, 0) + 1
+        # Honest match reason — overrides the legacy _why for the per-card
+        # match-reason line. The old _why is kept for diagnostics.
+        _why = _honest_why(r, _subs)
         cards.append(f"""
-        <div class="card" data-fp="{fp}" data-score="{score}" data-senior="{senior}" data-remote="{remote}" data-employment="{emp}" data-listed-days="{listed_days if listed_days is not None else 9999}" data-salary-max="{salary_max}" data-last-seen="{last_seen or ''}" data-first-seen="{first_seen or ''}" data-recruiter="{_is_recr}" data-why="{_esc(_why)}" data-cluster-count="{_xc_count}" data-cluster-companies="{_esc(_xc_label)}" data-title-norm="{_norm_key}" data-repost-days="{_repost_days or ''}" data-fit-title="{_fit_t}" data-fit-industry="{_fit_i}" data-fit-keywords="{_fit_k}" data-fit-seniority="{_fit_s}" data-fit-location="{_fit_l}">
+        <div class="card" data-fp="{fp}" data-score="{score}" data-senior="{senior}" data-remote="{remote}" data-employment="{emp}" data-listed-days="{listed_days if listed_days is not None else 9999}" data-salary-max="{salary_max}" data-last-seen="{last_seen or ''}" data-first-seen="{first_seen or ''}" data-recruiter="{_is_recr}" data-why="{_esc(_why)}" data-cluster-count="{_xc_count}" data-cluster-companies="{_esc(_xc_label)}" data-title-norm="{_norm_key}" data-repost-days="{_repost_days or ''}" data-fit-title="{_fit_t}" data-fit-industry="{_fit_i}" data-fit-keywords="{_fit_k}" data-fit-seniority="{_fit_s}" data-fit-location="{_fit_l}" data-tier="{_tier_name}">
           <div class="row1">
             <div class="title"><a href="{url}" target="_blank">{_esc(title)}</a></div>
             <div class="score">{score}</div>

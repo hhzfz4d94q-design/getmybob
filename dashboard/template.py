@@ -4966,6 +4966,92 @@ window.toggleFullFeed = function() {{
   _syncFocusFeedToggle();
 }};
 
+// === Grid precision (2026-05-28): hide BORDERLINE tier behind expander ====
+// Cards carry data-tier (strong | good | borderline). Strong + Good show
+// normally in #grid. Borderline cards get extracted into a separate
+// collapsible section so the main feed shows only quality matches —
+// without losing access to the rest.
+(function _hideBorderlineFromGrid() {{
+  function run() {{
+    try {{
+      const grid = document.getElementById('grid');
+      if (!grid) return;
+      const borderline = Array.from(grid.querySelectorAll('.card[data-tier="borderline"]'));
+      if (borderline.length === 0) return;
+      // Build a separate container for borderline cards
+      let section = document.getElementById('borderline-grid');
+      if (!section) {{
+        section = document.createElement('div');
+        section.id = 'borderline-grid';
+        section.style.cssText = 'margin-top:20px;padding:16px;background:#fafbff;border:1px dashed #d8dbe6;border-radius:10px;';
+        const header = document.createElement('div');
+        header.style.cssText = 'display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;cursor:pointer;';
+        header.innerHTML =
+          '<div><strong style="color:#666;font-size:13px;">⚠ ' + borderline.length + ' borderline matches</strong>' +
+          ' <span style="color:#999;font-size:12px;font-weight:400;">— failed multiple match dimensions. Often wrong but worth a glance.</span></div>' +
+          '<button id="borderline-toggle" style="background:#fff;border:1px solid #d0d4dc;color:#5C5CD6;padding:4px 12px;border-radius:6px;font-weight:600;font-size:12px;cursor:pointer;">Show borderline →</button>';
+        section.appendChild(header);
+        const inner = document.createElement('div');
+        inner.className = 'grid';
+        inner.id = 'borderline-grid-inner';
+        inner.style.cssText = 'display:none;margin-top:12px;padding:0;background:transparent;';
+        section.appendChild(inner);
+        grid.parentNode.insertBefore(section, grid.nextSibling);
+        // Move borderline cards into the inner container
+        borderline.forEach(c => {{ inner.appendChild(c); c.style.opacity = '0.78'; }});
+        // Wire toggle
+        document.getElementById('borderline-toggle').addEventListener('click', function() {{
+          const open = inner.style.display !== 'none';
+          inner.style.display = open ? 'none' : 'grid';
+          this.textContent = open ? 'Show borderline →' : 'Hide borderline ↑';
+        }});
+      }}
+      // Recount shown stat — only strong+good count as "matches showing"
+      try {{
+        const shownCounter = document.getElementById('shown-counter');
+        if (shownCounter) {{
+          const remaining = grid.querySelectorAll('.card').length;
+          shownCounter.textContent = remaining;
+        }}
+      }} catch (e) {{}}
+      // Add a 1-line summary at the very top of the grid
+      try {{
+        const sumLine = document.createElement('div');
+        sumLine.style.cssText = 'grid-column:1/-1;font-size:12.5px;color:#666;margin-bottom:6px;';
+        const strong = grid.querySelectorAll('.card[data-tier="strong"]').length;
+        const good = grid.querySelectorAll('.card[data-tier="good"]').length;
+        sumLine.innerHTML = '<strong>' + strong + ' strong</strong> + <strong>' + good + ' good</strong> matches shown' +
+                            ' <span style="color:#999;">(' + borderline.length + ' borderline hidden below)</span>';
+        grid.insertBefore(sumLine, grid.firstChild);
+      }} catch (e) {{}}
+    }} catch (e) {{ /* silent */ }}
+  }}
+  if (document.readyState === 'loading') {{
+    document.addEventListener('DOMContentLoaded', () => setTimeout(run, 200));
+  }} else {{
+    setTimeout(run, 200);
+  }}
+}})();
+
+// Visual tier markers — small colored corner badge on each card
+(function _addTierStyles() {{
+  if (document.getElementById('tier-styles')) return;
+  const css = document.createElement('style');
+  css.id = 'tier-styles';
+  css.textContent = `
+    .card[data-tier="strong"]    {{ border-left:3px solid #0a6b3a; }}
+    .card[data-tier="good"]      {{ border-left:3px solid #5C5CD6; }}
+    .card[data-tier="borderline"]{{ border-left:3px solid #d4d4d4; }}
+    .card[data-tier="strong"]::before {{
+      content:"strong match"; position:absolute; top:6px; right:80px;
+      background:#0a6b3a;color:#fff;font-size:10px;font-weight:700;
+      padding:2px 8px;border-radius:8px;text-transform:uppercase;letter-spacing:0.04em;
+    }}
+    .card {{ position:relative; }}
+  `;
+  document.head.appendChild(css);
+}})();
+
 // Auto-collapse the feed on first load when sprint is active.
 (function autoCollapseFeedInSprintMode() {{
   if (document.readyState === "loading") {{
