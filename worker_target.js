@@ -1441,7 +1441,7 @@ async function handleAdminContacts(request, env, cors) {
   if (request.method !== 'POST') return new Response('POST only', { status: 405, headers: cors });
   if (!env.RESUMES) return Response.json({ error: 'RESUMES KV binding missing' }, { status: 500, headers: cors });
   const adminKey = request.headers.get('X-Admin-Key');
-  if (!adminKey || adminKey !== env.WORKER_ADMIN_KEY) return Response.json({ error: 'Invalid X-Admin-Key' }, { status: 401, headers: cors });
+  if (!adminKey || adminKey !== env.ADMIN_KEY) return Response.json({ error: 'Invalid X-Admin-Key' }, { status: 401, headers: cors });
   const body = await request.json().catch(() => ({}));
   const slug = (body && body.slug || '').trim().toLowerCase();
   const contacts = Array.isArray(body && body.contacts) ? body.contacts : null;
