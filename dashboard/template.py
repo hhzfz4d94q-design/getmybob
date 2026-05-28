@@ -3092,6 +3092,23 @@ async function prepApplication(fp, btn) {{
       _trackerAction('savePrepKit', {{ fp, jobMeta: {{ title: jobTitle, company, url: jobUrl }}, prepKit: kit }}).then(r => {{
         if (r && r.record) _trackerCache[fp] = r.record;
       }});
+      // Week 5: stamp a tuning record so we can later correlate
+      // keyword changes / cover paragraphs with phone-screen rates.
+      try {{
+        const _ek = getEditKey();
+        const _h = {{ 'Content-Type': 'application/json' }};
+        if (_ek) _h['X-Edit-Key'] = _ek;
+        fetch(WORKER_BASE + '/api/tuning/save' + USER_QS, {{
+          method: 'POST', headers: _h,
+          body: JSON.stringify({{
+            fp,
+            jobMeta: {{ title: jobTitle, company }},
+            keywordDiff: data.keywordDiff,
+            sixSecondScan: data.sixSecondScan,
+            coverParagraph: data.coverParagraph
+          }})
+        }}).catch(() => {{}});
+      }} catch(_) {{}}
     }}
   }} catch (e) {{
     statusEl.className = 'prep-status error';
