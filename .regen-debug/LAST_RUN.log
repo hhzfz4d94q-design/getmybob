@@ -1,14 +1,12 @@
-import sys, os, traceback
-sys.path.insert(0, '.')
-try:
-    from fetch_jobs import generate_all_dashboards, get_conn
-    print("[regen] imported ok", flush=True)
-    conn = get_conn()
-    print("[regen] db connected", flush=True)
+[vc-portfolio] loaded 105 discovered companies
+[healthtech] loaded 137 curated companies
+[regen] imported ok
+[regen] db connected
+[regen] FATAL: NameError("name 'COMPANY_INDUSTRIES' is not defined")
+Traceback (most recent call last):
+  File "/tmp/regen.py", line 8, in <module>
     generate_all_dashboards(conn)
-    conn.close()
-    print("[regen] DONE", flush=True)
-except Exception as e:
-    print("[regen] FATAL: " + repr(e), flush=True)
-    traceback.print_exc()
-    sys.exit(1)
+  File "/home/runner/work/getmybob/getmybob/fetch_jobs.py", line 1639, in generate_all_dashboards
+    if not COMPANY_INDUSTRIES:
+           ^^^^^^^^^^^^^^^^^^
+NameError: name 'COMPANY_INDUSTRIES' is not defined
