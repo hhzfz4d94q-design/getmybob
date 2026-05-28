@@ -1232,6 +1232,8 @@ function reopenPrepFromTracker() {{
   document.getElementById('prep-summary').textContent = rec.prepKit.summary || '(no summary)';
   document.getElementById('prep-cover').textContent = rec.prepKit.coverLetter || '(no cover letter)';
   document.getElementById('prep-linkedin').textContent = rec.prepKit.linkedin || '(no LinkedIn intro)';
+  // Week 1: also restore keyword diff if cached
+  _renderKeywordDiff(rec.prepKit.keywordDiff);
   _tailoredResume = rec.prepKit.tailoredResume || null;
   _tailoredJobMeta = {{ jobTitle: rec.title, company: rec.company }};
   const sec = document.getElementById('prep-resume-section');
@@ -2837,6 +2839,8 @@ async function prepApplication(fp, btn) {{
     document.getElementById('prep-summary').textContent = data.summary || '(no summary returned)';
     document.getElementById('prep-cover').textContent = data.coverLetter || '(no cover letter returned)';
     document.getElementById('prep-linkedin').textContent = data.linkedin || '(no LinkedIn intro returned)';
+    // Week 1: render keyword diff section
+    _renderKeywordDiff(data.keywordDiff);
     _tailoredResume = data.tailoredResume || null;
     _tailoredJobMeta = {{ jobTitle, company }};
     const tailoredSection = document.getElementById('prep-resume-section');
@@ -2849,7 +2853,7 @@ async function prepApplication(fp, btn) {{
     statusEl.style.display = 'none';
     outputEl.style.display = 'block';
     // Auto-save the prep kit to the tracker so user can re-open without regenerating
-    const kit = {{ summary: data.summary, coverLetter: data.coverLetter, linkedin: data.linkedin, tailoredResume: data.tailoredResume }};
+    const kit = {{ summary: data.summary, coverLetter: data.coverLetter, linkedin: data.linkedin, tailoredResume: data.tailoredResume, keywordDiff: data.keywordDiff }};
     if (getEditKey()) {{
       _trackerAction('savePrepKit', {{ fp, jobMeta: {{ title: jobTitle, company, url: jobUrl }}, prepKit: kit }}).then(r => {{
         if (r && r.record) _trackerCache[fp] = r.record;
@@ -2861,6 +2865,77 @@ async function prepApplication(fp, btn) {{
   }}
 }}
 function closeModal() {{ document.getElementById('prep-modal').classList.remove('show'); }}
+// === Week 1: Keyword diff renderer ====================================
+let _lastKeywordDiff = null;
+function _renderKeywordDiff(kd) {{
+  _lastKeywordDiff = kd;
+  const section = document.getElementById('prep-keyword-section');
+  const table = document.getElementById('prep-keyword-table');
+  const summary = document.getElementById('prep-keyword-summary');
+  if (!section || !table) return;
+  if (!kd || (!Array.isArray(kd.matched) && !Array.isArray(kd.missing))) {{
+    section.style.display = 'none';
+    return;
+  }}
+  const matched = Array.isArray(kd.matched) ? kd.matched : [];
+  const missing = Array.isArray(kd.missing) ? kd.missing : [];
+  const total = matched.length + missing.length;
+  if (total === 0) {{ section.style.display = 'none'; return; }}
+  summary.textContent = matched.length + ' of ' + total + ' recruiter-search keywords already in your resume';
+  function esc(s) {{ return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({{ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }}[c])); }}
+  let html = '';
+  html += '<table style="width:100%;border-collapse:collapse;font-size:13px;">';
+  html += '<thead><tr style="text-align:left;color:#666;font-size:11px;text-transform:uppercase;letter-spacing:0.04em;border-bottom:1px solid #e2e5ea;">' +
+          '<th style="padding:8px 12px;">Required by JD</th>' +
+          '<th style="padding:8px 12px;">In your resume</th>' +
+          '<th style="padding:8px 12px;">Fix</th>' +
+          '</tr></thead><tbody>';
+  matched.forEach(m => {{
+    const occ = m.occurrences ? '<span style="color:#666;font-size:11.5px;">(' + m.occurrences + '×)</span>' : '';
+    html += '<tr style="border-bottom:1px solid #f4f5f7;">' +
+      '<td style="padding:8px 12px;font-weight:600;">' + esc(m.term) + '</td>' +
+      '<td style="padding:8px 12px;color:#0a6b3a;">✓ matched ' + occ + '</td>' +
+      '<td style="padding:8px 12px;color:#aaa;">—</td>' +
+      '</tr>';
+  }});
+  missing.forEach(m => {{
+    const altLine = m.alternative
+      ? '<span style="color:#a55;">paraphrase: <em>' + esc(m.alternative) + '</em>' + (m.alternativeOccurrences ? ' (' + m.alternativeOccurrences + '×)' : '') + '</span>'
+      : '<span style="color:#999;">not present</span>';
+    html += '<tr style="border-bottom:1px solid #f4f5f7;background:#fff7e6;">' +
+      '<td style="padding:8px 12px;font-weight:600;">' + esc(m.required) + '</td>' +
+      '<td style="padding:8px 12px;">' + altLine + '</td>' +
+      '<td style="padding:8px 12px;color:#444;">' + esc(m.fix || '') + '</td>' +
+      '</tr>';
+  }});
+  html += '</tbody></table>';
+  table.innerHTML = html;
+  section.style.display = 'block';
+}}
+
+function copyKeywordFixList(btn) {{
+  const kd = _lastKeywordDiff;
+  if (!kd) return;
+  const lines = [];
+  if (Array.isArray(kd.missing) && kd.missing.length) {{
+    lines.push('--- Add / swap to match this JD ---');
+    kd.missing.forEach(m => {{
+      lines.push(m.required + (m.alternative ? '  (you currently say: ' + m.alternative + ')' : '  (not in resume)'));
+      if (m.fix) lines.push('  → ' + m.fix);
+    }});
+  }}
+  if (Array.isArray(kd.matched) && kd.matched.length) {{
+    lines.push('');
+    lines.push('--- Already matched ---');
+    kd.matched.forEach(m => lines.push('✓ ' + m.term + (m.occurrences ? ' (' + m.occurrences + '×)' : '')));
+  }}
+  navigator.clipboard.writeText(lines.join('\\n')).then(() => {{
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => {{ btn.textContent = orig; }}, 1500);
+  }});
+}}
+
 function copyPrepField(id, btn) {{
   const txt = document.getElementById(id).textContent;
   navigator.clipboard.writeText(txt).then(() => {{

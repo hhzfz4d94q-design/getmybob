@@ -780,18 +780,20 @@ async function handlePrep(request, env, cors, slug) {
   let candidateName = '';
   try { const r = JSON.parse(resumeJson); candidateName = r?.personal?.name || ''; } catch (e) { /* ignore */ }
 
-  const prompt = `You are helping ${candidateName || 'a candidate'} apply for a healthcare/tech job. Based on the resume below, produce four outputs:
+  const prompt = `You are helping ${candidateName || 'a candidate'} apply for a job. Based on the resume below, produce FIVE outputs:
 
 1. A tailored 3-sentence resume summary highlighting why they're a strong fit.
 2. A 250-word cover letter, professional but warm.
 3. A 100-word LinkedIn intro message to a recruiter or hiring manager at this company.
 4. A FULL TAILORED RESUME for this specific job — structured JSON. Re-order skills and re-emphasize/re-word existing bullets to lead with what's most relevant for THIS role. Do NOT invent claims.
+5. A KEYWORD DIFF — the recruiter-Boolean-search check. Extract the hard-skill / proper-noun / framework / regulation keywords a recruiter would Boolean-search for from this job description. For each, decide whether the candidate's resume already contains it as an EXACT phrase (matched) or only via a paraphrase / not at all (missing). For each missing keyword, suggest the closest paraphrase the candidate already uses (so they can swap or augment) plus a one-line replacement hint.
 
 Return your response as a JSON object with EXACTLY these keys and nothing else:
 - "summary" (string)
 - "coverLetter" (string)
 - "linkedin" (string)
 - "tailoredResume" (object with keys: personal, summary, skills, experience, education, certifications — same shape as the input resume)
+- "keywordDiff" (object with keys: matched, missing — see below)
 
 For tailoredResume:
 - personal: copy from input as-is
@@ -800,7 +802,31 @@ For tailoredResume:
 - experience: keep same companies/titles/dates; re-order/rewrite bullets to emphasize relevance. 3-5 strongest bullets per role for THIS job.
 - education / certifications: copy as-is
 
-Only re-emphasize what's already in the resume. Never fabricate.
+For keywordDiff:
+{
+  "matched": [
+    { "term": "COSO", "occurrences": 3 },
+    { "term": "NIST 800-53", "occurrences": 1 }
+  ],
+  "missing": [
+    {
+      "required": "Vendor Risk Management",
+      "alternative": "Third-Party Risk",
+      "alternativeOccurrences": 2,
+      "fix": "Swap 2 mentions of 'Third-Party Risk' for 'Vendor Risk Management', or add VRM to your Skills block."
+    },
+    {
+      "required": "FFIEC IT Examination",
+      "alternative": null,
+      "alternativeOccurrences": 0,
+      "fix": "Add 'FFIEC IT Examination' to your Frameworks/Skills block if you have any FFIEC exposure; otherwise leave out."
+    }
+  ]
+}
+
+Pull 5-12 keywords (mix of must-have skills, frameworks, regulations, methodologies, named tools). Skip generic terms ('leadership', 'team player'). If a keyword has a clear synonym in the resume, surface it in 'alternative' so the user knows there's already a paraphrase they can swap. If the candidate genuinely doesn't have that keyword anywhere, set alternative=null.
+
+Only re-emphasize what's already in the resume. Never fabricate. The keywordDiff is a TRUE diff against the actual resume text — don't list a keyword as matched if it isn't literally present.
 
 JOB:
 Title: ${jobTitle}
@@ -813,7 +839,7 @@ ${resumeJson}`;
     const r = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 6000, messages: [{ role: 'user', content: prompt }] }),
+      body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 7000, messages: [{ role: 'user', content: prompt }] }),
     });
     if (!r.ok) { const err = await r.text(); return Response.json({ error: 'Anthropic API error', details: err }, { status: 502, headers: cors }); }
     const data = await r.json();
@@ -821,7 +847,7 @@ ${resumeJson}`;
     const cleaned = text.replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/\s*```$/, '').trim();
     let parsed;
     try { parsed = JSON.parse(cleaned); }
-    catch (e) { return Response.json({ summary: text, coverLetter: '', linkedin: '', tailoredResume: null, warning: 'AI did not return valid JSON' }, { headers: cors }); }
+    catch (e) { return Response.json({ summary: text, coverLetter: '', linkedin: '', tailoredResume: null, keywordDiff: null, warning: 'AI did not return valid JSON' }, { headers: cors }); }
     return Response.json(parsed, { headers: cors });
   } catch (e) { return Response.json({ error: 'Worker error', message: String(e) }, { status: 500, headers: cors }); }
 }
