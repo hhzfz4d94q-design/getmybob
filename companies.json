@@ -1304,7 +1304,9 @@
       "name": "Merck (MSD)",
       "tenant": "msd",
       "subdomain": "wd5",
-      "site": "SearchJobs"
+      "site": "SearchJobs",
+      "dreamList": true,
+      "dreamListFor": "geetu"
     },
     {
       "name": "CVS Health",
@@ -1615,7 +1617,9 @@
       "industries": [
         "pharmaceuticals",
         "life-sciences"
-      ]
+      ],
+      "dreamList": true,
+      "dreamListFor": "geetu"
     },
     {
       "name": "AbbVie",
@@ -1635,7 +1639,9 @@
       "industries": [
         "pharmaceuticals",
         "life-sciences"
-      ]
+      ],
+      "dreamList": true,
+      "dreamListFor": "geetu"
     },
     {
       "name": "Bristol Myers Squibb",
@@ -1677,7 +1683,9 @@
       "industries": [
         "pharmaceuticals",
         "life-sciences"
-      ]
+      ],
+      "dreamList": true,
+      "dreamListFor": "geetu"
     },
     {
       "name": "Regeneron",
