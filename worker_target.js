@@ -1681,10 +1681,43 @@ async function handleSprintComplete(request, env, cors, slug) {
     note:   (typeof fb.note === 'string' ? fb.note.slice(0, 1000) : '')
   };
 
+  // Compute activeDays — days the user was actually eligible to apply
+  // during this sprint (not snoozed, day-of-week allowed, within window).
+  // Falls back gracefully if any input is malformed.
+  function _computeActiveDays(prof) {
+    try {
+      const start = new Date(prof.sprintStart);
+      const end = new Date();
+      if (isNaN(start.getTime())) return _safeInt(prof.sprintDays, 10);
+      const tz = (typeof prof.sprintTimezone === 'string' && prof.sprintTimezone) || 'America/New_York';
+      const allowedDays = (Array.isArray(prof.sprintDaysOfWeek) && prof.sprintDaysOfWeek.length)
+        ? prof.sprintDaysOfWeek.map(Number)
+        : [1, 2, 3, 4, 5];
+      const snoozed = new Set(Array.isArray(prof.sprintSnoozedDays) ? prof.sprintSnoozedDays : []);
+      const plannedDays = _safeInt(prof.sprintDays, 10);
+      // Cap iteration at min(elapsed-days+1, plannedDays) so an early
+      // end before sprint window is over doesn't count future days.
+      const elapsedDays = Math.max(1, Math.floor((end - start) / 86400000) + 1);
+      const cap = Math.min(elapsedDays, plannedDays);
+      let active = 0;
+      for (let i = 0; i < cap; i++) {
+        const d = new Date(start.getTime() + i * 86400000);
+        const dow = _localDowNow(d, tz);
+        const date = _localDateStr(d, tz);
+        if (!allowedDays.includes(dow)) continue;
+        if (snoozed.has(date)) continue;
+        active++;
+      }
+      return active;
+    } catch (e) { return _safeInt(prof.sprintDays, 10); }
+  }
+  const activeDays = _computeActiveDays(profile);
+
   const record = {
     startedAt:      profile.sprintStart,
     endedAt:        new Date().toISOString(),
     daysPlanned:    _safeInt(profile.sprintDays, 10),
+    activeDays:     activeDays,
     dailyQuota:     _safeInt(profile.sprintDailyQuota, 3),
     daysOfWeek:     Array.isArray(profile.sprintDaysOfWeek) ? profile.sprintDaysOfWeek : [1,2,3,4,5],
     nudgeTime:      (typeof profile.sprintNudgeTime === 'string' && profile.sprintNudgeTime) ? profile.sprintNudgeTime : '07:00',

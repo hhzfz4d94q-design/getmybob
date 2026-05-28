@@ -189,7 +189,11 @@
         </optgroup>
       </select>
     </div>
-    <button type="button" class="btn primary" id="saveSprintPrefsBtn" style="margin-top:8px;">Save sprint preferences</button>
+    <div style="margin-top:14px;padding:10px 12px;background:#fff7e6;border:1px solid #fcd34d;color:#78350f;border-radius:8px;font-size:12.5px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
+      <span><strong>This doesn&rsquo;t start a sprint.</strong> It just saves what should be pre-selected next time you start one.</span>
+      <a id="goStartSprint" href="#" style="background:#1817B5;color:#fff;text-decoration:none;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:600;white-space:nowrap;">Start a sprint now &rarr;</a>
+    </div>
+    <button type="button" class="btn primary" id="saveSprintPrefsBtn" style="margin-top:10px;">Save preferences</button>
     <div id="sprintPrefsMsg" class="msg"></div>
   </div>
 
@@ -611,6 +615,15 @@ document.getElementById('saveSprintPrefsBtn').addEventListener('click', async ()
 });
 
 loadSprintPrefs();
+
+// Wire the "Start a sprint now" link to point at the user's dashboard
+// with a hash so the dashboard can auto-open the sprint config modal.
+(function _wireStartSprintLink() {
+  const a = document.getElementById('goStartSprint');
+  if (!a) return;
+  const slug = localStorage.getItem('gmj_user_slug');
+  if (slug) a.href = '/' + slug + '.html#start-sprint';
+})();
 
 
 </script>

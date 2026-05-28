@@ -6216,13 +6216,15 @@ async function _srInjectQuotaSuggestion(currentQuota) {{
     const j = await r.json();
     const hist = ((j && j.profile && j.profile.sprintHistory) || []).slice(-3);
     if (hist.length < 2) return; // need ≥2 sprints to suggest anything
-    let totalApplied = 0, totalQuotaDays = 0;
+    let totalApplied = 0, totalActiveDays = 0;
     hist.forEach(h => {{
-      const daysActive = Math.max(1, (h.daysPlanned || 0)); // approximation — we don't have actual active-day count
+      // Prefer h.activeDays (computed at /complete time); fall back to
+      // daysPlanned for older records that pre-date the field.
+      const days = Math.max(1, (typeof h.activeDays === 'number' && h.activeDays > 0) ? h.activeDays : (h.daysPlanned || 0));
       totalApplied += (h.appliedCount || 0);
-      totalQuotaDays += daysActive;
+      totalActiveDays += days;
     }});
-    const avgActualPerDay = totalQuotaDays > 0 ? totalApplied / totalQuotaDays : 0;
+    const avgActualPerDay = totalActiveDays > 0 ? totalApplied / totalActiveDays : 0;
     if (!Number.isFinite(avgActualPerDay) || avgActualPerDay <= 0) return;
     const ratio = avgActualPerDay / (currentQuota || 1);
     // Round to int, clamp 1..10
@@ -6238,7 +6240,7 @@ async function _srInjectQuotaSuggestion(currentQuota) {{
     const noun = hist.length === 2 ? 'sprints' : 'sprints';
     tip.innerHTML =
       '<span>📊 Across your last ' + hist.length + ' ' + noun + ' you averaged ' +
-        '<strong>' + avgActualPerDay.toFixed(1) + ' / day</strong> on a <strong>' + currentQuota + ' / day</strong> plan. ' +
+        '<strong>' + avgActualPerDay.toFixed(1) + ' / active day</strong> on a <strong>' + currentQuota + ' / day</strong> plan. ' +
         'Try ' + suggested + ' / day next sprint?</span>' +
       '<button type="button" id="sr-quota-apply" style="background:#1817B5;color:#fff;border:none;padding:5px 12px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;">Use ' + suggested + ' / day</button>';
     // Insert above the CTAs (the action row)
@@ -6451,7 +6453,7 @@ async function sprintEndEarly() {{
         '<span style="color:#5C5CD6;font-weight:600;">' + (h.appliedCount||0) + ' / ' + target + ' applied (' + pct + '%)</span>' +
       '</div>' +
       '<div style="font-size:12px;color:#666;margin-top:2px;">' +
-        (h.daysPlanned||0) + ' days &middot; ' + (h.dailyQuota||0) + '/day &middot; advanced ' + (h.advancedCount||0) + ' &middot; rejected ' + (h.rejectedCount||0) +
+        ((typeof h.activeDays === 'number') ? (h.activeDays + ' active / ' + (h.daysPlanned||0) + ' planned') : ((h.daysPlanned||0) + ' days')) + ' &middot; ' + (h.dailyQuota||0) + '/day &middot; advanced ' + (h.advancedCount||0) + ' &middot; rejected ' + (h.rejectedCount||0) +
       '</div>' +
       tagHtml + note +
       '</div>';
@@ -6476,6 +6478,28 @@ async function sprintEndEarly() {{
       '</details>';
     if (anchor.parentNode) anchor.parentNode.insertBefore(wrap, anchor.nextSibling);
   }} catch (e) {{ /* silent */ }}
+}})();
+
+// === #start-sprint deep-link handler (2026-05-28) =====================
+// /account.html links here with #start-sprint when the user clicks
+// "Start a sprint now" from the sprint preferences card. We auto-open
+// the sprint config modal once, then strip the hash so refreshes don't
+// re-trigger it.
+(function _handleStartSprintHash() {{
+  function run() {{
+    try {{
+      if (window.location.hash !== '#start-sprint') return;
+      if (typeof openSprintConfigModal !== 'function') return;
+      // Strip the hash so a reload doesn't re-open the modal
+      history.replaceState(null, '', window.location.pathname + window.location.search);
+      setTimeout(openSprintConfigModal, 300);
+    }} catch (e) {{ /* silent */ }}
+  }}
+  if (document.readyState === 'loading') {{
+    document.addEventListener('DOMContentLoaded', () => setTimeout(run, 200));
+  }} else {{
+    setTimeout(run, 200);
+  }}
 }})();
 
 // --- Tier 2: p5.js-style particle burst on Mark Applied --------------
