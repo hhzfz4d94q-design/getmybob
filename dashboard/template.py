@@ -4827,9 +4827,21 @@ async function refreshFocusPanel() {{
   if (list) {{
     list.innerHTML = "";
     if (picks.length === 0) {{
-      list.innerHTML = '<div style="padding:20px;text-align:center;color:#666;font-size:13.5px;">' +
-        '✨ You’ve applied to everything in today’s picks. Check the feed below for more, or come back tomorrow for fresh jobs.' +
-        '</div>';
+      const mode = window._scStrictness || 'balanced';
+      let modeMsg;
+      if (mode === 'strict') {{
+        modeMsg = 'Strict matching filtered every candidate today. <button id="fp-switch-balanced" style="background:#1817B5;color:#fff;border:none;padding:4px 10px;border-radius:5px;font-size:12px;font-weight:600;cursor:pointer;margin-left:6px;">Switch to Balanced</button>';
+      }} else {{
+        modeMsg = '✨ You’ve applied to everything in today’s picks, or no jobs passed the match gates. Check the feed below for more, or come back tomorrow for fresh jobs.';
+      }}
+      list.innerHTML = '<div style="padding:20px;text-align:center;color:#666;font-size:13.5px;">' + modeMsg + '</div>';
+      try {{
+        const sb = document.getElementById('fp-switch-balanced');
+        if (sb) sb.addEventListener('click', function() {{
+          try {{ const c = JSON.parse(localStorage.getItem(SC_KEY) || '{{}}'); c.strictness = 'balanced'; localStorage.setItem(SC_KEY, JSON.stringify(c)); }} catch(e){{}}
+          location.reload();
+        }});
+      }} catch(e){{}}
     }}
     picks.forEach(function(c, idx) {{
       const titleA = c.querySelector(".title a");
