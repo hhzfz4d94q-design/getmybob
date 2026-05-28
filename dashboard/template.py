@@ -1267,7 +1267,7 @@ function reopenPrepFromTracker() {{
   document.getElementById('prep-cover').textContent = rec.prepKit.coverLetter || '(no cover letter)';
   document.getElementById('prep-linkedin').textContent = rec.prepKit.linkedin || '(no LinkedIn intro)';
   // Week 1: also restore keyword diff if cached
-  _renderKeywordDiff(rec.prepKit.keywordDiff);
+  _renderKeywordDiff(rec.prepKit.keywordDiff, rec.prepKit.keywordCoverageAfterTailor);
   // Week 2: restore scan + cover paragraph from cache
   _renderSixSecondScan(rec.prepKit.sixSecondScan);
   _renderCoverParagraph(rec.prepKit.coverParagraph);
@@ -3070,8 +3070,8 @@ async function prepApplication(fp, btn) {{
     document.getElementById('prep-summary').textContent = data.summary || '(no summary returned)';
     document.getElementById('prep-cover').textContent = data.coverLetter || '(no cover letter returned)';
     document.getElementById('prep-linkedin').textContent = data.linkedin || '(no LinkedIn intro returned)';
-    // Week 1: render keyword diff section
-    _renderKeywordDiff(data.keywordDiff);
+    // Week 1: render keyword diff section + per-job after-tailor coverage
+    _renderKeywordDiff(data.keywordDiff, data.keywordCoverageAfterTailor);
     // Week 2: render six-second scan + cover paragraph
     _renderSixSecondScan(data.sixSecondScan);
     _renderCoverParagraph(data.coverParagraph);
@@ -3087,7 +3087,7 @@ async function prepApplication(fp, btn) {{
     statusEl.style.display = 'none';
     outputEl.style.display = 'block';
     // Auto-save the prep kit to the tracker so user can re-open without regenerating
-    const kit = {{ summary: data.summary, coverLetter: data.coverLetter, linkedin: data.linkedin, tailoredResume: data.tailoredResume, keywordDiff: data.keywordDiff, sixSecondScan: data.sixSecondScan, coverParagraph: data.coverParagraph }};
+    const kit = {{ summary: data.summary, coverLetter: data.coverLetter, linkedin: data.linkedin, tailoredResume: data.tailoredResume, keywordDiff: data.keywordDiff, keywordCoverageAfterTailor: data.keywordCoverageAfterTailor, sixSecondScan: data.sixSecondScan, coverParagraph: data.coverParagraph }};
     if (getEditKey()) {{
       _trackerAction('savePrepKit', {{ fp, jobMeta: {{ title: jobTitle, company, url: jobUrl }}, prepKit: kit }}).then(r => {{
         if (r && r.record) _trackerCache[fp] = r.record;
@@ -3116,10 +3116,14 @@ async function prepApplication(fp, btn) {{
   }}
 }}
 function closeModal() {{ document.getElementById('prep-modal').classList.remove('show'); }}
-// === Week 1: Keyword diff renderer ====================================
+// === Week 1 + Per-job customization: Keyword diff renderer ============
+// Renders the ORIGINAL-resume vs. JD diff, AND a per-row green check
+// when the TAILORED resume now covers a previously-missing keyword.
 let _lastKeywordDiff = null;
-function _renderKeywordDiff(kd) {{
+let _lastKeywordAfter = null;
+function _renderKeywordDiff(kd, afterCoverage) {{
   _lastKeywordDiff = kd;
+  _lastKeywordAfter = afterCoverage || null;
   const section = document.getElementById('prep-keyword-section');
   const table = document.getElementById('prep-keyword-table');
   const summary = document.getElementById('prep-keyword-summary');
@@ -3132,7 +3136,11 @@ function _renderKeywordDiff(kd) {{
   const missing = Array.isArray(kd.missing) ? kd.missing : [];
   const total = matched.length + missing.length;
   if (total === 0) {{ section.style.display = 'none'; return; }}
-  summary.textContent = matched.length + ' of ' + total + ' recruiter-search keywords already in your resume';
+  let summaryTxt = matched.length + ' of ' + total + ' recruiter-search keywords already in your resume';
+  if (_lastKeywordAfter && typeof _lastKeywordAfter.closedByTailoring === 'number' && _lastKeywordAfter.closedByTailoring > 0) {{
+    summaryTxt += ' · tailored version closes ' + _lastKeywordAfter.closedByTailoring + ' more';
+  }}
+  summary.textContent = summaryTxt;
   function esc(s) {{ return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({{ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }}[c])); }}
   let html = '';
   html += '<table style="width:100%;border-collapse:collapse;font-size:13px;">';
@@ -3149,12 +3157,24 @@ function _renderKeywordDiff(kd) {{
       '<td style="padding:8px 12px;color:#aaa;">—</td>' +
       '</tr>';
   }});
+  // Build lookup for after-tailor coverage so we can flag rows that
+  // the tailored resume already closes.
+  const afterMatchedSet = new Set(
+    (_lastKeywordAfter && Array.isArray(_lastKeywordAfter.matched))
+      ? _lastKeywordAfter.matched.map(m => String(m.term || '').toLowerCase())
+      : []
+  );
   missing.forEach(m => {{
+    const closedByTailor = afterMatchedSet.has(String(m.required || '').toLowerCase());
     const altLine = m.alternative
       ? '<span style="color:#a55;">paraphrase: <em>' + esc(m.alternative) + '</em>' + (m.alternativeOccurrences ? ' (' + m.alternativeOccurrences + '×)' : '') + '</span>'
       : '<span style="color:#999;">not present</span>';
-    html += '<tr style="border-bottom:1px solid #f4f5f7;background:#fff7e6;">' +
-      '<td style="padding:8px 12px;font-weight:600;">' + esc(m.required) + '</td>' +
+    const rowBg = closedByTailor ? '#f0fdf4' : '#fff7e6';
+    const closedBadge = closedByTailor
+      ? '<span style="display:inline-block;background:#0a6b3a;color:#fff;padding:1px 6px;border-radius:8px;font-size:10px;font-weight:700;margin-left:6px;vertical-align:middle;">✓ in tailored</span>'
+      : '';
+    html += '<tr style="border-bottom:1px solid #f4f5f7;background:' + rowBg + ';">' +
+      '<td style="padding:8px 12px;font-weight:600;">' + esc(m.required) + closedBadge + '</td>' +
       '<td style="padding:8px 12px;">' + altLine + '</td>' +
       '<td style="padding:8px 12px;color:#444;">' + esc(m.fix || '') + '</td>' +
       '</tr>';

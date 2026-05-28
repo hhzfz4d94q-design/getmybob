@@ -805,16 +805,29 @@ Return your response as a JSON object with EXACTLY these keys and nothing else:
 - "coverLetter" (string)
 - "linkedin" (string)
 - "tailoredResume" (object with keys: personal, summary, skills, experience, education, certifications — same shape as the input resume)
-- "keywordDiff" (object with keys: matched, missing — see below)
+- "keywordDiff" (object with keys: matched, missing — diff between ORIGINAL resume and the JD)
+- "keywordCoverageAfterTailor" (object with keys: matched, missing, closedByTailoring — diff between the TAILORED resume above and the JD, plus the count of missing-keywords the tailoring closed)
 - "sixSecondScan" (object with keys: titleObserved, titleAlignment, titleSuggestion, topBulletsCritique, rewrites)
 - "coverParagraph" (string)
 
+For keywordCoverageAfterTailor:
+{
+  "matched": [ { "term": "Vendor Risk Management", "occurrences": 3 } ],  // now present in the tailored resume
+  "missing": [ { "required": "FFIEC IT Examination", "reason": "no credible basis in candidate's experience" } ],  // still gone after tailoring (with reason)
+  "closedByTailoring": 4   // how many of keywordDiff.missing the tailored resume now hits
+}
+
 For tailoredResume:
 - personal: copy from input as-is
-- summary: rewrite for THIS job, 3-4 sentences
-- skills: re-order so most relevant 8-12 come first; drop the least relevant
+- summary: rewrite for THIS job, 3-4 sentences. MUST naturally include 2-4 of the keywordDiff.missing terms IF the candidate's actual background credibly supports them.
+- skills: re-order so most relevant 8-12 come first; drop the least relevant. ADD any missing JD keywords from keywordDiff.missing that the candidate has credible exposure to (e.g. if missing.required is "Vendor Risk Management" and the candidate's bullets describe vendor onboarding/oversight, add VRM to skills using that exact phrase).
 - experience: keep same companies/titles/dates; re-order/rewrite bullets to emphasize relevance. 3-5 strongest bullets per role for THIS job.
+  CRITICAL: rewrite bullets to surface the JD's exact phrasing where the underlying work matches. If the JD says "Vendor Risk Management" and a bullet says "managed third-party reviews", change it to "managed vendor risk reviews" — same fact, JD-matching phrasing. If the candidate has NO credible basis for a missing keyword, leave it out. NEVER fabricate.
 - education / certifications: copy as-is
+
+The point: a recruiter Boolean-searching for the JD's exact terms should now hit the tailored resume. The keywordDiff (computed against the ORIGINAL resume) tells you which gaps exist; close the credible ones in tailoredResume.
+
+After producing tailoredResume, COMPUTE keywordCoverageAfterTailor by re-checking the tailored resume's text against the same JD keywords. Report how many you closed.
 
 For keywordDiff:
 {
@@ -853,7 +866,7 @@ ${resumeJson}`;
     const r = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 8500, messages: [{ role: 'user', content: prompt }] }),
+      body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 9500, messages: [{ role: 'user', content: prompt }] }),
     });
     if (!r.ok) { const err = await r.text(); return Response.json({ error: 'Anthropic API error', details: err }, { status: 502, headers: cors }); }
     const data = await r.json();
@@ -861,7 +874,7 @@ ${resumeJson}`;
     const cleaned = text.replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/\s*```$/, '').trim();
     let parsed;
     try { parsed = JSON.parse(cleaned); }
-    catch (e) { return Response.json({ summary: text, coverLetter: '', linkedin: '', tailoredResume: null, keywordDiff: null, sixSecondScan: null, coverParagraph: '', warning: 'AI did not return valid JSON' }, { headers: cors }); }
+    catch (e) { return Response.json({ summary: text, coverLetter: '', linkedin: '', tailoredResume: null, keywordDiff: null, keywordCoverageAfterTailor: null, sixSecondScan: null, coverParagraph: '', warning: 'AI did not return valid JSON' }, { headers: cors }); }
     return Response.json(parsed, { headers: cors });
   } catch (e) { return Response.json({ error: 'Worker error', message: String(e) }, { status: 500, headers: cors }); }
 }
