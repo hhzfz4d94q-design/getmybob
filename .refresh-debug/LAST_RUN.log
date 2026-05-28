@@ -1,0 +1,22 @@
+[vc-portfolio] loaded 105 discovered companies
+[healthtech] loaded 264 curated companies
+[industries] mapped 340 companies; default=['healthcare', 'healthcare-it', 'digital-health', 'health-saas', 'pharma', 'pharmaceuticals', 'biotech', 'life-sciences', 'diagnostics', 'telehealth', 'mental-health', 'clinical-ai']
+[users] loaded 4 from Worker
+Traceback (most recent call last):
+  File "/home/runner/work/getmybob/getmybob/fetch_jobs.py", line 1851, in <module>
+    run()
+  File "/home/runner/work/getmybob/getmybob/fetch_jobs.py", line 737, in run
+    _merge_user_target_companies(companies)
+  File "/home/runner/work/getmybob/getmybob/matcher/catalogs.py", line 183, in _merge_user_target_companies
+    target_slug = _slugify_company_name(t.get("slug") if isinstance(t, dict) and t.get("slug") else name)
+                  ^^^^^^^^^^^^^^^^^^^^^
+NameError: name '_slugify_company_name' is not defined
+Traceback (most recent call last):
+  File "/home/runner/work/getmybob/getmybob/fetch_jobs.py", line 1851, in <module>
+    run()
+  File "/home/runner/work/getmybob/getmybob/fetch_jobs.py", line 737, in run
+    _merge_user_target_companies(companies)
+  File "/home/runner/work/getmybob/getmybob/matcher/catalogs.py", line 183, in _merge_user_target_companies
+    target_slug = _slugify_company_name(t.get("slug") if isinstance(t, dict) and t.get("slug") else name)
+                  ^^^^^^^^^^^^^^^^^^^^^
+NameError: name '_slugify_company_name' is not defined
