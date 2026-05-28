@@ -1,6 +1,6 @@
 {
   "_note": "Curated Healthcare IT / digital health catalog. Used for: (a) scoring boost when company appears in feed AND user has healthcare industries (+3, all entries), (b) auto-scraping (only ATS=greenhouse/lever/ashby/workable). Workday/Google/Amazon entries are catalog-only (scored boost when found, not scraped). Slugs are canonical for matching.",
-  "version": "2026-05-29-v3",
+  "version": "2026-05-29-v3+discovered",
   "companies": [
     {
       "name": "Doximity",
@@ -967,6 +967,162 @@
       "category": "medicare",
       "atsHint": "ashby",
       "slug": "spark-advisors"
+    },
+    {
+      "name": "Sword Health",
+      "category": "Mid-stage healthtech SaaS",
+      "atsHint": "greenhouse",
+      "slug": "swordhealth"
+    },
+    {
+      "name": "Omada Health",
+      "category": "Value-based care",
+      "atsHint": "greenhouse",
+      "slug": "omadahealth"
+    },
+    {
+      "name": "Devoted Health",
+      "category": "Health insurers + payers",
+      "atsHint": "greenhouse",
+      "slug": "devotedhealth"
+    },
+    {
+      "name": "Cityblock Health",
+      "category": "Value-based care",
+      "atsHint": "greenhouse",
+      "slug": "cityblock"
+    },
+    {
+      "name": "Hims & Hers",
+      "category": "Mid-stage healthtech SaaS",
+      "atsHint": "greenhouse",
+      "slug": "hims"
+    },
+    {
+      "name": "Capsule",
+      "category": "Mid-stage healthtech SaaS",
+      "atsHint": "greenhouse",
+      "slug": "capsulecares"
+    },
+    {
+      "name": "Calibrate",
+      "category": "Value-based care",
+      "atsHint": "greenhouse",
+      "slug": "calibrate"
+    },
+    {
+      "name": "K Health",
+      "category": "Mid-stage healthtech SaaS",
+      "atsHint": "greenhouse",
+      "slug": "khealth"
+    },
+    {
+      "name": "Included Health",
+      "category": "Mid-stage healthtech SaaS",
+      "atsHint": "greenhouse",
+      "slug": "includedhealth"
+    },
+    {
+      "name": "Commure",
+      "category": "Mid-stage healthtech SaaS",
+      "atsHint": "lever",
+      "slug": "commure"
+    },
+    {
+      "name": "Oscar Health",
+      "category": "Health insurers + payers",
+      "atsHint": "greenhouse",
+      "slug": "oscarhealth"
+    },
+    {
+      "name": "Alignment Healthcare",
+      "category": "Value-based care",
+      "atsHint": "greenhouse",
+      "slug": "alignmenthealthcare"
+    },
+    {
+      "name": "Oak Street Health",
+      "category": "Value-based care",
+      "atsHint": "greenhouse",
+      "slug": "oakstreethealth"
+    },
+    {
+      "name": "Vivante Health",
+      "category": "Mid-stage healthtech SaaS",
+      "atsHint": "greenhouse",
+      "slug": "vivantehealth"
+    },
+    {
+      "name": "Collective Health",
+      "category": "Mid-stage healthtech SaaS",
+      "atsHint": "greenhouse",
+      "slug": "collectivehealth"
+    },
+    {
+      "name": "Curana Health",
+      "category": "Value-based care",
+      "atsHint": "lever",
+      "slug": "curanahealth"
+    },
+    {
+      "name": "Natera",
+      "category": "Medical devices + diagnostics",
+      "atsHint": "greenhouse",
+      "slug": "natera"
+    },
+    {
+      "name": "Guardant Health",
+      "category": "Medical devices + diagnostics",
+      "atsHint": "greenhouse",
+      "slug": "guardanthealth"
+    },
+    {
+      "name": "Flatiron Health",
+      "category": "Real-world data / life-sciences analytics",
+      "atsHint": "greenhouse",
+      "slug": "flatiron"
+    },
+    {
+      "name": "Komodo Health",
+      "category": "Real-world data / life-sciences analytics",
+      "atsHint": "greenhouse",
+      "slug": "komodohealth"
+    },
+    {
+      "name": "Health Catalyst",
+      "category": "Real-world data / life-sciences analytics",
+      "atsHint": "greenhouse",
+      "slug": "healthcatalyst"
+    },
+    {
+      "name": "Clarify Health",
+      "category": "Real-world data / life-sciences analytics",
+      "atsHint": "lever",
+      "slug": "clarifyhealth"
+    },
+    {
+      "name": "Arcadia",
+      "category": "Mid-stage healthtech SaaS",
+      "atsHint": "lever",
+      "slug": "arcadia.io"
+    },
+    {
+      "name": "Redox",
+      "category": "Health-IT compliance / interoperability",
+      "atsHint": "lever",
+      "slug": "redoxengine"
+    },
+    {
+      "name": "Medable",
+      "category": "Real-world data / life-sciences analytics",
+      "atsHint": "greenhouse",
+      "slug": "medable"
+    },
+    {
+      "name": "TriNetX",
+      "category": "Real-world data / life-sciences analytics",
+      "atsHint": "lever",
+      "slug": "trinetx"
     }
   ]
 }
