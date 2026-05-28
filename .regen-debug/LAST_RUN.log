@@ -1,0 +1,14 @@
+import sys, os, traceback
+sys.path.insert(0, '.')
+try:
+    from fetch_jobs import generate_all_dashboards, get_conn
+    print("[regen] imported ok", flush=True)
+    conn = get_conn()
+    print("[regen] db connected", flush=True)
+    generate_all_dashboards(conn)
+    conn.close()
+    print("[regen] DONE", flush=True)
+except Exception as e:
+    print("[regen] FATAL: " + repr(e), flush=True)
+    traceback.print_exc()
+    sys.exit(1)
