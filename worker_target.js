@@ -1274,14 +1274,41 @@ async function handleRerank(request, env, cors, slug) {
     salaryFloor:  profile.salaryFloor  || null
   };
 
-  // Week 4 will inject dismissalPatterns into the prompt; for now we set
-  // up the variable so the wiring is in place.
-  const dismissals = (Array.isArray(profile.dismissalPatterns) ? profile.dismissalPatterns : [])
+  // Week 4: dismissal patterns become a strong signal. Pre-roll up by
+  // reason + company so Claude doesn't have to re-derive the pattern
+  // from raw rows. Cap at last 20 raw + the full rollup.
+  const dismissalsRaw = (Array.isArray(profile.dismissalPatterns) ? profile.dismissalPatterns : [])
     .filter(d => {
       const ts = Date.parse(d.ts || '');
       return Number.isFinite(ts) && (Date.now() - ts) < 14 * 86400000;
-    })
-    .slice(-20);
+    });
+  const dismissals = dismissalsRaw.slice(-20);
+  // Rollup: count dismissals by reason, by company, and by (reason+company)
+  const byReason = {};
+  const byCompany = {};
+  const byReasonCompany = {};
+  dismissalsRaw.forEach(d => {
+    const r = d.reason || 'other';
+    const c = (d.company || '').toLowerCase();
+    byReason[r] = (byReason[r] || 0) + 1;
+    if (c) byCompany[c] = (byCompany[c] || 0) + 1;
+    if (c) {
+      const k = r + '::' + c;
+      byReasonCompany[k] = (byReasonCompany[k] || 0) + 1;
+    }
+  });
+  // Identify "strong patterns" — same reason for 3+ jobs from same company
+  // OR same reason for 5+ jobs anywhere.
+  const strongPatterns = [];
+  Object.entries(byReasonCompany).forEach(([k, n]) => {
+    if (n >= 3) {
+      const [reason, company] = k.split('::');
+      strongPatterns.push({ pattern: reason + ' at ' + company, count: n });
+    }
+  });
+  Object.entries(byReason).forEach(([reason, n]) => {
+    if (n >= 5) strongPatterns.push({ pattern: 'broad ' + reason + ' (any company)', count: n });
+  });
 
   const jobsForPrompt = jobs.map(j => ({
     fp: j.fp,
@@ -1300,7 +1327,10 @@ Confidence guide:
   50-69  — partial fit, JD has some real misalignment
   <50    — should not be shown to user; explain why in dealBreaker
 
-Use the dismissal patterns as STRONG SIGNAL. If a user has dismissed 3+ jobs labeled 'too-junior' from a company / level, downweight similar jobs aggressively.
+DISMISSAL PATTERNS — use these as A STRONG VETO SIGNAL, not advisory:
+- Any job matching a 'strong pattern' below should get confidence <= 40 with a clear dealBreaker that names the pattern. Example: if 'too-junior at capco' appears in strongPatterns and a Capco Director role shows up in candidates, set dealBreaker = "matches your repeated 'too-junior at Capco' dismissal pattern".
+- Treat lighter dismissals (1-2 occurrences) as soft downweight — drop confidence by ~10-15 if the candidate triggers the same reason.
+- If a strong-pattern says 'wrong-industry at <company>', do NOT just suppress that company — also downweight other companies in the same sector.
 
 Return ONLY a JSON object with this exact shape:
 
@@ -1315,6 +1345,15 @@ ${JSON.stringify(profSlim).slice(0, 1500)}
 
 RECENT DISMISSALS (last 14d, oldest first):
 ${JSON.stringify(dismissals).slice(0, 2500)}
+
+STRONG PATTERNS (computed from raw dismissals — VETO signal):
+${JSON.stringify(strongPatterns).slice(0, 1000)}
+
+DISMISSAL COUNTS BY REASON (last 14d):
+${JSON.stringify(byReason).slice(0, 500)}
+
+DISMISSAL COUNTS BY COMPANY (last 14d):
+${JSON.stringify(byCompany).slice(0, 800)}
 
 CANDIDATES (${jobsForPrompt.length}):
 ${JSON.stringify(jobsForPrompt).slice(0, 14000)}`;
@@ -1336,7 +1375,8 @@ ${JSON.stringify(jobsForPrompt).slice(0, 14000)}`;
       date: today,
       stampedAt: new Date().toISOString(),
       jobCount: jobs.length,
-      dismissalCount: dismissals.length,
+      dismissalCount: dismissalsRaw.length,
+      strongPatternCount: strongPatterns.length,
       ranked: Array.isArray(parsed.ranked) ? parsed.ranked.slice(0, 15) : []
     };
     await env.RESUMES.put(key, JSON.stringify(record));
