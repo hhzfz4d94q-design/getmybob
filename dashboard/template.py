@@ -2192,9 +2192,84 @@ async function _renderResumeHealth() {{
       html += '</ul></div>';
     }}
     html += '<div style="font-size:11px;color:#888;margin-top:8px;">Computed ' + new Date(h.computedAt).toLocaleString() + '. Re-uploading your resume re-runs this check.</div>';
+    html += '<button class="btn primary" id="resume-health-fix-btn" style="margin-top:10px;" onclick="_loadResumeHealthFixes(this)">Show me what to fix</button>';
+    html += '<div id="resume-health-fixes" style="display:none;margin-top:14px;"></div>';
     widget.innerHTML = html;
   }} catch (e) {{
     widget.innerHTML = '<div style="font-size:13px;color:#a55;">Couldn\\'t compute health (' + ((e && e.message) || e) + ')</div>';
+  }}
+}}
+
+// === Week 4: LLM-powered "Show me what to fix" ========================
+async function _loadResumeHealthFixes(btn) {{
+  const out = document.getElementById('resume-health-fixes');
+  if (!out) return;
+  out.style.display = 'block';
+  out.innerHTML = '<div style="font-size:13px;color:#666;">Asking Claude for concrete rewrites &middot; ~15s…</div>';
+  if (btn) {{ btn.disabled = true; btn.textContent = 'Generating…'; }}
+  try {{
+    const r = await fetch(WORKER_BASE + '/resume-health-suggest' + USER_QS, {{ cache: 'no-store' }});
+    const j = await r.json();
+    if (!r.ok || j.error) {{
+      out.innerHTML = '<div style="font-size:13px;color:#a55;">Couldn\\'t generate fixes: ' + ((j && j.error) || ('HTTP ' + r.status)) + '</div>';
+      if (btn) {{ btn.disabled = false; btn.textContent = 'Try again'; }}
+      return;
+    }}
+    function esc(s) {{ return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({{ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }}[c])); }}
+    let html = '';
+    if (j.titleSubtitle && j.titleSubtitle.trim()) {{
+      html += '<div style="margin-bottom:14px;padding:10px 12px;background:#fff7e6;border:1px solid #fcd34d;border-radius:8px;">';
+      html += '<div style="font-size:12px;font-weight:600;color:#78350f;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px;">Add this subtitle under your name</div>';
+      html += '<code style="font-size:13px;background:#fff;padding:4px 8px;border-radius:4px;display:inline-block;">' + esc(j.titleSubtitle) + '</code>';
+      html += '</div>';
+    }}
+    const rewrites = Array.isArray(j.bulletRewrites) ? j.bulletRewrites : [];
+    if (rewrites.length) {{
+      html += '<div style="font-size:12px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px;">Bullet rewrites</div>';
+      rewrites.forEach((rw, i) => {{
+        html += '<div style="margin-bottom:12px;padding:12px;background:#f7f8fb;border:1px solid #e2e5ea;border-radius:8px;">';
+        html += '<div style="font-size:11.5px;color:#a55;margin-bottom:4px;">BEFORE</div>';
+        html += '<div style="font-size:13px;color:#444;margin-bottom:8px;line-height:1.5;">' + esc(rw.original || '') + '</div>';
+        html += '<div style="font-size:11.5px;color:#0a6b3a;margin-bottom:4px;">AFTER</div>';
+        html += '<div style="font-size:13px;color:#1a1a2e;margin-bottom:6px;font-weight:500;line-height:1.5;">' + esc(rw.suggested || '') + '</div>';
+        if (rw.why) html += '<div style="font-size:11.5px;color:#666;font-style:italic;margin-bottom:6px;">Why: ' + esc(rw.why) + '</div>';
+        html += '<button class="btn ghost rh-copy-btn" data-rh-copy="' + esc(rw.suggested || '').replace(/&quot;/g, '&quot;') + '" style="font-size:11.5px;padding:4px 10px;">Copy AFTER</button>';
+        html += '</div>';
+      }});
+    }}
+    const injections = Array.isArray(j.keywordInjections) ? j.keywordInjections : [];
+    if (injections.length) {{
+      html += '<div style="font-size:12px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.04em;margin-top:14px;margin-bottom:8px;">Add these keywords</div>';
+      html += '<table style="width:100%;border-collapse:collapse;font-size:12.5px;">';
+      injections.forEach(inj => {{
+        html += '<tr style="border-bottom:1px solid #f4f5f7;">';
+        html += '<td style="padding:6px 10px;font-weight:600;">' + esc(inj.term) + '</td>';
+        html += '<td style="padding:6px 10px;color:#666;">in <strong>' + esc(inj.wherePlace || '') + '</strong></td>';
+        html += '<td style="padding:6px 10px;"><code style="background:#fff;border:1px solid #e0e2ed;padding:2px 6px;border-radius:4px;">' + esc(inj.verbatim || '') + '</code></td>';
+        html += '</tr>';
+      }});
+      html += '</table>';
+    }}
+    if (!html) {{
+      html = '<div style="font-size:13px;color:#666;">No fixes needed — your resume already covers what your profile targets.</div>';
+    }}
+    out.innerHTML = html;
+    out.querySelectorAll('.rh-copy-btn').forEach(b => {{
+      b.addEventListener('click', () => {{
+        const txt = b.getAttribute('data-rh-copy') || '';
+        // Decode the HTML entities we escaped during render
+        const decoded = txt.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"');
+        navigator.clipboard.writeText(decoded).then(() => {{
+          const orig = b.textContent;
+          b.textContent = 'Copied!';
+          setTimeout(() => {{ b.textContent = orig; }}, 1200);
+        }});
+      }});
+    }});
+    if (btn) {{ btn.disabled = false; btn.textContent = 'Regenerate fixes'; }}
+  }} catch (e) {{
+    out.innerHTML = '<div style="font-size:13px;color:#a55;">Network error: ' + ((e && e.message) || e) + '</div>';
+    if (btn) {{ btn.disabled = false; btn.textContent = 'Try again'; }}
   }}
 }}
 

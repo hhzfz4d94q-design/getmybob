@@ -80,6 +80,7 @@ export default {
     if (url.pathname === '/resume-versions') return handleVersions(request, env, cors, slug);
     if (url.pathname === '/parse-resume') return handleParseResume(request, env, cors, slug);
     if (url.pathname === '/resume-health') return handleResumeHealth(request, env, cors, slug);
+    if (url.pathname === '/resume-health-suggest') return handleResumeHealthSuggest(request, env, cors, slug);
     if (url.pathname === '/skills-profile') return handleSkillsProfile(request, env, cors, slug);
     if (url.pathname === '/regenerate-profile') return handleRegenerateProfile(request, env, cors, slug);
     if (url.pathname === '/regenerate-companies') return handleRegenerateCompanies(request, env, cors, slug);
@@ -1015,6 +1016,67 @@ async function handleResumeHealth(request, env, cors, slug) {
   } catch (e) { /* tolerate */ }
 
   return Response.json(health, { headers: cors });
+}
+
+// --- /resume-health-suggest (Week 4 — LLM rewrites) -------------------
+// Takes the active resume + user profile + (optionally) a precomputed
+// health breakdown, and asks Claude to produce concrete fix actions:
+//   - bullet rewrites (BEFORE/AFTER/why) for the weakest bullets
+//   - a one-line subtitle suggestion when title is misaligned
+//   - keyword-injection suggestions: where in the resume to add
+//     missing target terms
+async function handleResumeHealthSuggest(request, env, cors, slug) {
+  if (!env.ANTHROPIC_API_KEY) return Response.json({ error: 'Missing ANTHROPIC_API_KEY secret' }, { status: 500, headers: cors });
+  if (!env.RESUMES) return Response.json({ error: 'RESUMES KV binding missing' }, { status: 500, headers: cors });
+  const resumeJson = await getActiveResume(env, slug);
+  if (!resumeJson) return Response.json({ error: 'No active resume saved.' }, { status: 404, headers: cors });
+  const profRaw = await env.RESUMES.get(uk(slug, 'skills_profile'));
+  const profile = profRaw ? JSON.parse(profRaw) : {};
+  const health = profile.resumeHealth || null;
+
+  const prompt = `You are a resume coach. Based on the resume + the user's profile + the precomputed health breakdown, produce concrete, copy-paste fix actions. Stay within the bounds of what the resume already says — emphasize, reword, add subtitles. NEVER fabricate.
+
+Return ONLY a JSON object with this shape:
+
+{
+  "bulletRewrites": [
+    { "original": "<exact text from resume>", "suggested": "<rewrite that emphasizes JD-relevant verbs + adds a credible quantification when one is implied by the original>", "why": "<one sentence>" }
+  ],
+  "titleSubtitle": "<one-line subtitle the user could add directly under their name to signal targeting, or empty string if the title is already aligned>",
+  "keywordInjections": [
+    { "term": "<missing target term>", "wherePlace": "Skills | Summary | Experience > <company>", "verbatim": "<short phrase to drop in>" }
+  ]
+}
+
+Constraints:
+- bulletRewrites: 3-5 items. 'original' MUST match a bullet from the resume's experience entries EXACTLY (no paraphrasing). Pick the bullets that are most generic OR longest without a number.
+- titleSubtitle: only if profile.targetTitles[0] differs meaningfully from the top resume title. Use the user's actual targetTitles. Empty string is valid.
+- keywordInjections: only for terms in profile.targetTitles/industries/keywords that don't appear anywhere in the resume body. Suggest the most credible placement; verbatim should be 3-8 words.
+
+PROFILE:
+${JSON.stringify({ targetTitles: profile.targetTitles, industries: profile.industries, keywords: profile.keywords }).slice(0, 2000)}
+
+HEALTH BREAKDOWN:
+${JSON.stringify(health).slice(0, 4000)}
+
+RESUME (JSON):
+${resumeJson.slice(0, 12000)}`;
+
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 3500, messages: [{ role: 'user', content: prompt }] }),
+    });
+    if (!r.ok) { const err = await r.text(); return Response.json({ error: 'Anthropic API error', details: err }, { status: 502, headers: cors }); }
+    const data = await r.json();
+    const text = data.content?.[0]?.text || '';
+    const cleaned = text.replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/\s*```$/, '').trim();
+    let parsed;
+    try { parsed = JSON.parse(cleaned); }
+    catch (e) { return Response.json({ error: 'AI did not return valid JSON', raw: text }, { status: 502, headers: cors }); }
+    return Response.json(parsed, { headers: cors });
+  } catch (e) { return Response.json({ error: 'Worker error', message: String(e) }, { status: 500, headers: cors }); }
 }
 
 // --- /regenerate-profile -----------------------------------------------
