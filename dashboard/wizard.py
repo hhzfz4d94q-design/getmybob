@@ -194,29 +194,43 @@ WIZARD_V3_BLOCK = r"""
     // Dedupe preserving order
     const seen = new Set(); items = items.filter(x => { if (seen.has(x)) return false; seen.add(x); return true; });
 
+    // Pool (suggestions). Strict descending order of usefulness as supplied
+    // by the AI. We keep the FULL pool stable for life of this render; the UI
+    // shows pool MINUS items as the swap-in suggestions.
+    const poolRaw = (opts.pool || []).map(x => String(x).toLowerCase().trim()).filter(Boolean);
+    const poolSeen = new Set();
+    const pool = poolRaw.filter(x => { if (poolSeen.has(x)) return false; poolSeen.add(x); return true; });
+
     body.innerHTML = ''
       + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">'
       +   '<div style="font-size:13px;color:#555;">Pick <b>up to ' + max + '</b></div>'
       +   '<div class="bullseye-count" style="font-size:13px;font-weight:600;">0 / ' + max + '</div>'
       + '</div>'
       + '<div class="bullseye-chips" style="display:flex;flex-wrap:wrap;gap:6px;min-height:36px;padding:10px;border:1px solid #e0e2ed;border-radius:8px;background:#fafbff;"></div>'
+      + '<div class="bullseye-suggest-wrap" style="margin-top:10px;display:none;">'
+      +   '<div style="font-size:11.5px;color:#666;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:6px;">Or swap in (from your resume):</div>'
+      +   '<div class="bullseye-suggest" style="display:flex;flex-wrap:wrap;gap:6px;"></div>'
+      + '</div>'
       + '<div style="display:flex;gap:6px;margin-top:10px;">'
       +   '<input type="text" class="bullseye-input" placeholder="' + (opts.placeholder || 'Add an item…') + '" style="flex:1;padding:8px 10px;border:1px solid #d0d4dc;border-radius:6px;font-size:13px;">'
       +   '<button type="button" class="bullseye-add wiz3-btn wiz3-btn-ghost" style="padding:6px 14px;">+ Add</button>'
       + '</div>'
       + (opts.hint ? '<div style="font-size:12px;color:#888;margin-top:8px;">' + opts.hint + '</div>' : '');
 
-    const chipsEl   = body.querySelector('.bullseye-chips');
-    const inputEl   = body.querySelector('.bullseye-input');
-    const addBtn    = body.querySelector('.bullseye-add');
-    const counterEl = body.querySelector('.bullseye-count');
+    const chipsEl    = body.querySelector('.bullseye-chips');
+    const inputEl    = body.querySelector('.bullseye-input');
+    const addBtn     = body.querySelector('.bullseye-add');
+    const counterEl  = body.querySelector('.bullseye-count');
+    const suggestEl  = body.querySelector('.bullseye-suggest');
+    const suggestWrap= body.querySelector('.bullseye-suggest-wrap');
 
     function refresh() {
+      // --- Selected chips ---
       chipsEl.innerHTML = '';
       if (!items.length) {
         const empty = document.createElement('div');
         empty.style.cssText = 'color:#999;font-size:12.5px;font-style:italic;padding:2px;';
-        empty.textContent = '(no picks yet — add some below)';
+        empty.textContent = '(no picks yet — add some below or promote a suggestion)';
         chipsEl.appendChild(empty);
       }
       items.forEach((item, idx) => {
@@ -240,6 +254,33 @@ WIZARD_V3_BLOCK = r"""
       inputEl.disabled = atCap;
       addBtn.disabled = atCap;
       inputEl.style.opacity = atCap ? '0.5' : '1';
+
+      // --- Suggestion row (pool minus selected, preserving rank order) ---
+      if (suggestEl) {
+        const itemsSet = new Set(items);
+        const suggestions = pool.filter(p => !itemsSet.has(p));
+        if (suggestions.length === 0) {
+          suggestWrap.style.display = 'none';
+        } else {
+          suggestWrap.style.display = '';
+          suggestEl.innerHTML = '';
+          suggestions.forEach(s => {
+            const ghost = document.createElement('button');
+            ghost.type = 'button';
+            ghost.textContent = '+ ' + s;
+            const disabled = atCap;
+            ghost.disabled = disabled;
+            ghost.title = disabled ? 'At cap — remove a chip first to promote this' : 'Add ' + s + ' to your selection';
+            ghost.style.cssText = 'display:inline-flex;align-items:center;padding:4px 10px;background:transparent;color:' + (disabled ? '#bbb' : '#5C5CD6') + ';border:1px dashed ' + (disabled ? '#ddd' : '#bcc0e6') + ';border-radius:14px;font-size:12px;cursor:' + (disabled ? 'not-allowed' : 'pointer') + ';';
+            ghost.addEventListener('click', () => {
+              if (items.length >= max || items.includes(s)) return;
+              items.push(s);
+              refresh();
+            });
+            suggestEl.appendChild(ghost);
+          });
+        }
+      }
     }
     function tryAdd() {
       const v = (inputEl.value || '').trim().toLowerCase();
@@ -327,24 +368,28 @@ WIZARD_V3_BLOCK = r"""
           '<div id="bs-section-companies"><h3 style="margin:0 0 6px;font-size:14px;color:#1a1a2e;">4. Target companies (optional refresh)</h3><p style="margin:0 0 10px;font-size:12px;color:#666;">AI will re-derive 20 companies from your bullseye above. Click below to see the diff.</p><div id="bs-companies-host"></div></div>';
 
         const p = await getProfile();
-        // 1. Titles
+        // 1. Titles — pool comes from titlesPool (AI-ranked, first 5 = current)
         renderBullseye(body.querySelector("#bs-titles-host"), {
           max: 5, current: p.targetTitles || [],
+          pool: p.titlesPool || [],
           placeholder: "e.g. vp of product management",
-          hint: "Lowercase, multi-word titles match best."
+          hint: "Lowercase, multi-word titles match best. Click a suggestion below to swap one in."
         });
-        // 2. Industries
+        // 2. Industries — pool comes from industriesPool
         renderBullseye(body.querySelector("#bs-industries-host"), {
           max: 5, current: p.industries || [],
+          pool: p.industriesPool || [],
           placeholder: "e.g. healthcare technology",
-          hint: "Tight industry choice = less noise."
+          hint: "Tight industry choice = less noise. Click a suggestion below to swap one in."
         });
-        // 3. Skills (merge keywords + technologies + frameworks)
+        // 3. Skills (merge keywords + technologies + frameworks) — pool from skillsPool
         const merged = [].concat(p.keywords || [], p.technologies || [], p.frameworks || []);
+        const skillsPool = (p.skillsPool && p.skillsPool.length) ? p.skillsPool : merged;
         renderBullseye(body.querySelector("#bs-skills-host"), {
-          max: 15, current: merged,
+          max: 15, current: merged.slice(0, 15),
+          pool: skillsPool,
           placeholder: "e.g. digital transformation",
-          hint: "These boost a job\'s score when found in title or description."
+          hint: "These boost a job\'s score when found in title or description. Suggestions below come from your resume."
         });
         // 4. Companies — same inline UI as original pick-companies step
         const cHost = body.querySelector("#bs-companies-host");

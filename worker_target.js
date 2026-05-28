@@ -425,11 +425,14 @@ Return ONLY a JSON object with this exact shape (no prose, no code fences):
   "careerStage": "one of: internship | new-grad | early-career | mid-career | senior | executive",
   "seniorityTitles": ["..."],
   "targetTitles": ["..."],
+  "titlesPool": ["..."],
   "industries": ["..."],
+  "industriesPool": ["..."],
   "specialties": ["..."],
   "keywords": ["..."],
   "technologies": ["..."],
   "frameworks": ["..."],
+  "skillsPool": ["..."],
   "regulations": ["..."],
   "certifications": ["..."],
   "negativeKeywords": ["..."],
@@ -452,6 +455,18 @@ Field guidance (ALL fields lowercase strings):
   - "senior": 12-20 yrs, director/sr director/principal/staff
   - "executive": 18+ yrs, VP+/C-suite. Use this for anyone whose recent titles include VP, SVP, EVP, Chief, President, Head-of (org-wide).
   This field drives which jobs and companies we surface — be precise.
+
+POOL FIELDS — RANKED SWAP-IN SUGGESTIONS:
+
+In addition to the primary selection fields (targetTitles, industries, keywords/technologies/frameworks), emit three "pool" fields with WIDER ranked candidate lists the user can swap into the primary set via the wizard UI:
+
+  - titlesPool (up to 15): the same shape and rules as targetTitles, but a wider ranked list. The first 5 entries MUST be identical to targetTitles in the same order. Entries 6-15 are your next-best title alternatives (still respecting the seniority-rung rule). The user picks one to swap when they remove a top-5 chip.
+
+  - industriesPool (up to 15): same shape as industries. First 5 entries identical to industries; entries 6-15 are next-best industry candidates the user can promote.
+
+  - skillsPool (up to 45): a SINGLE merged, deduped, ranked list of distinct skill terms drawn from keywords + technologies + frameworks. The first 15 entries are the ones you'd put in front of the user as their default "skills" set (most signal-dense, most distinctive). Entries 16-45 are next-best alternatives. Skip generic words; favor distinctive terms a recruiter would scan for. The wizard merges keywords/technologies/frameworks into a single bullseye, so skillsPool is what powers that picker — make the first 15 the BEST 15.
+
+  Pools must be in strict descending order of usefulness — the user assumes earlier = more important. Lowercase strings, no duplicates.
 
 - targetTitles (up to 5): SPECIFIC titles matching the candidate's ACTUAL current level and at most ONE rung above. Do NOT jump 2-3 rungs (e.g. a Sr Director should NOT see Chief titles — only Director, Sr Director, VP, Head of). Concrete and varied within the band. e.g. for a Sr Director banking-tech leader targeting director/vp roles: ["head of digital transformation", "vp banking technology", "vp grc", "director of enterprise architecture", "senior director, technology", "head of it strategy", "vp third-party risk management", "director of digital banking"]. Each title must be tokenizable into 2+ meaningful words.
 
@@ -520,13 +535,44 @@ ${resumeJson}`;
     let parsed;
     try { parsed = JSON.parse(cleaned); } catch (e) { return null; }
     // Normalize: ensure all array fields exist and are lowercase strings
-    for (const k of ['seniorityTitles','targetTitles','industries','specialties','keywords','technologies','frameworks','regulations','certifications','negativeKeywords']) {
+    for (const k of ['seniorityTitles','targetTitles','titlesPool','industries','industriesPool','specialties','keywords','technologies','frameworks','skillsPool','regulations','certifications','negativeKeywords']) {
       if (!Array.isArray(parsed[k])) parsed[k] = [];
       else parsed[k] = parsed[k].filter(x => typeof x === 'string').map(x => x.toLowerCase().trim()).filter(Boolean);
     }
     // Deterministic augmentation: add standard frameworks/regulations based on profile signals.
     // This ensures a banking-GRC profile always gets NIST CSF, COSO, FFIEC etc. even if the AI omits them.
     augmentProfileWithStandards(parsed);
+    // Pool fallback: if AI omitted a pool, derive it from the primary field.
+    // The wizard UI assumes pool[:N] == primary[:N], so backfilling keeps the
+    // suggestion-row UX functional even for older prompts or partial responses.
+    if (!parsed.titlesPool || !parsed.titlesPool.length) parsed.titlesPool = (parsed.targetTitles || []).slice(0, 15);
+    if (!parsed.industriesPool || !parsed.industriesPool.length) parsed.industriesPool = (parsed.industries || []).slice(0, 15);
+    if (!parsed.skillsPool || !parsed.skillsPool.length) {
+      const merged = [].concat(parsed.keywords || [], parsed.technologies || [], parsed.frameworks || []);
+      const seen = new Set();
+      parsed.skillsPool = merged.filter(s => {
+        if (!s || seen.has(s)) return false;
+        seen.add(s); return true;
+      }).slice(0, 45);
+    }
+    // Pool invariant: first N of pool must equal the primary selection.
+    // If the AI accidentally re-ordered things, prepend missing primaries.
+    function _alignPool(primary, pool, takeN) {
+      const out = [];
+      const seen = new Set();
+      for (const p of (primary || []).slice(0, takeN)) {
+        if (!seen.has(p)) { out.push(p); seen.add(p); }
+      }
+      for (const p of (pool || [])) {
+        if (!seen.has(p)) { out.push(p); seen.add(p); }
+      }
+      return out;
+    }
+    parsed.titlesPool = _alignPool(parsed.targetTitles, parsed.titlesPool, 5).slice(0, 15);
+    parsed.industriesPool = _alignPool(parsed.industries, parsed.industriesPool, 5).slice(0, 15);
+    // skillsPool: align against the merged keywords+technologies+frameworks (top 15)
+    const mergedTop15 = [].concat(parsed.keywords || [], parsed.technologies || [], parsed.frameworks || []).slice(0, 15);
+    parsed.skillsPool = _alignPool(mergedTop15, parsed.skillsPool, 15).slice(0, 45);
     // Extract structured contact + biographical fields from the raw resume JSON
     // (already produced by /parse-resume in shape {personal: {name,phone,email,location,linkedin}, education, experience}).
     // These power the auto-fill extension and the wizard's "Application profile" step.
