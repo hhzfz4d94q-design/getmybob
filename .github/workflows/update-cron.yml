@@ -1,0 +1,52 @@
+name: Update Worker cron schedule
+
+# Updates ONLY the cron schedule for the cool-darkness-dce5 Worker.
+# Doesn't touch secrets (RESEND_API_KEY / DIGEST_FROM stay as they are).
+#
+# Default flips the schedule to hourly so the per-user nudge / recap time
+# enforcement in the worker can actually take effect.
+
+on:
+  workflow_dispatch:
+    inputs:
+      cron:
+        description: 'Cron expression (UTC). Default "0 * * * *" = every hour on the hour.'
+        required: true
+        default: '0 * * * *'
+  repository_dispatch:
+    types: [update-cron]
+
+env:
+  CF_ACCOUNT_ID: 76598c8a5c8c7abbaed5c4292c363e09
+  WORKER_NAME: cool-darkness-dce5
+
+permissions:
+  contents: read
+
+jobs:
+  set-cron:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Cron Trigger (replaces any existing schedules)
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CRON: ${{ github.event.inputs.cron || github.event.client_payload.cron || '0 * * * *' }}
+        run: |
+          set -e
+          PAYLOAD=$(python3 -c "import json,os; print(json.dumps([{'cron':os.environ['CRON']}]))")
+          HTTP=$(curl -sS -o /tmp/cf.json -w "%{http_code}" -X PUT \
+            -H "Authorization: Bearer $CF_TOKEN" \
+            -H "Content-Type: application/json" \
+            --data "$PAYLOAD" \
+            "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/workers/scripts/${WORKER_NAME}/schedules")
+          echo "HTTP $HTTP"
+          python3 -c "import json; d=json.load(open('/tmp/cf.json')); print(json.dumps({'success':d.get('success'),'result':d.get('result'),'errors':d.get('errors',[])}, indent=2))"
+          if [ "$HTTP" != "200" ] && [ "$HTTP" != "201" ]; then exit 1; fi
+      - name: Verify
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          echo "=== Current cron schedules ==="
+          curl -sS -H "Authorization: Bearer $CF_TOKEN" \
+            "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/workers/scripts/${WORKER_NAME}/schedules" \
+            | python3 -c "import json,sys; d=json.load(sys.stdin); [print(' -', s.get('cron')) for s in (d.get('schedules') or d.get('result') or [])]"
