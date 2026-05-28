@@ -1,6 +1,6 @@
 {
   "_note": "Curated Healthcare IT / digital health catalog. Used for: (a) scoring boost when company appears in feed AND user has healthcare industries (+3, all entries), (b) auto-scraping (only ATS=greenhouse/lever/ashby/workable). Workday/Google/Amazon entries are catalog-only (scored boost when found, not scraped). Slugs are canonical for matching.",
-  "version": "2026-05-28-v2",
+  "version": "2026-05-29-v3",
   "companies": [
     {
       "name": "Doximity",
@@ -823,6 +823,150 @@
       "category": "provider-tech",
       "atsHint": "greenhouse",
       "slug": "iora-health"
+    },
+    {
+      "name": "Aledade",
+      "category": "vbc",
+      "atsHint": "greenhouse",
+      "slug": "aledade"
+    },
+    {
+      "name": "Strive Health",
+      "category": "vbc",
+      "atsHint": "greenhouse",
+      "slug": "strive"
+    },
+    {
+      "name": "Privia Health",
+      "category": "vbc",
+      "atsHint": "greenhouse",
+      "slug": "priviahealth"
+    },
+    {
+      "name": "Wayspring",
+      "category": "vbc",
+      "atsHint": "lever",
+      "slug": "wayspring"
+    },
+    {
+      "name": "Pearl Health",
+      "category": "vbc",
+      "atsHint": "greenhouse",
+      "slug": "pearlhealth"
+    },
+    {
+      "name": "Cohere Health",
+      "category": "payer-tech",
+      "atsHint": "greenhouse",
+      "slug": "coherehealth"
+    },
+    {
+      "name": "Lyric (formerly ClaimsXten)",
+      "category": "payer-tech",
+      "atsHint": "greenhouse",
+      "slug": "lyrichealth"
+    },
+    {
+      "name": "HealthEdge",
+      "category": "payer-tech",
+      "atsHint": "greenhouse",
+      "slug": "healthedge"
+    },
+    {
+      "name": "Vatica Health",
+      "category": "payer-tech",
+      "atsHint": "lever",
+      "slug": "vaticahealth"
+    },
+    {
+      "name": "Datavant",
+      "category": "life-sciences-data",
+      "atsHint": "greenhouse",
+      "slug": "datavant"
+    },
+    {
+      "name": "Particle Health",
+      "category": "interop",
+      "atsHint": "greenhouse",
+      "slug": "particlehealth"
+    },
+    {
+      "name": "Aetion",
+      "category": "life-sciences-data",
+      "atsHint": "greenhouse",
+      "slug": "aetion"
+    },
+    {
+      "name": "HealthVerity",
+      "category": "life-sciences-data",
+      "atsHint": "greenhouse",
+      "slug": "healthverity"
+    },
+    {
+      "name": "Apixio",
+      "category": "payer-tech",
+      "atsHint": "greenhouse",
+      "slug": "apixio"
+    },
+    {
+      "name": "ClearDATA",
+      "category": "infra",
+      "atsHint": "greenhouse",
+      "slug": "cleardata"
+    },
+    {
+      "name": "Hippocratic AI",
+      "category": "clinical-ai",
+      "atsHint": "greenhouse",
+      "slug": "hippocraticai"
+    },
+    {
+      "name": "Memora Health",
+      "category": "care-navigation",
+      "atsHint": "greenhouse",
+      "slug": "memora-health"
+    },
+    {
+      "name": "Curai Health",
+      "category": "telehealth",
+      "atsHint": "lever",
+      "slug": "curai"
+    },
+    {
+      "name": "Sprinter Health",
+      "category": "home-health",
+      "atsHint": "greenhouse",
+      "slug": "sprinterhealth"
+    },
+    {
+      "name": "Tomorrow Health",
+      "category": "home-health",
+      "atsHint": "greenhouse",
+      "slug": "tomorrow-health"
+    },
+    {
+      "name": "Forge Health",
+      "category": "behavioral",
+      "atsHint": "lever",
+      "slug": "forgehealth"
+    },
+    {
+      "name": "Wellth",
+      "category": "chronic-care",
+      "atsHint": "lever",
+      "slug": "wellth"
+    },
+    {
+      "name": "Maven Clinic",
+      "category": "womens-health",
+      "atsHint": "greenhouse",
+      "slug": "maven-clinic"
+    },
+    {
+      "name": "Spark Advisors",
+      "category": "medicare",
+      "atsHint": "ashby",
+      "slug": "spark-advisors"
     }
   ]
 }

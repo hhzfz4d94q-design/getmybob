@@ -1,0 +1,171 @@
+name: Seed catalog from user LinkedIn contacts
+
+# Reads contacts for every user in the registry, extracts unique company
+# names, and asks Claude to identify the ATS for each unknown one. Merges
+# into the catalog so the scraper picks them up next refresh.
+#
+# Why: every company where a user has a LinkedIn contact is by definition
+# a relevant candidate for the warm-intro pipeline. If we're not scraping
+# it, we can't show those warm-intro jobs.
+#
+# Trigger: Actions → "Seed catalog from user LinkedIn contacts" → Run.
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "0 6 * * 1"  # Mondays 6 UTC
+
+permissions:
+  contents: write
+
+env:
+  WORKER_BASE: https://cool-darkness-dce5.tr6jz6v7wg.workers.dev
+
+jobs:
+  seed:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Pull contacts for every user + ask Claude for ATS hints
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ADMIN_KEY: ${{ secrets.WORKER_ADMIN_KEY }}
+        run: |
+          python3 - <<'PY'
+          import json, os, urllib.request, re
+
+          # 1. Pull users list
+          req = urllib.request.Request(os.environ['WORKER_BASE' if False else '_'] if False else (
+              'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/users'
+          ))
+          with urllib.request.urlopen(req, timeout=20) as r:
+              users = json.loads(r.read()).get('users', [])
+          print(f"Found {len(users)} users")
+
+          # 2. Read everyone's contacts (admin endpoint exposes them)
+          all_companies = {}  # lowercased name → {name, contact_count, slugs/users}
+          for u in users:
+              slug = u.get('slug')
+              if not slug: continue
+              try:
+                  req = urllib.request.Request(
+                      f'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/admin/contacts?user={slug}',
+                      headers={'X-Admin-Key': os.environ.get('ADMIN_KEY','')},
+                  )
+                  with urllib.request.urlopen(req, timeout=20) as r:
+                      contacts = json.loads(r.read()) or []
+              except Exception as e:
+                  print(f"  [{slug}] no contacts ({e})"); continue
+              print(f"  [{slug}] {len(contacts)} contacts")
+              for c in contacts:
+                  co = (c.get('company') or '').strip()
+                  if not co or len(co) < 2: continue
+                  key = co.lower()
+                  if key not in all_companies:
+                      all_companies[key] = {'name': co, 'users': set(), 'count': 0}
+                  all_companies[key]['users'].add(slug)
+                  all_companies[key]['count'] += 1
+
+          # Sort by frequency descending — the companies where multiple
+          # contacts work are highest signal.
+          ranked = sorted(all_companies.values(), key=lambda x: -x['count'])
+          print(f"Found {len(ranked)} unique companies across all contact lists")
+
+          # Skip companies already in the catalog
+          with open('healthtech_companies.json') as f:
+              ht = json.load(f)
+          ht_names = {c.get('name','').lower() for c in ht['companies']}
+          with open('companies.json') as f:
+              co = json.load(f)
+          known_names = ht_names | {w.get('name','').lower() for w in co.get('workday',[])}
+          for k in ('greenhouse','lever','ashby'):
+              known_names |= {(s if isinstance(s,str) else s.get('slug','')).lower() for s in co.get(k,[])}
+
+          new = [r for r in ranked if r['name'].lower() not in known_names][:80]
+          print(f"{len(new)} new companies to enrich (capped at 80 per run)")
+          if not new:
+              print("Nothing new — exiting cleanly.")
+              raise SystemExit(0)
+
+          # 3. Ask Claude in one batch what ATS each one uses.
+          batch_prompt = "For each of these US-based companies, identify the ATS (greenhouse/lever/ashby/workday/icims/other) and slug/URL if known. Output ONLY a JSON array.\n\nCompanies:\n" + "\n".join(f"- {r['name']}" for r in new) + """
+
+Output one object per company:
+{
+  "name": "...",
+  "atsHint": "greenhouse|lever|ashby|workday|icims|other",
+  "slug": "<for greenhouse/lever/ashby — lowercased ATS slug>",
+  "workday": {"tenant":"...","subdomain":"wd1|wd3|wd5","site":"..."}  # only for workday entries you have high confidence about
+}
+
+Be conservative — if you don't know the ATS, return atsHint='other'. Don't invent slugs."""
+
+          req = urllib.request.Request(
+              'https://api.anthropic.com/v1/messages',
+              method='POST',
+              headers={
+                  'Content-Type': 'application/json',
+                  'x-api-key': os.environ['ANTHROPIC_API_KEY'],
+                  'anthropic-version': '2023-06-01',
+              },
+              data=json.dumps({
+                  'model': 'claude-sonnet-4-6',
+                  'max_tokens': 16000,
+                  'messages': [{'role': 'user', 'content': batch_prompt}],
+              }).encode(),
+          )
+          with urllib.request.urlopen(req, timeout=180) as r:
+              resp = json.loads(r.read().decode())
+          text = resp.get('content',[{}])[0].get('text','')
+          cleaned = re.sub(r'^```json\s*|```$', '', text.strip(), flags=re.MULTILINE)
+          enriched = json.loads(cleaned)
+          print(f"Claude enriched {len(enriched)} companies")
+
+          # 4. Merge into catalogs
+          added_ht = 0; added_wd = 0
+          ht_slugs = {c.get('slug','').lower() for c in ht['companies']}
+          wd_keys = {(w.get('tenant',''), w.get('site','')) for w in co.get('workday',[])}
+          for e in enriched:
+              hint = (e.get('atsHint') or '').lower()
+              slug = (e.get('slug') or '').lower()
+              if hint in {'greenhouse','lever','ashby','workable'} and slug and slug not in ht_slugs:
+                  ht['companies'].append({
+                      'name': e.get('name',''),
+                      'category': 'from-contacts',
+                      'atsHint': hint,
+                      'slug': slug,
+                  })
+                  ht_slugs.add(slug); added_ht += 1
+              elif hint == 'workday':
+                  wd = e.get('workday') or {}
+                  if wd.get('tenant') and wd.get('site') and (wd['tenant'], wd['site']) not in wd_keys:
+                      co['workday'].append({
+                          'name': e.get('name',''),
+                          'tenant': wd['tenant'],
+                          'subdomain': wd.get('subdomain','wd1'),
+                          'site': wd['site'],
+                          'industries': ['from-contacts'],
+                      })
+                      wd_keys.add((wd['tenant'], wd['site'])); added_wd += 1
+
+          ht['version'] = ht.get('version','') + '+from-contacts'
+          with open('healthtech_companies.json','w') as f: json.dump(ht, f, indent=2)
+          with open('companies.json','w') as f: json.dump(co, f, indent=2)
+          print(f"DONE — added {added_ht} healthtech + {added_wd} workday from contacts")
+          PY
+
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add healthtech_companies.json companies.json
+          if git diff --cached --quiet; then
+            echo "No new companies from contacts — nothing to commit."
+          else
+            git commit -m "Seed catalog from user LinkedIn contacts (weekly)"
+            git push origin main
+          fi

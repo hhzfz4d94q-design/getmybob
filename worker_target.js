@@ -663,7 +663,7 @@ async function handleSkillsProfile(request, env, cors, slug) {
       const raw = await env.RESUMES.get(uk(slug, 'skills_profile'));
       const existing = raw ? JSON.parse(raw) : {};
       const updated = Object.assign({}, existing);
-      const SCALAR_FIELDS = new Set(['salaryFloor', 'remotePreferred', 'seniorityLevel', 'careerStage', 'primaryRole', 'summary', 'companySizeMix', 'companySizePreferences', 'dailyTarget', 'recencyWindow', 'defaultSort', 'hideNoSalary', 'negativeTitles', 'matchWeights', 'signalStability', 'phone', 'email', 'location', 'linkedinUrl', 'githubUrl', 'websiteUrl', 'workAuthorization', 'requiresSponsorship', 'currentCompany', 'currentTitle', 'school', 'degree', 'graduationYear', 'firstName', 'lastName', 'excludeCompanies', 'sprintStart', 'sprintDays', 'sprintDailyQuota', 'sprintDaysOfWeek', 'sprintNudgeTime', 'sprintRecapTime', 'sprintTimezone', 'sprintSnoozedDays', 'networkCompanies', 'resumeHealth', 'resumeHealthHistory', 'lastMonthlyReportAt', 'dismissalPatterns', 'tighteningSilencedAt', 'tighteningLastSuggestionCount']);
+      const SCALAR_FIELDS = new Set(['salaryFloor', 'remotePreferred', 'seniorityLevel', 'careerStage', 'primaryRole', 'summary', 'companySizeMix', 'companySizePreferences', 'dailyTarget', 'recencyWindow', 'defaultSort', 'hideNoSalary', 'negativeTitles', 'matchWeights', 'signalStability', 'phone', 'email', 'location', 'linkedinUrl', 'githubUrl', 'websiteUrl', 'workAuthorization', 'requiresSponsorship', 'currentCompany', 'currentTitle', 'school', 'degree', 'graduationYear', 'firstName', 'lastName', 'excludeCompanies', 'sprintStart', 'sprintDays', 'sprintDailyQuota', 'sprintDaysOfWeek', 'sprintNudgeTime', 'sprintRecapTime', 'sprintTimezone', 'sprintSnoozedDays', 'networkCompanies', 'resumeHealth', 'resumeHealthHistory', 'lastMonthlyReportAt', 'dismissalPatterns', 'tighteningSilencedAt', 'tighteningLastSuggestionCount', 'sharedContactsFrom']);
       for (const [field, items] of Object.entries(body.patchFields)) {
         if (SCALAR_FIELDS.has(field)) {
           updated[field] = items;
@@ -2185,10 +2185,21 @@ async function handleContacts(request, env, cors, slug) {
 
 // --- /admin/contacts (admin push for any user) -------------------------
 async function handleAdminContacts(request, env, cors) {
-  if (request.method !== 'POST') return new Response('POST only', { status: 405, headers: cors });
   if (!env.RESUMES) return Response.json({ error: 'RESUMES KV binding missing' }, { status: 500, headers: cors });
   const adminKey = request.headers.get('X-Admin-Key');
   if (!adminKey || adminKey !== env.ADMIN_KEY) return Response.json({ error: 'Invalid X-Admin-Key' }, { status: 401, headers: cors });
+  // GET ?user=<slug> → return that user's contacts array (admin only).
+  // Used by seed-companies-from-contacts workflow.
+  if (request.method === 'GET') {
+    const url = new URL(request.url);
+    const slug = (url.searchParams.get('user') || '').trim().toLowerCase();
+    if (!slug) return Response.json({ error: 'Missing ?user=<slug>' }, { status: 400, headers: cors });
+    const raw = await env.RESUMES.get(uk(slug, 'contacts'));
+    if (!raw) return Response.json([], { headers: cors });
+    try { return Response.json(JSON.parse(raw), { headers: cors }); }
+    catch (e) { return Response.json([], { headers: cors }); }
+  }
+  if (request.method !== 'POST') return new Response('GET or POST', { status: 405, headers: cors });
   const body = await request.json().catch(() => ({}));
   const slug = (body && body.slug || '').trim().toLowerCase();
   const contacts = Array.isArray(body && body.contacts) ? body.contacts : null;

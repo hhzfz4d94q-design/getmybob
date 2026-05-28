@@ -7388,8 +7388,31 @@ document.addEventListener('tracker:updated', function(ev) {{
     }});
     if (!r.ok) return;
     const j = await r.json();
-    if (!j || !Array.isArray(j.contacts) || !j.contacts.length) return;
-    localStorage.setItem(LINKEDIN_CONTACTS_KEY, JSON.stringify(j.contacts));
+    let contacts = (j && Array.isArray(j.contacts)) ? j.contacts : [];
+    // Shared contacts: if profile.sharedContactsFrom = ['amit-arora'], pull
+    // their contacts list and union into our warm-intro pool. Lets Geetu
+    // benefit from Amit's network without copying CSVs.
+    try {{
+      const pr = await fetch(WORKER_BASE + '/skills-profile' + USER_QS, {{ cache: 'no-store' }});
+      if (pr.ok) {{
+        const pj = await pr.json();
+        const fromList = (pj && pj.profile && Array.isArray(pj.profile.sharedContactsFrom)) ? pj.profile.sharedContactsFrom : [];
+        for (const otherSlug of fromList) {{
+          if (!otherSlug || otherSlug === USER_SLUG) continue;
+          try {{
+            const or = await fetch(WORKER_BASE + '/contacts?user=' + encodeURIComponent(otherSlug), {{ headers: _h }});
+            if (!or.ok) continue;
+            const oj = await or.json();
+            if (oj && Array.isArray(oj.contacts) && oj.contacts.length) {{
+              contacts = contacts.concat(oj.contacts.map(c => Object.assign({{}}, c, {{ _sharedFrom: otherSlug }})));
+            }}
+          }} catch (e) {{}}
+        }}
+        try {{ console.log('[contacts] loaded', contacts.length, 'after merging shared from', fromList.length, 'users'); }} catch(_) {{}}
+      }}
+    }} catch (e) {{}}
+    if (contacts.length === 0) return;
+    localStorage.setItem(LINKEDIN_CONTACTS_KEY, JSON.stringify(contacts));
     if (j.meta) localStorage.setItem(LINKEDIN_CONTACTS_META_KEY, JSON.stringify(j.meta));
     if (typeof _contactsByCompany !== 'undefined') _contactsByCompany = null;
     if (typeof injectContactBadgesOnCards === 'function') injectContactBadgesOnCards();

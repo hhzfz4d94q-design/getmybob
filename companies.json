@@ -1545,6 +1545,257 @@
         "banking",
         "finance"
       ]
+    },
+    {
+      "name": "UnitedHealth Group",
+      "tenant": "uhg",
+      "subdomain": "wd5",
+      "site": "UnitedHealthGroup",
+      "industries": [
+        "healthcare",
+        "health-saas",
+        "healthcare-it"
+      ]
+    },
+    {
+      "name": "Elevance Health",
+      "tenant": "elevancehealth",
+      "subdomain": "wd1",
+      "site": "ElevanceHealth",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Humana",
+      "tenant": "humana",
+      "subdomain": "wd5",
+      "site": "Humana_External_Career_Site",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Cigna",
+      "tenant": "cigna",
+      "subdomain": "wd5",
+      "site": "cigna_careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Centene",
+      "tenant": "centene",
+      "subdomain": "wd1",
+      "site": "Centene",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Molina Healthcare",
+      "tenant": "molinahealthcare",
+      "subdomain": "wd1",
+      "site": "MolinaCareers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Johnson & Johnson",
+      "tenant": "jnj",
+      "subdomain": "wd5",
+      "site": "jnjcareers",
+      "industries": [
+        "pharmaceuticals",
+        "life-sciences"
+      ]
+    },
+    {
+      "name": "AbbVie",
+      "tenant": "abbvie",
+      "subdomain": "wd5",
+      "site": "abbviecareers",
+      "industries": [
+        "pharmaceuticals",
+        "life-sciences"
+      ]
+    },
+    {
+      "name": "Eli Lilly",
+      "tenant": "lilly",
+      "subdomain": "wd5",
+      "site": "LLY",
+      "industries": [
+        "pharmaceuticals",
+        "life-sciences"
+      ]
+    },
+    {
+      "name": "Bristol Myers Squibb",
+      "tenant": "bms",
+      "subdomain": "wd5",
+      "site": "BMS",
+      "industries": [
+        "pharmaceuticals",
+        "life-sciences"
+      ]
+    },
+    {
+      "name": "Gilead Sciences",
+      "tenant": "gilead",
+      "subdomain": "wd1",
+      "site": "gileadcareers",
+      "industries": [
+        "pharmaceuticals",
+        "biotech",
+        "life-sciences"
+      ]
+    },
+    {
+      "name": "Amgen",
+      "tenant": "amgen",
+      "subdomain": "wd1",
+      "site": "Amgen",
+      "industries": [
+        "pharmaceuticals",
+        "biotech",
+        "life-sciences"
+      ]
+    },
+    {
+      "name": "Sanofi",
+      "tenant": "sanofi",
+      "subdomain": "wd3",
+      "site": "SanofiCareers",
+      "industries": [
+        "pharmaceuticals",
+        "life-sciences"
+      ]
+    },
+    {
+      "name": "Regeneron",
+      "tenant": "regeneron",
+      "subdomain": "wd1",
+      "site": "Regeneron_Careers",
+      "industries": [
+        "pharmaceuticals",
+        "biotech",
+        "life-sciences"
+      ]
+    },
+    {
+      "name": "Takeda",
+      "tenant": "takeda",
+      "subdomain": "wd3",
+      "site": "Takeda",
+      "industries": [
+        "pharmaceuticals",
+        "life-sciences"
+      ]
+    },
+    {
+      "name": "Kaiser Permanente",
+      "tenant": "kp",
+      "subdomain": "wd5",
+      "site": "KaiserPermanenteCareers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "HCA Healthcare",
+      "tenant": "hcahealthcare",
+      "subdomain": "wd1",
+      "site": "HCA",
+      "industries": [
+        "healthcare"
+      ]
+    },
+    {
+      "name": "Providence Health",
+      "tenant": "providence",
+      "subdomain": "wd1",
+      "site": "Providence",
+      "industries": [
+        "healthcare"
+      ]
+    },
+    {
+      "name": "AdventHealth",
+      "tenant": "adventhealth",
+      "subdomain": "wd1",
+      "site": "adventhealth",
+      "industries": [
+        "healthcare"
+      ]
+    },
+    {
+      "name": "Mayo Clinic",
+      "tenant": "mayo",
+      "subdomain": "wd5",
+      "site": "mayo-careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Veeva Systems (full)",
+      "tenant": "veeva",
+      "subdomain": "wd1",
+      "site": "veeva_careers",
+      "industries": [
+        "healthcare-it",
+        "life-sciences"
+      ]
+    },
+    {
+      "name": "Oracle Health (Cerner)",
+      "tenant": "oracle",
+      "subdomain": "wd5",
+      "site": "OracleCareers",
+      "industries": [
+        "healthcare-it",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Medtronic",
+      "tenant": "medtronic",
+      "subdomain": "wd5",
+      "site": "MedtronicCareers",
+      "industries": [
+        "healthcare",
+        "life-sciences"
+      ]
+    },
+    {
+      "name": "Boston Scientific",
+      "tenant": "bsci",
+      "subdomain": "wd1",
+      "site": "BSC",
+      "industries": [
+        "healthcare",
+        "life-sciences"
+      ]
+    },
+    {
+      "name": "Abbott",
+      "tenant": "abbott",
+      "subdomain": "wd5",
+      "site": "abbottcareers",
+      "industries": [
+        "healthcare",
+        "life-sciences"
+      ]
     }
   ],
   "remoteok": [

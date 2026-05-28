@@ -1,0 +1,168 @@
+name: Discover healthcare companies (AI)
+
+# Asks Claude for mid-stage healthcare leadership employers — biased toward
+# 200-2000 employee Series B-D + post-IPO mid-cap that hire senior product /
+# transformation / GRC leaders publicly. Output merges into
+# healthtech_companies.json (greenhouse/lever/ashby entries that auto-scrape)
+# AND companies.json (workday entries with tenant URLs).
+#
+# Run with: Actions → "Discover healthcare companies (AI)" → Run workflow.
+# Pass an optional `count` (default 200) and `focus` (default 'mid-stage').
+
+on:
+  workflow_dispatch:
+    inputs:
+      count:
+        description: 'How many companies to discover (capped at 300)'
+        required: true
+        default: '200'
+      focus:
+        description: 'Focus band'
+        required: true
+        default: 'mid-stage'
+        type: choice
+        options:
+          - mid-stage
+          - enterprise
+          - mixed
+
+permissions:
+  contents: write
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Discover companies via Claude
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          COUNT: ${{ github.event.inputs.count }}
+          FOCUS: ${{ github.event.inputs.focus }}
+        run: |
+          python3 - <<'PY'
+          import json, os, urllib.request, urllib.parse
+
+          count = max(50, min(300, int(os.environ.get('COUNT', '200'))))
+          focus = os.environ.get('FOCUS', 'mid-stage')
+
+          focus_clause = {
+              'mid-stage': '200-2000 employees, Series B-D or post-IPO mid-cap. These are the companies actively scaling and hiring senior leaders publicly.',
+              'enterprise': '5000+ employees, established Fortune-500-adjacent. Often on Workday.',
+              'mixed': 'a mix across stages — 30% startup (Series A-B), 50% mid-stage (200-2000), 20% enterprise.'
+          }[focus]
+
+          prompt = f"""You're populating a US healthcare/healthtech employer catalog for a senior digital-transformation product leader.
+
+  Target band: {focus_clause}
+
+  Return exactly {count} distinct US-based healthcare-domain companies that hire senior product / transformation / GRC / IT leaders. Include verticals:
+  - Mid-stage healthtech SaaS (telehealth, payer-tech, EHR-adjacent, clinical-AI)
+  - Value-based care / risk-bearing care delivery
+  - Real-world data / life-sciences analytics
+  - Medical devices + diagnostics (mid-cap)
+  - Pharma + biotech (mid-cap)
+  - Health insurers + payers (regional + national)
+  - Major US health systems (Workday-hosted)
+  - Health-IT compliance / interoperability vendors
+
+  For each company, output JSON:
+  {{
+    "name": "string",
+    "vertical": "telehealth|payer-tech|provider-tech|life-sciences-data|...",
+    "atsHint": "greenhouse | lever | ashby | workday | icims | smartrecruiters | other",
+    "slug": "lowercase-greenhouse-or-lever-or-ashby slug (omit for workday)",
+    "workday": {{"tenant":"...", "subdomain":"wd1|wd3|wd5|wd12", "site":"..."}}  # only for workday entries you know the URL of
+  }}
+
+  Output ONLY a JSON array of these objects. No prose. {count} objects.
+  Skip companies with fewer than 50 employees. Skip pure consultancies. Skip recruiters.
+  Prefer companies you have HIGH confidence about — don't invent slugs or workday URLs you're not sure of. For workday entries you're uncertain about, OMIT the workday object (we'll fall back to catalog-only)."""
+
+          req = urllib.request.Request(
+              'https://api.anthropic.com/v1/messages',
+              method='POST',
+              headers={
+                  'Content-Type': 'application/json',
+                  'x-api-key': os.environ['ANTHROPIC_API_KEY'],
+                  'anthropic-version': '2023-06-01',
+              },
+              data=json.dumps({
+                  'model': 'claude-sonnet-4-6',
+                  'max_tokens': 16000,
+                  'messages': [{'role': 'user', 'content': prompt}],
+              }).encode(),
+          )
+          with urllib.request.urlopen(req, timeout=120) as r:
+              resp = json.loads(r.read().decode())
+          text = resp.get('content',[{}])[0].get('text','')
+          # Strip ```json fences if present
+          import re
+          cleaned = re.sub(r'^```json\s*|```$', '', text.strip(), flags=re.MULTILINE)
+          companies = json.loads(cleaned)
+          print(f"Discovered {len(companies)} companies from Claude")
+
+          # Merge into healthtech_companies.json (greenhouse/lever/ashby/workable)
+          with open('healthtech_companies.json') as f:
+              ht = json.load(f)
+          ht_slugs = {c.get('slug','').lower() for c in ht['companies']}
+          added_ht = 0
+          for c in companies:
+              hint = (c.get('atsHint') or '').lower()
+              slug = (c.get('slug') or '').lower()
+              if hint in {'greenhouse','lever','ashby','workable'} and slug and slug not in ht_slugs:
+                  ht['companies'].append({
+                      'name': c.get('name',''),
+                      'category': c.get('vertical','healthcare'),
+                      'atsHint': hint,
+                      'slug': slug,
+                  })
+                  ht_slugs.add(slug)
+                  added_ht += 1
+          ht['version'] = ht.get('version','') + '+discovered'
+          with open('healthtech_companies.json','w') as f:
+              json.dump(ht, f, indent=2)
+          print(f"Added {added_ht} new healthtech entries to healthtech_companies.json")
+
+          # Merge workday entries into companies.json
+          with open('companies.json') as f:
+              co = json.load(f)
+          wd_keys = {(w.get('tenant',''), w.get('site','')) for w in co.get('workday',[])}
+          added_wd = 0
+          for c in companies:
+              if c.get('atsHint','').lower() != 'workday': continue
+              wd = c.get('workday') or {}
+              if not wd.get('tenant') or not wd.get('site'): continue
+              key = (wd['tenant'], wd['site'])
+              if key in wd_keys: continue
+              co['workday'].append({
+                  'name': c.get('name',''),
+                  'tenant': wd['tenant'],
+                  'subdomain': wd.get('subdomain','wd1'),
+                  'site': wd['site'],
+                  'industries': ['healthcare','health-saas'],
+              })
+              wd_keys.add(key)
+              added_wd += 1
+          with open('companies.json','w') as f:
+              json.dump(co, f, indent=2)
+          print(f"Added {added_wd} new Workday tenants to companies.json")
+
+          print(f"DONE — total new companies: {added_ht + added_wd} (healthtech={added_ht}, workday={added_wd})")
+          PY
+
+      - name: Commit discovered companies
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add healthtech_companies.json companies.json
+          if git diff --cached --quiet; then
+            echo "No new companies discovered — nothing to commit."
+          else
+            git commit -m "AI-discovered healthcare companies (focus=${{ github.event.inputs.focus }}, count=${{ github.event.inputs.count }})"
+            git push origin main
+          fi
