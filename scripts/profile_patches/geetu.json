@@ -1,59 +1,8 @@
 {
-  "_note": "Bullseye fix v2: 5 titles / 5 industries / 25 skills. Patches scalar fields directly and REPLACES array fields. Note: technologies and frameworks are emptied so the scorer's 25-skill cap is enforced via keywords alone. targetCompanies intentionally NOT touched (object-array schema not patchable via this endpoint).",
+  "_note": "Sprint mode activation 2026-05-27: 10-day push, 3 apps/day quota = 30 total. Only patches sprint scalars — does not touch bullseye/skills/industries arrays from the previous patch.",
   "patchFields": {
-    "seniorityLevel": "vp",
-    "careerStage": "executive",
-    "primaryRole": "Senior digital transformation & product leader (Healthcare / Life Sciences) \u2014 targeting Director / Senior Director / Principal / VP / Group PM roles (NOT C-suite)",
-    "targetTitles": [
-      "vp of product management",
-      "vp of digital transformation",
-      "director of product management",
-      "head of digital health",
-      "group product manager"
-    ],
-    "seniorityTitles": [
-      "vp",
-      "head of",
-      "principal",
-      "senior principal",
-      "senior director",
-      "director",
-      "group product manager"
-    ],
-    "industries": [
-      "healthcare technology",
-      "digital health",
-      "pharmaceuticals",
-      "specialty ehr",
-      "health it"
-    ],
-    "specialties": [
-      "digital transformation",
-      "product portfolio management",
-      "saas product strategy",
-      "go-to-market strategy",
-      "ehr product management",
-      "patient engagement systems",
-      "demand management"
-    ],
-    "keywords": [
-      "digital transformation",
-      "product portfolio",
-      "saas",
-      "agile",
-      "ehr",
-      "healthcare it",
-      "go-to-market",
-      "product roadmap",
-      "revenue growth",
-      "change management",
-      "ai adoption",
-      "devops",
-      "operating model",
-      "program governance",
-      "stakeholder alignment"
-    ],
-    "technologies": [],
-    "frameworks": []
+    "sprintStart": "2026-05-27T00:00:00Z",
+    "sprintDays": 10,
+    "sprintDailyQuota": 3
   }
 }
