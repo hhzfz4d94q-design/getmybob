@@ -1846,4 +1846,13 @@ from dashboard.template import HTML_TEMPLATE  # extracted Phase 3
 
 
 if __name__ == "__main__":
-    run()
+    import sys, traceback
+    try:
+        run()
+    except Exception:
+        # Print traceback explicitly so GH Actions logs show WHY we failed
+        # (not just "exit 1")
+        traceback.print_exc()
+        # Re-raise so workflow correctly marks job as failed and skips
+        # the deploy/commit step
+        raise

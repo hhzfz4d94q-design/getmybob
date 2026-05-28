@@ -7,6 +7,7 @@ import re
 import sqlite3
 import urllib.parse
 import urllib.request
+from urllib.request import Request, urlopen
 from urllib.error import HTTPError, URLError
 from datetime import datetime, timezone, timedelta
 

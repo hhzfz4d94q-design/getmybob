@@ -7,10 +7,16 @@ import re
 import sqlite3
 import urllib.parse
 import urllib.request
+from urllib.request import Request, urlopen
 from urllib.error import HTTPError, URLError
 from datetime import datetime, timezone, timedelta
 
 from scrapers._http import fetch_json
+
+def _dbg_to_file(*args, **kwargs):
+    """No-op stub — debug helper was lost during scraper extraction."""
+    pass
+
 
 
 def fetch_himss(entry):

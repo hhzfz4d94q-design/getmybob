@@ -2,6 +2,7 @@
 
 Extracted from fetch_jobs.py 2026-05-28 (Phase 4).
 """
+import os
 import json
 import re
 import sqlite3
@@ -10,6 +11,13 @@ import urllib.request
 from datetime import datetime, timezone, timedelta
 
 from scrapers._http import fetch_json
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+def _dbg_to_file(*args, **kwargs):
+    """No-op stub — debug helper was lost during scraper extraction."""
+    pass
+
 
 
 def fetch_yc(entry):
