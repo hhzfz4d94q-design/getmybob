@@ -4582,6 +4582,23 @@ function openInterviewPrepFromCard(fp) {{
 async function refreshFocusPanel() {{
   const panel = document.getElementById("focus-panel");
   if (!panel) return;
+  // Defensive (2026-05-29): show the panel immediately. If any subsequent
+  // line throws, the user sees the panel + an in-page error rather than a
+  // blank middle.
+  panel.style.display = "";
+  try {{ return await _refreshFocusPanelBody(panel); }} catch (e) {{
+    try {{ console.error('[refreshFocusPanel] threw:', e); }} catch (_) {{}}
+    const list = document.getElementById("focus-list");
+    if (list) {{
+      list.innerHTML = '<div style="padding:18px;color:#a55;font-size:13.5px;">' +
+        '⚠ Focus panel failed to render: ' + ((e && e.message) || String(e)) + '<br>' +
+        '<small>This is a bug. Reload, and if it persists, open the browser console for the stack trace.</small>' +
+        '</div>';
+    }}
+  }}
+}}
+
+async function _refreshFocusPanelBody(panel) {{
   let N = (typeof loadDailyApplyTarget === "function") ? loadDailyApplyTarget() : 3;
   N = Math.max(3, Math.min(5, parseInt(N, 10) || 3));
 
