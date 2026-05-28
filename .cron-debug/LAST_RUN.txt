@@ -1,0 +1,17 @@
+HTTP: 200
+PAYLOAD: [{"cron": "0 * * * *"}]
+RESPONSE:
+{
+  "result": {
+    "schedules": [
+      {
+        "cron": "0 * * * *",
+        "created_on": "2026-05-28T18:12:15.017089Z",
+        "modified_on": "2026-05-28T18:14:23.604203Z"
+      }
+    ]
+  },
+  "success": true,
+  "errors": [],
+  "messages": []
+}
