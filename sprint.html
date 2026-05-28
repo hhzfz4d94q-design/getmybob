@@ -311,7 +311,13 @@ async function loadData() {
     // 3. Contacts (warm-intro count)
     let contacts = [];
     try {
-      const cr = await fetch(WORKER_BASE + '/contacts' + USER_QS, { credentials: 'include' });
+      // Try to find edit key from any same-domain localStorage entry (set by main dashboard)
+      let editKey = '';
+      try {
+        editKey = localStorage.getItem('htj_resume_key_' + SLUG) || localStorage.getItem('htj_resume_key') || '';
+      } catch(e) {}
+      const headers = editKey ? { 'X-Edit-Key': editKey } : {};
+      const cr = await fetch(WORKER_BASE + '/contacts' + USER_QS, { credentials: 'include', headers });
       if (cr.ok) {
         const cj = await cr.json();
         contacts = Array.isArray(cj.contacts) ? cj.contacts : [];

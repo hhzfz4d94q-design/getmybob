@@ -5791,10 +5791,12 @@ async function cycleStatus(fp, btn) {{
     const r = await _trackerAction('clearStatus', {{ fp }});
     if (!r) return;
     delete _trackerCache[fp];
+    try {{ document.dispatchEvent(new CustomEvent('tracker:updated', {{ detail: {{ fp, status: '' }} }})); }} catch(e) {{}}
   }} else {{
     const r = await _trackerAction('setStatus', {{ fp, status: next, jobMeta }});
     if (!r) return;
     _trackerCache[fp] = r.record;
+    try {{ document.dispatchEvent(new CustomEvent('tracker:updated', {{ detail: {{ fp, status: next }} }})); }} catch(e) {{}}
   }}
   refreshTrackerUI();
   filter();
@@ -10459,9 +10461,14 @@ function wizWtPrefill() {{
 async function startSprintNow(btn) {{
   if (btn) {{ btn.disabled = true; btn.textContent = 'Starting…'; }}
   try {{
+    const _ek = (typeof getEditKey === 'function') ? getEditKey() : null;
+    const _ak = (typeof getAdminKey === 'function') ? getAdminKey() : null;
+    const _headers = {{ 'Content-Type': 'application/json' }};
+    if (_ek) _headers['X-Edit-Key'] = _ek;
+    else if (_ak) _headers['X-Admin-Key'] = _ak;
     const r = await fetch(WORKER_BASE + '/api/sprint/start' + USER_QS, {{
       method: 'POST',
-      headers: {{ 'Content-Type': 'application/json', 'X-Edit-Key': EDIT_KEY }},
+      headers: _headers,
       credentials: 'include',
       body: JSON.stringify({{ sprintDays: 10, sprintDailyQuota: 3 }})
     }});
@@ -10560,8 +10567,13 @@ document.addEventListener('tracker:updated', function(ev) {{
         if (Array.isArray(arr) && arr.length > 0) return;
       }} catch(e) {{}}
     }}
+    const _ek = (typeof getEditKey === 'function') ? getEditKey() : null;
+    const _ak = (typeof getAdminKey === 'function') ? getAdminKey() : null;
+    const _h = {{}};
+    if (_ek) _h['X-Edit-Key'] = _ek;
+    else if (_ak) _h['X-Admin-Key'] = _ak;
     const r = await fetch(WORKER_BASE + '/contacts' + USER_QS, {{
-      headers: {{ 'X-Edit-Key': EDIT_KEY }},
+      headers: _h,
       credentials: 'include'
     }});
     if (!r.ok) return;

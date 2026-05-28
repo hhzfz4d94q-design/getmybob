@@ -1399,11 +1399,15 @@ Return as: {"results": {"CompanyName": {...}, ...}}`;
 async function handleContacts(request, env, cors, slug) {
   if (!env.RESUMES) return Response.json({ error: 'RESUMES KV binding missing' }, { status: 500, headers: cors });
   if (request.method === 'GET') {
-    // Auth: edit key OR own session
+    // Auth: edit key, own session, or admin
     let authed = await checkEditKey(request, env, slug);
     if (!authed) {
       const sess = await sessionFromRequest(request, env);
       if (sess && sess.slug === slug) authed = true;
+    }
+    if (!authed) {
+      const ak = request.headers.get('X-Admin-Key');
+      if (ak && env.ADMIN_KEY && ak === env.ADMIN_KEY) authed = true;
     }
     if (!authed) return Response.json({ error: 'Auth required' }, { status: 401, headers: cors });
     const raw = await env.RESUMES.get(uk(slug, 'contacts'));
@@ -1418,6 +1422,10 @@ async function handleContacts(request, env, cors, slug) {
     if (!authed) {
       const sess = await sessionFromRequest(request, env);
       if (sess && sess.slug === slug) authed = true;
+    }
+    if (!authed) {
+      const ak = request.headers.get('X-Admin-Key');
+      if (ak && env.ADMIN_KEY && ak === env.ADMIN_KEY) authed = true;
     }
     if (!authed) return Response.json({ error: 'Auth required' }, { status: 401, headers: cors });
     const body = await request.json().catch(() => ({}));
@@ -1465,6 +1473,10 @@ async function handleSprintStart(request, env, cors, slug) {
     const sess = await sessionFromRequest(request, env);
     if (sess && sess.slug === slug) authed = true;
   }
+  if (!authed) {
+    const ak = request.headers.get('X-Admin-Key');
+    if (ak && env.ADMIN_KEY && ak === env.ADMIN_KEY) authed = true;
+  }
   if (!authed) return Response.json({ error: 'Auth required' }, { status: 401, headers: cors });
   const body = await request.json().catch(() => ({}));
   const sprintDays = Math.max(1, Math.min(30, parseInt(body.sprintDays || 10, 10)));
@@ -1486,6 +1498,10 @@ async function handleSprintReset(request, env, cors, slug) {
   if (!authed) {
     const sess = await sessionFromRequest(request, env);
     if (sess && sess.slug === slug) authed = true;
+  }
+  if (!authed) {
+    const ak = request.headers.get('X-Admin-Key');
+    if (ak && env.ADMIN_KEY && ak === env.ADMIN_KEY) authed = true;
   }
   if (!authed) return Response.json({ error: 'Auth required' }, { status: 401, headers: cors });
   const raw = await env.RESUMES.get(uk(slug, 'skills_profile'));
