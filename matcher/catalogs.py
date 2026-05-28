@@ -16,6 +16,7 @@ import re
 
 from matcher.canonical import canonical_company
 from storage.profile import load_users, load_skills_profile
+from storage.db import _slugify_company_name
 
 # Module globals — fetch_jobs.py re-imports these for backward compat
 VC_PORTFOLIO_COMPANIES = []  # list of dicts {name, industry, fundingStage, atsHint}
