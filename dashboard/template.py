@@ -4780,6 +4780,19 @@ async function refreshFocusPanel() {{
       parts.push(isHiring ? "warm intro to a recruiter here" : "warm-intro (you have a LinkedIn contact here)");
     }}
     if (c.querySelector(".just-posted-badge")) parts.push("posted in last 3 days");
+    // Week 2: primary subscore reason — name the strongest dimension that passed.
+    const dims = [
+      ['fit-industry', 'industry match'],
+      ['fit-keywords', 'skill keywords'],
+      ['fit-title',    'title fit'],
+      ['fit-seniority','level fit']
+    ];
+    let bestLabel = null, bestScore = 0;
+    dims.forEach(([k, label]) => {{
+      const v = parseInt(c.getAttribute('data-' + k) || '', 10);
+      if (Number.isFinite(v) && v > bestScore) {{ bestScore = v; bestLabel = label; }}
+    }});
+    if (bestLabel && bestScore >= 60) parts.push('strongest signal: ' + bestLabel + ' (' + bestScore + ')');
     const mr = c.querySelector(".match-reason, .why-match");
     if (mr) {{
       const txt = (mr.textContent || "").replace(/^→ Match:\s*/, "").trim();
@@ -4827,9 +4840,15 @@ async function refreshFocusPanel() {{
       if (why) {{
         html += '<div style="color:#5C5CD6;font-size:12.5px;font-style:italic;line-height:1.4;">→ ' + _esc(why) + '</div>';
       }}
-      html += '<div style="display:flex;gap:8px;align-items:center;margin-top:2px;">';
+      html += '<div style="display:flex;gap:8px;align-items:center;margin-top:2px;flex-wrap:wrap;">';
       html += '<a href="' + applyUrl + '" target="_blank" rel="noopener" style="background:linear-gradient(135deg,#1817B5,#7C7CF0);color:#fff;padding:7px 14px;border-radius:6px;font-size:13px;font-weight:600;text-decoration:none;">Apply →</a>';
       html += '<button data-jump-fp="' + fp + '" style="background:none;border:1px solid #d0d4dc;color:#666;padding:6px 12px;border-radius:6px;font-size:12.5px;cursor:pointer;">View full card</button>';
+      // Week 2: structured Skip-with-reason buttons
+      html += '<div style="display:inline-flex;gap:4px;margin-left:8px;">';
+      html += '<button class="fp-skip-btn" data-skip-fp="' + fp + '" data-skip-reason="too-junior"    data-skip-co="' + _esc(compTxt) + '" data-skip-title="' + _esc(titleTxt) + '" style="background:#fff;border:1px solid #eee;color:#888;font-size:11px;padding:4px 8px;border-radius:5px;cursor:pointer;" title="Skip — title is too junior for me">↓ junior</button>';
+      html += '<button class="fp-skip-btn" data-skip-fp="' + fp + '" data-skip-reason="wrong-industry" data-skip-co="' + _esc(compTxt) + '" data-skip-title="' + _esc(titleTxt) + '" style="background:#fff;border:1px solid #eee;color:#888;font-size:11px;padding:4px 8px;border-radius:5px;cursor:pointer;" title="Skip — wrong industry for me">↯ industry</button>';
+      html += '<button class="fp-skip-btn" data-skip-fp="' + fp + '" data-skip-reason="bad-company"   data-skip-co="' + _esc(compTxt) + '" data-skip-title="' + _esc(titleTxt) + '" style="background:#fff;border:1px solid #eee;color:#888;font-size:11px;padding:4px 8px;border-radius:5px;cursor:pointer;" title="Skip — not the right company">✗ company</button>';
+      html += '</div>';
       html += '<span style="margin-left:auto;color:#888;font-size:11px;">score ' + score + '</span>';
       html += '</div>';
       row.innerHTML = html;
@@ -4842,6 +4861,44 @@ async function refreshFocusPanel() {{
         if (typeof window._focusJumpTo === 'function') window._focusJumpTo(fp);
       }});
     }});
+    // Week 2: Skip-with-reason button delegation
+    list.querySelectorAll('.fp-skip-btn').forEach(function(b) {{
+      b.addEventListener('click', function() {{
+        _focusDismiss(b.dataset.skipFp, b.dataset.skipReason, b.dataset.skipCo, b.dataset.skipTitle, b);
+      }});
+    }});
+  }}
+}}
+
+// === Week 2 (match precision): Skip-with-reason → /api/dismiss ========
+async function _focusDismiss(fp, reason, company, title, btnEl) {{
+  if (btnEl) {{ btnEl.disabled = true; btnEl.textContent = '…'; }}
+  try {{
+    const _ek = (typeof getEditKey === 'function') ? getEditKey() : null;
+    const _ak = (typeof getAdminKey === 'function') ? getAdminKey() : null;
+    const _h = {{ 'Content-Type': 'application/json' }};
+    if (_ek) _h['X-Edit-Key'] = _ek;
+    else if (_ak) _h['X-Admin-Key'] = _ak;
+    const r = await fetch(WORKER_BASE + '/api/dismiss' + USER_QS, {{
+      method: 'POST', headers: _h,
+      body: JSON.stringify({{ fp, reason, company, title }})
+    }});
+    if (!r.ok) {{
+      const j = await r.json().catch(()=>({{}}));
+      alert('Could not record dismissal: ' + (j.error || r.status));
+      if (btnEl) {{ btnEl.disabled = false; btnEl.textContent = btnEl.dataset.skipReason; }}
+      return;
+    }}
+    // Mirror into local tracker cache so the next refreshFocusPanel skips this fp
+    try {{
+      if (typeof _trackerCache !== 'undefined') {{
+        _trackerCache[fp] = Object.assign(_trackerCache[fp] || {{}}, {{ status: 'dismissed', statusChangedAt: new Date().toISOString() }});
+      }}
+    }} catch(_) {{}}
+    if (typeof refreshFocusPanel === 'function') await refreshFocusPanel();
+  }} catch (e) {{
+    alert(_spErr('focusDismiss', WORKER_BASE + '/api/dismiss' + USER_QS, e));
+    if (btnEl) {{ btnEl.disabled = false; btnEl.textContent = btnEl.dataset.skipReason; }}
   }}
 }}
 

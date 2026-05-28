@@ -84,6 +84,7 @@ export default {
     if (url.pathname === '/api/tuning/save')    return handleTuningSave(request, env, cors, slug);
     if (url.pathname === '/api/tuning/outcome') return handleTuningOutcome(request, env, cors, slug);
     if (url.pathname === '/api/tuning/list')    return handleTuningList(request, env, cors, slug);
+    if (url.pathname === '/api/dismiss')         return handleDismiss(request, env, cors, slug);
     if (url.pathname === '/skills-profile') return handleSkillsProfile(request, env, cors, slug);
     if (url.pathname === '/regenerate-profile') return handleRegenerateProfile(request, env, cors, slug);
     if (url.pathname === '/regenerate-companies') return handleRegenerateCompanies(request, env, cors, slug);
@@ -660,7 +661,7 @@ async function handleSkillsProfile(request, env, cors, slug) {
       const raw = await env.RESUMES.get(uk(slug, 'skills_profile'));
       const existing = raw ? JSON.parse(raw) : {};
       const updated = Object.assign({}, existing);
-      const SCALAR_FIELDS = new Set(['salaryFloor', 'remotePreferred', 'seniorityLevel', 'careerStage', 'primaryRole', 'summary', 'companySizeMix', 'companySizePreferences', 'dailyTarget', 'recencyWindow', 'defaultSort', 'hideNoSalary', 'negativeTitles', 'matchWeights', 'signalStability', 'phone', 'email', 'location', 'linkedinUrl', 'githubUrl', 'websiteUrl', 'workAuthorization', 'requiresSponsorship', 'currentCompany', 'currentTitle', 'school', 'degree', 'graduationYear', 'firstName', 'lastName', 'excludeCompanies', 'sprintStart', 'sprintDays', 'sprintDailyQuota', 'sprintDaysOfWeek', 'sprintNudgeTime', 'sprintRecapTime', 'sprintTimezone', 'sprintSnoozedDays', 'networkCompanies', 'resumeHealth', 'resumeHealthHistory', 'lastMonthlyReportAt']);
+      const SCALAR_FIELDS = new Set(['salaryFloor', 'remotePreferred', 'seniorityLevel', 'careerStage', 'primaryRole', 'summary', 'companySizeMix', 'companySizePreferences', 'dailyTarget', 'recencyWindow', 'defaultSort', 'hideNoSalary', 'negativeTitles', 'matchWeights', 'signalStability', 'phone', 'email', 'location', 'linkedinUrl', 'githubUrl', 'websiteUrl', 'workAuthorization', 'requiresSponsorship', 'currentCompany', 'currentTitle', 'school', 'degree', 'graduationYear', 'firstName', 'lastName', 'excludeCompanies', 'sprintStart', 'sprintDays', 'sprintDailyQuota', 'sprintDaysOfWeek', 'sprintNudgeTime', 'sprintRecapTime', 'sprintTimezone', 'sprintSnoozedDays', 'networkCompanies', 'resumeHealth', 'resumeHealthHistory', 'lastMonthlyReportAt', 'dismissalPatterns']);
       for (const [field, items] of Object.entries(body.patchFields)) {
         if (SCALAR_FIELDS.has(field)) {
           updated[field] = items;
@@ -1162,6 +1163,60 @@ async function handleTuningList(request, env, cors, slug) {
     if (o === 'rejected') summary.rejected++;
   });
   return Response.json({ tunings: list, summary }, { headers: cors });
+}
+
+// --- /api/dismiss (Week 2 — structured per-reason dismissal) ----------
+// POST { fp, company, title, reason } where reason in:
+//   'too-junior' | 'wrong-industry' | 'bad-company' | 'wrong-location' | 'other'
+// Appends to profile.dismissalPatterns (capped 100). Also flips the
+// tracker entry to 'dismissed' so the regular tracker pipeline still
+// filters this job out of future picks.
+async function handleDismiss(request, env, cors, slug) {
+  if (request.method !== 'POST') return new Response('POST only', { status: 405, headers: cors });
+  let authed = await checkEditKey(request, env, slug);
+  if (!authed) {
+    const sess = await sessionFromRequest(request, env);
+    if (sess && sess.slug === slug) authed = true;
+  }
+  if (!authed) {
+    const ak = request.headers.get('X-Admin-Key');
+    if (ak && env.ADMIN_KEY && ak === env.ADMIN_KEY) authed = true;
+  }
+  if (!authed) return Response.json({ error: 'Auth required' }, { status: 401, headers: cors });
+  const body = await request.json().catch(() => ({}));
+  if (!body.fp) return Response.json({ error: 'Missing fp' }, { status: 400, headers: cors });
+  const allowedReasons = ['too-junior','wrong-industry','bad-company','wrong-location','other'];
+  const reason = allowedReasons.includes(body.reason) ? body.reason : 'other';
+
+  const profRaw = await env.RESUMES.get(uk(slug, 'skills_profile'));
+  const profile = profRaw ? JSON.parse(profRaw) : {};
+  if (!Array.isArray(profile.dismissalPatterns)) profile.dismissalPatterns = [];
+  profile.dismissalPatterns.push({
+    fp: body.fp,
+    company: (body.company || '').slice(0, 80),
+    title: (body.title || '').slice(0, 120),
+    reason,
+    note: (body.note || '').slice(0, 300),
+    ts: new Date().toISOString()
+  });
+  if (profile.dismissalPatterns.length > 100) profile.dismissalPatterns = profile.dismissalPatterns.slice(-100);
+  profile.editedAt = new Date().toISOString();
+  await env.RESUMES.put(uk(slug, 'skills_profile'), JSON.stringify(profile));
+
+  // Also mark in tracker so the focus panel filters this fp on next render
+  try {
+    const trackerRaw = await env.RESUMES.get(uk(slug, 'tracker'));
+    const tracker = trackerRaw ? JSON.parse(trackerRaw) : {};
+    tracker[body.fp] = Object.assign(tracker[body.fp] || {}, {
+      status: 'dismissed',
+      statusChangedAt: new Date().toISOString(),
+      jobMeta: { title: body.title || '', company: body.company || '' },
+      dismissReason: reason
+    });
+    await env.RESUMES.put(uk(slug, 'tracker'), JSON.stringify(tracker));
+  } catch (e) { /* tolerate */ }
+
+  return Response.json({ status: 'recorded', reason, totalDismissals: profile.dismissalPatterns.length }, { headers: cors });
 }
 
 // --- /regenerate-profile -----------------------------------------------
