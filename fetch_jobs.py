@@ -105,6 +105,7 @@ from storage.db import (
     get_conn, upsert_job, fingerprint,
     _build_company_industries, _slugify_company_name, SCHEMA, DB_PATH,
 )
+import storage.db as _storage_db  # for live access to COMPANY_INDUSTRIES (gets reassigned by _build_company_industries)
 from storage.profile import load_skills_profile, load_users, _careers_root
 from matcher.role_family import (
     _detect_role_family, _user_role_family, _is_role_family_mismatch,
@@ -1636,7 +1637,7 @@ def generate_all_dashboards(conn):
     touch index.html or landing.html.
     """
     # Ensure COMPANY_INDUSTRIES is built (may not have been if called standalone)
-    if not COMPANY_INDUSTRIES:
+    if not getattr(_storage_db, 'COMPANY_INDUSTRIES', None):
         try:
             with open(COMPANIES_PATH) as f:
                 _build_company_industries(json.load(f))
