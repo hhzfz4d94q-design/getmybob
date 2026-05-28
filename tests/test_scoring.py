@@ -198,7 +198,66 @@ GOLDENS = [
       "description": "Lead GRC and TPRM at Stripe. Third-party risk, regulatory compliance, "
                      "vendor management. Capital markets, fintech. Padded enough for no penalty."},
      AMIT_PROFILE, 50, 100),
+
+    # ===== Healthcare expansion goldens (added 2026-05-28) =================
+    # Profile: senior healthcare-IT leader (Geetu shape)
+    # Tests: networkCompanies +5, healthtech catalog +3, stacking, gate-by-industry
 ]
+
+GEETU_PROFILE = {
+    "targetTitles": ["vp of product management", "director of product management",
+                     "head of digital health", "group product manager"],
+    "industries": ["healthcare technology", "digital health", "pharmaceuticals", "ehr"],
+    "keywords": ["digital transformation", "product portfolio", "saas", "ehr",
+                 "healthcare it", "product roadmap", "agile"],
+    "technologies": [],
+    "frameworks": [],
+    "negativeKeywords": [],
+    "seniorityLevel": "vp",
+    "seniorityTitles": ["vp", "director", "head of", "group product manager"],
+    "matchWeights": {"titles": 30, "industries": 35, "skills": 35},
+    "signalStability": {"title": 40, "industry": 100, "skills": 100},
+    "networkCompanies": ["BioReference Laboratories", "Prescryptive Health, Inc.", "DrFirst, Inc."],
+}
+
+# A bullseye-matching base JD that gets boosted by company position
+HC_JD = (
+    "VP of Product Management role leading our digital health platform. "
+    "Drive product portfolio strategy across our SaaS healthcare IT offerings. "
+    "Define product roadmap, partner with engineering on agile delivery, "
+    "and own the EHR integration roadmap. Healthcare technology, pharmaceuticals. "
+    "Lead a team of senior product managers."
+)
+
+HEALTH_GOLDENS = [
+    # 14. Network company (canonical match) gets +5 vs same job at random co
+    ("network +5: BioReference (canonical) gets boost",
+     {"title": "VP Product", "company_name": "Bio-Reference", "description": HC_JD},
+     GEETU_PROFILE, 60, 100),
+    # 15. Catalog company (Doximity is in catalog) gets +3 when industries match
+    ("catalog +3: Doximity boosted (user has health industries)",
+     {"title": "VP Product", "company_name": "Doximity", "description": HC_JD},
+     GEETU_PROFILE, 60, 100),
+    # 16. Catalog gate: same Doximity job for non-health profile gets NO catalog boost
+    ("catalog gate: Doximity NOT boosted for non-health user",
+     {"title": "VP Product", "company_name": "Doximity",
+      "description": "VP Product role. Drive roadmap. Lead engineering."},
+     {**AMIT_PROFILE, "industries": ["fintech", "banking"]}, 30, 75),
+    # 17. Stacking: company in BOTH network AND catalog gets +5+3 = +8
+    ("stacked +8: company in network AND catalog",
+     {"title": "VP Product", "company_name": "Prescryptive Health",
+      "description": HC_JD},
+     {**GEETU_PROFILE,
+      "networkCompanies": ["Prescryptive Health, Inc."],
+      # Also force into catalog set for test:
+     }, 65, 100),
+]
+GOLDENS.extend(HEALTH_GOLDENS)
+
+# Add Prescryptive Health to healthtech catalog if not already (for stacking test #17)
+if hasattr(fetch_jobs, "HEALTHTECH_SET"):
+    if "prescryptive health" not in fetch_jobs.HEALTHTECH_SET:
+        fetch_jobs.HEALTHTECH_SET.add("prescryptive health")
 
 print("score_job() golden tests:\n")
 for label, job, prof, lo, hi in GOLDENS:

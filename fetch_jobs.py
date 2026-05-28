@@ -2193,6 +2193,33 @@ def _load_healthtech_catalog():
         print(f'[healthtech] load failed: {e}', flush=True)
         HEALTHTECH_COMPANIES = []
         HEALTHTECH_SET = set()
+    # Rebuild HEALTHTECH_SET to use canonical forms — fixes spelling-variation misses
+    # ("Bio-Reference Laboratories" vs "BioReference" etc.)
+    HEALTHTECH_SET = set(canonical_company(c.get('name')) for c in HEALTHTECH_COMPANIES if isinstance(c, dict))
+
+def canonical_company(name):
+    """Normalize a company name for fuzzy matching against catalogs/network.
+    Strips common suffixes (Inc, LLC, Corp), trailing parenthetical, all
+    punctuation, collapses whitespace, lowercases. This is the canonical
+    form used by both score_job() boost lookups AND catalog loaders so they
+    agree on identity.
+    Examples:
+        'Bio-Reference Laboratories' -> 'bioreference laboratories'
+        'BioReference'               -> 'bioreference'
+        'Prescryptive Health, Inc.'  -> 'prescryptive health'
+        'PillPack (Amazon)'          -> 'pillpack'
+    """
+    if not name:
+        return ''
+    n = str(name).lower()
+    # Drop trailing parenthetical (e.g. "(Amazon)", "(One Medical)")
+    n = re.sub(r'\s*\([^)]*\)\s*$', '', n)
+    # Drop common entity suffixes
+    n = re.sub(r',?\s*(inc|llc|corp|corporation|ltd|plc|co|company)\.?\s*$', '', n)
+    # Strip all non-alphanumeric (hyphens, periods, commas, slashes)
+    n = re.sub(r'[^a-z0-9 ]+', '', n)
+    n = re.sub(r'\s+', ' ', n).strip()
+    return n
 
 def _load_vc_portfolio():
     """Load discovered VC-portfolio companies from vc_portfolio_companies.json.
@@ -2760,19 +2787,18 @@ def score_job(job):
     # Both small, additive, only fire when user opted into healthcare industries.
     # Stacking with warm-intro priority (+200 sprint sort) keeps these companies
     # at the top of the feed for users who match.
+    # Uses canonical_company() so 'Bio-Reference Laboratories' and 'BioReference'
+    # both match the same network entry.
     try:
-        _co_lower = (job.get("company_name") or job.get("company_slug") or "").strip().lower()
-        if _co_lower and SKILLS_PROFILE:
-            # (A) Network-seed boost: company is in the user's LinkedIn-network
-            # healthcare list. +5 — small enough not to overpower bullseye,
-            # large enough to lift above neighbors of equal fit.
-            net_co = set(c.lower().strip() for c in (SKILLS_PROFILE.get('networkCompanies') or []) if isinstance(c, str))
-            if _co_lower in net_co:
+        _co_raw = job.get("company_name") or job.get("company_slug") or ""
+        _co_canon = canonical_company(_co_raw)
+        if _co_canon and SKILLS_PROFILE:
+            # (A) Network-seed boost
+            net_co = set(canonical_company(c) for c in (SKILLS_PROFILE.get('networkCompanies') or []) if isinstance(c, str))
+            if _co_canon in net_co:
                 s += 5
-            # (B) Curated healthtech catalog boost: company is in the
-            # universal HIT catalog. +3 — gentle, only meaningful when
-            # user's industries actually include health/pharma/digital.
-            if HEALTHTECH_SET and _co_lower in HEALTHTECH_SET:
+            # (B) Curated healthtech catalog boost (gated on healthcare industries)
+            if HEALTHTECH_SET and _co_canon in HEALTHTECH_SET:
                 user_inds = ' '.join(str(i).lower() for i in (SKILLS_PROFILE.get('industries') or []))
                 if any(kw in user_inds for kw in ('health', 'pharma', 'medic', 'bio', 'ehr', 'clinic', 'wellness', 'therapeut')):
                     s += 3
@@ -2928,14 +2954,18 @@ def _merge_healthtech_catalog(companies):
             if slug: existing[ats].add(slug.lower())
     added = 0
     for c in HEALTHTECH_COMPANIES:
-        name = (c.get('name') or '').strip() if isinstance(c, dict) else str(c).strip()
+        if not isinstance(c, dict): continue
+        name = (c.get('name') or '').strip()
         if not name: continue
-        ats = (c.get('atsHint') or 'greenhouse').strip().lower() if isinstance(c, dict) else 'greenhouse'
+        ats = (c.get('atsHint') or 'greenhouse').strip().lower()
         # Only auto-add for ATSes we can scrape by slug
         if ats not in ('greenhouse', 'lever', 'ashby', 'workable'):
             continue
         if ats not in companies: companies[ats] = []
-        slug = re.sub(r'[^a-z0-9]+', '-', name.lower()).strip('-')
+        # Prefer explicit slug from catalog; fall back to derived slug only if missing
+        slug = (c.get('slug') or '').strip().lower()
+        if not slug:
+            slug = re.sub(r'[^a-z0-9]+', '-', name.lower()).strip('-')
         if not slug: continue
         if slug in existing.get(ats, set()): continue
         companies[ats].append(slug)

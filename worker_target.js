@@ -2670,81 +2670,74 @@ async function sendDailyMixedToAll(env) {
   return { sprintSent, digestSent, total: users.length };
 }
 
-async function sendSprintReminderForUser(env, user, profile) {
-  const slug = user.slug;
-  const userName = user.name || slug;
+// PURE function — testable without env / fetch / KV. Takes already-fetched
+// data, returns { subject, bodyHtml, ccList, meta }. Refactored 2026-05-28.
+function buildSprintReminder({ slug, userName, profile, tracker, contacts, cards, now, ccEmail }) {
   const start = new Date(profile.sprintStart);
-  const now = new Date();
+  now = now || new Date();
   const sprintDays = parseInt(profile.sprintDays || 10, 10);
   const dailyQuota = parseInt(profile.sprintDailyQuota || 3, 10);
   const dayN = Math.floor((now - start) / 86400000) + 1;
   const quotaTotal = sprintDays * dailyQuota;
-  // Tracker rollup
-  const trackerRaw = await env.RESUMES.get(uk(slug, 'tracker'));
-  const tracker = trackerRaw ? JSON.parse(trackerRaw) : {};
+
+  // Tracker rollup over the sprint window
   let applied = 0, todayApplied = 0, yesterdayApplied = 0;
   const todayStr = now.toISOString().slice(0, 10);
   const yesterdayStr = new Date(now.getTime() - 86400000).toISOString().slice(0, 10);
-  Object.values(tracker).forEach(e => {
+  Object.values(tracker || {}).forEach(e => {
     if (!e || typeof e !== 'object') return;
     const st = (e.status || '').toLowerCase();
     if (!['applied','phone','onsite','offer','rejected'].includes(st)) return;
     const ts = e.appliedAt || e.updatedAt || '';
     if (!ts) return;
     const dt = new Date(ts);
-    if (dt < start) return;
+    if (isNaN(dt.getTime()) || dt < start) return;
     applied++;
     const ds = dt.toISOString().slice(0, 10);
     if (ds === todayStr) todayApplied++;
     if (ds === yesterdayStr) yesterdayApplied++;
   });
-  // Read contacts for warm-intro tagging
-  const contactsRaw = await env.RESUMES.get(uk(slug, 'contacts'));
-  const contacts = contactsRaw ? JSON.parse(contactsRaw) : [];
+
+  // Build contacts-by-company map (lowercased company name → count)
   const contactsByCo = {};
-  contacts.forEach(c => {
-    const k = (c.company || '').toLowerCase().trim();
+  (contacts || []).forEach(c => {
+    const k = ((c && c.company) || '').toLowerCase().trim();
     if (!k) return;
-    if (!contactsByCo[k]) contactsByCo[k] = 0;
-    contactsByCo[k]++;
+    contactsByCo[k] = (contactsByCo[k] || 0) + 1;
   });
-  // Fetch dashboard HTML to extract top picks (warm-intro first)
-  let html = '';
-  try {
-    const r = await fetch(`https://getmemyjob.officebeatllc.com/${slug}.html`, { headers: { 'Accept':'text/html' } });
-    if (r.ok) html = await r.text();
-  } catch (e) {}
-  // Extract cards
-  const cardRx = /<div class="card"[^>]*data-fp="([^"]+)"[^>]*data-score="(\d+)"[^>]*>[\s\S]*?<div class="title"><a href="([^"]+)"[^>]*>([^<]+)<\/a>[\s\S]*?<span class="company">([^<]+)<\/span>/g;
+
+  // Filter + rank cards: warm-intro first, then score
   const picks = [];
-  let m;
-  while ((m = cardRx.exec(html)) !== null) {
-    const [, fp, score, applyUrl, title, company] = m;
-    const rec = tracker[fp];
-    if (rec && rec.status && ['applied','phone','onsite','offer'].includes(rec.status)) continue;
-    const co = (company || '').trim();
-    const warmCount = contactsByCo[co.toLowerCase()] || 0;
-    picks.push({ fp, score: parseInt(score, 10), applyUrl, title: title.trim(), company: co, warmCount });
-  }
+  (cards || []).forEach(card => {
+    const rec = tracker && tracker[card.fp];
+    if (rec && rec.status && ['applied','phone','onsite','offer'].includes(rec.status)) return;
+    const warmCount = contactsByCo[(card.company || '').toLowerCase()] || 0;
+    picks.push({ ...card, warmCount });
+  });
   picks.sort((a, b) => {
     const wa = a.warmCount > 0 ? 1 : 0;
     const wb = b.warmCount > 0 ? 1 : 0;
     if (wa !== wb) return wb - wa;
-    return b.score - a.score;
+    return (b.score || 0) - (a.score || 0);
   });
   const top = picks.slice(0, dailyQuota);
-  // Day-3-miss escalation
-  let ccList = [];
-  if (dayN >= 4 && yesterdayApplied === 0) {
-    if (env.SPRINT_CC_EMAIL) ccList.push(env.SPRINT_CC_EMAIL);
-  }
-  const pct = Math.min(100, Math.round((applied / quotaTotal) * 100));
-  const subj = `Day ${dayN} of ${sprintDays} · ${todayApplied}/${dailyQuota} today · ${applied}/${quotaTotal} total`;
+
+  // Day-3-miss cc escalation
+  const ccList = [];
+  if (dayN >= 4 && yesterdayApplied === 0 && ccEmail) ccList.push(ccEmail);
+
+  const pct = quotaTotal > 0 ? Math.min(100, Math.round((applied / quotaTotal) * 100)) : 0;
+  const subject = `Day ${dayN} of ${sprintDays} · ${todayApplied}/${dailyQuota} today · ${applied}/${quotaTotal} total`;
+
   let listHtml = '';
-  top.forEach((p, i) => {
-    const badge = p.warmCount > 0 ? `<span style="background:#fbbf24;color:#78350f;padding:2px 6px;border-radius:4px;font-size:11px;font-weight:600;margin-right:6px;">🤝 ${p.warmCount} contact${p.warmCount===1?'':'s'}</span>` : '';
+  top.forEach(p => {
+    const badge = p.warmCount > 0
+      ? `<span style="background:#fbbf24;color:#78350f;padding:2px 6px;border-radius:4px;font-size:11px;font-weight:600;margin-right:6px;">🤝 ${p.warmCount} contact${p.warmCount===1?'':'s'}</span>`
+      : '';
     listHtml += `<li style="margin:10px 0;line-height:1.4;">${badge}<a href="${p.applyUrl}" style="color:#1817B5;font-weight:600;text-decoration:none;">${p.title}</a> · ${p.company} <span style="color:#666;">(${p.score})</span></li>`;
   });
+  const firstName = (userName || slug).split(' ')[0];
+  const endStr = new Date(start.getTime() + sprintDays*86400000).toISOString().slice(0,10);
   const bodyHtml = `<!doctype html><html><body style="font-family:Inter,system-ui,sans-serif;color:#222;max-width:600px;margin:0 auto;padding:24px;">
     <div style="background:linear-gradient(135deg,#0B0828,#1817B5);color:#fff;padding:20px;border-radius:12px;margin-bottom:20px;">
       <div style="font-size:18px;font-weight:700;letter-spacing:0.3px;">🎯 Sprint Day ${dayN} of ${sprintDays}</div>
@@ -2753,12 +2746,39 @@ async function sendSprintReminderForUser(env, user, profile) {
         <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,#7C7CF0,#A4A4FF);"></div>
       </div>
     </div>
-    <p style="font-size:15px;">Hi ${userName.split(' ')[0]}, here are <b>${top.length} jobs</b> to apply to today. Warm-intro picks (where you have LinkedIn contacts) come first — those callbacks beat cold applies 5×.</p>
+    <p style="font-size:15px;">Hi ${firstName}, here are <b>${top.length} jobs</b> to apply to today. Warm-intro picks (where you have LinkedIn contacts) come first — those callbacks beat cold applies 5×.</p>
     <ol style="padding-left:18px;">${listHtml}</ol>
     <p style="font-size:13px;color:#666;margin-top:24px;">Mark them applied on your dashboard so tomorrow's email knows. <a href="https://getmemyjob.officebeatllc.com/${slug}.html" style="color:#1817B5;">Open dashboard →</a></p>
-    <p style="font-size:11px;color:#888;margin-top:18px;">This is a sprint reminder, not a regular digest. Sprint ends ${new Date(start.getTime() + sprintDays*86400000).toISOString().slice(0,10)}.</p>
+    <p style="font-size:11px;color:#888;margin-top:18px;">This is a sprint reminder, not a regular digest. Sprint ends ${endStr}.</p>
   </body></html>`;
-  return await sendEmailViaResend(env, user.email, subj, bodyHtml, ccList);
+
+  return { subject, bodyHtml, ccList, meta: { dayN, applied, todayApplied, yesterdayApplied, quotaTotal, pct, topCount: top.length } };
+}
+
+// Outer: fetches everything, calls pure builder, sends via Resend.
+async function sendSprintReminderForUser(env, user, profile) {
+  const slug = user.slug;
+  const trackerRaw = await env.RESUMES.get(uk(slug, 'tracker'));
+  const tracker = trackerRaw ? JSON.parse(trackerRaw) : {};
+  const contactsRaw = await env.RESUMES.get(uk(slug, 'contacts'));
+  const contacts = contactsRaw ? JSON.parse(contactsRaw) : [];
+  let html = '';
+  try {
+    const r = await fetch(`https://getmemyjob.officebeatllc.com/${slug}.html`, { headers: { 'Accept':'text/html' } });
+    if (r.ok) html = await r.text();
+  } catch (e) {}
+  // Parse cards out of the dashboard HTML
+  const cardRx = /<div class="card"[^>]*data-fp="([^"]+)"[^>]*data-score="(\d+)"[^>]*>[\s\S]*?<div class="title"><a href="([^"]+)"[^>]*>([^<]+)<\/a>[\s\S]*?<span class="company">([^<]+)<\/span>/g;
+  const cards = [];
+  let m;
+  while ((m = cardRx.exec(html)) !== null) {
+    cards.push({ fp: m[1], score: parseInt(m[2], 10), applyUrl: m[3], title: (m[4]||'').trim(), company: (m[5]||'').trim() });
+  }
+  const { subject, bodyHtml, ccList } = buildSprintReminder({
+    slug, userName: user.name || slug, profile, tracker, contacts, cards,
+    now: new Date(), ccEmail: env.SPRINT_CC_EMAIL || '',
+  });
+  return await sendEmailViaResend(env, user.email, subject, bodyHtml, ccList);
 }
 
 async function sendDailyDigestToAll(env) {
@@ -2905,3 +2925,5 @@ async function handleDigestTrigger(request, env, cors) {
   return Response.json(result, { headers: cors });
 }
 
+// Named export for unit testing — Cloudflare ignores non-default exports at runtime.
+export { buildSprintReminder };
