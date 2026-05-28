@@ -336,14 +336,15 @@ HTML_TEMPLATE = """<!doctype html>
 {sprint_strip}
 {low_match_warning}
 <div class="stats">
-  <div class="stat"><b>{total}</b>Total jobs tracked</div>
-  <div class="stat"><b>{senior_remote}</b>Senior + Remote (last 7d)</div>
-  <div class="stat"><b>{ghost}</b>Possible ghost jobs (60d+)</div>
-  <div class="stat"><b id="shown-counter">{shown}</b>Showing</div>
-  <div class="stat goal-stat" id="goal-stat">
+  <div class="stat personal"><b id="shown-counter">{shown}</b>Matches showing</div>
+  <div class="stat personal goal-stat" id="goal-stat">
     <b><span id="goal-today-count">0</span>/<span id="goal-today-target">5</span></b>
     <span>Today\u2019s applications<br><span id="goal-progress-bar" style="display:inline-block;width:90%;height:5px;background:#e6e8eb;border-radius:3px;margin-top:4px;overflow:hidden;"><span id="goal-progress-fill" style="display:block;height:100%;width:0%;background:#5C5CD6;border-radius:3px;transition:width 0.3s;"></span></span> <span id="goal-streak" style="font-size:11px;color:#777;margin-left:4px;"></span></span>
   </div>
+  <div class="stats-divider" aria-hidden="true"></div>
+  <div class="stat global-stat" title="Total jobs in our entire scrape (not just yours)"><b>{total}</b>Jobs tracked (all users)</div>
+  <div class="stat global-stat"><b>{senior_remote}</b>Senior + Remote (last 7d)</div>
+  <div class="stat global-stat"><b>{ghost}</b>Likely ghost jobs (60d+)</div>
 </div>
 <div class="app-tracker">
   <div class="view-toggle">
@@ -391,6 +392,12 @@ HTML_TEMPLATE = """<!doctype html>
     <option value="hide" selected>Recruiters: Hide</option>
     <option value="show">Recruiters: Show</option>
     <option value="only">Recruiters: Only</option>
+  </select>
+  <select id="maxPerCompanyFilter" onchange="changeMaxPerCompany()" title="How many roles per company can appear in today's picks. Default: 1 (max variety).">
+    <option value="1">Max per company: 1</option>
+    <option value="2">Max per company: 2</option>
+    <option value="3">Max per company: 3</option>
+    <option value="999">Max per company: ∞</option>
   </select>
   <select id="sortBy" onchange="sortCards()">
     <option value="sprint">Sort: Sprint priority</option>
@@ -936,6 +943,11 @@ function renderFunnel(counts) {{
   // The funnel respects status progression. "Total Applied" = anyone who ever applied
   // (includes those who progressed beyond), so we use cumulative counts.
   const c_applied = counts.applied + counts.phonescreen + counts.onsite + counts.offer + counts.rejected;
+  // Empty-state: collapse the 5 empty stage cards into a thin hint row
+  if (c_applied === 0) {{
+    el.innerHTML = '<div class="funnel-empty">📋 Your application pipeline will appear here once you start applying. Mark jobs applied from the focus picks below.</div>';
+    return;
+  }}
   const c_phone = counts.phonescreen + counts.onsite + counts.offer; // people who reached at least phone screen
   const c_onsite = counts.onsite + counts.offer;
   const c_offer = counts.offer;
@@ -4088,10 +4100,13 @@ async function refreshFocusPanel() {{
     // If user has applied to some stamped picks, top up from candidates
     if (picks.length < N) {{
       const used = new Set(picks.map(c => c.getAttribute("data-fp")));
-      const usedCompanies = new Set(picks.map(c => {{
+      const MAX_CO_TOPUP = (typeof loadMaxPerCompany === "function") ? loadMaxPerCompany() : 1;
+      const perCompanyCountTopup = {{}};
+      picks.forEach(c => {{
         const ce = c.querySelector(".company");
-        return ce ? ce.textContent.trim().toLowerCase() : "";
-      }}));
+        const co = ce ? ce.textContent.trim().toLowerCase() : "";
+        if (co) perCompanyCountTopup[co] = (perCompanyCountTopup[co] || 0) + 1;
+      }});
       candidates.sort(function(a, b) {{
         if (typeof _sprintPriority === "function") return _sprintPriority(b) - _sprintPriority(a);
         return (parseInt(b.dataset.score || "0", 10)) - (parseInt(a.dataset.score || "0", 10));
@@ -4102,8 +4117,10 @@ async function refreshFocusPanel() {{
         if (used.has(fp)) continue;
         const ce = c.querySelector(".company");
         const co = ce ? ce.textContent.trim().toLowerCase() : "";
-        if (!co || usedCompanies.has(co)) continue;
-        usedCompanies.add(co);
+        if (!co) continue;
+        const cnt = perCompanyCountTopup[co] || 0;
+        if (cnt >= MAX_CO_TOPUP) continue;
+        perCompanyCountTopup[co] = cnt + 1;
         picks.push(c);
       }}
     }}
@@ -4114,12 +4131,15 @@ async function refreshFocusPanel() {{
       return (parseInt(b.dataset.score || "0", 10)) - (parseInt(a.dataset.score || "0", 10));
     }});
     picks = [];
-    const seenCompanies = new Set();
+    const MAX_CO = (typeof loadMaxPerCompany === "function") ? loadMaxPerCompany() : 1;
+    const perCompanyCount = {{}};
     for (const c of candidates) {{
       const compEl = c.querySelector(".company");
       const co = compEl ? compEl.textContent.trim().toLowerCase() : "";
-      if (!co || seenCompanies.has(co)) continue;
-      seenCompanies.add(co);
+      if (!co) continue;
+      const cnt = perCompanyCount[co] || 0;
+      if (cnt >= MAX_CO) continue;
+      perCompanyCount[co] = cnt + 1;
       picks.push(c);
       if (picks.length >= N) break;
     }}
@@ -4275,13 +4295,11 @@ window.toggleFullFeed = function() {{
   if (isCollapsed) {{
     grid.style.display = "";
     grid.dataset.feedCollapsed = "false";
-    btn.innerHTML = "Hide more matches ↑";
   }} else {{
     grid.style.display = "none";
     grid.dataset.feedCollapsed = "true";
-    const total = grid.querySelectorAll(".card").length;
-    btn.innerHTML = "View " + Math.max(0, total - 3) + " more matches ↓";
   }}
+  _syncFocusFeedToggle();
 }};
 
 // Auto-collapse the feed on first load when sprint is active.
@@ -4306,6 +4324,30 @@ window.toggleFullFeed = function() {{
   }}, 500);
 }})();
 
+// Keep the "View N more matches" toggle text in sync with grid visibility
+// and current card count. Called by refreshFocusPanel and on DOMContentLoaded.
+function _syncFocusFeedToggle() {{
+  const grid = document.getElementById("grid");
+  const btn = document.getElementById("focus-feed-toggle-btn");
+  if (!grid || !btn) return;
+  const total = grid.querySelectorAll(".card").length;
+  const N = (typeof loadDailyApplyTarget === "function") ? loadDailyApplyTarget() : 3;
+  const moreCount = Math.max(0, total - N);
+  const isCollapsed = grid.dataset.feedCollapsed === "true";
+  if (isCollapsed) {{
+    btn.innerHTML = "Show all " + total + " matches ↓";
+  }} else {{
+    if (moreCount > 0) {{
+      btn.innerHTML = "Hide the " + moreCount + " other matches ↑";
+    }} else {{
+      btn.innerHTML = "No other matches — these are the only ones today";
+      btn.disabled = true;
+      btn.style.opacity = "0.6";
+      btn.style.cursor = "default";
+    }}
+  }}
+}}
+
 // Light helper for HTML-escaping used in the panel rows
 function _esc(s) {{
   return (s || "").replace(/[&<>"]/g, function(c) {{
@@ -4315,7 +4357,10 @@ function _esc(s) {{
 
 // Initial render + re-render after tracker updates
 document.addEventListener("DOMContentLoaded", function() {{
-  setTimeout(refreshFocusPanel, 400);
+  setTimeout(function() {{
+    refreshFocusPanel();
+    setTimeout(_syncFocusFeedToggle, 600);
+  }}, 400);
 }});
 
 function wizPickDailyTarget(n) {{
@@ -4326,6 +4371,43 @@ function loadDailyApplyTarget() {{
   // Clamped to 3-5: focused picks, not a long list. (2026-05-28)
   try {{ const n = parseInt(localStorage.getItem(DAILY_TARGET_KEY) || "3", 10); return Math.max(3, Math.min(5, n)); }} catch (e) {{ return 3; }}
 }}
+
+// --- Max per company for today's picks (2026-05-28) -------------------
+// Lets the user control how many roles from the same company can show up
+// in the focus panel. Default 1 = maximum variety.
+const MAX_PER_COMPANY_KEY = "htj_max_per_company_" + USER_SLUG;
+function loadMaxPerCompany() {{
+  try {{
+    const v = parseInt(localStorage.getItem(MAX_PER_COMPANY_KEY) || "1", 10);
+    return (v >= 1 && v <= 999) ? v : 1;
+  }} catch (e) {{ return 1; }}
+}}
+function _restoreMaxPerCompanySelect() {{
+  try {{
+    const sel = document.getElementById("maxPerCompanyFilter");
+    if (sel) sel.value = String(loadMaxPerCompany());
+  }} catch (e) {{}}
+}}
+window.changeMaxPerCompany = async function() {{
+  const sel = document.getElementById("maxPerCompanyFilter");
+  if (!sel) return;
+  try {{ localStorage.setItem(MAX_PER_COMPANY_KEY, sel.value); }} catch (e) {{}}
+  // Clear today's stamp so picks recompute with the new cap
+  try {{
+    const ek = (typeof getEditKey === 'function') ? getEditKey() : null;
+    const ak = (typeof getAdminKey === 'function') ? getAdminKey() : null;
+    const headers = {{}};
+    if (ek) headers['X-Edit-Key'] = ek;
+    else if (ak) headers['X-Admin-Key'] = ak;
+    await fetch(WORKER_BASE + "/api/picks" + USER_QS, {{
+      method: 'DELETE', credentials: 'include', headers
+    }}).catch(() => {{}});
+  }} catch (e) {{}}
+  if (typeof refreshFocusPanel === 'function') await refreshFocusPanel();
+}};
+document.addEventListener("DOMContentLoaded", function() {{
+  setTimeout(_restoreMaxPerCompanySelect, 100);
+}});
 // --- Hiring-role detection in LinkedIn contacts -----------------------
 // A contact whose Position contains words like "recruiter", "talent",
 // "hiring", "people ops", "VP HR" is a higher-priority warm intro than
