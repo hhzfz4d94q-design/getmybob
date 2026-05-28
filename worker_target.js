@@ -2859,7 +2859,9 @@ async function sendEmailViaResend(env, toEmail, subject, htmlBody, ccList) {
       from: env.DIGEST_FROM,
       to: [toEmail],
       subject,
-      html: htmlBody,, cc: (Array.isArray(ccList) && ccList.length ? ccList : undefined) }),
+      html: htmlBody,
+      cc: (Array.isArray(ccList) && ccList.length ? ccList : undefined),
+    }),
   });
   if (!r.ok) {
     const err = await r.text().catch(() => "");
