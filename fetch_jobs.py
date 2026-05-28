@@ -37,6 +37,18 @@ from scrapers.yc import fetch_yc
 from scrapers.hn_hiring import fetch_hn_hiring
 from scrapers.healthecareers import fetch_healthecareers
 from scrapers.himss import fetch_himss
+
+# SOURCES dispatch — built here because it references all the per-ATS scrapers
+SOURCES = {
+    "greenhouse": fetch_greenhouse, "lever": fetch_lever, "ashby": fetch_ashby,
+    "workable": fetch_workable, "workday": fetch_workday, "wttj": fetch_wttj,
+    "icims": fetch_icims, "smartrecruiters": fetch_smartrecruiters,
+    "pinpoint": fetch_pinpoint, "teamtailor": fetch_teamtailor,
+    "recruitee": fetch_recruitee, "wellfound": fetch_wellfound,
+    "trueup": fetch_trueup, "remoteok": fetch_remoteok, "yc": fetch_yc,
+    "hn_hiring": fetch_hn_hiring, "healthecareers": fetch_healthecareers,
+    "himss": fetch_himss,
+}
 # Scoring cluster — extracted to matcher/scoring.py (Phase 2 of split refactor).
 # fetch_jobs.py keeps the names visible for backward compat with the rest of this file.
 from matcher import scoring as _scoring
@@ -87,6 +99,18 @@ _load_vc_portfolio = _catalogs.load_vc_portfolio
 _load_healthtech_catalog = _catalogs.load_healthtech_catalog
 _merge_healthtech_catalog = _catalogs.merge_healthtech_catalog
 _merge_vc_portfolio_companies = _catalogs.merge_vc_portfolio_companies
+
+# Phase 5: storage + role_family extracted
+from storage.db import (
+    get_conn, upsert_job, fingerprint,
+    _build_company_industries, _slugify_company_name, SCHEMA, DB_PATH,
+)
+from storage.profile import load_skills_profile, load_users, _careers_root
+from matcher.role_family import (
+    _detect_role_family, _user_role_family, _is_role_family_mismatch,
+    ROLE_FAMILIES, OPEN_USER_FAMS, INCOMPATIBLE_PAIRS,
+)
+_merge_user_target_companies = _catalogs._merge_user_target_companies
 
 import sqlite3
 import sys
@@ -227,7 +251,6 @@ def _dbg_to_file(source_key, msg):
 
 
 
-SOURCES = {"greenhouse": fetch_greenhouse, "lever": fetch_lever, "ashby": fetch_ashby, "workable": fetch_workable, "workday": fetch_workday, "wttj": fetch_wttj, "icims": fetch_icims, "smartrecruiters": fetch_smartrecruiters, "pinpoint": fetch_pinpoint, "teamtailor": fetch_teamtailor, "recruitee": fetch_recruitee, "wellfound": fetch_wellfound, "trueup": fetch_trueup, "remoteok": fetch_remoteok, "yc": fetch_yc, "hn_hiring": fetch_hn_hiring, "healthecareers": fetch_healthecareers, "himss": fetch_himss}
 
 
 # --- Utilities -----------------------------------------------------------
@@ -593,10 +616,6 @@ def _normalize_title(title):
     return "".join(w for w in words if w and w not in STOP_WORDS)
 
 
-def fingerprint(job):
-    """Stable hash so the same role across reposts/sources dedupes."""
-    base = f"{job['company_slug']}|{_normalize_title(job['title'])}|{re.sub(r'[^a-z0-9]+', '', (job['location'] or '').lower())}"
-    return sha256(base.encode()).hexdigest()[:16]
 
 
 # Heuristic company-type classifier (2026-05-27).
@@ -650,92 +669,10 @@ def _industry_match(company_industries, user_industries):
     return bool(ct & ut)
 
 
-def load_skills_profile(slug="geetu"):
-    """Fetch the AI-generated skills profile for a specific user from the Worker.
-    Returns None on failure — scoring falls back to legacy hardcoded keywords."""
-    try:
-        url = WORKER_BASE_URL + "/skills-profile?user=" + slug
-        req = Request(url, headers={"User-Agent": "fetch_jobs.py"})
-        with urlopen(req, timeout=15) as resp:
-            data = json.loads(resp.read().decode("utf-8"))
-        profile = data.get("profile")
-        if not profile or not isinstance(profile, dict):
-            return None
-        for k in ("keywords", "seniorityTitles", "industries", "negativeKeywords"):
-            if isinstance(profile.get(k), list):
-                profile[k] = [str(x).lower().strip() for x in profile[k] if x]
-            else:
-                profile[k] = []
-        return profile
-    except Exception as e:
-        print(f"[skills-profile:{slug}] could not load: {e}", flush=True)
-        return None
 
 
-def load_users():
-    """Fetch user list from Worker /users endpoint. Falls back to users.json on failure,
-    then to a hardcoded default. The Worker is the canonical registry."""
-    # Primary: Worker /users
-    try:
-        req = Request(WORKER_BASE_URL + "/users", headers={"User-Agent": "fetch_jobs.py"})
-        with urlopen(req, timeout=15) as resp:
-            data = json.loads(resp.read().decode("utf-8"))
-        users = data.get("users", [])
-        if isinstance(users, list) and users:
-            print(f"[users] loaded {len(users)} from Worker", flush=True)
-            return users
-    except Exception as e:
-        print(f"[users] Worker fetch failed ({e}), falling back to users.json", flush=True)
-
-    # Fallback: users.json (legacy)
-    try:
-        with open(USERS_JSON_PATH) as f:
-            users = json.load(f)
-        if isinstance(users, list) and users:
-            return users
-    except Exception:
-        pass
-
-    # Last resort
-    print("[users] using hardcoded default (geetu)", flush=True)
-    return [{"slug": "geetu", "name": "Geetanjali Arora"}]
 
 
-def _careers_root(url):
-    """Derive the careers landing page for a job's ATS from its full URL.
-    Returns a URL pointing to all jobs at that company on that ATS, or None.
-    Used in the dashboard card as a fallback link in case the specific job
-    listing has been removed."""
-    if not url:
-        return None
-    try:
-        from urllib.parse import urlparse
-        p = urlparse(url)
-        host = (p.netloc or "").lower()
-        path = (p.path or "/")
-        if "myworkdayjobs.com" in host:
-            parts = [seg for seg in path.split("/") if seg]
-            if parts:
-                return f"https://{host}/{parts[0]}"
-            return f"https://{host}/"
-        if "boards.greenhouse.io" in host or "job-boards.greenhouse.io" in host:
-            parts = [seg for seg in path.split("/") if seg]
-            if parts:
-                return f"https://{host}/{parts[0]}"
-            return f"https://{host}/"
-        if "jobs.lever.co" in host:
-            parts = [seg for seg in path.split("/") if seg]
-            if parts:
-                return f"https://{host}/{parts[0]}"
-            return f"https://{host}/"
-        if "jobs.ashbyhq.com" in host:
-            parts = [seg for seg in path.split("/") if seg]
-            if parts:
-                return f"https://{host}/{parts[0]}"
-            return f"https://{host}/"
-    except Exception:
-        return None
-    return None
 
 
 # --- Role-family classification (2026-05-26) ----------------------------
@@ -746,69 +683,12 @@ def _careers_root(url):
 #   - Either sees "Sales Rep" → sales ≠ their family → drop
 # Note: when role-family is ambiguous we DO NOT drop — we prefer over-include.
 
-ROLE_FAMILIES = {
-    "engineering": ["software engineer", "software development engineer", "sde ",
-                    "swe ", "backend engineer", "frontend engineer", "full stack",
-                    "fullstack", "full-stack", ".net developer", ".net engineer",
-                    "java developer", "python developer", "ruby developer", "go developer",
-                    "rust developer", "ios developer", "android developer",
-                    "mobile engineer", "devops engineer", "site reliability",
-                    "platform engineer", "data engineer", "ml engineer", "ai engineer",
-                    "infrastructure engineer", "security engineer", "principal engineer",
-                    "staff engineer", "senior engineer", "lead engineer", "software developer",
-                    "react developer", "vue developer", "angular developer", "engineering manager"],
-    "qa": ["quality assurance", "qa lead", "qa manager", "qa engineer", "test lead",
-           "test manager", "test engineer", "sdet", "automation engineer",
-           "software development engineer in test", "test automation"],
-    "sales-rep": ["sales rep", "sales representative", "sdr", "bdr", "account executive",
-                  "sales executive", "account manager", "sales manager", "sales director",
-                  "sales engineer", "field sales"],
-    "marketing-ic": ["marketing manager", "marketing coordinator", "marketing director",
-                     "marketing lead", "marketing analyst", "marketing specialist",
-                     "vp marketing", "head of marketing", "chief marketing", "cmo",
-                     "director of marketing", "director, marketing",
-                     "demand generation", "content marketer", "growth marketer",
-                     "performance marketer", "email marketer", "seo manager",
-                     "ppc manager", "social media manager", "brand manager",
-                     "brand director", "director of brand", "head of brand",
-                     "vp brand", "brand strategy", "director, brand"],
-    "design": ["ux designer", "ui designer", "graphic designer", "product designer", "visual designer",
-               "brand designer", "interaction designer", "designer"],
-    "operations-coo": ["chief operating officer", "coo", "general manager", "head of operations",
-                       "vp operations", "operations executive"],
-    "clinical": ["nurse", "physician", "doctor", "rn ", "nurse practitioner", "clinical specialist",
-                 "medical director", "medical officer"],
-    "recruiting-hr": ["recruiter", "talent acquisition", "talent partner", "people partner",
-                      "hr business partner", "head of people"],
-    "finance-ic": ["financial analyst", "accountant", "controller", "treasurer", "tax manager",
-                   "fp&a analyst", "fp&a manager"],
-    "legal-ic": ["paralegal", "associate counsel", "legal counsel"],
-    "customer-success": ["customer success manager", "csm", "customer experience manager",
-                          "cx manager", "customer support", "client support",
-                          "client services", "client delivery", "client success",
-                          "client experience", "client partner", "account success",
-                          "professional services manager", "implementation specialist",
-                          "implementation analyst", "delivery manager"],
-    "data-analyst": ["data analyst", "business analyst", "research analyst"],
-    # Below families are KEPT for our personas — listing them so user_fam detection works.
-    "product": ["product manager", "product director", "vp product", "head of product",
-                "chief product", "vp of product", "principal product manager", "product strategy",
-                "product growth", "product operations", "product executive", "product leader",
-                "product owner", "product lead"],
-    "risk-grc": ["risk manager", "risk director", "vp risk", "head of risk", "chief risk",
-                 "compliance", "audit", "governance", "grc", "credit risk", "operational risk",
-                 "regulatory", "ciso", "cyber risk", "information security"],
-    "digital-transformation": ["digital transformation", "transformation lead", "digital strategy",
-                                "innovation", "chief digital"],
-}
 
 # Families an exec might pivot INTO without being a literal title match.
 # When user_fam is in the "open" set, allow any family.
-OPEN_USER_FAMS = set()  # no families are "open" — every recognized family enforces incompatibility
 
 # When job_fam is None (ambiguous), we never drop on family.
 # When user_fam is None (ambiguous), we never drop on family.
-INCOMPATIBLE_PAIRS = set()
 # Engineering doesn't fit risk-grc / product / digital-transformation users
 for u in ("risk-grc", "product", "digital-transformation", "marketing-ic", "sales-rep", "legal-ic"):
     for j in ("engineering", "qa", "clinical", "design"):
@@ -828,306 +708,20 @@ for u_fam, j_fams in [("product", ["sales-rep", "engineering", "qa", "clinical",
 for j in ("engineering", "qa", "sales-rep", "operations-coo", "clinical", "design", "marketing-ic", "customer-success", "recruiting-hr", "finance-ic", "legal-ic"):
     INCOMPATIBLE_PAIRS.add(("digital-transformation", j))
 
-def _detect_role_family(title):
-    """Return the role family of a job title, or None if ambiguous.
-    Short tokens (≤4 chars) use word-boundary matching so 'coo' doesn't match
-    'coord' / 'cool' etc."""
-    if not title:
-        return None
-    t = " " + title.lower() + " "
-    for fam in ("operations-coo", "engineering", "qa", "sales-rep", "marketing-ic",
-                "design", "clinical", "recruiting-hr", "finance-ic", "legal-ic",
-                "customer-success", "data-analyst", "risk-grc", "product",
-                "digital-transformation"):
-        for term in ROLE_FAMILIES.get(fam, []):
-            tl = term.lower()
-            if len(tl) <= 4 and " " not in tl:
-                # word-boundary check for short single-token terms
-                if re.search(r"(?<![a-z])" + re.escape(tl) + r"(?![a-z])", t):
-                    return fam
-            else:
-                if tl in t:
-                    return fam
-    return None
-
-def _user_role_family(profile):
-    """Detect the user's role family from primaryRole + targetTitles.
-    Order: most-specific PROFESSIONS first so digital-transformation doesn't
-    win over product/risk/etc. when the user's role mentions both."""
-    if not profile:
-        return None
-    primary = " " + (profile.get("primaryRole") or "").lower() + " "
-    # Search order favors specific role families over digital-transformation
-    for fam in ("risk-grc", "product", "engineering", "qa", "sales-rep",
-                "marketing-ic", "design", "operations-coo", "clinical",
-                "recruiting-hr", "finance-ic", "legal-ic", "customer-success",
-                "data-analyst", "digital-transformation"):
-        for term in ROLE_FAMILIES.get(fam, []):
-            tl = term.lower()
-            if len(tl) <= 4 and " " not in tl:
-                if re.search(r"(?<![a-z])" + re.escape(tl) + r"(?![a-z])", primary):
-                    return fam
-            else:
-                if tl in primary:
-                    return fam
-    # Fallback to top 5 targetTitles
-    for tt in (profile.get("targetTitles") or [])[:5]:
-        tl = " " + (tt or "").lower() + " "
-        for fam in ("risk-grc", "product", "engineering", "operations-coo",
-                    "qa", "design", "digital-transformation"):
-            for term in ROLE_FAMILIES.get(fam, []):
-                if term.lower() in tl:
-                    return fam
-    return None
-
-def _is_role_family_mismatch(title, profile):
-    """True if job's role family is FUNDAMENTALLY incompatible with the user's."""
-    u = _user_role_family(profile)
-    if not u or u in OPEN_USER_FAMS:
-        return False
-    j = _detect_role_family(title)
-    if not j:
-        return False
-    return (u, j) in INCOMPATIBLE_PAIRS
 
 
-def get_conn():
-    # Self-heal: if the DB file exists but is corrupt/empty, wipe it and retry.
-    for attempt in range(2):
-        try:
-            conn = sqlite3.connect(DB_PATH)
-            conn.executescript(SCHEMA)
-            # Migration: add salary_range to older DBs that don't have it
-            try:
-                conn.execute("ALTER TABLE jobs ADD COLUMN salary_range TEXT")
-                conn.commit()
-            except sqlite3.OperationalError:
-                pass  # column already exists
-            # Migration: add employment_type column
-            try:
-                conn.execute("ALTER TABLE jobs ADD COLUMN employment_type TEXT")
-                conn.commit()
-            except sqlite3.OperationalError:
-                pass
-            # Migration: add industries column (comma-separated)
-            try:
-                conn.execute("ALTER TABLE jobs ADD COLUMN industries TEXT")
-                conn.commit()
-            except sqlite3.OperationalError:
-                pass
-            return conn
-        except sqlite3.DatabaseError:
-            if attempt == 0 and os.path.exists(DB_PATH):
-                try:
-                    os.remove(DB_PATH)
-                    for sidecar in (DB_PATH + "-journal", DB_PATH + "-wal", DB_PATH + "-shm"):
-                        if os.path.exists(sidecar):
-                            os.remove(sidecar)
-                except OSError:
-                    pass
-            else:
-                raise
 
 
-def upsert_job(conn, job):
-    fp = fingerprint(job)
-    now = datetime.now(timezone.utc).isoformat()
-    remote = 1 if is_remote(job) else 0
-    senior = 1 if is_senior(job) else 0
-    score = score_job(job)
 
-    salary = job.get("salary_range") or ""
-    employment_type = detect_employment_type(job)
-    # Industries: looked up from COMPANY_INDUSTRIES based on company_slug (lowercased)
-    industries = COMPANY_INDUSTRIES.get((job.get("company_slug") or "").lower(), DEFAULT_INDUSTRIES)
-    industries_str = ",".join(industries) if industries else ""
-    cur = conn.execute("SELECT fingerprint, sightings FROM jobs WHERE fingerprint=?", (fp,))
-    row = cur.fetchone()
-    if row:
-        conn.execute(
-            "UPDATE jobs SET last_seen=?, sightings=sightings+1, score=?, remote=?, senior=?, salary_range=?, employment_type=?, industries=? WHERE fingerprint=?",
-            (now, score, remote, senior, salary, employment_type, industries_str, fp),
-        )
-    else:
-        conn.execute(
-            """INSERT INTO jobs (fingerprint, source, company_slug, company_name, external_id,
-               title, location, url, posted_at, description, first_seen, last_seen,
-               sightings, remote, senior, score, salary_range, employment_type, industries)
-               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,1,?,?,?,?,?,?)""",
-            (fp, job["source"], job["company_slug"], job["company_name"], job["external_id"],
-             job["title"], job["location"], job["url"], job["posted_at"], job["description"],
-             now, now, remote, senior, score, salary, employment_type, industries_str),
-        )
+
 
 
 # --- Main pipeline -------------------------------------------------------
 
-def _build_company_industries(companies):
-    """Populate COMPANY_INDUSTRIES from companies.json.
-    Each entry can be a slug string (uses _default_industries) or {slug, industries}."""
-    global COMPANY_INDUSTRIES, DEFAULT_INDUSTRIES
-    defaults = companies.get("_default_industries")
-    if defaults:
-        DEFAULT_INDUSTRIES = defaults
-    mapping = {}
-    for source in ("greenhouse", "lever", "ashby"):
-        for entry in companies.get(source, []):
-            if isinstance(entry, str):
-                mapping[entry.lower()] = DEFAULT_INDUSTRIES
-            elif isinstance(entry, dict) and entry.get("slug"):
-                mapping[entry["slug"].lower()] = entry.get("industries", DEFAULT_INDUSTRIES)
-    for entry in companies.get("workday", []):
-        if isinstance(entry, dict):
-            key = (entry.get("tenant") or entry.get("name", "")).lower()
-            if key:
-                mapping[key] = entry.get("industries", DEFAULT_INDUSTRIES)
-    for entry in companies.get("wttj", []):
-        if isinstance(entry, dict):
-            key = (entry.get("slug") or entry.get("name", "")).lower()
-            if key:
-                mapping[key] = entry.get("industries", DEFAULT_INDUSTRIES)
-    COMPANY_INDUSTRIES = mapping
-    print(f"[industries] mapped {len(mapping)} companies; default={DEFAULT_INDUSTRIES}", flush=True)
 
 
-def _slugify_company_name(name):
-    """Lowercase, drop non-alphanumerics — best-effort guess at the ATS slug from a company name."""
-    if not name:
-        return ""
-    return re.sub(r"[^a-z0-9]+", "", str(name).lower())
 
 
-def _merge_user_target_companies(companies):
-    """Path 2: read each user's profile.targetCompanies (AI-suggested) and merge them
-    into the in-memory companies dict so the scraper picks them up. No-op if no user
-    profile has targetCompanies yet (e.g. before the Worker prompt is updated)."""
-    try:
-        users = load_users()
-    except Exception as e:
-        print(f"[user-targets] load_users failed: {e}", flush=True)
-        return
-
-    # Track what slugs/tenants already exist per ATS so we don't duplicate
-    existing = {ats: set() for ats in ("greenhouse", "lever", "ashby")}
-    existing["workday"] = set()
-    for ats in ("greenhouse", "lever", "ashby"):
-        for entry in companies.get(ats, []):
-            if isinstance(entry, str):
-                existing[ats].add(entry.lower())
-            elif isinstance(entry, dict) and entry.get("slug"):
-                existing[ats].add(entry["slug"].lower())
-    for entry in companies.get("workday", []):
-        if isinstance(entry, dict) and entry.get("tenant"):
-            existing["workday"].add(entry["tenant"].lower())
-
-    added = {ats: 0 for ats in ("greenhouse", "lever", "ashby")}
-    skipped = 0
-
-    for u in users:
-        slug = (u.get("slug") if isinstance(u, dict) else u) or ""
-        if not slug:
-            continue
-        try:
-            profile = load_skills_profile(slug) or {}
-        except Exception as e:
-            print(f"[user-targets:{slug}] profile fetch failed: {e}", flush=True)
-            continue
-
-        targets = profile.get("targetCompanies") or []
-        if not targets:
-            continue
-
-        user_industries = profile.get("industries", []) or []
-
-        for t in targets:
-            # Each target can be a dict {name, atsHint, why} or a bare string name
-            if isinstance(t, str):
-                name = t
-                hint = "greenhouse"
-            elif isinstance(t, dict):
-                name = t.get("name") or t.get("slug") or ""
-                hint = (t.get("atsHint") or t.get("ats") or "greenhouse").lower()
-            else:
-                continue
-            if not name:
-                continue
-
-            target_slug = _slugify_company_name(t.get("slug") if isinstance(t, dict) and t.get("slug") else name)
-
-            # Greenhouse/Lever/Ashby take a simple slug; Workday needs tenant+subdomain+site
-            # which we now try to parse from an atsUrl the AI may have provided.
-            if hint == "workday":
-                ats_url = t.get("atsUrl") if isinstance(t, dict) else None
-                wd_tenant = wd_subdomain = wd_site = None
-                if ats_url:
-                    # Parse https://{tenant}.{subdomain}.myworkdayjobs.com/{site}
-                    wd_match = re.match(
-                        r"https?://([^./]+)\.(wd\d+)\.myworkdayjobs\.com/([^/?#]+)",
-                        ats_url,
-                    )
-                    if wd_match:
-                        wd_tenant, wd_subdomain, wd_site = wd_match.groups()
-                if not wd_tenant:
-                    # Slice 3.5 fallback heuristic: AI didn't give us a usable atsUrl,
-                    # but workday tenant slugs often follow a predictable pattern. Try
-                    # the most common combo (wd1 + Careers/External) so the scraper
-                    # gets a chance — it will fail gracefully if the slug is wrong.
-                    wd_tenant = target_slug
-                    wd_subdomain = "wd1"
-                    wd_site = "Careers"
-                    print(f"[user-targets:{slug}] workday fallback for '{name}' -> {wd_tenant}.{wd_subdomain}.myworkdayjobs.com/{wd_site} (no atsUrl from AI)", flush=True)
-                wd_key = wd_tenant.lower()
-                if wd_key in existing.setdefault("workday", set()):
-                    continue
-                companies.setdefault("workday", []).append({
-                    "name": name,
-                    "tenant": wd_tenant,
-                    "subdomain": wd_subdomain,
-                    "site": wd_site,
-                    "industries": user_industries or DEFAULT_INDUSTRIES,
-                    "_added_by_user": slug,
-                })
-                existing["workday"].add(wd_key)
-                added.setdefault("workday", 0)
-                added["workday"] += 1
-                continue
-
-            # Multi-ATS fallback (2026-05-27): the AI's atsHint is unreliable —
-            # it defaults to "greenhouse" for ~half the suggestions even when
-            # the company actually uses Lever/Ashby/WTTJ/Workable. So for any
-            # slug-based hint (or "unknown"), we add the target_slug to ALL
-            # four slug-based pools (greenhouse, lever, ashby, wttj). Each
-            # scraper either returns jobs or silently 404s. Whichever wins
-            # gives us coverage; we pay ~3 extra HTTP requests per company.
-            # This is also how WTTJ gets activated for the first time — it
-            # was coded but had 0 companies configured.
-            SLUG_POOLS = ("greenhouse", "lever", "ashby", "wttj", "workable", "icims", "smartrecruiters", "pinpoint", "teamtailor", "recruitee", "wellfound", "trueup")
-            if hint not in SLUG_POOLS and hint != "unknown":
-                skipped += 1
-                continue
-
-            for pool in SLUG_POOLS:
-                existing.setdefault(pool, set())
-                if target_slug in existing[pool]:
-                    continue
-                entry = {
-                    "slug": target_slug,
-                    "industries": user_industries or DEFAULT_INDUSTRIES,
-                    "_added_by_user": slug,
-                    "_ai_hint": hint,  # debugging breadcrumb
-                }
-                if pool == "wttj":
-                    entry["name"] = name
-                companies.setdefault(pool, []).append(entry)
-                existing[pool].add(target_slug)
-                added.setdefault(pool, 0)
-                added[pool] += 1
-
-    total = sum(added.values())
-    if total:
-        print(f"[user-targets] merged {total} per-user companies (greenhouse={added.get('greenhouse',0)}, lever={added.get('lever',0)}, ashby={added.get('ashby',0)}, wttj={added.get('wttj',0)}, workday={added.get('workday',0)}); skipped {skipped} non-routable", flush=True)
-    else:
-        print(f"[user-targets] no targetCompanies in any user profile yet (Worker prompt may not be updated)", flush=True)
 
 
 def run():

@@ -121,3 +121,137 @@ def merge_vc_portfolio_companies(companies):
         added += 1
     if added:
         print(f'[vc-portfolio] merged {added} discovered companies into scrape pool', flush=True)
+
+
+# Phase 5: per-user target companies merger
+def _merge_user_target_companies(companies):
+    """Path 2: read each user's profile.targetCompanies (AI-suggested) and merge them
+    into the in-memory companies dict so the scraper picks them up. No-op if no user
+    profile has targetCompanies yet (e.g. before the Worker prompt is updated)."""
+    try:
+        users = load_users()
+    except Exception as e:
+        print(f"[user-targets] load_users failed: {e}", flush=True)
+        return
+
+    # Track what slugs/tenants already exist per ATS so we don't duplicate
+    existing = {ats: set() for ats in ("greenhouse", "lever", "ashby")}
+    existing["workday"] = set()
+    for ats in ("greenhouse", "lever", "ashby"):
+        for entry in companies.get(ats, []):
+            if isinstance(entry, str):
+                existing[ats].add(entry.lower())
+            elif isinstance(entry, dict) and entry.get("slug"):
+                existing[ats].add(entry["slug"].lower())
+    for entry in companies.get("workday", []):
+        if isinstance(entry, dict) and entry.get("tenant"):
+            existing["workday"].add(entry["tenant"].lower())
+
+    added = {ats: 0 for ats in ("greenhouse", "lever", "ashby")}
+    skipped = 0
+
+    for u in users:
+        slug = (u.get("slug") if isinstance(u, dict) else u) or ""
+        if not slug:
+            continue
+        try:
+            profile = load_skills_profile(slug) or {}
+        except Exception as e:
+            print(f"[user-targets:{slug}] profile fetch failed: {e}", flush=True)
+            continue
+
+        targets = profile.get("targetCompanies") or []
+        if not targets:
+            continue
+
+        user_industries = profile.get("industries", []) or []
+
+        for t in targets:
+            # Each target can be a dict {name, atsHint, why} or a bare string name
+            if isinstance(t, str):
+                name = t
+                hint = "greenhouse"
+            elif isinstance(t, dict):
+                name = t.get("name") or t.get("slug") or ""
+                hint = (t.get("atsHint") or t.get("ats") or "greenhouse").lower()
+            else:
+                continue
+            if not name:
+                continue
+
+            target_slug = _slugify_company_name(t.get("slug") if isinstance(t, dict) and t.get("slug") else name)
+
+            # Greenhouse/Lever/Ashby take a simple slug; Workday needs tenant+subdomain+site
+            # which we now try to parse from an atsUrl the AI may have provided.
+            if hint == "workday":
+                ats_url = t.get("atsUrl") if isinstance(t, dict) else None
+                wd_tenant = wd_subdomain = wd_site = None
+                if ats_url:
+                    # Parse https://{tenant}.{subdomain}.myworkdayjobs.com/{site}
+                    wd_match = re.match(
+                        r"https?://([^./]+)\.(wd\d+)\.myworkdayjobs\.com/([^/?#]+)",
+                        ats_url,
+                    )
+                    if wd_match:
+                        wd_tenant, wd_subdomain, wd_site = wd_match.groups()
+                if not wd_tenant:
+                    # Slice 3.5 fallback heuristic: AI didn't give us a usable atsUrl,
+                    # but workday tenant slugs often follow a predictable pattern. Try
+                    # the most common combo (wd1 + Careers/External) so the scraper
+                    # gets a chance — it will fail gracefully if the slug is wrong.
+                    wd_tenant = target_slug
+                    wd_subdomain = "wd1"
+                    wd_site = "Careers"
+                    print(f"[user-targets:{slug}] workday fallback for '{name}' -> {wd_tenant}.{wd_subdomain}.myworkdayjobs.com/{wd_site} (no atsUrl from AI)", flush=True)
+                wd_key = wd_tenant.lower()
+                if wd_key in existing.setdefault("workday", set()):
+                    continue
+                companies.setdefault("workday", []).append({
+                    "name": name,
+                    "tenant": wd_tenant,
+                    "subdomain": wd_subdomain,
+                    "site": wd_site,
+                    "industries": user_industries or DEFAULT_INDUSTRIES,
+                    "_added_by_user": slug,
+                })
+                existing["workday"].add(wd_key)
+                added.setdefault("workday", 0)
+                added["workday"] += 1
+                continue
+
+            # Multi-ATS fallback (2026-05-27): the AI's atsHint is unreliable —
+            # it defaults to "greenhouse" for ~half the suggestions even when
+            # the company actually uses Lever/Ashby/WTTJ/Workable. So for any
+            # slug-based hint (or "unknown"), we add the target_slug to ALL
+            # four slug-based pools (greenhouse, lever, ashby, wttj). Each
+            # scraper either returns jobs or silently 404s. Whichever wins
+            # gives us coverage; we pay ~3 extra HTTP requests per company.
+            # This is also how WTTJ gets activated for the first time — it
+            # was coded but had 0 companies configured.
+            SLUG_POOLS = ("greenhouse", "lever", "ashby", "wttj", "workable", "icims", "smartrecruiters", "pinpoint", "teamtailor", "recruitee", "wellfound", "trueup")
+            if hint not in SLUG_POOLS and hint != "unknown":
+                skipped += 1
+                continue
+
+            for pool in SLUG_POOLS:
+                existing.setdefault(pool, set())
+                if target_slug in existing[pool]:
+                    continue
+                entry = {
+                    "slug": target_slug,
+                    "industries": user_industries or DEFAULT_INDUSTRIES,
+                    "_added_by_user": slug,
+                    "_ai_hint": hint,  # debugging breadcrumb
+                }
+                if pool == "wttj":
+                    entry["name"] = name
+                companies.setdefault(pool, []).append(entry)
+                existing[pool].add(target_slug)
+                added.setdefault(pool, 0)
+                added[pool] += 1
+
+    total = sum(added.values())
+    if total:
+        print(f"[user-targets] merged {total} per-user companies (greenhouse={added.get('greenhouse',0)}, lever={added.get('lever',0)}, ashby={added.get('ashby',0)}, wttj={added.get('wttj',0)}, workday={added.get('workday',0)}); skipped {skipped} non-routable", flush=True)
+    else:
+        print(f"[user-targets] no targetCompanies in any user profile yet (Worker prompt may not be updated)", flush=True)
