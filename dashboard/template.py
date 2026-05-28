@@ -4228,7 +4228,7 @@ async function refreshFocusPanel() {{
             if (ek) headers['X-Edit-Key'] = ek;
             else if (ak) headers['X-Admin-Key'] = ak;
             fetch(WORKER_BASE + "/api/picks" + USER_QS, {{
-              method: 'DELETE', credentials: 'include', headers
+              method: 'DELETE', headers
             }}).catch(() => {{}});
           }} catch (e) {{}}
           // stampedFps stays null → fresh-compute branch runs below
@@ -4320,7 +4320,7 @@ async function refreshFocusPanel() {{
       if (ek) headers['X-Edit-Key'] = ek;
       else if (ak) headers['X-Admin-Key'] = ak;
       fetch(WORKER_BASE + "/api/picks" + USER_QS, {{
-        method: 'POST', credentials: 'include', headers,
+        method: 'POST', headers,
         body: JSON.stringify({{ fingerprints: picks.map(c => c.getAttribute("data-fp")) }})
       }}).catch(() => {{}});
     }}
@@ -4436,7 +4436,7 @@ window.refreshPicks = async function() {{
     if (ek) headers['X-Edit-Key'] = ek;
     else if (ak) headers['X-Admin-Key'] = ak;
     await fetch(WORKER_BASE + "/api/picks" + USER_QS, {{
-      method: 'DELETE', credentials: 'include', headers
+      method: 'DELETE', headers
     }}).catch(() => {{}});
     if (typeof refreshFocusPanel === 'function') await refreshFocusPanel();
   }} finally {{
@@ -4569,7 +4569,7 @@ window.changeMaxPerCompany = async function() {{
     if (ek) headers['X-Edit-Key'] = ek;
     else if (ak) headers['X-Admin-Key'] = ak;
     await fetch(WORKER_BASE + "/api/picks" + USER_QS, {{
-      method: 'DELETE', credentials: 'include', headers
+      method: 'DELETE', headers
     }}).catch(() => {{}});
   }} catch (e) {{}}
   if (typeof refreshFocusPanel === 'function') await refreshFocusPanel();
@@ -6120,7 +6120,6 @@ async function startConfiguredSprint(btn) {{
     const r = await fetch(WORKER_BASE + '/api/sprint/start' + USER_QS, {{
       method: 'POST',
       headers: _headers,
-      credentials: 'include',
       body: JSON.stringify({{
         sprintDays: c.duration,
         sprintDailyQuota: c.quota,
@@ -6275,7 +6274,6 @@ async function finishSprintReview(btn, startAnother) {{
     const r = await fetch(WORKER_BASE + '/api/sprint/complete' + USER_QS, {{
       method: 'POST',
       headers: _headers,
-      credentials: 'include',
       body: JSON.stringify({{
         appliedCount: applied,
         advancedCount: advanced,
@@ -6364,7 +6362,7 @@ async function sprintSnoozeToday(btn) {{
   if (btn) {{ btn.disabled = true; btn.textContent = 'Snoozing…'; }}
   try {{
     const r = await fetch(WORKER_BASE + '/api/sprint/snooze-today' + USER_QS, {{
-      method: 'POST', headers: _spAuthHeaders(), credentials: 'include', body: '{{}}'
+      method: 'POST', headers: _spAuthHeaders(), body: '{{}}'
     }});
     if (!r.ok) {{
       const j = await r.json().catch(() => ({{}}));
@@ -6387,7 +6385,7 @@ async function sprintAdjustQuota() {{
   if (!Number.isFinite(next) || next < 1 || next > 10) {{ alert('Pick a number 1–10.'); return; }}
   try {{
     const r = await fetch(WORKER_BASE + '/skills-profile' + USER_QS, {{
-      method: 'POST', headers: _spAuthHeaders(), credentials: 'include',
+      method: 'POST', headers: _spAuthHeaders(),
       body: JSON.stringify({{ patchFields: {{ sprintDailyQuota: next }} }})
     }});
     if (!r.ok) {{
@@ -6584,7 +6582,6 @@ document.addEventListener('tracker:updated', function(ev) {{
     else if (_ak) _h['X-Admin-Key'] = _ak;
     const r = await fetch(WORKER_BASE + '/contacts' + USER_QS, {{
       headers: _h,
-      credentials: 'include'
     }});
     if (!r.ok) return;
     const j = await r.json();
