@@ -1,0 +1,39 @@
+name: Clear all stamped picks (admin)
+
+# One-click belt-and-suspenders to wipe every user's "today's stamped picks"
+# from KV. The dashboard already self-heals stale stamps on next load (any
+# stamp that violates the user's current max-per-company cap gets discarded
+# and recomputed), so this workflow is only needed if something slips through
+# the self-heal — e.g. a device that hasn't refreshed in a while.
+#
+# Trigger:  Actions → "Clear all stamped picks (admin)" → Run workflow.
+# No inputs. Calls /admin/clear-all-picks with X-Admin-Key.
+
+on:
+  workflow_dispatch: {}
+  repository_dispatch:
+    types: [clear-all-picks]
+
+permissions:
+  contents: read
+
+jobs:
+  clear:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hit /admin/clear-all-picks
+        env:
+          ADMIN_KEY: ${{ secrets.WORKER_ADMIN_KEY }}
+        run: |
+          set -e
+          if [ -z "$ADMIN_KEY" ]; then
+            echo "::error::Repo secret WORKER_ADMIN_KEY is not set"
+            exit 1
+          fi
+          HTTP=$(curl -sS -o /tmp/resp.json -w "%{http_code}" -X POST \
+            -H "X-Admin-Key: $ADMIN_KEY" \
+            "https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/admin/clear-all-picks")
+          echo "HTTP $HTTP"
+          cat /tmp/resp.json
+          echo ""
+          python3 -c "import json,sys; d=json.load(open('/tmp/resp.json')); print('Cleared %d users: %s' % (d.get('cleared', 0), ', '.join(d.get('users', [])))); sys.exit(0 if 'cleared' in d else 1)"

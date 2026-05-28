@@ -4059,13 +4059,44 @@ async function refreshFocusPanel() {{
 
   // STAGE 3: fetch today's stamped picks. If present, lock the picks to that
   // exact fingerprint set so they don't shift through the day.
+  // SELF-HEALING (2026-05-28): if the stamp violates the current
+  // maxPerCompany cap (e.g. legacy stamp written before dedup was wired up,
+  // or stamp from before user lowered their cap), discard and recompute.
   let stampedFps = null;
   try {{
     const r = await fetch(WORKER_BASE + "/api/picks" + USER_QS);
     if (r.ok) {{
       const j = await r.json();
       if (j && Array.isArray(j.fingerprints) && j.fingerprints.length > 0 && j.date === today) {{
-        stampedFps = j.fingerprints;
+        const stampMax = (typeof loadMaxPerCompany === "function") ? loadMaxPerCompany() : 1;
+        const stampCo = {{}};
+        let violates = false;
+        for (const fp of j.fingerprints) {{
+          const c = grid.querySelector('.card[data-fp="' + fp + '"]');
+          if (!c) continue;
+          const ce = c.querySelector(".company");
+          const co = ce ? ce.textContent.trim().toLowerCase() : "";
+          if (!co) continue;
+          stampCo[co] = (stampCo[co] || 0) + 1;
+          if (stampCo[co] > stampMax) {{ violates = true; break; }}
+        }}
+        if (violates) {{
+          // Stale/invalid stamp — clear it server-side so other devices also
+          // get the fresh compute, then fall through to recompute.
+          try {{
+            const ek = (typeof getEditKey === 'function') ? getEditKey() : null;
+            const ak = (typeof getAdminKey === 'function') ? getAdminKey() : null;
+            const headers = {{}};
+            if (ek) headers['X-Edit-Key'] = ek;
+            else if (ak) headers['X-Admin-Key'] = ak;
+            fetch(WORKER_BASE + "/api/picks" + USER_QS, {{
+              method: 'DELETE', credentials: 'include', headers
+            }}).catch(() => {{}});
+          }} catch (e) {{}}
+          // stampedFps stays null → fresh-compute branch runs below
+        }} else {{
+          stampedFps = j.fingerprints;
+        }}
       }}
     }}
   }} catch (e) {{}}

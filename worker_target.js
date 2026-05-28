@@ -95,6 +95,7 @@ export default {
     if (url.pathname === '/api/sprint/start') return handleSprintStart(request, env, cors, slug);
     if (url.pathname === '/api/sprint/reset') return handleSprintReset(request, env, cors, slug);
     if (url.pathname === '/api/picks') return handlePicks(request, env, cors, slug);
+    if (url.pathname === '/admin/clear-all-picks') return handleAdminClearAllPicks(request, env, cors);
     return new Response(
       'Endpoints: /api/auth/{signup,login,logout,me,change-password}, /prep, /resume, /resume-versions, /parse-resume, /skills-profile, /regenerate-profile, /regenerate-companies, /draft-warm-intro, /suggest-refinements, /rerank-titles, /tracker, /draft-followup, /interview-prep, /generate-digest, /refresh, /admin/users, /notes.',
       { status: 404, headers: cors }
@@ -1566,6 +1567,32 @@ async function handlePicks(request, env, cors, slug) {
   }
 
   return new Response('Use GET / POST / DELETE', { status: 405, headers: cors });
+}
+
+// --- /admin/clear-all-picks --------------------------------------------
+// One-shot admin endpoint: wipes today's stamped picks for every known user.
+// Pairs with the self-healing in refreshFocusPanel; this is the belt-and-
+// suspenders for any user the self-heal missed (stale device, offline, etc).
+// Returns { cleared: N, users: [slug, ...] }.
+async function handleAdminClearAllPicks(request, env, cors) {
+  if (!env.RESUMES) return Response.json({ error: 'RESUMES KV binding missing' }, { status: 500, headers: cors });
+  if (!env.ADMIN_KEY) return Response.json({ error: 'Worker missing ADMIN_KEY secret' }, { status: 500, headers: cors });
+  if (request.headers.get('X-Admin-Key') !== env.ADMIN_KEY) {
+    return Response.json({ error: 'Invalid X-Admin-Key' }, { status: 401, headers: cors });
+  }
+  if (request.method !== 'POST' && request.method !== 'DELETE') {
+    return new Response('Use POST or DELETE', { status: 405, headers: cors });
+  }
+  await migrateLegacyIfNeeded(env);
+  const users = await bootstrapUsersListIfEmpty(env);
+  const cleared = [];
+  for (const u of users) {
+    try {
+      await env.RESUMES.delete(uk(u.slug, 'picks:today'));
+      cleared.push(u.slug);
+    } catch (e) {}
+  }
+  return Response.json({ cleared: cleared.length, users: cleared }, { headers: cors });
 }
 
 async function handleAdminUsers(request, env, cors) {
