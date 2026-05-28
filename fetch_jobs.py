@@ -1568,14 +1568,30 @@ def days_since_posted(posted_at_iso):
         return None
 
 
-def freshness_multiplier(posted_at_iso):
-    """Smooth exponential decay: 1.0 at posting, ~0.51 at 14 days,
-    ~0.05 at 60 days. Returns 1.0 (neutral) if no date known."""
+def freshness_multiplier(posted_at_iso, company_name=None):
+    """Smooth exponential decay with stage-aware lenience for small companies.
+    Default decay (D+/public/unknown): exp(-d/21) — ~50% at 14d, ~5% at 60d
+    Series B/C (mid):                  exp(-d/28) — ~60% at 14d, ~12% at 60d
+    Seed/A (small):                    exp(-d/42) — ~72% at 14d, ~24% at 60d
+    Smaller companies post less often and refresh less, so we don't punish
+    stale listings as hard. Pull stage from worker /company-stage cache."""
     import math
     d = days_since_posted(posted_at_iso)
     if d is None:
         return 1.0
-    return math.exp(-d / 21.0)
+    # Choose decay constant based on funding stage
+    decay = 21.0  # default
+    if company_name:
+        try:
+            rec = _get_company_stage(company_name)
+            stage = (rec and rec.get('stage') or '').lower()
+            if stage in ('seed', 'series-a', 'bootstrapped'):
+                decay = 42.0  # small / very small
+            elif stage in ('series-b', 'series-c'):
+                decay = 28.0  # mid
+        except Exception:
+            pass
+    return math.exp(-d / decay)
 
 
 _NEXT_STAGE = {
@@ -2154,6 +2170,24 @@ WORKER_BASE_URL = "https://cool-darkness-dce5.tr6jz6v7wg.workers.dev"
 USERS_JSON_PATH = os.path.join(ROOT, "users.json")
 SKILLS_PROFILE = None  # set per user during generate_dashboard
 COMPANY_INDUSTRIES = {}  # company_slug -> list of industries (populated from companies.json)
+VC_PORTFOLIO_COMPANIES = []  # list of dicts {name, industry, fundingStage, atsHint} from VC discovery
+
+def _load_vc_portfolio():
+    """Load discovered VC-portfolio companies from vc_portfolio_companies.json.
+    Called once at startup. If file missing, returns empty list (no error)."""
+    global VC_PORTFOLIO_COMPANIES
+    path = os.path.join(ROOT, 'vc_portfolio_companies.json')
+    try:
+        with open(path, 'r', encoding='utf-8') as f:
+            d = json.load(f)
+        VC_PORTFOLIO_COMPANIES = d.get('companies', []) if isinstance(d, dict) else (d if isinstance(d, list) else [])
+        print(f'[vc-portfolio] loaded {len(VC_PORTFOLIO_COMPANIES)} discovered companies', flush=True)
+    except FileNotFoundError:
+        VC_PORTFOLIO_COMPANIES = []
+    except Exception as e:
+        print(f'[vc-portfolio] skipped: {e}', flush=True)
+        VC_PORTFOLIO_COMPANIES = []
+_load_vc_portfolio()
 def _load_recruiters_by_company():
     try:
         with open(os.path.join(ROOT, "recruiters.json"), "r", encoding="utf-8") as f:
@@ -2692,7 +2726,7 @@ def score_job(job):
     # signal score by exp(-days/21). Replaces the prior binary recency boost.
     # A 3-day-old listing keeps ~87% of its score; a 30-day-old listing keeps ~24%.
     # Jobs with no posted_at get neutral (1.0) so we don't punish silent ATSes.
-    fresh_mult = freshness_multiplier(job.get("posted_at"))
+    fresh_mult = freshness_multiplier(job.get("posted_at"), job.get("company_name"))
     # Apply ONLY to the SIGNAL portion (above 50 base), so a zero-signal stale
     # job doesn't get pushed negative.
     if s > 50 and fresh_mult < 1.0:
@@ -2833,6 +2867,34 @@ def _slugify_company_name(name):
     if not name:
         return ""
     return re.sub(r"[^a-z0-9]+", "", str(name).lower())
+
+
+def _merge_vc_portfolio_companies(companies):
+    """Path 3: merge discovered VC-portfolio companies into the scrape pool.
+    Driven by vc_portfolio_companies.json (populated weekly by the
+    discover-vc-portfolio workflow). Each entry: {name, industry, fundingStage, atsHint}.
+    We slugify the name and add to the atsHint's company list."""
+    if not VC_PORTFOLIO_COMPANIES:
+        return
+    existing = {ats: set() for ats in ('greenhouse', 'lever', 'ashby', 'workable', 'ashby')}
+    for ats in existing:
+        for entry in companies.get(ats, []):
+            slug = entry if isinstance(entry, str) else (entry.get('slug') if isinstance(entry, dict) else '')
+            if slug: existing[ats].add(slug.lower())
+    added = 0
+    for c in VC_PORTFOLIO_COMPANIES:
+        name = (c.get('name') or '').strip() if isinstance(c, dict) else str(c).strip()
+        if not name: continue
+        ats = (c.get('atsHint') or 'greenhouse').strip().lower() if isinstance(c, dict) else 'greenhouse'
+        if ats not in companies: companies[ats] = []
+        slug = re.sub(r'[^a-z0-9]+', '-', name.lower()).strip('-')
+        if not slug: continue
+        if slug in existing.get(ats, set()): continue
+        companies[ats].append(slug)
+        existing.setdefault(ats, set()).add(slug)
+        added += 1
+    if added:
+        print(f'[vc-portfolio] merged {added} discovered companies into scrape pool', flush=True)
 
 
 def _merge_user_target_companies(companies):
@@ -2978,6 +3040,10 @@ def run():
     # then refresh the industry mapping to include them. No-op if no user profile
     # has targetCompanies yet (i.e. before the Worker /parse-resume prompt update).
     _merge_user_target_companies(companies)
+    # Path 3: merge VC-portfolio discovered companies — pool of startups/scaleups
+    # surfaced by /admin/discover-vc-portfolio + the discover-vc-portfolio.yml
+    # weekly workflow. Adds them to whichever ATS hint Claude assigned.
+    _merge_vc_portfolio_companies(companies)
     _build_company_industries(companies)
 
     conn = get_conn()

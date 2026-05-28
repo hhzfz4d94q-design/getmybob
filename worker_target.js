@@ -48,6 +48,7 @@ export default {
     // Admin endpoints (provision / list / delete users)
     if (url.pathname === '/admin/users') return handleAdminUsers(request, env, cors);
     if (url.pathname === '/admin/enrich-companies') return handleEnrichCompanies(request, env, cors);
+    if (url.pathname === '/admin/discover-vc-portfolio') return handleDiscoverVcPortfolio(request, env, cors);
     if (url.pathname === '/company-stage') return handleCompanyStage(request, env, cors);
     if (url.pathname === '/admin/pending-users') return handleAdminPendingUsers(request, env, cors);
     if (url.pathname === '/admin/approve-user') return handleAdminApproveUser(request, env, cors);
@@ -1215,6 +1216,87 @@ async function handleCompanyStage(request, env, cors) {
   try { return Response.json({ company, cached: true, ...JSON.parse(raw) }, { headers: cors }); }
   catch (e) { return Response.json({ company, cached: false, stage: null }, { headers: cors }); }
 }
+
+async function handleDiscoverVcPortfolio(request, env, cors) {
+  // POST { vcFirms?: [str], industries?: [str], targetTitles?: [str], excludeCompanies?: [str] }
+  // → Asks Claude to enumerate startups/scaleups (Seed–Series C) funded by
+  // those VCs in those industries that hire those titles. Cached 30 days
+  // per (vc, industry) tuple. Returns a flat list of company names + atsHint.
+  if (request.method !== 'POST') return Response.json({ error: 'POST only' }, { status: 405, headers: cors });
+  if (!env.ADMIN_KEY) return Response.json({ error: 'Worker missing ADMIN_KEY secret' }, { status: 500, headers: cors });
+  if (request.headers.get('X-Admin-Key') !== env.ADMIN_KEY) {
+    return Response.json({ error: 'Invalid X-Admin-Key' }, { status: 401, headers: cors });
+  }
+  if (!env.ANTHROPIC_API_KEY) return Response.json({ error: 'Missing ANTHROPIC_API_KEY' }, { status: 500, headers: cors });
+  let body;
+  try { body = await request.json(); } catch (e) { return Response.json({ error: 'Bad JSON' }, { status: 400, headers: cors }); }
+  const vcFirms = Array.isArray(body.vcFirms) && body.vcFirms.length
+    ? body.vcFirms.slice(0, 30)
+    : ['Andreessen Horowitz (a16z)', 'Sequoia Capital', 'Founders Fund', 'Bessemer Venture Partners',
+       'Lightspeed Venture Partners', 'Greylock Partners', 'Index Ventures', 'Union Square Ventures',
+       'Accel', 'Kleiner Perkins', 'GV (Google Ventures)', 'General Catalyst'];
+  const industries = Array.isArray(body.industries) ? body.industries.slice(0, 10) : ['fintech', 'banking', 'healthcare IT'];
+  const titles = Array.isArray(body.targetTitles) ? body.targetTitles.slice(0, 10) : ['VP', 'Director', 'Head of'];
+  const excludeNames = new Set((Array.isArray(body.excludeCompanies) ? body.excludeCompanies : []).map(x => String(x).toLowerCase()));
+  const force = !!body.force;
+
+  const cacheKey = 'vc:portfolio:' + (industries.join('|') + '|' + vcFirms.join('|')).slice(0, 250).toLowerCase().replace(/[^a-z0-9|]/g, '_');
+  if (!force) {
+    const cached = await env.RESUMES.get(cacheKey);
+    if (cached) {
+      try {
+        const parsed = JSON.parse(cached);
+        if (parsed.companies && (Date.now() - (parsed.cachedAt || 0)) < 30 * 24 * 3600 * 1000) {
+          return Response.json({ ...parsed, fromCache: true }, { headers: cors });
+        }
+      } catch (e) {}
+    }
+  }
+
+  const prompt = `You are sourcing companies for a job-search product. Return a JSON array of currently-operating private companies (Seed through Series C, plus selected Series D startups) that meet ALL of these criteria:
+
+1. Funded by one of these VCs: ${vcFirms.join(', ')}
+2. Operate primarily in one of these industries: ${industries.join(', ')}
+3. Plausibly hire roles like: ${titles.join(' / ')}
+4. US-headquartered (preferred) or have major US presence
+5. Currently active (not acquired/shut down per your knowledge)
+
+For each, output: {"name": exact legal/common name, "industry": one from list above, "fundingStage": one of "seed"/"series-a"/"series-b"/"series-c"/"series-d", "atsHint": one of "greenhouse"/"lever"/"ashby"/"workday"/"workable"/"unknown" — pick the ATS slug they MOST LIKELY use based on company size and stage}
+
+Aim for 30-60 companies, biased toward Series A-C (where senior hiring is most active). Do NOT include: ${[...excludeNames].slice(0, 20).join(', ') || '(none)'}.
+
+Output ONLY a JSON object: {"companies": [...]}. No prose, no markdown.`;
+
+  try {
+    const aiResp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 6000, messages: [{ role: 'user', content: prompt }] }),
+    });
+    const aiJson = await aiResp.json();
+    const text = ((aiJson.content || [])[0] || {}).text || '';
+    const cleanText = text.replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/i, '').trim();
+    let parsed;
+    try { parsed = JSON.parse(cleanText); }
+    catch (e) {
+      return Response.json({ error: 'AI returned non-JSON', preview: cleanText.slice(0, 200) }, { status: 502, headers: cors });
+    }
+    const companies = Array.isArray(parsed.companies) ? parsed.companies : [];
+    const record = {
+      companies,
+      vcFirms,
+      industries,
+      titles,
+      cachedAt: Date.now(),
+      analyzedAt: new Date().toISOString(),
+    };
+    await env.RESUMES.put(cacheKey, JSON.stringify(record), { expirationTtl: 30 * 24 * 3600 });
+    return Response.json({ ...record, fromCache: false, count: companies.length }, { headers: cors });
+  } catch (e) {
+    return Response.json({ error: 'Discovery failed: ' + (e && e.message || String(e)) }, { status: 502, headers: cors });
+  }
+}
+
 
 async function handleEnrichCompanies(request, env, cors) {
   if (request.method !== 'POST') return Response.json({ error: 'POST only' }, { status: 405, headers: cors });

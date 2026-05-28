@@ -1,0 +1,105 @@
+name: Discover VC portfolio companies (startup pool expansion)
+
+# Calls /admin/discover-vc-portfolio with each user's industries + target
+# titles, aggregates results, writes vc_portfolio_companies.json which
+# fetch_jobs.py reads to expand the scrape pool with startup/scaleup companies.
+
+on:
+  schedule:
+    - cron: "0 7 * * 2"   # weekly, Tuesday 7am UTC (after refresh)
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Force re-classify even if cached'
+        required: false
+        default: 'false'
+
+permissions:
+  contents: write
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Aggregate per-user bullseye + call discover endpoint
+        env:
+          ADMIN_KEY: ${{ secrets.WORKER_ADMIN_KEY }}
+          FORCE: ${{ github.event.inputs.force }}
+        run: |
+          set -e
+          if [ -z "$ADMIN_KEY" ]; then
+            echo "::error::WORKER_ADMIN_KEY missing"; exit 1
+          fi
+
+          # 1. Pull users + their profiles, build union of industries + titles
+          curl -sS -H "X-Admin-Key: $ADMIN_KEY" \
+            "https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/admin/users" \
+            > /tmp/users.json
+
+          python3 << 'PY'
+          import json, os, subprocess
+          users = json.load(open('/tmp/users.json'))['users']
+          industries = set()
+          titles = set()
+          excludes = set()
+          for u in users:
+              slug = u.get('slug')
+              if not slug: continue
+              try:
+                  r = subprocess.run(['curl','-sS','--max-time','15',
+                      f'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/skills-profile?user={slug}'],
+                      capture_output=True, text=True, check=True)
+                  p = (json.loads(r.stdout).get('profile') or {})
+                  for i in (p.get('industries') or []): industries.add(str(i).strip().lower())
+                  for t in (p.get('targetTitles') or []): titles.add(str(t).strip().lower())
+                  for c in (p.get('excludeCompanies') or []): excludes.add(str(c).strip().lower())
+              except Exception as e:
+                  print(f'  [warn] {slug}: {e}')
+          payload = {
+              'industries': sorted(industries)[:10],
+              'targetTitles': sorted(titles)[:10],
+              'excludeCompanies': sorted(excludes)[:30],
+              'force': os.environ.get('FORCE','false').lower() == 'true',
+          }
+          print('Aggregated:', json.dumps(payload, indent=2))
+          json.dump(payload, open('/tmp/payload.json','w'))
+          PY
+
+          # 2. Call worker
+          BODY=$(cat /tmp/payload.json)
+          curl -sS --max-time 120 -X POST \
+            -H "X-Admin-Key: $ADMIN_KEY" \
+            -H "Content-Type: application/json" \
+            --data "$BODY" \
+            "https://cool-darkness-dce5.tr6jz6v7wg.workers.dev/admin/discover-vc-portfolio" \
+            > /tmp/discovery.json
+
+          # 3. Validate + extract company list
+          python3 << 'PY'
+          import json
+          d = json.load(open('/tmp/discovery.json'))
+          if d.get('error'):
+              raise SystemExit(f"Discovery error: {d['error']}")
+          companies = d.get('companies', [])
+          print(f"Discovered {len(companies)} companies (fromCache={d.get('fromCache')})")
+          # Save in the shape fetch_jobs.py reads
+          out = {
+              'companies': companies,
+              'vcFirms': d.get('vcFirms', []),
+              'industries': d.get('industries', []),
+              'analyzedAt': d.get('analyzedAt'),
+          }
+          json.dump(out, open('vc_portfolio_companies.json','w'), indent=2)
+          # Stage distribution print
+          from collections import Counter
+          stages = Counter(c.get('fundingStage','?') for c in companies)
+          for s, n in stages.most_common():
+              print(f'  {s}: {n}')
+          PY
+
+          git config user.email "discover-bot@getmemyjob.local"
+          git config user.name "discover-bot"
+          git add vc_portfolio_companies.json
+          git commit -m "auto: vc-portfolio discovery snapshot" || echo "nothing"
+          git push
