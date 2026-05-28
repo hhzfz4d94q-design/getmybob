@@ -4818,6 +4818,52 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
             '</div>'
         )
 
+    # --- Sprint mode (10-day push) ---------------------------------
+    # If skills_profile.sprintStart is set, render a progress strip and
+    # flag the dashboard so it sorts by sprint priority on first load.
+    # Counter values are hydrated client-side after /tracker loads.
+    sprint_strip_html = ''
+    sprint_active_attr = 'false'
+    try:
+        sp = (SKILLS_PROFILE or {}).get('sprintStart')
+        if sp:
+            from datetime import datetime as _spdt, timezone as _sptz
+            start_dt = _spdt.fromisoformat(str(sp).replace('Z','+00:00'))
+            now_dt = _spdt.now(_sptz.utc)
+            sprint_days = int((SKILLS_PROFILE or {}).get('sprintDays', 10))
+            daily_quota = int((SKILLS_PROFILE or {}).get('sprintDailyQuota', 3))
+            day_n = max(1, min(sprint_days, int((now_dt - start_dt).days) + 1))
+            quota_total = sprint_days * daily_quota
+            sprint_active_attr = 'true'
+            # Persist sprint params on the strip so JS can read them
+            sprint_strip_html = (
+                '<div id="sprint-strip" '
+                f'data-sprint-start="{start_dt.isoformat()}" '
+                f'data-sprint-days="{sprint_days}" '
+                f'data-sprint-daily-quota="{daily_quota}" '
+                f'data-sprint-quota-total="{quota_total}" '
+                'style="background:linear-gradient(135deg,#0B0828 0%,#1E146E 40%,#1817B5 100%);'
+                'color:#fff;padding:14px 20px;border-radius:12px;margin:0 auto 14px;max-width:1400px;'
+                'font-family:Inter,system-ui,sans-serif;box-shadow:0 4px 14px rgba(11,8,40,0.18);">'
+                '<div style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;">'
+                '<div style="font-size:14px;font-weight:700;letter-spacing:0.5px;">'
+                f'🎯 10-DAY SPRINT &mdash; Day <span id="sprint-day-n">{day_n}</span> of {sprint_days}'
+                '</div>'
+                f'<div style="font-size:13px;opacity:0.95;"><span id="sprint-applied-total">0</span> of {quota_total} applications</div>'
+                '</div>'
+                '<div style="margin-top:10px;height:8px;background:rgba(255,255,255,0.18);border-radius:6px;overflow:hidden;">'
+                '<div id="sprint-progress-fill" style="height:100%;width:0%;background:linear-gradient(90deg,#7C7CF0,#A4A4FF);border-radius:6px;transition:width 0.4s;"></div>'
+                '</div>'
+                '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:12px;opacity:0.9;">'
+                f'<span>Today: <span id="sprint-today-count">0</span> of {daily_quota}</span>'
+                '<span><span id="sprint-pct">0</span>% to goal</span>'
+                '</div>'
+                '</div>'
+            )
+    except Exception as _sprint_err:
+        sprint_strip_html = ''
+        sprint_active_attr = 'false'
+
     html = HTML_TEMPLATE.format(
         total=total,
         senior_remote=senior_remote,
@@ -4831,6 +4877,8 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         has_profile_js=("true" if SKILLS_PROFILE else "false"),
         hidden_jobs_json=hidden_jobs_json,
         low_match_warning=(auto_learn_html + low_match_warning_html),
+        sprint_strip=sprint_strip_html,
+        sprint_active=sprint_active_attr,
     )
     # Some embedded emoji in HTML_TEMPLATE are stored as UTF-16 surrogate
     # pair literals (\ud83c\udfaf etc). Merge them into proper codepoints
@@ -5202,7 +5250,7 @@ HTML_TEMPLATE = """<!doctype html>
 <header>
   <h1>Jobs for {user_name}</h1>
   <div class="sub" title="{subtitle} · Generated {generated}">{subtitle} · Generated {generated}</div>
-  <div class="header-actions">
+  <div class="header-actions" data-sprint-active="{sprint_active}">
     <button id="refresh-btn" class="header-btn" onclick="refreshData()" title="Pull fresh job listings from all sources. Takes 2-3 minutes.">⟳ Find new jobs</button>
     <button id="prefs-btn" class="header-btn" onclick="replayTour()" title="Re-open the setup wizard to update your bullseye, locations, scoring, etc.">⚙ Preferences</button>
     <div class="header-more-wrap">
@@ -5227,6 +5275,7 @@ HTML_TEMPLATE = """<!doctype html>
     </div>
   </div>
 </header>
+{sprint_strip}
 {low_match_warning}
 <div class="stats">
   <div class="stat"><b>{total}</b>Total jobs tracked</div>
@@ -5286,6 +5335,7 @@ HTML_TEMPLATE = """<!doctype html>
     <option value="only">Recruiters: Only</option>
   </select>
   <select id="sortBy" onchange="sortCards()">
+    <option value="sprint">Sort: Sprint priority</option>
     <option value="score">Sort: Best match</option>
     <option value="salary">Sort: Salary (high to low)</option>
     <option value="recent">Sort: Most recent</option>
@@ -6102,10 +6152,20 @@ function sortCards() {{
   const grid = document.getElementById('grid');
   const cards = Array.from(grid.querySelectorAll('.card'));
   function _secondary(a, b) {{
+    if (by === 'sprint') return _sprintPriority(b) - _sprintPriority(a);
     if (by === 'salary') return (parseInt(b.dataset.salaryMax || '0', 10)) - (parseInt(a.dataset.salaryMax || '0', 10));
     if (by === 'recent') return (b.dataset.lastSeen || '').localeCompare(a.dataset.lastSeen || '');
     if (by === 'ghost') return (b.dataset.firstSeen || '').localeCompare(a.dataset.firstSeen || '');
     return (parseInt(b.dataset.score || '0', 10)) - (parseInt(a.dataset.score || '0', 10));
+  }}
+  function _sprintPriority(card) {{
+    let p = 0;
+    if (card.querySelector('.just-posted-badge')) p += 100;
+    if (card.querySelector('.contact-badge')) p += 50;
+    p += parseInt(card.dataset.score || '0', 10);
+    const statusBtn = card.querySelector('[data-status-for]');
+    if (statusBtn && /applied|phone|onsite|offer|rejected|dismissed/i.test(statusBtn.textContent || '')) p -= 20;
+    return p;
   }}
   cards.sort((a, b) => {{
     // PRIMARY criterion: any LinkedIn connection at a company that's
@@ -10301,6 +10361,74 @@ function wizWtPrefill() {{
   if (document.readyState === 'loading') {{
     document.addEventListener('DOMContentLoaded', loadNotes);
   }} else {{ loadNotes(); }}
+}})();
+
+// --- Sprint mode: auto-sort + hydrate counters -----------------------------
+(function(){{
+  function _initSprintSort(){{
+    try {{
+      const ha = document.querySelector('.header-actions');
+      if (!ha || ha.dataset.sprintActive !== 'true') return;
+      const sel = document.getElementById('sortBy');
+      if (!sel) return;
+      if (sel.dataset.sprintApplied === '1') return;
+      sel.value = 'sprint';
+      sel.dataset.sprintApplied = '1';
+      if (typeof sortCards === 'function') sortCards();
+    }} catch(e){{}}
+  }}
+  async function _hydrateSprint(){{
+    try {{
+      const strip = document.getElementById('sprint-strip');
+      if (!strip) return;
+      const start = strip.dataset.sprintStart;
+      const days = parseInt(strip.dataset.sprintDays || '10', 10);
+      const dailyQuota = parseInt(strip.dataset.sprintDailyQuota || '3', 10);
+      const quotaTotal = parseInt(strip.dataset.sprintQuotaTotal || (days * dailyQuota), 10);
+      if (!start) return;
+      const startDt = new Date(start);
+      const todayStr = new Date().toISOString().slice(0,10);
+      // Use the in-page tracker cache if present, else fetch directly.
+      let tracker = (typeof window._trackerCache === 'object' && window._trackerCache) || null;
+      if (!tracker && typeof TRACKER_WORKER_URL !== 'undefined') {{
+        try {{
+          const r = await fetch(TRACKER_WORKER_URL);
+          if (r.ok) tracker = await r.json();
+        }} catch(e){{}}
+      }}
+      if (!tracker || typeof tracker !== 'object') return;
+      let applied = 0, today = 0;
+      const activeStatuses = {{applied:1, phone:1, onsite:1, offer:1, rejected:1}};
+      Object.values(tracker).forEach(function(entry){{
+        if (!entry || typeof entry !== 'object') return;
+        const st = (entry.status || '').toLowerCase();
+        if (!activeStatuses[st]) return;
+        const ts = entry.appliedAt || entry.updatedAt || '';
+        if (!ts) return;
+        const td = new Date(ts);
+        if (isNaN(td.getTime()) || td < startDt) return;
+        applied += 1;
+        if (td.toISOString().slice(0,10) === todayStr) today += 1;
+      }});
+      const pct = quotaTotal ? Math.min(100, Math.round((applied/quotaTotal)*100)) : 0;
+      const elApplied = document.getElementById('sprint-applied-total');
+      const elToday = document.getElementById('sprint-today-count');
+      const elPct = document.getElementById('sprint-pct');
+      const elFill = document.getElementById('sprint-progress-fill');
+      if (elApplied) elApplied.textContent = String(applied);
+      if (elToday) elToday.textContent = String(today);
+      if (elPct) elPct.textContent = String(pct);
+      if (elFill) elFill.style.width = pct + '%';
+    }} catch(e){{}}
+  }}
+  function _runAll(){{ _initSprintSort(); _hydrateSprint(); }}
+  if (document.readyState === 'loading') {{
+    document.addEventListener('DOMContentLoaded', _runAll);
+  }} else {{
+    _runAll();
+  }}
+  // Re-hydrate after status changes (tracker mutates)
+  document.addEventListener('tracker:updated', _hydrateSprint);
 }})();
 </script>
 </body></html>"""
