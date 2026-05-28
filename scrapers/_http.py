@@ -1,7 +1,9 @@
 """Shared HTTP helper for all scrapers."""
 import json
-import urllib.request
-import urllib.error
+from urllib.request import Request, urlopen
+from urllib.error import HTTPError, URLError
+
+UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HealthTechJobsFetcher/1.0"
 
 
 def fetch_json(url, timeout=15, data=None, method=None):
