@@ -65,6 +65,17 @@ HTML_TEMPLATE = """<!doctype html>
   .goal-stat {{ background: linear-gradient(135deg, #f8f4ff 0%, #eef0ff 100%) !important; }}
   .goal-stat b {{ color: #5C5CD6 !important; }}
   .stat b {{ font-size: 22px; display: block; color: #5C5CD6; }}
+  /* Sprint config modal — prototype 2026-05-28 */
+  .sc-section {{ margin-bottom: 16px; }}
+  .sc-label {{ font-size: 12.5px; font-weight: 600; color: #1A1A2E; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.04em; }}
+  .sc-pills {{ display: flex; flex-wrap: wrap; gap: 6px; }}
+  .sc-pill {{ padding: 7px 14px; background: #fff; color: #5C5CD6; border: 1px solid #d0d4dc; border-radius: 16px; font-size: 13px; cursor: pointer; font-family: inherit; transition: all 0.1s; }}
+  .sc-pill:hover {{ border-color: #5C5CD6; background: #fafbff; }}
+  .sc-pill.active {{ background: #5C5CD6; color: #fff; border-color: #5C5CD6; font-weight: 600; }}
+  .sc-pills.sc-days .sc-pill {{ padding: 6px 10px; min-width: 44px; text-align: center; font-size: 12px; }}
+  .sc-hint {{ font-size: 11.5px; color: #888; margin-top: 6px; }}
+  /* funnel-empty was referenced from JS but never had a CSS rule — repair */
+  .funnel-empty {{ flex:1; background:#f7f8fb; border:1px dashed #d8dbe6; border-radius:8px; padding:10px 14px; color:#6b7280; font-size:13px; display:flex; align-items:center; justify-content:center; }}
   .filters {{ padding: 12px 28px; background: white; border-bottom: 1px solid #e5e5ea; display: flex; gap: 12px; }}
   .filters input, .filters select {{ padding: 6px 10px; font-size: 13px; border: 1px solid #ddd; border-radius: 6px; }}
   .grid {{ padding: 18px 28px; display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 14px; }}
@@ -652,6 +663,57 @@ HTML_TEMPLATE = """<!doctype html>
     <h3 id="interview-title">Interview prep</h3>
     <p class="prep-status" id="interview-status">Generating with Claude… this takes 20-30 seconds.</p>
     <div id="interview-output" style="display:none;"></div>
+  </div>
+</div>
+
+<!-- Sprint config modal (prototype 2026-05-28) -->
+<div class="modal-overlay" id="sprint-config-modal" onclick="if(event.target===this)closeSprintConfigModal()">
+  <div class="modal sprint-config-modal" style="max-width:520px;">
+    <span class="modal-close" onclick="closeSprintConfigModal()">&times;</span>
+    <h3 style="margin:0 0 4px;display:flex;align-items:center;gap:8px;">🎯 Start your sprint</h3>
+    <p style="margin:0 0 18px;color:#666;font-size:13.5px;">A short, focused push: a daily quota, a fixed end date, and a single email each morning with that day&rsquo;s picks. Tweak the defaults to match how aggressive you want to be.</p>
+    <div class="sc-section">
+      <div class="sc-label">How long?</div>
+      <div class="sc-pills" data-group="duration">
+        <button type="button" class="sc-pill" data-val="5">5 days</button>
+        <button type="button" class="sc-pill" data-val="10">10 days</button>
+        <button type="button" class="sc-pill" data-val="14">14 days</button>
+        <button type="button" class="sc-pill" data-val="21">21 days</button>
+      </div>
+    </div>
+    <div class="sc-section">
+      <div class="sc-label">Apps per day</div>
+      <div class="sc-pills" data-group="quota">
+        <button type="button" class="sc-pill" data-val="2">2 / day</button>
+        <button type="button" class="sc-pill" data-val="3">3 / day</button>
+        <button type="button" class="sc-pill" data-val="5">5 / day</button>
+      </div>
+    </div>
+    <div class="sc-section">
+      <div class="sc-label">Days of the week</div>
+      <div class="sc-pills sc-days" data-group="days">
+        <button type="button" class="sc-pill" data-val="1">Mon</button>
+        <button type="button" class="sc-pill" data-val="2">Tue</button>
+        <button type="button" class="sc-pill" data-val="3">Wed</button>
+        <button type="button" class="sc-pill" data-val="4">Thu</button>
+        <button type="button" class="sc-pill" data-val="5">Fri</button>
+        <button type="button" class="sc-pill" data-val="6">Sat</button>
+        <button type="button" class="sc-pill" data-val="0">Sun</button>
+      </div>
+      <div class="sc-hint">Skip days won&rsquo;t count toward your streak or remaining-days count. (Saved locally for now &mdash; server enforcement is the next step.)</div>
+    </div>
+    <div class="sc-section">
+      <div class="sc-label">Daily email nudge</div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <input type="time" id="sc-nudge-time" value="07:00" style="padding:6px 10px;border:1px solid #d0d4dc;border-radius:6px;font-size:13.5px;">
+        <span style="font-size:12.5px;color:#666;">your local time &middot; one email per active day with the top picks</span>
+      </div>
+    </div>
+    <div id="sc-preview" style="margin:16px 0 4px;padding:10px 12px;background:#f4f4ff;border:1px solid #d8dbe6;border-radius:8px;font-size:13px;color:#3a3a72;"></div>
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:14px;">
+      <button type="button" class="btn ghost" onclick="closeSprintConfigModal()">Cancel</button>
+      <button type="button" class="btn primary" id="sc-start-btn" onclick="startConfiguredSprint(this)">Start sprint &rarr;</button>
+    </div>
   </div>
 </div>
 
@@ -5800,7 +5862,110 @@ function wizWtPrefill() {{
   document.addEventListener('tracker:updated', _hydrateSprint);
 }})();
 
-async function startSprintNow(btn) {{
+// === Sprint config modal (prototype 2026-05-28) =====================
+// The dashboard banner's "Start my 10-day sprint →" used to POST blind
+// defaults. Now it opens this modal first so the user can pick duration,
+// quota, days-of-week, and nudge time before committing.
+const SC_KEY = 'gmj_sprint_config_' + USER_SLUG;
+function _scLoadConfig() {{
+  try {{
+    const raw = localStorage.getItem(SC_KEY);
+    if (raw) {{
+      const o = JSON.parse(raw);
+      if (o && typeof o === 'object') return Object.assign({{ duration:10, quota:3, days:[1,2,3,4,5], nudgeTime:'07:00' }}, o);
+    }}
+  }} catch (e) {{}}
+  return {{ duration: 10, quota: 3, days: [1,2,3,4,5], nudgeTime: '07:00' }};
+}}
+function _scSaveConfig(o) {{
+  try {{ localStorage.setItem(SC_KEY, JSON.stringify(o)); }} catch (e) {{}}
+}}
+function _scActivatePill(group, value) {{
+  const wrap = document.querySelector('.sc-pills[data-group="' + group + '"]');
+  if (!wrap) return;
+  wrap.querySelectorAll('.sc-pill').forEach(p => {{
+    p.classList.toggle('active', String(p.dataset.val) === String(value));
+  }});
+}}
+function _scActivateDays(daysArr) {{
+  const wrap = document.querySelector('.sc-pills[data-group="days"]');
+  if (!wrap) return;
+  const set = new Set((daysArr || []).map(String));
+  wrap.querySelectorAll('.sc-pill').forEach(p => {{
+    p.classList.toggle('active', set.has(String(p.dataset.val)));
+  }});
+}}
+function _scReadConfig() {{
+  const get = group => {{
+    const el = document.querySelector('.sc-pills[data-group="' + group + '"] .sc-pill.active');
+    return el ? parseInt(el.dataset.val, 10) : null;
+  }};
+  const days = Array.from(document.querySelectorAll('.sc-pills[data-group="days"] .sc-pill.active'))
+    .map(p => parseInt(p.dataset.val, 10));
+  const t = (document.getElementById('sc-nudge-time') || {{}}).value || '07:00';
+  return {{
+    duration: get('duration') || 10,
+    quota: get('quota') || 3,
+    days: days.length ? days : [1,2,3,4,5],
+    nudgeTime: t
+  }};
+}}
+function _scUpdatePreview() {{
+  const c = _scReadConfig();
+  const el = document.getElementById('sc-preview');
+  if (!el) return;
+  const totalApps = c.duration * c.quota;
+  const skipNote = c.days.length < 7 ? ' (only on selected days)' : '';
+  el.innerHTML = '<strong>' + c.duration + ' days × ' + c.quota + ' apps/day = ' + totalApps + ' applications total</strong>' +
+                 skipNote + ' &middot; daily nudge at ' + c.nudgeTime + '.';
+}}
+function _scWirePills() {{
+  document.querySelectorAll('.sc-pills .sc-pill').forEach(p => {{
+    p.onclick = () => {{
+      const wrap = p.closest('.sc-pills');
+      const group = wrap.dataset.group;
+      if (group === 'days') {{
+        p.classList.toggle('active');
+      }} else {{
+        wrap.querySelectorAll('.sc-pill').forEach(x => x.classList.remove('active'));
+        p.classList.add('active');
+      }}
+      _scUpdatePreview();
+    }};
+  }});
+  const nt = document.getElementById('sc-nudge-time');
+  if (nt) nt.oninput = _scUpdatePreview;
+}}
+function openSprintConfigModal() {{
+  const modal = document.getElementById('sprint-config-modal');
+  if (!modal) return;
+  const c = _scLoadConfig();
+  _scActivatePill('duration', c.duration);
+  _scActivatePill('quota', c.quota);
+  _scActivateDays(c.days);
+  const nt = document.getElementById('sc-nudge-time');
+  if (nt) nt.value = c.nudgeTime;
+  _scWirePills();
+  _scUpdatePreview();
+  modal.classList.add('show');
+}}
+function closeSprintConfigModal() {{
+  const modal = document.getElementById('sprint-config-modal');
+  if (modal) modal.classList.remove('show');
+}}
+// Banner CTA keeps onclick="startSprintNow(this)" — just route through
+// the modal so we don't have to touch fetch_jobs.py.
+function startSprintNow(btn) {{
+  if (btn) {{ btn.disabled = true; btn.textContent = 'Opening…'; }}
+  openSprintConfigModal();
+  setTimeout(() => {{
+    if (btn) {{ btn.disabled = false; btn.textContent = 'Start my 10-day sprint →'; }}
+  }}, 400);
+}}
+// Actually start the sprint with the modal's chosen config.
+async function startConfiguredSprint(btn) {{
+  const c = _scReadConfig();
+  _scSaveConfig(c);
   if (btn) {{ btn.disabled = true; btn.textContent = 'Starting…'; }}
   try {{
     const _ek = (typeof getEditKey === 'function') ? getEditKey() : null;
@@ -5812,7 +5977,7 @@ async function startSprintNow(btn) {{
       method: 'POST',
       headers: _headers,
       credentials: 'include',
-      body: JSON.stringify({{ sprintDays: 10, sprintDailyQuota: 3 }})
+      body: JSON.stringify({{ sprintDays: c.duration, sprintDailyQuota: c.quota }})
     }});
     if (r.ok) {{
       try {{
@@ -5822,15 +5987,16 @@ async function startSprintNow(btn) {{
         requestAnimationFrame(() => {{ burst.style.opacity='1'; }});
         setTimeout(() => {{ burst.style.opacity='0'; setTimeout(() => burst.remove(), 400); }}, 600);
       }} catch(e) {{}}
+      closeSprintConfigModal();
       setTimeout(() => location.reload(), 700);
     }} else {{
       const j = await r.json().catch(()=>({{}}));
       alert('Could not start sprint: ' + (j.error || r.status));
-      if (btn) {{ btn.disabled = false; btn.textContent = 'Start my 10-day sprint →'; }}
+      if (btn) {{ btn.disabled = false; btn.textContent = 'Start sprint →'; }}
     }}
   }} catch (e) {{
     alert('Network error: ' + (e.message || e));
-    if (btn) {{ btn.disabled = false; btn.textContent = 'Start my 10-day sprint →'; }}
+    if (btn) {{ btn.disabled = false; btn.textContent = 'Start sprint →'; }}
   }}
 }}
 
