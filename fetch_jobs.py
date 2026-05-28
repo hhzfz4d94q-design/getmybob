@@ -1353,20 +1353,38 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         title = (rrow[2] or "").lower()
         blob  = ((rrow[2] or "") + " " + (rrow[12] or "")).lower()
         remote_flag = rrow[9]
-        # --- title fit: exact multi-token target match vs. partial vs. senior-only ---
+        # --- title fit: tiered match. Bias toward giving SOME credit rather
+        # than 0 on any reasonable title — we no longer require the magic
+        # word VP/Director just to score above the floor.
         target_titles = SKILLS_PROFILE.get("targetTitles") or []
         ttoks = set(re.findall(r"[a-z]+", title))
         title_fit = 0
-        _STOP = {"of","the","a","an","and","or","for","to","at","in","on","with","by","as","is"}
+        _STOP = {"of","the","a","an","and","or","for","to","at","in","on","with","by","as","is","all","levels"}
         for t in target_titles:
             tt_tokens = [x for x in re.findall(r"[a-z]+", (t or '').lower()) if x not in _STOP and len(x) > 1]
-            if len(tt_tokens) < 2: continue
+            if not tt_tokens: continue
             matched = sum(1 for tk in tt_tokens if tk in ttoks)
-            if matched == len(tt_tokens): title_fit = 100; break
-            if matched >= len(tt_tokens) - 1: title_fit = max(title_fit, 55)
-        if title_fit == 0:
-            _SENIOR = {"vp","svp","evp","chief","cio","cto","cdo","coo","cfo","cro","cpo","ceo","principal","director","head","managing","executive","president","partner","lead","leader"}
-            if _SENIOR & ttoks: title_fit = 35
+            if len(tt_tokens) >= 2 and matched == len(tt_tokens):
+                title_fit = 100; break
+            if len(tt_tokens) >= 2 and matched >= len(tt_tokens) - 1:
+                title_fit = max(title_fit, 60)
+            elif len(tt_tokens) >= 2 and matched >= 1:
+                title_fit = max(title_fit, 35)
+            elif len(tt_tokens) == 1 and matched == 1:
+                title_fit = max(title_fit, 30)
+        # Senior-keyword fallback — extended to include 'architect', 'manager',
+        # 'engineer', 'consultant', 'counsel' so 'Solution Architect' or
+        # 'Risk Manager' aren't penalized for not literally saying 'Director'.
+        _SENIOR = {"vp","svp","evp","chief","cio","cto","cdo","coo","cfo","cro","cpo","ceo",
+                   "principal","director","head","managing","executive","president","partner","lead","leader",
+                   "architect","strategist","counsel","consultant","specialist","manager","engineer"}
+        if title_fit < 35 and (_SENIOR & ttoks):
+            title_fit = 35
+        # Last-resort floor: any non-empty title gets 20 so it's never 0.
+        # (The aggregate score still differentiates — title_fit just isn't
+        # supposed to be a kill-switch on its own.)
+        if title_fit == 0 and title:
+            title_fit = 20
         # --- industry fit ---
         inds = SKILLS_PROFILE.get("industries") or []
         ind_hits = sum(1 for i in inds if i and i in blob)

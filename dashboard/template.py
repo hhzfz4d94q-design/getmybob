@@ -4666,18 +4666,14 @@ async function refreshFocusPanel() {{
     const compEl = c.querySelector(".company");
     const co = compEl ? compEl.textContent.trim().toLowerCase() : "";
     if (dismissedByCompany[co] && dismissedByCompany[co] >= 5) return false;
-    // Per-dimension gates (data-fit-* attrs are emitted by fetch_jobs.py).
-    // If a card has no fit data (old regen), don't gate it — degrade gracefully.
-    const ft = parseInt(c.getAttribute("data-fit-title") || "", 10);
-    const fi = parseInt(c.getAttribute("data-fit-industry") || "", 10);
-    const fk = parseInt(c.getAttribute("data-fit-keywords") || "", 10);
-    const fs = parseInt(c.getAttribute("data-fit-seniority") || "", 10);
-    // Strictness check counts how many dimensions cleared the gate; strict
-    // requires all 4, balanced requires 3+, exploratory requires 2+.
-    if (Number.isFinite(ft)) {{
-      const passed = [ft, fi, fk, fs].filter(v => Number.isFinite(v) && v >= MIN_GATE).length;
-      const required = (window._scStrictness === 'strict') ? 4 : (window._scStrictness === 'exploratory') ? 2 : 3;
-      if (passed < required) {{ gateDrops++; return false; }}
+    // Tier-aware gating: the card's data-tier already encodes whether the
+    // subscores pass per-dim thresholds. strict='strong only';
+    // balanced='strong + good'; exploratory='all' (no gate).
+    const tier = c.getAttribute('data-tier');
+    if (tier) {{
+      const mode = window._scStrictness || 'balanced';
+      if (mode === 'strict' && tier !== 'strong') {{ gateDrops++; return false; }}
+      if (mode === 'balanced' && tier !== 'strong' && tier !== 'good') {{ gateDrops++; return false; }}
     }}
     return true;
   }});
@@ -5076,6 +5072,11 @@ window.toggleFullFeed = function() {{
     const grid = document.getElementById("grid");
     if (!grid) return;
     if (grid.dataset.feedCollapsed === "true") return;
+    // Don't auto-collapse if focus panel rendered 0 picks — would leave
+    // a blank middle of the page.
+    const focusList = document.getElementById("focus-list");
+    const focusCount = focusList ? focusList.querySelectorAll('[data-jump-fp]').length : 0;
+    if (focusCount === 0) return;
     grid.style.display = "none";
     grid.dataset.feedCollapsed = "true";
     const btn = document.getElementById("focus-feed-toggle-btn");
