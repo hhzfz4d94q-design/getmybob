@@ -1796,6 +1796,596 @@
         "healthcare",
         "life-sciences"
       ]
+    },
+    {
+      "name": "Centene Corporation",
+      "tenant": "centene",
+      "subdomain": "wd5",
+      "site": "Centene_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Molina Healthcare",
+      "tenant": "molinahealthcare",
+      "subdomain": "wd5",
+      "site": "Molina",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Teladoc Health",
+      "tenant": "teladoc",
+      "subdomain": "wd5",
+      "site": "Teladoc_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "HealthEquity",
+      "tenant": "healthequity",
+      "subdomain": "wd5",
+      "site": "HealthEquity_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Exact Sciences",
+      "tenant": "exactsciences",
+      "subdomain": "wd5",
+      "site": "Exact_Sciences_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "IQVIA",
+      "tenant": "iqvia",
+      "subdomain": "wd3",
+      "site": "IQVIA_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Cerner",
+      "tenant": "cerner",
+      "subdomain": "wd5",
+      "site": "Cerner_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Change Healthcare",
+      "tenant": "changehealthcare",
+      "subdomain": "wd5",
+      "site": "Change_Healthcare_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Point32Health",
+      "tenant": "point32health",
+      "subdomain": "wd5",
+      "site": "Point32Health_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Blue Shield of California",
+      "tenant": "blueshieldca",
+      "subdomain": "wd5",
+      "site": "BSC_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Independence Blue Cross",
+      "tenant": "ibx",
+      "subdomain": "wd5",
+      "site": "IBX_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Blue Cross Blue Shield of Michigan",
+      "tenant": "bcbsm",
+      "subdomain": "wd5",
+      "site": "BCBSM_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Highmark Health",
+      "tenant": "highmarkhealth",
+      "subdomain": "wd5",
+      "site": "Highmark_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Horizon Blue Cross Blue Shield",
+      "tenant": "horizonblue",
+      "subdomain": "wd5",
+      "site": "Horizon_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Health Care Service Corporation",
+      "tenant": "hcsc",
+      "subdomain": "wd5",
+      "site": "HCSC_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Kaiser Permanente",
+      "tenant": "kaiserpermanente",
+      "subdomain": "wd5",
+      "site": "Kaiser_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Intermountain Healthcare",
+      "tenant": "intermountain",
+      "subdomain": "wd5",
+      "site": "Intermountain_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Cleveland Clinic",
+      "tenant": "ccf",
+      "subdomain": "wd5",
+      "site": "CCF_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Mayo Clinic",
+      "tenant": "mayoclinic",
+      "subdomain": "wd5",
+      "site": "Mayo_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Providence",
+      "tenant": "providence",
+      "subdomain": "wd5",
+      "site": "Providence_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "CommonSpirit Health",
+      "tenant": "commonspirit",
+      "subdomain": "wd5",
+      "site": "CommonSpirit_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Trinity Health",
+      "tenant": "trinityhealth",
+      "subdomain": "wd5",
+      "site": "Trinity_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Advocate Aurora Health",
+      "tenant": "advocatehealth",
+      "subdomain": "wd5",
+      "site": "Advocate_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Ascension",
+      "tenant": "ascension",
+      "subdomain": "wd5",
+      "site": "Ascension_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "HCA Healthcare",
+      "tenant": "hcahealthcare",
+      "subdomain": "wd5",
+      "site": "HCA_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Tenet Healthcare",
+      "tenant": "tenethealth",
+      "subdomain": "wd5",
+      "site": "Tenet_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Sutter Health",
+      "tenant": "sutterhealth",
+      "subdomain": "wd5",
+      "site": "Sutter_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Banner Health",
+      "tenant": "bannerhealth",
+      "subdomain": "wd5",
+      "site": "Banner_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Atrium Health",
+      "tenant": "atriumhealth",
+      "subdomain": "wd5",
+      "site": "Atrium_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "NYU Langone Health",
+      "tenant": "nyulangone",
+      "subdomain": "wd5",
+      "site": "NYU_Langone_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Mass General Brigham",
+      "tenant": "massgeneralbrigham",
+      "subdomain": "wd5",
+      "site": "MGB_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Penn Medicine",
+      "tenant": "pennmedicine",
+      "subdomain": "wd5",
+      "site": "Penn_Medicine_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Johns Hopkins Medicine",
+      "tenant": "johnshopkinsmedicine",
+      "subdomain": "wd5",
+      "site": "JHM_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "NewYork-Presbyterian Hospital",
+      "tenant": "nyp",
+      "subdomain": "wd5",
+      "site": "NYP_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Northwell Health",
+      "tenant": "northwell",
+      "subdomain": "wd5",
+      "site": "Northwell_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Ochsner Health",
+      "tenant": "ochsner",
+      "subdomain": "wd5",
+      "site": "Ochsner_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Stanford Health Care",
+      "tenant": "stanfordhealthcare",
+      "subdomain": "wd5",
+      "site": "Stanford_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "UCLA Health",
+      "tenant": "uclahealth",
+      "subdomain": "wd5",
+      "site": "UCLA_Health_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "UCSF Health",
+      "tenant": "ucsfhealth",
+      "subdomain": "wd5",
+      "site": "UCSF_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Cedars-Sinai",
+      "tenant": "cedarssinai",
+      "subdomain": "wd5",
+      "site": "Cedars_Sinai_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Baylor Scott & White Health",
+      "tenant": "bswhealth",
+      "subdomain": "wd5",
+      "site": "BSW_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Houston Methodist",
+      "tenant": "houstonmethodist",
+      "subdomain": "wd5",
+      "site": "Houston_Methodist_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Sanford Health",
+      "tenant": "sanfordhealth",
+      "subdomain": "wd5",
+      "site": "Sanford_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "OhioHealth",
+      "tenant": "ohiohealth",
+      "subdomain": "wd5",
+      "site": "OhioHealth_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Inova Health System",
+      "tenant": "inova",
+      "subdomain": "wd5",
+      "site": "Inova_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Novant Health",
+      "tenant": "novanthealth",
+      "subdomain": "wd5",
+      "site": "Novant_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "ChristianaCare",
+      "tenant": "christianacare",
+      "subdomain": "wd5",
+      "site": "ChristianaCare_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "RWJBarnabas Health",
+      "tenant": "rwjbh",
+      "subdomain": "wd5",
+      "site": "RWJBH_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Geisinger",
+      "tenant": "geisinger",
+      "subdomain": "wd5",
+      "site": "Geisinger_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "AdventHealth",
+      "tenant": "adventhealth",
+      "subdomain": "wd5",
+      "site": "AdventHealth_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Humana",
+      "tenant": "humana",
+      "subdomain": "wd5",
+      "site": "Humana_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Illumina",
+      "tenant": "illumina",
+      "subdomain": "wd5",
+      "site": "Illumina_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Dexcom",
+      "tenant": "dexcom",
+      "subdomain": "wd5",
+      "site": "Dexcom_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Insulet",
+      "tenant": "insulet",
+      "subdomain": "wd5",
+      "site": "Insulet_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Moderna",
+      "tenant": "modernatx",
+      "subdomain": "wd5",
+      "site": "Moderna_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "BioNTech",
+      "tenant": "biontech",
+      "subdomain": "wd5",
+      "site": "BioNTech_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Alnylam Pharmaceuticals",
+      "tenant": "alnylam",
+      "subdomain": "wd5",
+      "site": "Alnylam_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Neurocrine Biosciences",
+      "tenant": "neurocrine",
+      "subdomain": "wd5",
+      "site": "Neurocrine_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Vertex Pharmaceuticals",
+      "tenant": "vrtx",
+      "subdomain": "wd5",
+      "site": "Vertex_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
     }
   ],
   "remoteok": [
