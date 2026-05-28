@@ -1465,7 +1465,7 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
     # Honest match-reason builder — derived from subscores, not a fallback.
     # Format: "title: <obs> ✗ (target: <X>) · industry ✓ · Capco on target list"
     def _honest_why(rrow, subs):
-        t, i, k, s, _l = subs
+        t, i, k, s, l = subs
         title = (rrow[2] or "").strip()
         company = (rrow[1] or "").strip()
         parts = []
