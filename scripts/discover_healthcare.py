@@ -8,6 +8,7 @@ import os
 import re
 import sys
 import urllib.request
+import urllib.error
 
 
 def main():
@@ -51,6 +52,10 @@ Prefer companies you have HIGH confidence about. Don't invent slugs or workday U
     if not api_key:
         print("FATAL: ANTHROPIC_API_KEY not set", file=sys.stderr)
         return 1
+    print(f"API key present (len={len(api_key)}, prefix={api_key[:8]}…)", flush=True)
+
+    model = os.environ.get("CLAUDE_MODEL", "claude-sonnet-4-5")
+    print(f"Using model: {model}, asking for {count} companies, focus={focus}", flush=True)
 
     req = urllib.request.Request(
         "https://api.anthropic.com/v1/messages",
@@ -62,22 +67,42 @@ Prefer companies you have HIGH confidence about. Don't invent slugs or workday U
         },
         data=json.dumps(
             {
-                "model": "claude-sonnet-4-6",
+                "model": model,
                 "max_tokens": 16000,
                 "messages": [{"role": "user", "content": prompt}],
             }
         ).encode(),
     )
-    with urllib.request.urlopen(req, timeout=180) as r:
-        resp = json.loads(r.read().decode())
+    try:
+        with urllib.request.urlopen(req, timeout=180) as r:
+            status = r.status
+            body = r.read().decode()
+    except urllib.error.HTTPError as e:
+        err_body = e.read().decode("utf-8", errors="replace")
+        print(f"FATAL: Anthropic API HTTPError {e.code}: {err_body[:1500]}", file=sys.stderr)
+        return 1
+    except Exception as e:
+        print(f"FATAL: Anthropic request failed: {type(e).__name__}: {e}", file=sys.stderr)
+        return 1
+    print(f"API HTTP {status}, body length={len(body)}", flush=True)
+    try:
+        resp = json.loads(body)
+    except Exception as e:
+        print(f"FATAL: API body not JSON: {e}\nHead: {body[:500]}", file=sys.stderr)
+        return 1
     text = resp.get("content", [{}])[0].get("text", "")
+    print(f"Claude text length={len(text)}, head={text[:200]!r}", flush=True)
     cleaned = re.sub(r"^```json\s*|```$", "", text.strip(), flags=re.MULTILINE)
     try:
         companies = json.loads(cleaned)
     except Exception as e:
-        print(f"FATAL: Claude didn't return valid JSON: {e}\nRaw: {text[:500]}", file=sys.stderr)
+        print(
+            f"FATAL: Claude didn't return valid JSON: {e}\n"
+            f"Head: {cleaned[:500]}\nTail: {cleaned[-500:]}",
+            file=sys.stderr,
+        )
         return 1
-    print(f"Discovered {len(companies)} companies from Claude")
+    print(f"Discovered {len(companies)} companies from Claude", flush=True)
 
     with open("healthtech_companies.json") as f:
         ht = json.load(f)

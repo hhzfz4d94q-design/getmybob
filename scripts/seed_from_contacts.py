@@ -7,6 +7,7 @@ import os
 import re
 import sys
 import urllib.request
+import urllib.error
 
 WORKER = "https://cool-darkness-dce5.tr6jz6v7wg.workers.dev"
 
@@ -87,6 +88,9 @@ def main():
         "Be conservative — atsHint='other' if you don't know. Don't invent slugs."
     )
 
+    import os as _os
+    model = _os.environ.get("CLAUDE_MODEL", "claude-sonnet-4-5")
+    print(f"Using model: {model}", flush=True)
     req = urllib.request.Request(
         "https://api.anthropic.com/v1/messages",
         method="POST",
@@ -97,17 +101,28 @@ def main():
         },
         data=json.dumps(
             {
-                "model": "claude-sonnet-4-6",
+                "model": model,
                 "max_tokens": 16000,
                 "messages": [{"role": "user", "content": prompt}],
             }
         ).encode(),
     )
-    with urllib.request.urlopen(req, timeout=180) as r:
-        resp = json.loads(r.read().decode())
+    try:
+        with urllib.request.urlopen(req, timeout=180) as r:
+            body = r.read().decode()
+    except urllib.error.HTTPError as e:
+        err = e.read().decode("utf-8", errors="replace")
+        print(f"FATAL: Anthropic API HTTPError {e.code}: {err[:1500]}", file=sys.stderr)
+        return 1
+    resp = json.loads(body)
     text = resp.get("content", [{}])[0].get("text", "")
+    print(f"Claude text length={len(text)}, head={text[:200]!r}", flush=True)
     cleaned = re.sub(r"^```json\s*|```$", "", text.strip(), flags=re.MULTILINE)
-    enriched = json.loads(cleaned)
+    try:
+        enriched = json.loads(cleaned)
+    except Exception as e:
+        print(f"FATAL: not JSON: {e}\nHead: {cleaned[:500]}", file=sys.stderr)
+        return 1
     print(f"Enriched {len(enriched)} companies")
 
     ht_slugs = {c.get("slug", "").lower() for c in ht["companies"]}
