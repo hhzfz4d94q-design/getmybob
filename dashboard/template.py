@@ -5943,6 +5943,14 @@ function wizWtPrefill() {{
 // defaults. Now it opens this modal first so the user can pick duration,
 // quota, days-of-week, and nudge time before committing.
 const SC_KEY = 'gmj_sprint_config_' + USER_SLUG;
+// URL-aware error formatter — every sprint catch should use this so the
+// failing endpoint is visible in console + the user-facing alert.
+function _spErr(label, url, e) {{
+  const msg = (e && e.message) ? e.message : String(e || 'unknown error');
+  const short = (url || '').replace(/^https?:\/\/[^\/]+/, '');
+  try {{ console.error('[' + label + ']', short, e); }} catch (_) {{}}
+  return msg + '  (endpoint: ' + short + ')';
+}}
 function _scLoadConfig() {{
   try {{
     const raw = localStorage.getItem(SC_KEY);
@@ -6145,7 +6153,7 @@ async function startConfiguredSprint(btn) {{
       if (btn) {{ btn.disabled = false; btn.textContent = 'Start sprint →'; }}
     }}
   }} catch (e) {{
-    alert('Network error: ' + (e.message || e));
+    alert(_spErr('startConfiguredSprint', WORKER_BASE + '/api/sprint/start' + USER_QS, e));
     if (btn) {{ btn.disabled = false; btn.textContent = 'Start sprint →'; }}
   }}
 }}
@@ -6297,7 +6305,7 @@ async function finishSprintReview(btn, startAnother) {{
       setTimeout(() => location.reload(), 600);
     }}
   }} catch (e) {{
-    alert('Network error: ' + (e.message || e));
+    alert(_spErr('finishSprintReview', WORKER_BASE + '/api/sprint/complete' + USER_QS, e));
     if (btn) {{ btn.disabled = false; btn.textContent = startAnother ? 'Save & start another sprint →' : 'Save & take a break'; }}
   }}
 }}
@@ -6372,7 +6380,7 @@ async function sprintSnoozeToday(btn) {{
     }}
     if (btn) {{ btn.textContent = 'Snoozed ✓'; }}
   }} catch (e) {{
-    alert('Network error: ' + (e.message || e));
+    alert(_spErr('sprintSnoozeToday', WORKER_BASE + '/api/sprint/snooze-today' + USER_QS, e));
     if (btn) {{ btn.disabled = false; btn.textContent = 'Snooze today'; }}
   }}
 }}
@@ -6395,7 +6403,7 @@ async function sprintAdjustQuota() {{
     }}
     location.reload();
   }} catch (e) {{
-    alert('Network error: ' + (e.message || e));
+    alert(_spErr('sprintAdjustQuota', WORKER_BASE + '/skills-profile' + USER_QS, e));
   }}
 }}
 

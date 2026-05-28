@@ -10,11 +10,21 @@ on:
   push:
     paths:
       - 'fetch_jobs.py'
+      - 'dashboard/**'
+      - 'account.html'
+      - 'sprint.html'
+      - 'admin.html'
+      - 'login.html'
+      - 'signup.html'
+      - 'forgot.html'
       - 'scripts/validate_dashboard_js.py'
+      - 'scripts/check_credentials_include.py'
       - '.github/workflows/js-syntax-gate.yml'
   pull_request:
     paths:
       - 'fetch_jobs.py'
+      - 'dashboard/**'
+      - 'account.html'
   workflow_dispatch: {}
 
 jobs:
@@ -30,3 +40,6 @@ jobs:
           node-version: "22"
       - name: Validate every <script> block parses as JS
         run: python3 scripts/validate_dashboard_js.py
+
+      - name: Reject credentials:'include' in dashboard files
+        run: python3 scripts/check_credentials_include.py

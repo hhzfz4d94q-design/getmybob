@@ -317,7 +317,7 @@ async function loadData() {
         editKey = localStorage.getItem('htj_resume_key_' + SLUG) || localStorage.getItem('htj_resume_key') || '';
       } catch(e) {}
       const headers = editKey ? { 'X-Edit-Key': editKey } : {};
-      const cr = await fetch(WORKER_BASE + '/contacts' + USER_QS, { credentials: 'include', headers });
+      const cr = await fetch(WORKER_BASE + '/contacts' + USER_QS, { headers });
       if (cr.ok) {
         const cj = await cr.json();
         contacts = Array.isArray(cj.contacts) ? cj.contacts : [];

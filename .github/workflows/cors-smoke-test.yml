@@ -1,0 +1,127 @@
+name: CORS smoke test (live worker)
+
+# After a worker deploy or dashboard regen, probe each cross-origin
+# endpoint the dashboard actually calls. Catches CORS regressions
+# (missing Allow-Origin, missing Allow-Methods, etc.) BEFORE a user
+# clicks "Start sprint" and sees "Failed to fetch". 2026-05-28.
+
+on:
+  workflow_dispatch: {}
+  workflow_run:
+    workflows: ["Manage Cloudflare Worker (dump / deploy)"]
+    types: [completed]
+  schedule:
+    - cron: "30 11 * * *"  # daily, 30 min after the morning cron
+
+permissions:
+  contents: read
+
+env:
+  WORKER_BASE: https://cool-darkness-dce5.tr6jz6v7wg.workers.dev
+  ORIGIN: https://getmyjob.officebeatllc.com
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe OPTIONS preflight on each endpoint
+        run: |
+          set +e
+          ENDPOINTS=(
+            "/api/sprint/start"
+            "/api/sprint/complete"
+            "/api/sprint/snooze-today"
+            "/api/picks"
+            "/skills-profile"
+            "/tracker"
+            "/notes"
+            "/contacts"
+            "/prep"
+            "/parse-resume"
+          )
+          fails=0
+          for ep in "${ENDPOINTS[@]}"; do
+            echo ""
+            echo "=== OPTIONS $WORKER_BASE$ep ==="
+            HEADERS=$(curl -sS -i -X OPTIONS \
+              -H "Origin: $ORIGIN" \
+              -H "Access-Control-Request-Method: POST" \
+              -H "Access-Control-Request-Headers: content-type, x-edit-key, x-admin-key, authorization" \
+              "$WORKER_BASE$ep" 2>&1 | head -20)
+            echo "$HEADERS"
+            STATUS=$(echo "$HEADERS" | head -1 | awk '{print $2}')
+            if [ "$STATUS" != "204" ] && [ "$STATUS" != "200" ]; then
+              echo "::error::$ep — preflight returned HTTP $STATUS (expected 204/200)"
+              fails=$((fails+1)); continue
+            fi
+            if ! echo "$HEADERS" | grep -qi "access-control-allow-origin"; then
+              echo "::error::$ep — preflight missing Access-Control-Allow-Origin"
+              fails=$((fails+1)); continue
+            fi
+            if ! echo "$HEADERS" | grep -qi "access-control-allow-methods"; then
+              echo "::error::$ep — preflight missing Access-Control-Allow-Methods"
+              fails=$((fails+1)); continue
+            fi
+            if ! echo "$HEADERS" | grep -qi "access-control-allow-headers"; then
+              echo "::error::$ep — preflight missing Access-Control-Allow-Headers"
+              fails=$((fails+1)); continue
+            fi
+            echo "✓ $ep preflight OK"
+          done
+          echo ""
+          echo "=== Summary ==="
+          if [ "$fails" -gt 0 ]; then
+            echo "::error::$fails endpoint(s) failed CORS preflight"
+            exit 1
+          fi
+          echo "All $((${#ENDPOINTS[@]})) endpoints passed CORS preflight."
+
+      - name: Probe real GET on read-only endpoints (verify CORS on response)
+        run: |
+          set +e
+          # GETs that don't require auth and don't mutate. Verifies the
+          # response itself (not just preflight) carries CORS headers.
+          ENDPOINTS=(
+            "/skills-profile?user=amit-arora"
+            "/api/picks?user=amit-arora"
+          )
+          fails=0
+          for ep in "${ENDPOINTS[@]}"; do
+            echo ""
+            echo "=== GET $WORKER_BASE$ep ==="
+            HEADERS=$(curl -sS -i -X GET \
+              -H "Origin: $ORIGIN" \
+              "$WORKER_BASE$ep" 2>&1 | head -15)
+            echo "$HEADERS"
+            STATUS=$(echo "$HEADERS" | head -1 | awk '{print $2}')
+            if [ "$STATUS" != "200" ]; then
+              echo "::warning::$ep — got HTTP $STATUS (probably OK if endpoint requires auth, but worth confirming)"
+            fi
+            if ! echo "$HEADERS" | grep -qi "access-control-allow-origin"; then
+              echo "::error::$ep — response missing Access-Control-Allow-Origin"
+              fails=$((fails+1))
+            fi
+          done
+          if [ "$fails" -gt 0 ]; then
+            echo "::error::$fails endpoint(s) returned response without CORS headers"
+            exit 1
+          fi
+
+      - name: Reject if any allow-credentials is set with allow-origin '*'
+        run: |
+          # If a future change adds Allow-Credentials: true while keeping
+          # Allow-Origin: *, browsers will block all cross-origin POSTs that
+          # use credentials:include. Catch this combination early.
+          HEADERS=$(curl -sS -i -X OPTIONS \
+            -H "Origin: $ORIGIN" \
+            -H "Access-Control-Request-Method: POST" \
+            "$WORKER_BASE/api/sprint/start" 2>&1)
+          if echo "$HEADERS" | grep -qi "access-control-allow-credentials.*true"; then
+            ORIGIN_HDR=$(echo "$HEADERS" | grep -i "access-control-allow-origin" | tr -d '\r')
+            if echo "$ORIGIN_HDR" | grep -q '\*'; then
+              echo "::error::Worker sends Allow-Credentials:true alongside Allow-Origin:*  — incompatible. Browsers will block credentialed cross-origin requests."
+              echo "$HEADERS" | head -20
+              exit 1
+            fi
+          fi
+          echo "✓ no Allow-Credentials/Allow-Origin:* mismatch detected"
