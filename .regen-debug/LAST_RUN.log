@@ -11,16 +11,23 @@
 [velocity] 138 actively-scaling companies (3+ senior roles in 30d)
 [location-remote:geetu] filter pref='hybrid' locs=['Allendale, NJ', 'New York City', 'New Jersey'] kept 2860/2860
 [why-hidden:geetu] classified 2000 hidden jobs (of 19980 total dropped)
-[regen] FATAL: NameError("name 'l' is not defined")
-Traceback (most recent call last):
-  File "/tmp/regen.py", line 8, in <module>
-    generate_all_dashboards(conn)
-  File "/home/runner/work/getmybob/getmybob/fetch_jobs.py", line 1813, in generate_all_dashboards
-    generate_dashboard(conn, user_slug=slug, user_name=name, output_path=out)
-  File "/home/runner/work/getmybob/getmybob/fetch_jobs.py", line 1583, in generate_dashboard
-    _why = _honest_why(r, _subs)
-           ^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/work/getmybob/getmybob/fetch_jobs.py", line 1491, in _honest_why
-    if l < 30: parts.append("location ✗ (far from your preferred)")
-       ^
-NameError: name 'l' is not defined
+
+Dashboard written: /home/runner/work/getmybob/getmybob/geetu.html
+[diag:amit-arora] loaded profile, targetCompanies len=23, first={'name': 'Webster Bank', 'atsHint': 'workday', 'atsUrl': 'https://websterbank.wd1.myworkdayjobs.com/WebsterCareers', 'why': 'Super-regional commercial bank actively modernizing its technology stack and GRC posture post-Sterling merger — ideal fit for an exec with deep commercial banking IT and compliance transformation experience.'}
+[skills-profile:amit-arora] Senior technology executive and transformation consultant specializing in GRC, digital banking, and capital markets IT · 15 keywords
+[velocity] 138 actively-scaling companies (3+ senior roles in 30d)
+[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 4208/4208
+[why-hidden:amit-arora] classified 2000 hidden jobs (of 19980 total dropped)
+
+Dashboard written: /home/runner/work/getmybob/getmybob/amit-arora.html
+[skills-profile:ishika-arora] not available — using fallback themes only
+[velocity] 138 actively-scaling companies (3+ senior roles in 30d)
+[why-hidden:ishika-arora] classified 2000 hidden jobs (of 20000 total dropped)
+
+Dashboard written: /home/runner/work/getmybob/getmybob/ishika-arora.html
+[skills-profile:radhika-kalra] not available — using fallback themes only
+[velocity] 138 actively-scaling companies (3+ senior roles in 30d)
+[why-hidden:radhika-kalra] classified 2000 hidden jobs (of 20000 total dropped)
+
+Dashboard written: /home/runner/work/getmybob/getmybob/radhika-kalra.html
+[regen] DONE
