@@ -4032,28 +4032,37 @@ WIZARD_V3_BLOCK = r"""
     }
     const cont = document.getElementById("wiz3-continue");
     cont.disabled = true; cont.textContent = "Saving…";
+    let _migrationDone = false;
     try {
       await s.save(state, { body });
       if (!state.completed.includes(s.key)) state.completed.push(s.key);
       state.skipped = state.skipped.filter(k => k !== s.key);
     } catch (e) {
       const msg = e && e.message ? e.message : String(e);
-      if (/session expired|HTTP 401|Not signed in/i.test(msg)) {
+      try { console.warn("[wiz3] save threw:", msg, e); } catch(_) {}
+      // FIX 1 hook: bullseye save throws "__migration_complete" after auto-finishing.
+      if (msg === "__migration_complete") {
+        _migrationDone = true;
+      } else if (/session expired|HTTP 401|Not signed in/i.test(msg)) {
         setMsg(body, "err", "Session expired. Open your account page to re-enter your invite key. Your picks are kept here until you do.");
-        // Add a quick link
         try {
           let el = body.querySelector(".wiz3-msg");
           if (el) {
             el.innerHTML = 'Session expired. <a href="/account.html" target="_blank" style="color:#5C5CD6;font-weight:600;">Open account page</a> to re-enter your invite key. Your picks stay until you do.';
           }
         } catch(_) {}
+        cont.disabled = false; cont.textContent = "Continue →";
+        return;
       } else {
         setMsg(body, "err", "Couldn't save: " + msg);
+        cont.disabled = false; cont.textContent = "Continue →";
+        return;
       }
-      cont.disabled = false; cont.textContent = "Continue →";
-      return;
+    } finally {
+      // FIX 3: Continue button must never stick in "Saving…" state.
+      try { cont.disabled = false; if (cont.textContent === "Saving…") cont.textContent = "Continue →"; } catch(_) {}
     }
-    cont.disabled = false;
+    if (_migrationDone) return; // already closed by bullseye save()
     const idx = stepIndex(state.currentStep);
     if (idx + 1 >= STEPS.length) { finish(); return; }
     state.currentStep = STEPS[idx + 1].key;
