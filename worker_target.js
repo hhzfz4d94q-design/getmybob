@@ -79,6 +79,7 @@ export default {
     if (url.pathname === '/resume') return handleResume(request, env, cors, slug);
     if (url.pathname === '/resume-versions') return handleVersions(request, env, cors, slug);
     if (url.pathname === '/parse-resume') return handleParseResume(request, env, cors, slug);
+    if (url.pathname === '/resume-health') return handleResumeHealth(request, env, cors, slug);
     if (url.pathname === '/skills-profile') return handleSkillsProfile(request, env, cors, slug);
     if (url.pathname === '/regenerate-profile') return handleRegenerateProfile(request, env, cors, slug);
     if (url.pathname === '/regenerate-companies') return handleRegenerateCompanies(request, env, cors, slug);
@@ -655,7 +656,7 @@ async function handleSkillsProfile(request, env, cors, slug) {
       const raw = await env.RESUMES.get(uk(slug, 'skills_profile'));
       const existing = raw ? JSON.parse(raw) : {};
       const updated = Object.assign({}, existing);
-      const SCALAR_FIELDS = new Set(['salaryFloor', 'remotePreferred', 'seniorityLevel', 'careerStage', 'primaryRole', 'summary', 'companySizeMix', 'companySizePreferences', 'dailyTarget', 'recencyWindow', 'defaultSort', 'hideNoSalary', 'negativeTitles', 'matchWeights', 'signalStability', 'phone', 'email', 'location', 'linkedinUrl', 'githubUrl', 'websiteUrl', 'workAuthorization', 'requiresSponsorship', 'currentCompany', 'currentTitle', 'school', 'degree', 'graduationYear', 'firstName', 'lastName', 'excludeCompanies', 'sprintStart', 'sprintDays', 'sprintDailyQuota', 'sprintDaysOfWeek', 'sprintNudgeTime', 'sprintRecapTime', 'sprintTimezone', 'sprintSnoozedDays', 'networkCompanies']);
+      const SCALAR_FIELDS = new Set(['salaryFloor', 'remotePreferred', 'seniorityLevel', 'careerStage', 'primaryRole', 'summary', 'companySizeMix', 'companySizePreferences', 'dailyTarget', 'recencyWindow', 'defaultSort', 'hideNoSalary', 'negativeTitles', 'matchWeights', 'signalStability', 'phone', 'email', 'location', 'linkedinUrl', 'githubUrl', 'websiteUrl', 'workAuthorization', 'requiresSponsorship', 'currentCompany', 'currentTitle', 'school', 'degree', 'graduationYear', 'firstName', 'lastName', 'excludeCompanies', 'sprintStart', 'sprintDays', 'sprintDailyQuota', 'sprintDaysOfWeek', 'sprintNudgeTime', 'sprintRecapTime', 'sprintTimezone', 'sprintSnoozedDays', 'networkCompanies', 'resumeHealth', 'resumeHealthHistory']);
       for (const [field, items] of Object.entries(body.patchFields)) {
         if (SCALAR_FIELDS.has(field)) {
           updated[field] = items;
@@ -861,6 +862,160 @@ ${resumeJson}`;
   } catch (e) { return Response.json({ error: 'Worker error', message: String(e) }, { status: 500, headers: cors }); }
 }
 
+
+// --- /resume-health (Week 3) ------------------------------------------
+// Deterministic resume health checks (no LLM). Returns a score 0-100 plus
+// a breakdown across parseability, keyword density vs. user's targets,
+// quantified-bullet ratio, title alignment, recency clarity. Persists
+// to skills_profile.resumeHealth so the dashboard can render history.
+async function handleResumeHealth(request, env, cors, slug) {
+  if (!env.RESUMES) return Response.json({ error: 'RESUMES KV binding missing' }, { status: 500, headers: cors });
+  const resumeJson = await getActiveResume(env, slug);
+  if (!resumeJson) return Response.json({ error: 'No active resume saved.' }, { status: 404, headers: cors });
+  let resume;
+  try { resume = JSON.parse(resumeJson); }
+  catch (e) { return Response.json({ error: 'Resume not valid JSON' }, { status: 400, headers: cors }); }
+
+  const profRaw = await env.RESUMES.get(uk(slug, 'skills_profile'));
+  const profile = profRaw ? JSON.parse(profRaw) : {};
+
+  // ---- helpers ----
+  function _flattenResumeText(r) {
+    const parts = [];
+    if (r.summary) parts.push(String(r.summary));
+    if (Array.isArray(r.skills)) parts.push(r.skills.join(' '));
+    if (Array.isArray(r.experience)) {
+      r.experience.forEach(e => {
+        if (e.title) parts.push(String(e.title));
+        if (e.company) parts.push(String(e.company));
+        if (Array.isArray(e.bullets)) parts.push(e.bullets.join(' '));
+        if (Array.isArray(e.achievements)) parts.push(e.achievements.join(' '));
+      });
+    }
+    if (Array.isArray(r.education)) r.education.forEach(e => { if (e.school) parts.push(String(e.school)); if (e.degree) parts.push(String(e.degree)); });
+    if (Array.isArray(r.certifications)) parts.push(r.certifications.join(' '));
+    return parts.join(' ').toLowerCase();
+  }
+  function _allBullets(r) {
+    const out = [];
+    if (Array.isArray(r.experience)) {
+      r.experience.forEach(e => {
+        if (Array.isArray(e.bullets)) e.bullets.forEach(b => out.push(String(b)));
+        if (Array.isArray(e.achievements)) e.achievements.forEach(b => out.push(String(b)));
+      });
+    }
+    return out;
+  }
+
+  const flat = _flattenResumeText(resume);
+  const allBullets = _allBullets(resume);
+
+  // ---- 1. Parseability — JSON resume is already clean text, so default 95.
+  // We can't inspect PDF/DOCX from here (the JSON has been parsed already).
+  // Surface that limitation in the breakdown instead of pretending.
+  const parseability = {
+    score: 95,
+    issues: [],
+    notes: 'Resume is stored as structured JSON, so ATS extraction is reliable. To check the original PDF\'s parseability, re-upload it as PDF rather than pasting.'
+  };
+
+  // ---- 2. Keyword density vs. user's targetTitles + industries + keywords
+  const targetTerms = [].concat(profile.targetTitles || [], profile.industries || [], profile.keywords || [])
+    .map(t => String(t || '').toLowerCase().trim()).filter(Boolean);
+  const uniqTerms = Array.from(new Set(targetTerms));
+  const hit = uniqTerms.filter(t => flat.includes(t));
+  const missing = uniqTerms.filter(t => !flat.includes(t));
+  const keywordScore = uniqTerms.length === 0 ? 0 : Math.round(100 * hit.length / uniqTerms.length);
+  const keyword = { score: keywordScore, hit, missing, targetTermCount: uniqTerms.length };
+
+  // ---- 3. Quantified-bullet ratio — bullets with a number
+  const numberRx = /\b\$?[0-9][0-9,.]*[kKmMbB%]?\b/;
+  const quantified = allBullets.filter(b => numberRx.test(b));
+  const ratio = allBullets.length === 0 ? 0 : quantified.length / allBullets.length;
+  const quantScore = Math.round(100 * Math.min(1, ratio / 0.6)); // 60% = full score
+  const weakBullets = allBullets
+    .filter(b => !numberRx.test(b))
+    .filter(b => b.length > 20)
+    .slice(0, 5);
+  const quantBreakdown = { score: quantScore, total: allBullets.length, quantified: quantified.length, ratio: Math.round(ratio * 100) / 100, weakBullets };
+
+  // ---- 4. Title alignment — top experience entry's title vs. user's targetTitles
+  let titleObserved = '';
+  if (Array.isArray(resume.experience) && resume.experience.length) {
+    titleObserved = (resume.experience[0].title || '').trim();
+  }
+  const targetTitles = (profile.targetTitles || []).map(t => String(t || '').toLowerCase());
+  const obsLow = titleObserved.toLowerCase();
+  let titleScore = 50;
+  let titleStatus = 'unknown';
+  if (titleObserved && targetTitles.length) {
+    const exact = targetTitles.some(t => obsLow === t);
+    const contains = targetTitles.some(t => obsLow.includes(t.split(/\s+/).pop() || ''));
+    if (exact) { titleScore = 100; titleStatus = 'aligned'; }
+    else if (contains) { titleScore = 70; titleStatus = 'level-adjacent'; }
+    else { titleScore = 40; titleStatus = 'misaligned'; }
+  }
+  const titleAlignment = { score: titleScore, observed: titleObserved, targeted: profile.targetTitles || [], status: titleStatus };
+
+  // ---- 5. Recency + clarity — most-recent role present, dates clear
+  let recencyScore = 100;
+  const recencyIssues = [];
+  if (!Array.isArray(resume.experience) || resume.experience.length === 0) {
+    recencyScore = 0; recencyIssues.push('No experience entries found.');
+  } else {
+    const first = resume.experience[0];
+    if (!first.endDate && !first.end && !first.current) recencyIssues.push('Most recent role has no end date or "Present" marker.');
+    resume.experience.slice(0, 3).forEach((e, i) => {
+      const start = e.startDate || e.start || '';
+      const end = e.endDate || e.end || (e.current ? 'Present' : '');
+      if (!start) { recencyScore -= 15; recencyIssues.push('Role #' + (i+1) + ' has no start date.'); }
+      if (!end)   { recencyScore -= 10; recencyIssues.push('Role #' + (i+1) + ' has no end date.'); }
+    });
+    recencyScore = Math.max(0, recencyScore);
+  }
+  const recency = { score: recencyScore, issues: recencyIssues };
+
+  // ---- Aggregate (weighted average) ----
+  // Weights: keywords 30, quantified 25, title 20, recency 15, parseability 10
+  const weights = { keyword: 0.30, quantified: 0.25, titleAlignment: 0.20, recency: 0.15, parseability: 0.10 };
+  const total =
+    keyword.score        * weights.keyword +
+    quantBreakdown.score * weights.quantified +
+    titleAlignment.score * weights.titleAlignment +
+    recency.score        * weights.recency +
+    parseability.score   * weights.parseability;
+  const score = Math.round(total);
+
+  // Active resume id (so we can detect "stale health for this version")
+  const resumeId = await env.RESUMES.get(uk(slug, 'resume:active')) || null;
+
+  const health = {
+    computedAt: new Date().toISOString(),
+    resumeId,
+    score,
+    weights,
+    breakdown: {
+      parseability,
+      keyword,
+      quantified: quantBreakdown,
+      titleAlignment,
+      recency
+    }
+  };
+
+  // Persist on profile (best-effort — auth-gated separately via patch path,
+  // but reads are public anyway so we don't require auth to compute).
+  try {
+    profile.resumeHealth = health;
+    profile.user = slug;
+    if (!Array.isArray(profile.resumeHealthHistory)) profile.resumeHealthHistory = [];
+    profile.resumeHealthHistory.push({ at: health.computedAt, score, resumeId });
+    if (profile.resumeHealthHistory.length > 12) profile.resumeHealthHistory = profile.resumeHealthHistory.slice(-12);
+    await env.RESUMES.put(uk(slug, 'skills_profile'), JSON.stringify(profile));
+  } catch (e) { /* tolerate */ }
+
+  return Response.json(health, { headers: cors });
+}
 
 // --- /regenerate-profile -----------------------------------------------
 // Re-run regenerateSkillsProfile for an existing user without needing them

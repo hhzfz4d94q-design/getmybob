@@ -2126,6 +2126,78 @@ function showVerifyModal(onConfirm) {{
   document.body.appendChild(m);
 }}
 
+// === Week 3: Resume Health renderer (deterministic) ==================
+async function _renderResumeHealth() {{
+  const widget = document.getElementById('resume-health-widget');
+  if (!widget) return;
+  widget.style.display = 'block';
+  widget.innerHTML = '<div style="font-size:13px;color:#666;">Checking resume health…</div>';
+  try {{
+    const r = await fetch(WORKER_BASE + '/resume-health' + USER_QS, {{ cache: 'no-store' }});
+    const h = await r.json();
+    if (!r.ok || !h || typeof h.score !== 'number') {{
+      widget.innerHTML = '<div style="font-size:13px;color:#a55;">Couldn\\'t compute health: ' + ((h && h.error) || ('HTTP ' + r.status)) + '</div>';
+      return;
+    }}
+    function esc(s) {{ return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({{ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }}[c])); }}
+    function bar(score) {{
+      const color = score >= 80 ? '#0a6b3a' : (score >= 60 ? '#5C5CD6' : (score >= 40 ? '#a86b00' : '#B91C1C'));
+      const pct = Math.max(0, Math.min(100, score));
+      return '<div style="display:inline-block;vertical-align:middle;width:120px;height:6px;background:#eef0ff;border-radius:3px;overflow:hidden;margin:0 8px;">' +
+             '<div style="width:' + pct + '%;height:100%;background:' + color + ';"></div></div>';
+    }}
+    function row(label, score, note) {{
+      const color = score >= 80 ? '#0a6b3a' : (score >= 60 ? '#5C5CD6' : (score >= 40 ? '#a86b00' : '#B91C1C'));
+      return '<div style="display:flex;justify-content:space-between;align-items:center;font-size:12.5px;padding:4px 0;border-bottom:1px solid #f4f5f7;">' +
+        '<span>' + esc(label) + (note ? '  <span style="color:#888;font-weight:400;">' + esc(note) + '</span>' : '') + '</span>' +
+        '<span>' + bar(score) + '<span style="color:' + color + ';font-weight:600;min-width:38px;display:inline-block;text-align:right;">' + score + '</span></span>' +
+        '</div>';
+    }}
+    const b = h.breakdown || {{}};
+    const headColor = h.score >= 80 ? '#0a6b3a' : (h.score >= 60 ? '#5C5CD6' : (h.score >= 40 ? '#a86b00' : '#B91C1C'));
+    let html = '';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">';
+    html += '<div style="font-size:13px;font-weight:600;color:#1A1A2E;">Resume health score</div>';
+    html += '<div style="font-size:24px;font-weight:700;color:' + headColor + ';">' + h.score + ' / 100</div>';
+    html += '</div>';
+    html += '<div style="margin-bottom:6px;">';
+    html += row('Keyword coverage',      (b.keyword || {{}}).score || 0,        (b.keyword || {{}}).hit ? ((b.keyword.hit.length) + ' of ' + ((b.keyword.hit.length||0) + (b.keyword.missing.length||0)) + ' target terms in resume') : '');
+    html += row('Quantified bullets',    (b.quantified || {{}}).score || 0,     (b.quantified || {{}}).total ? ((b.quantified.quantified) + ' / ' + (b.quantified.total) + ' bullets have a number') : '');
+    html += row('Title alignment',       (b.titleAlignment || {{}}).score || 0, ((b.titleAlignment || {{}}).status || ''));
+    html += row('Recency + clarity',     (b.recency || {{}}).score || 0,        ((b.recency || {{}}).issues || []).length ? (b.recency.issues.length + ' issue(s)') : '');
+    html += row('Parseability',          (b.parseability || {{}}).score || 0,   '');
+    html += '</div>';
+    // Quick actionable callouts (top 2 weakest)
+    const sorted = [
+      {{ label: 'keywords', score: (b.keyword || {{}}).score || 0, missing: (b.keyword || {{}}).missing || [] }},
+      {{ label: 'quantified', score: (b.quantified || {{}}).score || 0, weak: (b.quantified || {{}}).weakBullets || [] }},
+      {{ label: 'title', score: (b.titleAlignment || {{}}).score || 0, observed: (b.titleAlignment || {{}}).observed || '', targeted: (b.titleAlignment || {{}}).targeted || [] }},
+      {{ label: 'recency', score: (b.recency || {{}}).score || 0, issues: (b.recency || {{}}).issues || [] }}
+    ].sort((a, b2) => a.score - b2.score);
+    const top2 = sorted.filter(s => s.score < 80).slice(0, 2);
+    if (top2.length) {{
+      html += '<div style="margin-top:10px;padding:8px 10px;background:#fff7e6;border:1px solid #fcd34d;border-radius:6px;font-size:12.5px;color:#78350f;">';
+      html += '<strong>Quick wins:</strong><ul style="margin:6px 0 0;padding-left:20px;">';
+      top2.forEach(t => {{
+        if (t.label === 'keywords' && t.missing.length) {{
+          html += '<li>Add these target terms to your resume body (currently missing): <em>' + esc(t.missing.slice(0,5).join(', ')) + '</em></li>';
+        }} else if (t.label === 'quantified' && t.weak.length) {{
+          html += '<li>Quantify these bullets (add a number or %): <em>' + esc(t.weak[0].slice(0, 100)) + (t.weak[0].length > 100 ? '…' : '') + '</em></li>';
+        }} else if (t.label === 'title' && t.targeted.length) {{
+          html += '<li>Your title line says <em>' + esc(t.observed || '(blank)') + '</em>; targets are <em>' + esc(t.targeted.slice(0,3).join(', ')) + '</em>. Consider adding a one-line subtitle.</li>';
+        }} else if (t.label === 'recency' && t.issues.length) {{
+          html += '<li>' + esc(t.issues[0]) + '</li>';
+        }}
+      }});
+      html += '</ul></div>';
+    }}
+    html += '<div style="font-size:11px;color:#888;margin-top:8px;">Computed ' + new Date(h.computedAt).toLocaleString() + '. Re-uploading your resume re-runs this check.</div>';
+    widget.innerHTML = html;
+  }} catch (e) {{
+    widget.innerHTML = '<div style="font-size:13px;color:#a55;">Couldn\\'t compute health (' + ((e && e.message) || e) + ')</div>';
+  }}
+}}
+
 function setResumeTab(name) {{
   document.querySelectorAll('#resume-editor .tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
   document.querySelectorAll('#resume-editor .tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + name));
@@ -2407,6 +2479,9 @@ async function openResumeModal() {{
     setResumeTab('upload');
     if (!data.resume) {{
       document.getElementById('upload-status').textContent = 'No resume saved yet — upload one to begin.';
+    }} else {{
+      // Week 3: compute + render Resume Health Score (no LLM, fast)
+      _renderResumeHealth();
     }}
   }} catch (e) {{
     statusEl.className = 'prep-status error';
