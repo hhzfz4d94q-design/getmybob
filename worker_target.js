@@ -824,7 +824,7 @@ For tailoredResume:
 - personal: copy from input as-is
 - summary: rewrite for THIS job, 3-4 sentences. MUST naturally include 2-4 of the keywordDiff.missing terms IF the candidate's actual background credibly supports them.
 - skills: re-order so most relevant 8-12 come first; drop the least relevant. ADD any missing JD keywords from keywordDiff.missing that the candidate has credible exposure to (e.g. if missing.required is "Vendor Risk Management" and the candidate's bullets describe vendor onboarding/oversight, add VRM to skills using that exact phrase).
-- experience: keep same companies/titles/dates; re-order/rewrite bullets to emphasize relevance. 3-5 strongest bullets per role for THIS job.
+- experience: keep same companies/titles/dates; re-order/rewrite bullets to emphasize relevance. EVERY role in the original resume must appear in the output with AT LEAST 2 bullets — even for older or less-relevant roles. Don't collapse roles to title-only; that produces an empty-looking resume. For the most-relevant 2-3 roles, include 3-5 strong bullets. For others, 2 minimum is fine.
   CRITICAL: rewrite bullets to surface the JD's exact phrasing where the underlying work matches. If the JD says "Vendor Risk Management" and a bullet says "managed third-party reviews", change it to "managed vendor risk reviews" — same fact, JD-matching phrasing. If the candidate has NO credible basis for a missing keyword, leave it out. NEVER fabricate.
 - education / certifications: copy as-is
 

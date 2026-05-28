@@ -4743,20 +4743,31 @@ async function _refreshFocusPanelBody(panel) {{
       return (parseInt(b.dataset.score || "0", 10)) - (parseInt(a.dataset.score || "0", 10));
     }});
     picks = [];
-    const MAX_CO = (typeof loadMaxPerCompany === "function") ? loadMaxPerCompany() : 1;
-    const perCompanyCount = {{}};
-    // Show the user a CHOICE of up to N+2 (capped 5) candidates. They pick
-    // any N to apply to — extras stay visible as bonus options.
+    const _MAX_CO_USER = (typeof loadMaxPerCompany === "function") ? loadMaxPerCompany() : 1;
     const POOL = (typeof loadFocusPoolSize === "function") ? loadFocusPoolSize() : N;
-    for (const c of candidates) {{
-      const compEl = c.querySelector(".company");
-      const co = compEl ? compEl.textContent.trim().toLowerCase() : "";
-      if (!co) continue;
-      const cnt = perCompanyCount[co] || 0;
-      if (cnt >= MAX_CO) continue;
-      perCompanyCount[co] = cnt + 1;
-      picks.push(c);
-      if (picks.length >= POOL) break;
+    // Auto-relax loop: try user's cap first; if picks < N, bump cap +1 and
+    // re-pick. Up to cap=5. Stops as soon as we hit POOL or run out of cands.
+    let activeCap = _MAX_CO_USER;
+    let capRelaxed = false;
+    while (picks.length < N && activeCap <= 5) {{
+      picks = [];
+      const perCompanyCount = {{}};
+      for (const c of candidates) {{
+        const compEl = c.querySelector(".company");
+        const co = compEl ? compEl.textContent.trim().toLowerCase() : "";
+        if (!co) continue;
+        const cnt = perCompanyCount[co] || 0;
+        if (cnt >= activeCap) continue;
+        perCompanyCount[co] = cnt + 1;
+        picks.push(c);
+        if (picks.length >= POOL) break;
+      }}
+      if (picks.length >= N) break;
+      activeCap += 1;
+      capRelaxed = true;
+    }}
+    if (capRelaxed) {{
+      try {{ console.log('[focus-panel] auto-relaxed per-company cap from ' + _MAX_CO_USER + ' to ' + (activeCap - 1) + ' to fill quota of ' + N); }} catch(_) {{}}
     }}
     // Best-effort stamp — fire and forget
     if (picks.length > 0) {{

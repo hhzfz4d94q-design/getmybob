@@ -1399,11 +1399,49 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
             traj = trajectory_match(SKILLS_PROFILE.get("careerStage"), detect_title_stage(rrow[2] or ""))
         except Exception: traj = None
         sen_fit = {"next": 100, "same": 85, "down": 20}.get(traj, 60)
-        # --- location fit: remote pref / remote flag ---
+        # --- location fit: geography + remote_pref + remote_flag ---
+        # Three signals:
+        #   1. Job location string vs. profile.preferredLocations
+        #   2. Job remote flag vs. profile.remotePreference
+        #   3. Country/region inference if the JD location is far from any
+        #      user-stated location (e.g. user wants NYC + Remote, job is in
+        #      Bangkok — should kill loc_fit even if 'remote' flag is set).
         remote_pref = (SKILLS_PROFILE.get("remotePreference") or "any").lower()
+        preferred = [str(l).lower().strip() for l in (SKILLS_PROFILE.get("preferredLocations") or []) if l]
+        job_loc = (rrow[3] or "").lower().strip()
         loc_fit = 100
-        if remote_pref == "remote-only" and not remote_flag: loc_fit = 30
-        elif remote_pref == "onsite" and remote_flag: loc_fit = 60
+        # Geography check — strongest signal. If job location names a city/region
+        # we can compare against, do it. Tokens that count as 'matches':
+        #   - any user preferred location token appearing in job location
+        #   - "remote" in user preferences + "remote" in job location
+        if preferred and job_loc:
+            pref_tokens = set()
+            for pl in preferred:
+                pref_tokens.update(t for t in re.findall(r"[a-z]+", pl) if len(t) >= 3)
+            job_tokens = set(re.findall(r"[a-z]+", job_loc))
+            # Boost for direct location overlap (e.g. "new york" appears in both)
+            overlap = pref_tokens & job_tokens
+            if overlap:
+                loc_fit = 100
+            else:
+                # No overlap — strong negative signal UNLESS user wants remote
+                # AND job is flagged remote.
+                wants_remote = any("remote" in p for p in preferred) or remote_pref in ("remote-only", "hybrid", "any")
+                if remote_flag and wants_remote:
+                    loc_fit = 75  # remote-acceptable, but not their stated city
+                else:
+                    # Penalty heavy for non-overlap + non-remote.
+                    # Heuristic: if job location names a country known to not
+                    # match the user's preferred set, drive loc_fit very low.
+                    _FAR = {"bangkok","thailand","singapore","kuala","lumpur","malaysia","manila","philippines","mumbai","delhi","bengaluru","bangalore","india","hong","kong","tokyo","japan","sydney","australia","london","paris","berlin","dubai","tel","aviv"}
+                    if _FAR & job_tokens:
+                        loc_fit = 10
+                    else:
+                        loc_fit = 35
+        elif remote_pref == "remote-only" and not remote_flag:
+            loc_fit = 30
+        elif remote_pref == "onsite" and remote_flag:
+            loc_fit = 60
         return (title_fit, ind_fit, kw_fit, sen_fit, loc_fit)
 
     # ---- Tier classifier (Week 7 / grid precision) -------------------
@@ -1412,11 +1450,15 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
     #   good       — at least 3 of {title,industry,keywords,seniority}>=50
     #   borderline — everything else that still passed score thresholds
     def _tier(subs):
-        t, i, k, s, _l = subs
-        if t >= 70 and i >= 60 and s >= 60:
+        t, i, k, s, l = subs
+        # Location fit < 30 is a strong veto — a job in Bangkok for a US user
+        # cannot be a 'good' match no matter how perfect the other signals.
+        if l < 30:
+            return 'borderline'
+        if t >= 70 and i >= 60 and s >= 60 and l >= 60:
             return 'strong'
         passed = sum(1 for v in (t, i, k, s) if v >= 50)
-        if passed >= 3:
+        if passed >= 3 and l >= 50:
             return 'good'
         return 'borderline'
 
@@ -1445,6 +1487,9 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         # Seniority
         if s >= 70: parts.append("level ✓")
         elif s < 40: parts.append("level ✗")
+        # Location fit (new — call out when geography mismatches)
+        if l < 30: parts.append("location ✗ (far from your preferred)")
+        elif l < 60: parts.append("location ~")
         # Target company callout
         tco = {c.get("name", "").lower() for c in (SKILLS_PROFILE.get("targetCompanies") or [])}
         if company.lower() in tco:
