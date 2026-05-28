@@ -1457,14 +1457,17 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
     #   borderline — everything else that still passed score thresholds
     def _tier(subs):
         t, i, k, s, l = subs
-        # Location fit < 30 is a strong veto — a job in Bangkok for a US user
-        # cannot be a 'good' match no matter how perfect the other signals.
+        # Location fit < 30 is a strong veto.
         if l < 30:
             return 'borderline'
         if t >= 70 and i >= 60 and s >= 60 and l >= 60:
             return 'strong'
         passed = sum(1 for v in (t, i, k, s) if v >= 50)
-        if passed >= 3 and l >= 50:
+        # 'good' relaxed from 3 of 4 to 2 of 4 (with loc>=50 still required).
+        # Three perfect signals was too tight — given location is already a
+        # gate, two strong signals + acceptable location is a reasonable
+        # 'good' for a candidate-pool with imperfect profile data.
+        if passed >= 2 and l >= 50:
             return 'good'
         return 'borderline'
 

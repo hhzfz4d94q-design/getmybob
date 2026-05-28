@@ -5059,6 +5059,21 @@ window.toggleFullFeed = function() {{
         sumLine.innerHTML = '<strong>' + strong + ' strong</strong> + <strong>' + good + ' good</strong> matches shown' +
                             ' <span style="color:#999;">(' + borderline.length + ' borderline hidden below)</span>';
         grid.insertBefore(sumLine, grid.firstChild);
+        // If no strong + no good, surface a banner with actionable next steps.
+        if (strong === 0 && good === 0 && borderline.length > 0) {{
+          const noMatchBanner = document.createElement('div');
+          noMatchBanner.style.cssText = 'grid-column:1/-1;margin-bottom:14px;padding:14px 16px;background:#fff7e6;border:1px solid #fcd34d;border-radius:10px;color:#78350f;font-size:13.5px;';
+          noMatchBanner.innerHTML =
+            '<strong>No strong or good matches today — but ' + borderline.length + ' borderline candidates exist.</strong><br>' +
+            '<span style="font-size:12.5px;">Try one of these:</span>' +
+            '<ul style="margin:8px 0 8px 18px;font-size:12.5px;">' +
+            '<li>Click <strong>Show borderline →</strong> below to review the ' + borderline.length + ' demoted cards (often wrong but worth a glance).</li>' +
+            '<li>Open Preferences → Sprint → switch <strong>Match strictness</strong> to <em>Exploratory</em>. Tradeoff: more variety, more noise.</li>' +
+            '<li>Loosen your <strong>Max per company</strong> filter in the toolbar above (currently restricting same-company duplicates).</li>' +
+            '<li>Re-upload your resume to refresh the AI-extracted profile — your stated targets may be too narrow for the current job pool.</li>' +
+            '</ul>';
+          grid.parentNode.insertBefore(noMatchBanner, grid);
+        }}
       }} catch (e) {{}}
     }} catch (e) {{ /* silent */ }}
   }}
