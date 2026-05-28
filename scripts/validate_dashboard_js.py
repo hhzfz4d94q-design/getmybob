@@ -23,6 +23,9 @@ def main():
         print(f"FATAL: {fj_path} not found", file=sys.stderr)
         return 2
 
+    # Add the repo root to sys.path so fetch_jobs.py can import the new matcher/ package
+    if root not in sys.path:
+        sys.path.insert(0, root)
     # Import fetch_jobs.py without executing its main() — just load HTML_TEMPLATE
     spec = importlib.util.spec_from_file_location("fj", fj_path)
     m = importlib.util.module_from_spec(spec)

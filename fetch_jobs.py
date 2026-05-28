@@ -13,6 +13,8 @@ No scraping — only public ATS APIs (legal + reliable).
 import json
 import os
 import re
+from matcher.canonical import canonical_company  # extracted Phase 1
+
 import sqlite3
 import sys
 import time
@@ -2170,74 +2172,21 @@ WORKER_BASE_URL = "https://cool-darkness-dce5.tr6jz6v7wg.workers.dev"
 USERS_JSON_PATH = os.path.join(ROOT, "users.json")
 SKILLS_PROFILE = None  # set per user during generate_dashboard
 COMPANY_INDUSTRIES = {}  # company_slug -> list of industries (populated from companies.json)
-VC_PORTFOLIO_COMPANIES = []  # list of dicts {name, industry, fundingStage, atsHint} from VC discovery
-HEALTHTECH_COMPANIES = []  # list of dicts {name, category, atsHint} from curated healthtech catalog
-HEALTHTECH_SET = set()     # lowercase company names for fast scoring lookup
+# Catalog loaders + globals — extracted to matcher/catalogs.py (Phase 1 of split refactor).
+# We re-import the globals so other code in this file still sees them via module name.
+from matcher import catalogs as _catalogs
+_catalogs.load_vc_portfolio()
+_catalogs.load_healthtech_catalog()
+VC_PORTFOLIO_COMPANIES = _catalogs.VC_PORTFOLIO_COMPANIES
+HEALTHTECH_COMPANIES = _catalogs.HEALTHTECH_COMPANIES
+HEALTHTECH_SET = _catalogs.HEALTHTECH_SET
+# Backward-compat names for existing call sites elsewhere in this file:
+_load_vc_portfolio = _catalogs.load_vc_portfolio
+_load_healthtech_catalog = _catalogs.load_healthtech_catalog
 
-def _load_healthtech_catalog():
-    """Load curated healthtech catalog from healthtech_companies.json.
-    Universal supplement to per-user targetCompanies. Adds healthcare IT
-    breadth for users who target health/pharma/digital-health industries."""
-    global HEALTHTECH_COMPANIES, HEALTHTECH_SET
-    path = os.path.join(ROOT, 'healthtech_companies.json')
-    try:
-        with open(path, 'r', encoding='utf-8') as f:
-            d = json.load(f)
-        HEALTHTECH_COMPANIES = d.get('companies', []) if isinstance(d, dict) else (d if isinstance(d, list) else [])
-        HEALTHTECH_SET = set((c.get('name') or '').lower().strip() for c in HEALTHTECH_COMPANIES if isinstance(c, dict))
-        print(f'[healthtech] loaded {len(HEALTHTECH_COMPANIES)} curated companies', flush=True)
-    except FileNotFoundError:
-        HEALTHTECH_COMPANIES = []
-        HEALTHTECH_SET = set()
-    except Exception as e:
-        print(f'[healthtech] load failed: {e}', flush=True)
-        HEALTHTECH_COMPANIES = []
-        HEALTHTECH_SET = set()
-    # Rebuild HEALTHTECH_SET to use canonical forms — fixes spelling-variation misses
-    # ("Bio-Reference Laboratories" vs "BioReference" etc.)
-    HEALTHTECH_SET = set(canonical_company(c.get('name')) for c in HEALTHTECH_COMPANIES if isinstance(c, dict))
-
-def canonical_company(name):
-    """Normalize a company name for fuzzy matching against catalogs/network.
-    Strips common suffixes (Inc, LLC, Corp), trailing parenthetical, all
-    punctuation, collapses whitespace, lowercases. This is the canonical
-    form used by both score_job() boost lookups AND catalog loaders so they
-    agree on identity.
-    Examples:
-        'Bio-Reference Laboratories' -> 'bioreference laboratories'
-        'BioReference'               -> 'bioreference'
-        'Prescryptive Health, Inc.'  -> 'prescryptive health'
-        'PillPack (Amazon)'          -> 'pillpack'
-    """
-    if not name:
-        return ''
-    n = str(name).lower()
-    # Drop trailing parenthetical (e.g. "(Amazon)", "(One Medical)")
-    n = re.sub(r'\s*\([^)]*\)\s*$', '', n)
-    # Drop common entity suffixes
-    n = re.sub(r',?\s*(inc|llc|corp|corporation|ltd|plc|co|company)\.?\s*$', '', n)
-    # Strip all non-alphanumeric (hyphens, periods, commas, slashes)
-    n = re.sub(r'[^a-z0-9 ]+', '', n)
-    n = re.sub(r'\s+', ' ', n).strip()
-    return n
-
-def _load_vc_portfolio():
-    """Load discovered VC-portfolio companies from vc_portfolio_companies.json.
-    Called once at startup. If file missing, returns empty list (no error)."""
-    global VC_PORTFOLIO_COMPANIES
-    path = os.path.join(ROOT, 'vc_portfolio_companies.json')
-    try:
-        with open(path, 'r', encoding='utf-8') as f:
-            d = json.load(f)
-        VC_PORTFOLIO_COMPANIES = d.get('companies', []) if isinstance(d, dict) else (d if isinstance(d, list) else [])
-        print(f'[vc-portfolio] loaded {len(VC_PORTFOLIO_COMPANIES)} discovered companies', flush=True)
-    except FileNotFoundError:
-        VC_PORTFOLIO_COMPANIES = []
-    except Exception as e:
-        print(f'[vc-portfolio] skipped: {e}', flush=True)
-        VC_PORTFOLIO_COMPANIES = []
-_load_vc_portfolio()
-_load_healthtech_catalog()
+# Catalog mergers — extracted to matcher/catalogs.py (Phase 1).
+_merge_healthtech_catalog = _catalogs.merge_healthtech_catalog
+_merge_vc_portfolio_companies = _catalogs.merge_vc_portfolio_companies
 def _load_recruiters_by_company():
     try:
         with open(os.path.join(ROOT, "recruiters.json"), "r", encoding="utf-8") as f:
@@ -2939,68 +2888,6 @@ def _slugify_company_name(name):
     if not name:
         return ""
     return re.sub(r"[^a-z0-9]+", "", str(name).lower())
-
-
-def _merge_healthtech_catalog(companies):
-    """Path 4: merge curated healthtech catalog companies into the scrape pool.
-    Same mechanism as VC portfolio but driven by healthtech_companies.json
-    (committed in-repo, not AI-discovered)."""
-    if not HEALTHTECH_COMPANIES:
-        return
-    existing = {ats: set() for ats in ('greenhouse', 'lever', 'ashby', 'workable')}
-    for ats in existing:
-        for entry in companies.get(ats, []):
-            slug = entry if isinstance(entry, str) else (entry.get('slug') if isinstance(entry, dict) else '')
-            if slug: existing[ats].add(slug.lower())
-    added = 0
-    for c in HEALTHTECH_COMPANIES:
-        if not isinstance(c, dict): continue
-        name = (c.get('name') or '').strip()
-        if not name: continue
-        ats = (c.get('atsHint') or 'greenhouse').strip().lower()
-        # Only auto-add for ATSes we can scrape by slug
-        if ats not in ('greenhouse', 'lever', 'ashby', 'workable'):
-            continue
-        if ats not in companies: companies[ats] = []
-        # Prefer explicit slug from catalog; fall back to derived slug only if missing
-        slug = (c.get('slug') or '').strip().lower()
-        if not slug:
-            slug = re.sub(r'[^a-z0-9]+', '-', name.lower()).strip('-')
-        if not slug: continue
-        if slug in existing.get(ats, set()): continue
-        companies[ats].append(slug)
-        existing.setdefault(ats, set()).add(slug)
-        added += 1
-    if added:
-        print(f'[healthtech] merged {added} catalog companies into scrape pool', flush=True)
-
-
-def _merge_vc_portfolio_companies(companies):
-    """Path 3: merge discovered VC-portfolio companies into the scrape pool.
-    Driven by vc_portfolio_companies.json (populated weekly by the
-    discover-vc-portfolio workflow). Each entry: {name, industry, fundingStage, atsHint}.
-    We slugify the name and add to the atsHint's company list."""
-    if not VC_PORTFOLIO_COMPANIES:
-        return
-    existing = {ats: set() for ats in ('greenhouse', 'lever', 'ashby', 'workable', 'ashby')}
-    for ats in existing:
-        for entry in companies.get(ats, []):
-            slug = entry if isinstance(entry, str) else (entry.get('slug') if isinstance(entry, dict) else '')
-            if slug: existing[ats].add(slug.lower())
-    added = 0
-    for c in VC_PORTFOLIO_COMPANIES:
-        name = (c.get('name') or '').strip() if isinstance(c, dict) else str(c).strip()
-        if not name: continue
-        ats = (c.get('atsHint') or 'greenhouse').strip().lower() if isinstance(c, dict) else 'greenhouse'
-        if ats not in companies: companies[ats] = []
-        slug = re.sub(r'[^a-z0-9]+', '-', name.lower()).strip('-')
-        if not slug: continue
-        if slug in existing.get(ats, set()): continue
-        companies[ats].append(slug)
-        existing.setdefault(ats, set()).add(slug)
-        added += 1
-    if added:
-        print(f'[vc-portfolio] merged {added} discovered companies into scrape pool', flush=True)
 
 
 def _merge_user_target_companies(companies):
