@@ -4634,7 +4634,13 @@ async function refreshFocusPanel() {{
   }} catch (e) {{}}
 
   // Get all visible cards, exclude already-decided + heavy-dismissed-company jobs
+  // Week 1 (match precision): also apply per-dimension hard gates. A pick MUST
+  // score >= MIN_GATE on title, industry, keywords, seniority. Location is
+  // informational only — not gated. Defaults map to a permissive 'balanced'
+  // threshold; strict/exploratory will tighten/loosen later (Week 6).
+  const MIN_GATE = 40;
   const allCards = Array.from(grid.querySelectorAll(".card"));
+  let gateDrops = 0;
   const candidates = allCards.filter(function(c) {{
     const fp = c.getAttribute("data-fp");
     const rec = tracker[fp];
@@ -4645,8 +4651,19 @@ async function refreshFocusPanel() {{
     const compEl = c.querySelector(".company");
     const co = compEl ? compEl.textContent.trim().toLowerCase() : "";
     if (dismissedByCompany[co] && dismissedByCompany[co] >= 5) return false;
+    // Per-dimension gates (data-fit-* attrs are emitted by fetch_jobs.py).
+    // If a card has no fit data (old regen), don't gate it — degrade gracefully.
+    const ft = parseInt(c.getAttribute("data-fit-title") || "", 10);
+    const fi = parseInt(c.getAttribute("data-fit-industry") || "", 10);
+    const fk = parseInt(c.getAttribute("data-fit-keywords") || "", 10);
+    const fs = parseInt(c.getAttribute("data-fit-seniority") || "", 10);
+    if (Number.isFinite(ft) && (ft < MIN_GATE || fi < MIN_GATE || fk < MIN_GATE || fs < MIN_GATE)) {{
+      gateDrops++;
+      return false;
+    }}
     return true;
   }});
+  try {{ if (gateDrops > 0) console.log('[focus-panel] gate dropped', gateDrops, 'jobs that failed per-dimension thresholds'); }} catch(_) {{}}
 
   let picks;
   if (stampedFps) {{

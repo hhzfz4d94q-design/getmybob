@@ -1344,6 +1344,50 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
             reasons.append("industry overlap: " + ", ".join(ind_overlap[:3]))
         return " • ".join(reasons) if reasons else "passed default gates"
 
+    # ---- Week 1 (match precision): per-dimension subscores -----------
+    # Five 0-100 subscores per card. Focus panel uses them to gate which
+    # picks reach the user. Aggregate score (column 11) is still used for
+    # ranking; subscores are for gating.
+    def _subscores(rrow):
+        if not SKILLS_PROFILE: return (50, 50, 50, 50, 50)
+        title = (rrow[2] or "").lower()
+        blob  = ((rrow[2] or "") + " " + (rrow[12] or "")).lower()
+        remote_flag = rrow[9]
+        # --- title fit: exact multi-token target match vs. partial vs. senior-only ---
+        target_titles = SKILLS_PROFILE.get("targetTitles") or []
+        ttoks = set(re.findall(r"[a-z]+", title))
+        title_fit = 0
+        _STOP = {"of","the","a","an","and","or","for","to","at","in","on","with","by","as","is"}
+        for t in target_titles:
+            tt_tokens = [x for x in re.findall(r"[a-z]+", (t or '').lower()) if x not in _STOP and len(x) > 1]
+            if len(tt_tokens) < 2: continue
+            matched = sum(1 for tk in tt_tokens if tk in ttoks)
+            if matched == len(tt_tokens): title_fit = 100; break
+            if matched >= len(tt_tokens) - 1: title_fit = max(title_fit, 55)
+        if title_fit == 0:
+            _SENIOR = {"vp","svp","evp","chief","cio","cto","cdo","coo","cfo","cro","cpo","ceo","principal","director","head","managing","executive","president","partner","lead","leader"}
+            if _SENIOR & ttoks: title_fit = 35
+        # --- industry fit ---
+        inds = SKILLS_PROFILE.get("industries") or []
+        ind_hits = sum(1 for i in inds if i and i in blob)
+        ind_fit = min(100, ind_hits * 60)  # 1 hit=60, 2+=100
+        # --- keywords fit ---
+        sk_terms = (SKILLS_PROFILE.get("keywords") or []) + (SKILLS_PROFILE.get("technologies") or []) + (SKILLS_PROFILE.get("frameworks") or [])
+        kw_hits = sum(1 for k in sk_terms if k and k in blob)
+        kw_fit = min(100, int(kw_hits * 100 / 5))  # 5 hits = 100
+        # --- seniority fit: trajectory check ---
+        from matcher.scoring import detect_title_stage, trajectory_match
+        try:
+            traj = trajectory_match(SKILLS_PROFILE.get("careerStage"), detect_title_stage(rrow[2] or ""))
+        except Exception: traj = None
+        sen_fit = {"next": 100, "same": 85, "down": 20}.get(traj, 60)
+        # --- location fit: remote pref / remote flag ---
+        remote_pref = (SKILLS_PROFILE.get("remotePreference") or "any").lower()
+        loc_fit = 100
+        if remote_pref == "remote-only" and not remote_flag: loc_fit = 30
+        elif remote_pref == "onsite" and remote_flag: loc_fit = 60
+        return (title_fit, ind_fit, kw_fit, sen_fit, loc_fit)
+
     cards = []
     for r in rows:
         (fp, company, title, loc, url, posted_at, first_seen, last_seen,
@@ -1420,8 +1464,9 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
             pass
         _repost_badge = f' · <span class="repost-badge" title="Re-posted {_repost_days} days after we first saw this job — you may have already seen / applied to it.">↻ re-posted {_repost_days}d after first sighting</span>' if _repost_days else ''
 
+        _fit_t, _fit_i, _fit_k, _fit_s, _fit_l = _subscores(r)
         cards.append(f"""
-        <div class="card" data-fp="{fp}" data-score="{score}" data-senior="{senior}" data-remote="{remote}" data-employment="{emp}" data-listed-days="{listed_days if listed_days is not None else 9999}" data-salary-max="{salary_max}" data-last-seen="{last_seen or ''}" data-first-seen="{first_seen or ''}" data-recruiter="{_is_recr}" data-why="{_esc(_why)}" data-cluster-count="{_xc_count}" data-cluster-companies="{_esc(_xc_label)}" data-title-norm="{_norm_key}" data-repost-days="{_repost_days or ''}">
+        <div class="card" data-fp="{fp}" data-score="{score}" data-senior="{senior}" data-remote="{remote}" data-employment="{emp}" data-listed-days="{listed_days if listed_days is not None else 9999}" data-salary-max="{salary_max}" data-last-seen="{last_seen or ''}" data-first-seen="{first_seen or ''}" data-recruiter="{_is_recr}" data-why="{_esc(_why)}" data-cluster-count="{_xc_count}" data-cluster-companies="{_esc(_xc_label)}" data-title-norm="{_norm_key}" data-repost-days="{_repost_days or ''}" data-fit-title="{_fit_t}" data-fit-industry="{_fit_i}" data-fit-keywords="{_fit_k}" data-fit-seniority="{_fit_s}" data-fit-location="{_fit_l}">
           <div class="row1">
             <div class="title"><a href="{url}" target="_blank">{_esc(title)}</a></div>
             <div class="score">{score}</div>
