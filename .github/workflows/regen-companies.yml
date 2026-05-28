@@ -1,0 +1,62 @@
+name: Regenerate target companies (AI re-derive from bullseye)
+
+# POSTs /regenerate-companies?user=<slug> with admin key. Worker uses the
+# user's existing skills_profile (industries + targetTitles + keywords) to
+# ask Claude for 20 fresh target companies. Faster than full /regenerate-profile
+# because it doesn't re-parse the resume — just re-derives company list.
+
+on:
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: 'User slug (e.g. geetu)'
+        required: true
+        default: 'geetu'
+
+env:
+  WORKER_URL: https://cool-darkness-dce5.tr6jz6v7wg.workers.dev
+
+permissions:
+  contents: read
+
+jobs:
+  regen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Regenerate companies
+        env:
+          ADMIN_KEY: ${{ secrets.WORKER_ADMIN_KEY }}
+          SLUG: ${{ github.event.inputs.slug }}
+          WORKER_URL: https://cool-darkness-dce5.tr6jz6v7wg.workers.dev
+        run: |
+          echo "## regen-companies $SLUG" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          python3 - <<'PY' 2>&1 | tee -a $GITHUB_STEP_SUMMARY
+          import json, os, sys, urllib.request, urllib.error
+          worker = os.environ['WORKER_URL'].rstrip('/')
+          slug = os.environ['SLUG']
+          key = os.environ['ADMIN_KEY']
+          req = urllib.request.Request(
+              f'{worker}/regenerate-companies?user={slug}',
+              data=json.dumps({'dry_run': False}).encode(),
+              method='POST',
+              headers={'X-Admin-Key': key, 'Content-Type': 'application/json'},
+          )
+          try:
+              with urllib.request.urlopen(req, timeout=120) as r:
+                  print(f'HTTP {r.status}')
+                  d = json.loads(r.read())
+                  if 'profile' in d:
+                      tc = (d['profile'].get('targetCompanies') or [])
+                      print(f'New target companies ({len(tc)}):')
+                      for c in tc:
+                          n = c if isinstance(c,str) else c.get('name','?')
+                          print(f'  · {n}')
+                  else:
+                      print(json.dumps(d, indent=2)[:2000])
+          except urllib.error.HTTPError as e:
+              print(f'HTTP {e.code}: {e.read().decode()[:500]}')
+              sys.exit(2)
+          PY
+          echo '```' >> $GITHUB_STEP_SUMMARY
