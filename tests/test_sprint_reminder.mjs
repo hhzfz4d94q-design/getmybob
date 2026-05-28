@@ -135,6 +135,26 @@ console.log('buildSprintReminder tests:\n');
   check('empty state: 0 jobs', /<b>0 jobs<\/b>/.test(r.bodyHtml));
 }
 
+
+// 8. Defensive: missing sprintStart returns null subject (skipped) instead of crashing
+{
+  const r = buildSprintReminder({
+    slug: 'x', userName: 'X', profile: {},
+    tracker: {}, contacts: [], cards: [], now: new Date(), ccEmail: '',
+  });
+  check('no sprintStart → subject is null (skipped)', r.subject === null);
+  check('skip reason recorded in meta', r.meta && r.meta.skipped === 'no-sprint-start');
+}
+
+// 9. Defensive: invalid sprintStart string returns skipped too
+{
+  const r = buildSprintReminder({
+    slug: 'x', userName: 'X', profile: { sprintStart: 'not-a-date' },
+    tracker: {}, contacts: [], cards: [], now: new Date(), ccEmail: '',
+  });
+  check('invalid sprintStart → skipped', r.subject === null && r.meta.skipped === 'invalid-sprint-start');
+}
+
 console.log();
 console.log('='.repeat(40));
 console.log(`Result: ${PASS} passed, ${FAIL} failed`);

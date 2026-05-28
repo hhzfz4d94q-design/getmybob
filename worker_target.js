@@ -2673,7 +2673,16 @@ async function sendDailyMixedToAll(env) {
 // PURE function — testable without env / fetch / KV. Takes already-fetched
 // data, returns { subject, bodyHtml, ccList, meta }. Refactored 2026-05-28.
 function buildSprintReminder({ slug, userName, profile, tracker, contacts, cards, now, ccEmail }) {
+  // Defensive: cron should not call us without sprintStart, but a single bad
+  // profile shouldn't crash the whole loop. Return a null-shaped result the
+  // caller can detect.
+  if (!profile || !profile.sprintStart) {
+    return { subject: null, bodyHtml: null, ccList: [], meta: { skipped: 'no-sprint-start' } };
+  }
   const start = new Date(profile.sprintStart);
+  if (isNaN(start.getTime())) {
+    return { subject: null, bodyHtml: null, ccList: [], meta: { skipped: 'invalid-sprint-start' } };
+  }
   now = now || new Date();
   const sprintDays = parseInt(profile.sprintDays || 10, 10);
   const dailyQuota = parseInt(profile.sprintDailyQuota || 3, 10);
@@ -2774,10 +2783,14 @@ async function sendSprintReminderForUser(env, user, profile) {
   while ((m = cardRx.exec(html)) !== null) {
     cards.push({ fp: m[1], score: parseInt(m[2], 10), applyUrl: m[3], title: (m[4]||'').trim(), company: (m[5]||'').trim() });
   }
-  const { subject, bodyHtml, ccList } = buildSprintReminder({
+  const { subject, bodyHtml, ccList, meta } = buildSprintReminder({
     slug, userName: user.name || slug, profile, tracker, contacts, cards,
     now: new Date(), ccEmail: env.SPRINT_CC_EMAIL || '',
   });
+  if (!subject || !bodyHtml) {
+    console.log(`[sprint-reminder] ${slug} skipped: ${meta && meta.skipped}`);
+    return { ok: false, reason: meta && meta.skipped };
+  }
   return await sendEmailViaResend(env, user.email, subject, bodyHtml, ccList);
 }
 
