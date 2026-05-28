@@ -9,43 +9,23 @@ on:
         default: 'geetu'
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   push:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Push contacts (captures output)
-        id: push
-        continue-on-error: true
+      - name: Push contacts
         env:
           ADMIN_KEY: ${{ secrets.WORKER_ADMIN_KEY }}
           SLUG: ${{ github.event.inputs.slug }}
           WORKER_URL: https://cool-darkness-dce5.tr6jz6v7wg.workers.dev
         run: |
-          mkdir -p reports
-          python3 scripts/push_contacts.py 2>&1 | tee reports/push_contacts_${SLUG}.log
+          echo "## push-contacts $SLUG" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          python3 scripts/push_contacts.py 2>&1 | tee -a $GITHUB_STEP_SUMMARY
           EXIT=${PIPESTATUS[0]}
-          echo "PYTHON_EXIT=$EXIT" | tee -a reports/push_contacts_${SLUG}.log
-          exit 0
-      - name: Commit log
-        if: always()
-        run: |
-          git config user.email "bot@officebeatllc.com"
-          git config user.name "push-contacts-bot"
-          git add reports/ 2>/dev/null || true
-          if git diff --staged --quiet; then
-            echo "no log to commit"
-          else
-            git commit -m "auto: push-contacts log ${{ github.event.inputs.slug }}"
-            git push
-          fi
-      - name: Fail workflow if push failed
-        run: |
-          if grep -q "PYTHON_EXIT=0" reports/push_contacts_*.log 2>/dev/null; then
-            echo "OK"
-          else
-            echo "::error::push failed; see committed log"
-            exit 1
-          fi
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "exit_code: $EXIT" >> $GITHUB_STEP_SUMMARY
+          exit $EXIT
