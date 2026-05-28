@@ -5082,6 +5082,7 @@ window.toggleFullFeed = function() {{
             '<li>Open Preferences → Sprint → switch <strong>Match strictness</strong> to <em>Exploratory</em>. Tradeoff: more variety, more noise.</li>' +
             '<li>Loosen your <strong>Max per company</strong> filter in the toolbar above (currently restricting same-company duplicates).</li>' +
             '<li>Re-upload your resume to refresh the AI-extracted profile — your stated targets may be too narrow for the current job pool.</li>' +
+            '<li>In active sprint? Use the <strong>Cancel sprint</strong> button in the sprint strip above to abandon cleanly (no history record).</li>' +
             '</ul>';
           grid.parentNode.insertBefore(noMatchBanner, grid);
         }}
@@ -7088,6 +7089,34 @@ async function sprintEndEarly() {{
   if (typeof openSprintReviewModal === 'function') openSprintReviewModal();
 }}
 
+// Cancel sprint cleanly when there were no jobs to review — no history
+// record, no debrief modal. Uses /api/sprint/reset which just clears
+// sprintStart on the profile.
+async function sprintCancel(btn) {{
+  if (!confirm('Cancel this sprint? No record will be kept. (Use this when the system had no good matches — not when you simply gave up.)')) return;
+  if (btn) {{ btn.disabled = true; btn.textContent = 'Cancelling…'; }}
+  try {{
+    const _ek = (typeof getEditKey === 'function') ? getEditKey() : null;
+    const _ak = (typeof getAdminKey === 'function') ? getAdminKey() : null;
+    const _h = {{ 'Content-Type': 'application/json' }};
+    if (_ek) _h['X-Edit-Key'] = _ek;
+    else if (_ak) _h['X-Admin-Key'] = _ak;
+    const r = await fetch(WORKER_BASE + '/api/sprint/reset' + USER_QS, {{
+      method: 'POST', headers: _h, body: '{{}}'
+    }});
+    if (!r.ok) {{
+      const j = await r.json().catch(() => ({{}}));
+      alert('Could not cancel: ' + (j.error || r.status));
+      if (btn) {{ btn.disabled = false; btn.textContent = 'Cancel sprint'; }}
+      return;
+    }}
+    location.reload();
+  }} catch (e) {{
+    alert(_spErr('sprintCancel', WORKER_BASE + '/api/sprint/reset' + USER_QS, e));
+    if (btn) {{ btn.disabled = false; btn.textContent = 'Cancel sprint'; }}
+  }}
+}}
+
 // Render mid-sprint controls into the strip header.
 (function _addMidSprintControls() {{
   function run() {{
@@ -7101,6 +7130,7 @@ async function sprintEndEarly() {{
       bar.innerHTML =
         '<button onclick="sprintSnoozeToday(this)" style="background:rgba(255,255,255,0.12);color:#fff;border:1px solid rgba(255,255,255,0.25);padding:4px 12px;border-radius:6px;font-size:11.5px;font-weight:600;cursor:pointer;">Snooze today</button>' +
         '<button onclick="sprintAdjustQuota()" style="background:rgba(255,255,255,0.12);color:#fff;border:1px solid rgba(255,255,255,0.25);padding:4px 12px;border-radius:6px;font-size:11.5px;font-weight:600;cursor:pointer;">Adjust quota</button>' +
+        '<button onclick="sprintCancel(this)" title="Cancel without writing a history record — use when there were no good matches" style="background:rgba(180,40,40,0.18);color:#fff;border:1px solid rgba(255,200,200,0.4);padding:4px 12px;border-radius:6px;font-size:11.5px;font-weight:600;cursor:pointer;">Cancel sprint</button>' +
         '<button onclick="sprintEndEarly()" style="background:rgba(255,255,255,0.12);color:#fff;border:1px solid rgba(255,255,255,0.25);padding:4px 12px;border-radius:6px;font-size:11.5px;font-weight:600;cursor:pointer;">End early</button>';
       strip.appendChild(bar);
     }} catch (e) {{ /* silent */ }}
