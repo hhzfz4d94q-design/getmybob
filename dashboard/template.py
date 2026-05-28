@@ -741,6 +741,15 @@ HTML_TEMPLATE = """<!doctype html>
       </div>
     </div>
     <div class="sc-section">
+      <div class="sc-label">Match strictness</div>
+      <div class="sc-pills" data-group="strictness">
+        <button type="button" class="sc-pill" data-val="strict" title="Only show very high-confidence matches. Fewer picks per day but each is on-target.">Strict (90+)</button>
+        <button type="button" class="sc-pill" data-val="balanced" title="Default — solid matches with some flexibility.">Balanced (70+)</button>
+        <button type="button" class="sc-pill" data-val="exploratory" title="Show more candidates including borderline fits. More variety, more noise.">Exploratory (50+)</button>
+      </div>
+      <div class="sc-hint">Drives the per-dimension gates (Layer 1) AND the AI re-rank confidence cutoff (Layer 3). Strict mode also auto-triggers re-rank on every dashboard load.</div>
+    </div>
+    <div class="sc-section">
       <div class="sc-label">Your timezone</div>
       <select id="sc-timezone" style="padding:6px 10px;border:1px solid #d0d4dc;border-radius:6px;font-size:13.5px;min-width:260px;">
         <optgroup label="United States">
@@ -4639,7 +4648,12 @@ async function refreshFocusPanel() {{
   // score >= MIN_GATE on title, industry, keywords, seniority. Location is
   // informational only — not gated. Defaults map to a permissive 'balanced'
   // threshold; strict/exploratory will tighten/loosen later (Week 6).
-  const MIN_GATE = 40;
+  // Week 6: MIN_GATE varies with strictness mode.
+  const _scStrict = (function() {{
+    try {{ return JSON.parse(localStorage.getItem(SC_KEY) || '{{}}').strictness || 'balanced'; }} catch (e) {{ return 'balanced'; }}
+  }})();
+  window._scStrictness = _scStrict;
+  const MIN_GATE = _scStrict === 'strict' ? 60 : (_scStrict === 'exploratory' ? 30 : 40);
   const allCards = Array.from(grid.querySelectorAll(".card"));
   let gateDrops = 0;
   const candidates = allCards.filter(function(c) {{
@@ -4658,9 +4672,12 @@ async function refreshFocusPanel() {{
     const fi = parseInt(c.getAttribute("data-fit-industry") || "", 10);
     const fk = parseInt(c.getAttribute("data-fit-keywords") || "", 10);
     const fs = parseInt(c.getAttribute("data-fit-seniority") || "", 10);
-    if (Number.isFinite(ft) && (ft < MIN_GATE || fi < MIN_GATE || fk < MIN_GATE || fs < MIN_GATE)) {{
-      gateDrops++;
-      return false;
+    // Strictness check counts how many dimensions cleared the gate; strict
+    // requires all 4, balanced requires 3+, exploratory requires 2+.
+    if (Number.isFinite(ft)) {{
+      const passed = [ft, fi, fk, fs].filter(v => Number.isFinite(v) && v >= MIN_GATE).length;
+      const required = (window._scStrictness === 'strict') ? 4 : (window._scStrictness === 'exploratory') ? 2 : 3;
+      if (passed < required) {{ gateDrops++; return false; }}
     }}
     return true;
   }});
@@ -6451,10 +6468,10 @@ function _scLoadConfig() {{
     const raw = localStorage.getItem(SC_KEY);
     if (raw) {{
       const o = JSON.parse(raw);
-      if (o && typeof o === 'object') return Object.assign({{ duration:10, quota:3, days:[1,2,3,4,5], nudgeTime:'07:00', recapTime:'19:00', timezone:'America/New_York' }}, o);
+      if (o && typeof o === 'object') return Object.assign({{ duration:10, quota:3, days:[1,2,3,4,5], nudgeTime:'07:00', recapTime:'19:00', timezone:'America/New_York', strictness:'balanced' }}, o);
     }}
   }} catch (e) {{}}
-  return {{ duration: 10, quota: 3, days: [1,2,3,4,5], nudgeTime: '07:00', recapTime: '19:00', timezone: 'America/New_York' }};
+  return {{ duration: 10, quota: 3, days: [1,2,3,4,5], nudgeTime: '07:00', recapTime: '19:00', timezone: 'America/New_York', strictness: 'balanced' }};
 }}
 function _scSaveConfig(o) {{
   try {{ localStorage.setItem(SC_KEY, JSON.stringify(o)); }} catch (e) {{}}
@@ -6484,13 +6501,15 @@ function _scReadConfig() {{
   const t = (document.getElementById('sc-nudge-time') || {{}}).value || '07:00';
   const rt = (document.getElementById('sc-recap-time') || {{}}).value || '19:00';
   const tz = (document.getElementById('sc-timezone') || {{}}).value || 'America/New_York';
+  const strict = (document.querySelector('.sc-pills[data-group="strictness"] .sc-pill.active') || {{}}).dataset?.val || 'balanced';
   return {{
     duration: get('duration') || 10,
     quota: get('quota') || 3,
     days: days.length ? days : [1,2,3,4,5],
     nudgeTime: t,
     recapTime: rt,
-    timezone: tz
+    timezone: tz,
+    strictness: strict
   }};
 }}
 function _scUpdatePreview() {{
@@ -6500,8 +6519,9 @@ function _scUpdatePreview() {{
   const totalApps = c.duration * c.quota;
   const skipNote = c.days.length < 7 ? ' (only on selected days)' : '';
   const tzShort = (c.timezone || 'America/New_York').split('/').pop().replace(/_/g, ' ');
+  const strictLbl = ({{ 'strict': 'Strict 90+', 'balanced': 'Balanced 70+', 'exploratory': 'Exploratory 50+' }})[c.strictness] || 'Balanced';
   el.innerHTML = '<strong>' + c.duration + ' days × ' + c.quota + ' apps/day = ' + totalApps + ' applications total</strong>' +
-                 skipNote + ' &middot; morning nudge ' + c.nudgeTime + ' &middot; recap ' + c.recapTime + ' (' + tzShort + ').';
+                 skipNote + ' &middot; nudge ' + c.nudgeTime + ' &middot; recap ' + c.recapTime + ' (' + tzShort + ') &middot; ' + strictLbl + ' matching.';
 }}
 function _scWirePills() {{
   document.querySelectorAll('.sc-pills .sc-pill').forEach(p => {{
@@ -6557,6 +6577,7 @@ async function openSprintConfigModal() {{
     }}
     tzEl.value = c.timezone || 'America/New_York';
   }}
+  _scActivatePill('strictness', c.strictness || 'balanced');
   _scWirePills();
   _scUpdatePreview();
   modal.classList.add('show');
@@ -6984,6 +7005,30 @@ async function sprintEndEarly() {{
       '</details>';
     if (anchor.parentNode) anchor.parentNode.insertBefore(wrap, anchor.nextSibling);
   }} catch (e) {{ /* silent */ }}
+}})();
+
+// === Week 6: strict-mode auto-trigger AI re-rank on each dashboard load
+(function _strictAutoRerank() {{
+  function run() {{
+    try {{
+      const strict = JSON.parse(localStorage.getItem('gmj_sprint_config_' + USER_SLUG) || '{{}}').strictness;
+      if (strict !== 'strict') return;
+      // Only auto-trigger if no rerank stamp exists yet today
+      fetch(WORKER_BASE + '/api/rerank' + USER_QS).then(r => r.json()).then(j => {{
+        if (j && Array.isArray(j.ranked) && j.ranked.length > 0) return;
+        // No stamp — fire the rerank in background after picks render
+        setTimeout(() => {{
+          const btn = document.getElementById('focus-rerank-btn');
+          if (btn && typeof rerankPicks === 'function') rerankPicks(btn);
+        }}, 2500);
+      }}).catch(() => {{}});
+    }} catch (e) {{}}
+  }}
+  if (document.readyState === 'loading') {{
+    document.addEventListener('DOMContentLoaded', () => setTimeout(run, 1000));
+  }} else {{
+    setTimeout(run, 1000);
+  }}
 }})();
 
 // === Week 5: profile auto-tuning suggestion banner ====================
