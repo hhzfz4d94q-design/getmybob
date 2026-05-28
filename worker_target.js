@@ -780,13 +780,20 @@ async function handlePrep(request, env, cors, slug) {
   let candidateName = '';
   try { const r = JSON.parse(resumeJson); candidateName = r?.personal?.name || ''; } catch (e) { /* ignore */ }
 
-  const prompt = `You are helping ${candidateName || 'a candidate'} apply for a job. Based on the resume below, produce FIVE outputs:
+  const prompt = `You are helping ${candidateName || 'a candidate'} apply for a job. Based on the resume below, produce SEVEN outputs:
 
 1. A tailored 3-sentence resume summary highlighting why they're a strong fit.
 2. A 250-word cover letter, professional but warm.
 3. A 100-word LinkedIn intro message to a recruiter or hiring manager at this company.
 4. A FULL TAILORED RESUME for this specific job — structured JSON. Re-order skills and re-emphasize/re-word existing bullets to lead with what's most relevant for THIS role. Do NOT invent claims.
 5. A KEYWORD DIFF — the recruiter-Boolean-search check. Extract the hard-skill / proper-noun / framework / regulation keywords a recruiter would Boolean-search for from this job description. For each, decide whether the candidate's resume already contains it as an EXACT phrase (matched) or only via a paraphrase / not at all (missing). For each missing keyword, suggest the closest paraphrase the candidate already uses (so they can swap or augment) plus a one-line replacement hint.
+6. A SIX-SECOND SCAN — the human-reviewer-skimming-200-resumes check. A recruiter or HM spends literally six seconds on the first pass; their eye goes to the title line under the candidate's name and the first 3 bullets of their most recent role. Report:
+   - titleObserved: the title currently on line 1 (or top of resume)
+   - titleAlignment: 'aligned' | 'one level off' | 'two+ levels off' vs. the job title
+   - titleSuggestion: a one-line subtitle the candidate could add ('Targeting: <job title here>') — leave empty string if titleAlignment is 'aligned'
+   - topBulletsCritique: 1-2 sentences on whether the first 3 bullets of the most recent role hit this job's themes or read as generic
+   - rewrites: array of {original, suggested, why} — propose rewrites for up to 3 weak/generic top bullets. 'original' must be the EXACT text from the resume. 'suggested' must use only true facts from the resume but emphasize JD-relevant verbs/numbers. 'why' is one sentence.
+7. A COVER PARAGRAPH — a 3-4 sentence editorial paragraph the candidate could paste at the very top of their resume for THIS application only. Lead with years + domain. Cite one or two specific accomplishments (verbatim from the resume). End with a single sentence naming the company + role and what specifically they want to bring. NO marketing fluff.
 
 Return your response as a JSON object with EXACTLY these keys and nothing else:
 - "summary" (string)
@@ -794,6 +801,8 @@ Return your response as a JSON object with EXACTLY these keys and nothing else:
 - "linkedin" (string)
 - "tailoredResume" (object with keys: personal, summary, skills, experience, education, certifications — same shape as the input resume)
 - "keywordDiff" (object with keys: matched, missing — see below)
+- "sixSecondScan" (object with keys: titleObserved, titleAlignment, titleSuggestion, topBulletsCritique, rewrites)
+- "coverParagraph" (string)
 
 For tailoredResume:
 - personal: copy from input as-is
@@ -839,7 +848,7 @@ ${resumeJson}`;
     const r = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 7000, messages: [{ role: 'user', content: prompt }] }),
+      body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 8500, messages: [{ role: 'user', content: prompt }] }),
     });
     if (!r.ok) { const err = await r.text(); return Response.json({ error: 'Anthropic API error', details: err }, { status: 502, headers: cors }); }
     const data = await r.json();
@@ -847,7 +856,7 @@ ${resumeJson}`;
     const cleaned = text.replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/\s*```$/, '').trim();
     let parsed;
     try { parsed = JSON.parse(cleaned); }
-    catch (e) { return Response.json({ summary: text, coverLetter: '', linkedin: '', tailoredResume: null, keywordDiff: null, warning: 'AI did not return valid JSON' }, { headers: cors }); }
+    catch (e) { return Response.json({ summary: text, coverLetter: '', linkedin: '', tailoredResume: null, keywordDiff: null, sixSecondScan: null, coverParagraph: '', warning: 'AI did not return valid JSON' }, { headers: cors }); }
     return Response.json(parsed, { headers: cors });
   } catch (e) { return Response.json({ error: 'Worker error', message: String(e) }, { status: 500, headers: cors }); }
 }

@@ -606,6 +606,19 @@ HTML_TEMPLATE = """<!doctype html>
         <button class="btn primary" onclick="copyKeywordFixList(this)" style="margin-top:10px;">Copy fix list</button>
       </div>
 
+      <!-- Week 2: 6-second scan (what a human reviewer sees in 6s) -->
+      <div class="prep-section" id="prep-scan-section" style="display:none;">
+        <div class="prep-label">6-second scan (what a human reviewer sees)</div>
+        <div id="prep-scan-body" style="background:#fff;border:1px solid #e2e5ea;border-radius:8px;padding:14px 16px;font-size:13px;line-height:1.55;"></div>
+      </div>
+
+      <!-- Week 2: editorial cover paragraph (paste at top of resume for this app) -->
+      <div class="prep-section" id="prep-coverpara-section" style="display:none;">
+        <div class="prep-label">Cover paragraph (paste at top of resume for this job)</div>
+        <pre id="prep-coverpara" class="prep-text"></pre>
+        <button class="btn primary" onclick="copyPrepField('prep-coverpara', this)">Copy cover paragraph</button>
+      </div>
+
       <div class="prep-section">
         <div class="prep-label">Resume Summary</div>
         <pre id="prep-summary" class="prep-text"></pre>
@@ -1244,6 +1257,9 @@ function reopenPrepFromTracker() {{
   document.getElementById('prep-linkedin').textContent = rec.prepKit.linkedin || '(no LinkedIn intro)';
   // Week 1: also restore keyword diff if cached
   _renderKeywordDiff(rec.prepKit.keywordDiff);
+  // Week 2: restore scan + cover paragraph from cache
+  _renderSixSecondScan(rec.prepKit.sixSecondScan);
+  _renderCoverParagraph(rec.prepKit.coverParagraph);
   _tailoredResume = rec.prepKit.tailoredResume || null;
   _tailoredJobMeta = {{ jobTitle: rec.title, company: rec.company }};
   const sec = document.getElementById('prep-resume-section');
@@ -2851,6 +2867,9 @@ async function prepApplication(fp, btn) {{
     document.getElementById('prep-linkedin').textContent = data.linkedin || '(no LinkedIn intro returned)';
     // Week 1: render keyword diff section
     _renderKeywordDiff(data.keywordDiff);
+    // Week 2: render six-second scan + cover paragraph
+    _renderSixSecondScan(data.sixSecondScan);
+    _renderCoverParagraph(data.coverParagraph);
     _tailoredResume = data.tailoredResume || null;
     _tailoredJobMeta = {{ jobTitle, company }};
     const tailoredSection = document.getElementById('prep-resume-section');
@@ -2863,7 +2882,7 @@ async function prepApplication(fp, btn) {{
     statusEl.style.display = 'none';
     outputEl.style.display = 'block';
     // Auto-save the prep kit to the tracker so user can re-open without regenerating
-    const kit = {{ summary: data.summary, coverLetter: data.coverLetter, linkedin: data.linkedin, tailoredResume: data.tailoredResume, keywordDiff: data.keywordDiff }};
+    const kit = {{ summary: data.summary, coverLetter: data.coverLetter, linkedin: data.linkedin, tailoredResume: data.tailoredResume, keywordDiff: data.keywordDiff, sixSecondScan: data.sixSecondScan, coverParagraph: data.coverParagraph }};
     if (getEditKey()) {{
       _trackerAction('savePrepKit', {{ fp, jobMeta: {{ title: jobTitle, company, url: jobUrl }}, prepKit: kit }}).then(r => {{
         if (r && r.record) _trackerCache[fp] = r.record;
@@ -2920,6 +2939,54 @@ function _renderKeywordDiff(kd) {{
   }});
   html += '</tbody></table>';
   table.innerHTML = html;
+  section.style.display = 'block';
+}}
+
+// === Week 2: Six-second scan renderer ================================
+function _renderSixSecondScan(scan) {{
+  const section = document.getElementById('prep-scan-section');
+  const body = document.getElementById('prep-scan-body');
+  if (!section || !body) return;
+  if (!scan || typeof scan !== 'object') {{ section.style.display = 'none'; return; }}
+  function esc(s) {{ return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({{ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }}[c])); }}
+  const alignmentColor = {{ 'aligned': '#0a6b3a', 'one level off': '#78350f', 'two+ levels off': '#B91C1C' }}[scan.titleAlignment] || '#444';
+  let html = '';
+  html += '<div style="margin-bottom:10px;">';
+  html += '<strong>Title line:</strong> ' + esc(scan.titleObserved || '(not detected)');
+  html += '  <span style="color:' + alignmentColor + ';font-weight:600;">[' + esc(scan.titleAlignment || 'unknown') + ']</span>';
+  html += '</div>';
+  if (scan.titleSuggestion) {{
+    html += '<div style="margin-bottom:10px;padding:8px 10px;background:#fff7e6;border:1px solid #fcd34d;border-radius:6px;font-size:12.5px;">';
+    html += '<strong>Suggested subtitle:</strong> <code style="background:#fff;padding:2px 6px;border-radius:4px;">' + esc(scan.titleSuggestion) + '</code>';
+    html += '</div>';
+  }}
+  if (scan.topBulletsCritique) {{
+    html += '<div style="margin-bottom:10px;color:#555;"><strong>Top-bullet read:</strong> ' + esc(scan.topBulletsCritique) + '</div>';
+  }}
+  const rewrites = Array.isArray(scan.rewrites) ? scan.rewrites : [];
+  if (rewrites.length) {{
+    html += '<div style="font-size:12px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.04em;margin-top:14px;margin-bottom:6px;">Suggested rewrites</div>';
+    rewrites.forEach(rw => {{
+      html += '<div style="margin-bottom:12px;padding:10px;background:#f7f8fb;border:1px solid #e2e5ea;border-radius:6px;">';
+      html += '<div style="font-size:11.5px;color:#a55;margin-bottom:4px;">BEFORE</div>';
+      html += '<div style="font-size:13px;color:#444;margin-bottom:8px;">' + esc(rw.original || '') + '</div>';
+      html += '<div style="font-size:11.5px;color:#0a6b3a;margin-bottom:4px;">AFTER</div>';
+      html += '<div style="font-size:13px;color:#1a1a2e;margin-bottom:6px;font-weight:500;">' + esc(rw.suggested || '') + '</div>';
+      if (rw.why) html += '<div style="font-size:11.5px;color:#666;font-style:italic;">Why: ' + esc(rw.why) + '</div>';
+      html += '</div>';
+    }});
+  }}
+  body.innerHTML = html;
+  section.style.display = 'block';
+}}
+
+// === Week 2: Cover paragraph renderer ================================
+function _renderCoverParagraph(text) {{
+  const section = document.getElementById('prep-coverpara-section');
+  const pre = document.getElementById('prep-coverpara');
+  if (!section || !pre) return;
+  if (!text || typeof text !== 'string' || !text.trim()) {{ section.style.display = 'none'; return; }}
+  pre.textContent = text;
   section.style.display = 'block';
 }}
 
