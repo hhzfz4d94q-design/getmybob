@@ -24,21 +24,60 @@ jobs:
           python-version: "3.11"
 
       - name: Fetch jobs and generate dashboard
+        id: scrape
+        shell: bash
         run: |
-          python3 fetch_jobs.py
+          export PYTHONUNBUFFERED=1
+          set +e  # don't fail-fast — we want to capture the full log even on crash
+          python3 fetch_jobs.py > /tmp/refresh.log 2>&1
+          PYEXIT=$?
+          echo "Python exit code: $PYEXIT"
+          echo "Log lines: $(wc -l < /tmp/refresh.log)"
+          echo "::group::Refresh output (tail 200 lines)"
+          tail -n 200 /tmp/refresh.log
+          echo "::endgroup::"
+          if [ "$PYEXIT" = "0" ]; then
+            echo "status=ok" >> "$GITHUB_OUTPUT"
+          else
+            echo "status=fail" >> "$GITHUB_OUTPUT"
+          fi
+          # Capture full log into a tracked file so we can read it back
+          # via git pull even when GH log endpoints are blocked.
+          mkdir -p .refresh-debug
+          cp /tmp/refresh.log .refresh-debug/LAST_RUN.log
+          echo "$PYEXIT" > .refresh-debug/LAST_EXIT_CODE
+          echo "Captured $(wc -l < .refresh-debug/LAST_RUN.log) lines, exit=$PYEXIT"
+
+      - name: Commit refresh log so we can read it back
+        if: always()
+        run: |
+          mkdir -p .refresh-debug
+          if [ ! -f .refresh-debug/LAST_RUN.log ]; then
+            echo "no log produced" > .refresh-debug/LAST_RUN.log
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .refresh-debug/LAST_RUN.log .refresh-debug/LAST_EXIT_CODE 2>/dev/null
+          if git diff --cached --quiet; then
+            echo "Log file unchanged."
+          else
+            git commit -m "refresh-debug: capture LAST_RUN.log (auto)"
+            git pull --rebase origin main 2>/dev/null || true
+            git push origin main || echo "push failed (non-fatal)"
+          fi
+
+      - name: Fail if scrape did not complete
+        if: steps.scrape.outputs.status != 'ok'
+        run: |
+          echo "::error::Scrape did not complete — see .refresh-debug/LAST_RUN.log on main."
+          exit 1
 
       - name: Pre-deploy smoke gate (blocks bad output from shipping)
         run: |
           set -e
-          # 1. Generated dashboards must have valid JS syntax
           python3 scripts/validate_dashboard_js.py
-          # 2. Scoring goldens must still pass (catches scoring regressions
-          #    that would degrade users' Top-20 without a JS error)
           python3 tests/test_scoring.py
-          # 3. Catalog integrity (no dupe / bad slug / unknown ATS)
           python3 tests/test_catalog_integrity.py
-          # 4. Sprint reminder pure-builder tests (catches email generation bugs
-          #    before the 7am cron sends a broken email to every user)
           if command -v node >/dev/null 2>&1; then
             node tests/test_sprint_reminder.mjs
           else
@@ -50,9 +89,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          # Stage jobs.db and every *.html EXCEPT index.html (landing page)
-          # and landing.html (canonical landing copy). This keeps the public
-          # homepage stable across auto-refresh runs.
           git add jobs.db
           git add reports/ 2>/dev/null || true
           for f in *.html; do
@@ -62,8 +98,6 @@ jobs:
           done
           if ! git diff --staged --quiet; then
             git commit -m "auto: refresh dashboard $(date -u +'%Y-%m-%dT%H:%MZ')"
-            # Rebase any new commits that landed on main while we were running
-            # (fix for "push rejected non-fast-forward" race).
             for i in 1 2 3; do
               if git push; then exit 0; fi
               echo "push attempt $i failed, rebasing and retrying..."
