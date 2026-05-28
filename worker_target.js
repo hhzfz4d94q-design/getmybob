@@ -86,6 +86,7 @@ export default {
     if (url.pathname === '/api/tuning/list')    return handleTuningList(request, env, cors, slug);
     if (url.pathname === '/api/dismiss')         return handleDismiss(request, env, cors, slug);
     if (url.pathname === '/api/rerank')          return handleRerank(request, env, cors, slug);
+    if (url.pathname === '/api/profile/suggest-tightening') return handleProfileSuggestTightening(request, env, cors, slug);
     if (url.pathname === '/skills-profile') return handleSkillsProfile(request, env, cors, slug);
     if (url.pathname === '/regenerate-profile') return handleRegenerateProfile(request, env, cors, slug);
     if (url.pathname === '/regenerate-companies') return handleRegenerateCompanies(request, env, cors, slug);
@@ -662,7 +663,7 @@ async function handleSkillsProfile(request, env, cors, slug) {
       const raw = await env.RESUMES.get(uk(slug, 'skills_profile'));
       const existing = raw ? JSON.parse(raw) : {};
       const updated = Object.assign({}, existing);
-      const SCALAR_FIELDS = new Set(['salaryFloor', 'remotePreferred', 'seniorityLevel', 'careerStage', 'primaryRole', 'summary', 'companySizeMix', 'companySizePreferences', 'dailyTarget', 'recencyWindow', 'defaultSort', 'hideNoSalary', 'negativeTitles', 'matchWeights', 'signalStability', 'phone', 'email', 'location', 'linkedinUrl', 'githubUrl', 'websiteUrl', 'workAuthorization', 'requiresSponsorship', 'currentCompany', 'currentTitle', 'school', 'degree', 'graduationYear', 'firstName', 'lastName', 'excludeCompanies', 'sprintStart', 'sprintDays', 'sprintDailyQuota', 'sprintDaysOfWeek', 'sprintNudgeTime', 'sprintRecapTime', 'sprintTimezone', 'sprintSnoozedDays', 'networkCompanies', 'resumeHealth', 'resumeHealthHistory', 'lastMonthlyReportAt', 'dismissalPatterns']);
+      const SCALAR_FIELDS = new Set(['salaryFloor', 'remotePreferred', 'seniorityLevel', 'careerStage', 'primaryRole', 'summary', 'companySizeMix', 'companySizePreferences', 'dailyTarget', 'recencyWindow', 'defaultSort', 'hideNoSalary', 'negativeTitles', 'matchWeights', 'signalStability', 'phone', 'email', 'location', 'linkedinUrl', 'githubUrl', 'websiteUrl', 'workAuthorization', 'requiresSponsorship', 'currentCompany', 'currentTitle', 'school', 'degree', 'graduationYear', 'firstName', 'lastName', 'excludeCompanies', 'sprintStart', 'sprintDays', 'sprintDailyQuota', 'sprintDaysOfWeek', 'sprintNudgeTime', 'sprintRecapTime', 'sprintTimezone', 'sprintSnoozedDays', 'networkCompanies', 'resumeHealth', 'resumeHealthHistory', 'lastMonthlyReportAt', 'dismissalPatterns', 'tighteningSilencedAt', 'tighteningLastSuggestionCount']);
       for (const [field, items] of Object.entries(body.patchFields)) {
         if (SCALAR_FIELDS.has(field)) {
           updated[field] = items;
@@ -1382,6 +1383,135 @@ ${JSON.stringify(jobsForPrompt).slice(0, 14000)}`;
     await env.RESUMES.put(key, JSON.stringify(record));
     return Response.json(record, { headers: cors });
   } catch (e) { return Response.json({ error: 'Worker error', message: String(e) }, { status: 500, headers: cors }); }
+}
+
+// --- /api/profile/suggest-tightening (Week 5) -------------------------
+// Inspects last-14d dismissalPatterns and proposes profile changes
+// when the user is clearly signaling a tighter preference. Consent-driven:
+// GET to see, POST {accept:true} to apply, POST {accept:false} to silence.
+async function handleProfileSuggestTightening(request, env, cors, slug) {
+  if (!env.RESUMES) return Response.json({ error: 'RESUMES KV binding missing' }, { status: 500, headers: cors });
+  const profRaw = await env.RESUMES.get(uk(slug, 'skills_profile'));
+  const profile = profRaw ? JSON.parse(profRaw) : {};
+  const dismissals = (Array.isArray(profile.dismissalPatterns) ? profile.dismissalPatterns : [])
+    .filter(d => {
+      const ts = Date.parse(d.ts || '');
+      return Number.isFinite(ts) && (Date.now() - ts) < 14 * 86400000;
+    });
+
+  // Helper: derive proposed changes from dismissal data
+  function computeSuggestions() {
+    const byReason = {};
+    const companyByReason = {};
+    dismissals.forEach(d => {
+      const r = d.reason || 'other';
+      byReason[r] = (byReason[r] || 0) + 1;
+      if (!companyByReason[r]) companyByReason[r] = {};
+      const c = (d.company || '').toLowerCase();
+      if (c) companyByReason[r][c] = (companyByReason[r][c] || 0) + 1;
+    });
+    const suggestions = [];
+    // 'too-junior' ≥ 5 → tighten seniority floor (raise careerStage by one or
+    // narrow targetTitles to drop the lowest-level ones).
+    if ((byReason['too-junior'] || 0) >= 5) {
+      suggestions.push({
+        field: 'careerStage',
+        currentValue: profile.careerStage || 'unknown',
+        suggestedValue: {
+          'mid-career': 'senior',
+          'senior': 'executive',
+          'executive': 'executive'  // no higher rung
+        }[profile.careerStage || ''] || 'senior',
+        evidence: byReason['too-junior'] + ' jobs dismissed as "too junior" in the last 14 days',
+        impact: 'Stops the matcher from showing roles below this seniority level'
+      });
+    }
+    // 'wrong-industry' ≥ 5 → tighten industries to drop the rarely-dismissed ones.
+    if ((byReason['wrong-industry'] || 0) >= 5) {
+      suggestions.push({
+        field: 'industries',
+        currentValue: profile.industries || [],
+        // Keep half (most signal-bearing) — user reviews which to remove
+        suggestedValue: (profile.industries || []).slice(0, Math.max(1, Math.floor((profile.industries || []).length / 2))),
+        evidence: byReason['wrong-industry'] + ' jobs dismissed as "wrong industry" in the last 14 days',
+        impact: 'Narrows the industry filter — fewer false matches but possibly fewer total picks'
+      });
+    }
+    // 'bad-company' with strong repeats per company → add to excludeCompanies.
+    if (companyByReason['bad-company']) {
+      const heavy = Object.entries(companyByReason['bad-company'])
+        .filter(([_, n]) => n >= 3)
+        .map(([c, n]) => ({ company: c, count: n }));
+      if (heavy.length > 0) {
+        suggestions.push({
+          field: 'excludeCompanies',
+          currentValue: profile.excludeCompanies || [],
+          suggestedValue: Array.from(new Set([...(profile.excludeCompanies || []), ...heavy.map(h => h.company)])),
+          evidence: heavy.map(h => h.count + 'x at ' + h.company).join(', '),
+          impact: 'Hard-blocks these companies from all future picks (you can undo from /account.html)'
+        });
+      }
+    }
+    return suggestions;
+  }
+
+  if (request.method === 'GET') {
+    const suggestions = computeSuggestions();
+    // Honor the "silenced" flag: don't surface again for 7 days after dismiss
+    const silencedAt = profile.tighteningSilencedAt ? Date.parse(profile.tighteningSilencedAt) : 0;
+    const silencedFor = Date.now() - silencedAt;
+    if (suggestions.length && silencedAt && silencedFor < 7 * 86400000) {
+      // Snooze unless suggestions COUNT has grown notably (suggesting new evidence)
+      const lastSnapshot = profile.tighteningLastSuggestionCount || 0;
+      if (suggestions.length <= lastSnapshot) {
+        return Response.json({ suggestions: [], silencedUntil: new Date(silencedAt + 7 * 86400000).toISOString() }, { headers: cors });
+      }
+    }
+    return Response.json({ suggestions, dismissalsConsidered: dismissals.length }, { headers: cors });
+  }
+
+  if (request.method === 'POST') {
+    let authed = await checkEditKey(request, env, slug);
+    if (!authed) {
+      const sess = await sessionFromRequest(request, env);
+      if (sess && sess.slug === slug) authed = true;
+    }
+    if (!authed) {
+      const ak = request.headers.get('X-Admin-Key');
+      if (ak && env.ADMIN_KEY && ak === env.ADMIN_KEY) authed = true;
+    }
+    if (!authed) return Response.json({ error: 'Auth required' }, { status: 401, headers: cors });
+
+    const body = await request.json().catch(() => ({}));
+    if (body.accept === true && Array.isArray(body.applyFields)) {
+      const suggestions = computeSuggestions();
+      const byField = {};
+      suggestions.forEach(s => { byField[s.field] = s; });
+      let applied = [];
+      for (const field of body.applyFields) {
+        const s = byField[field];
+        if (!s) continue;
+        profile[field] = s.suggestedValue;
+        applied.push(field);
+      }
+      profile.tighteningSilencedAt = '';  // reset since we acted
+      profile.tighteningLastSuggestionCount = 0;
+      profile.editedAt = new Date().toISOString();
+      await env.RESUMES.put(uk(slug, 'skills_profile'), JSON.stringify(profile));
+      return Response.json({ status: 'applied', fields: applied }, { headers: cors });
+    }
+    // Decline: silence for 7 days, stamp current suggestion count so we re-nag
+    // only when new evidence accumulates.
+    if (body.accept === false) {
+      const suggestions = computeSuggestions();
+      profile.tighteningSilencedAt = new Date().toISOString();
+      profile.tighteningLastSuggestionCount = suggestions.length;
+      await env.RESUMES.put(uk(slug, 'skills_profile'), JSON.stringify(profile));
+      return Response.json({ status: 'silenced', for: '7 days or until more dismissals accumulate' }, { headers: cors });
+    }
+    return Response.json({ error: 'Expected { accept: true|false, applyFields?: [...] }' }, { status: 400, headers: cors });
+  }
+  return new Response('GET / POST only', { status: 405, headers: cors });
 }
 
 // --- /regenerate-profile -----------------------------------------------

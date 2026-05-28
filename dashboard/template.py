@@ -6986,6 +6986,73 @@ async function sprintEndEarly() {{
   }} catch (e) {{ /* silent */ }}
 }})();
 
+// === Week 5: profile auto-tuning suggestion banner ====================
+(function _renderTighteningBanner() {{
+  async function run() {{
+    try {{
+      const r = await fetch(WORKER_BASE + '/api/profile/suggest-tightening' + USER_QS);
+      if (!r.ok) return;
+      const j = await r.json();
+      if (!j || !Array.isArray(j.suggestions) || j.suggestions.length === 0) return;
+      // Insertion target: above the focus panel
+      const focus = document.getElementById('focus-panel');
+      if (!focus) return;
+      if (document.getElementById('tightening-banner')) return; // idempotent
+      function esc(s) {{ return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({{ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }}[c])); }}
+      const wrap = document.createElement('div');
+      wrap.id = 'tightening-banner';
+      wrap.style.cssText = 'background:#fff7e6;border:1px solid #fcd34d;color:#78350f;padding:12px 14px;border-radius:10px;margin:0 auto 12px;max-width:1400px;font-size:13.5px;font-family:Inter,system-ui,sans-serif;';
+      let html = '<div style="font-weight:600;margin-bottom:6px;">🎯 We noticed you keep dismissing similar jobs. Tighten your profile?</div>';
+      html += '<div style="margin-bottom:8px;">';
+      j.suggestions.forEach((s, i) => {{
+        html += '<label style="display:block;font-size:13px;margin-bottom:4px;cursor:pointer;">';
+        html += '<input type="checkbox" class="tight-pick" data-field="' + esc(s.field) + '" checked style="margin-right:8px;vertical-align:middle;">';
+        html += '<strong>' + esc(s.field) + '</strong>: ' + esc(s.evidence) + '<br>';
+        html += '<span style="font-size:12px;color:#666;margin-left:24px;">' + esc(s.impact) + '</span>';
+        html += '</label>';
+      }});
+      html += '</div>';
+      html += '<div style="display:flex;gap:8px;">';
+      html += '<button id="tight-apply" style="background:#1817B5;color:#fff;border:none;padding:6px 14px;border-radius:6px;font-weight:600;cursor:pointer;font-size:13px;">Apply selected</button>';
+      html += '<button id="tight-snooze" style="background:#fff;color:#78350f;border:1px solid #fcd34d;padding:6px 14px;border-radius:6px;font-weight:600;cursor:pointer;font-size:13px;">Not now</button>';
+      html += '</div>';
+      wrap.innerHTML = html;
+      focus.parentNode.insertBefore(wrap, focus);
+      document.getElementById('tight-apply').onclick = async () => {{
+        const fields = Array.from(wrap.querySelectorAll('.tight-pick:checked')).map(c => c.dataset.field);
+        if (fields.length === 0) {{ alert('Pick at least one suggestion to apply.'); return; }}
+        const _ek = (typeof getEditKey === 'function') ? getEditKey() : null;
+        const _ak = (typeof getAdminKey === 'function') ? getAdminKey() : null;
+        const _h = {{ 'Content-Type': 'application/json' }};
+        if (_ek) _h['X-Edit-Key'] = _ek;
+        else if (_ak) _h['X-Admin-Key'] = _ak;
+        const r2 = await fetch(WORKER_BASE + '/api/profile/suggest-tightening' + USER_QS, {{
+          method: 'POST', headers: _h,
+          body: JSON.stringify({{ accept: true, applyFields: fields }})
+        }});
+        if (r2.ok) {{ wrap.innerHTML = '<div style="color:#0a6b3a;font-weight:600;">✓ Profile tightened — reload to see fresh picks.</div>'; setTimeout(() => location.reload(), 1200); }}
+        else {{ alert('Apply failed: HTTP ' + r2.status); }}
+      }};
+      document.getElementById('tight-snooze').onclick = async () => {{
+        const _ek = (typeof getEditKey === 'function') ? getEditKey() : null;
+        const _ak = (typeof getAdminKey === 'function') ? getAdminKey() : null;
+        const _h = {{ 'Content-Type': 'application/json' }};
+        if (_ek) _h['X-Edit-Key'] = _ek;
+        else if (_ak) _h['X-Admin-Key'] = _ak;
+        fetch(WORKER_BASE + '/api/profile/suggest-tightening' + USER_QS, {{
+          method: 'POST', headers: _h, body: JSON.stringify({{ accept: false }})
+        }}).catch(() => {{}});
+        wrap.remove();
+      }};
+    }} catch (e) {{ /* silent */ }}
+  }}
+  if (document.readyState === 'loading') {{
+    document.addEventListener('DOMContentLoaded', () => setTimeout(run, 800));
+  }} else {{
+    setTimeout(run, 800);
+  }}
+}})();
+
 // === #start-sprint deep-link handler (2026-05-28) =====================
 // /account.html links here with #start-sprint when the user clicks
 // "Start a sprint now" from the sprint preferences card. We auto-open
