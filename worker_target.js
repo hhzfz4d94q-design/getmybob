@@ -93,6 +93,7 @@ export default {
     if (url.pathname === '/contacts') return handleContacts(request, env, cors, slug);
     if (url.pathname === '/admin/contacts') return handleAdminContacts(request, env, cors);
     if (url.pathname === '/api/sprint/start') return handleSprintStart(request, env, cors, slug);
+    if (url.pathname === '/api/sprint/complete') return handleSprintComplete(request, env, cors, slug);
     if (url.pathname === '/api/sprint/reset') return handleSprintReset(request, env, cors, slug);
     if (url.pathname === '/api/picks') return handlePicks(request, env, cors, slug);
     if (url.pathname === '/admin/clear-all-picks') return handleAdminClearAllPicks(request, env, cors);
@@ -1589,6 +1590,73 @@ async function handleSprintReset(request, env, cors, slug) {
   profile.editedAt = new Date().toISOString();
   await env.RESUMES.put(uk(slug, 'skills_profile'), JSON.stringify(profile));
   return Response.json({ status: 'reset' }, { headers: cors });
+}
+
+// --- /api/sprint/complete (2026-05-28) --------------------------------
+// End-of-sprint review: records this sprint's outcome to sprintHistory[],
+// clears sprintStart so the dashboard stops showing the sprint strip, and
+// preserves the chosen daysOfWeek/nudgeTime as defaults for the next sprint.
+// Body: { appliedCount, advancedCount, rejectedCount, feedback?: {...} }
+async function handleSprintComplete(request, env, cors, slug) {
+  if (request.method !== 'POST') return new Response('POST only', { status: 405, headers: cors });
+  let authed = await checkEditKey(request, env, slug);
+  if (!authed) {
+    const sess = await sessionFromRequest(request, env);
+    if (sess && sess.slug === slug) authed = true;
+  }
+  if (!authed) {
+    const ak = request.headers.get('X-Admin-Key');
+    if (ak && env.ADMIN_KEY && ak === env.ADMIN_KEY) authed = true;
+  }
+  if (!authed) return Response.json({ error: 'Auth required' }, { status: 401, headers: cors });
+
+  const body = await request.json().catch(() => ({}));
+  const raw = await env.RESUMES.get(uk(slug, 'skills_profile'));
+  const profile = raw ? JSON.parse(raw) : {};
+  if (!profile.sprintStart) {
+    return Response.json({ error: 'No active sprint to complete' }, { status: 400, headers: cors });
+  }
+
+  const _safeInt = (v, def) => {
+    const n = parseInt(v, 10);
+    return Number.isFinite(n) && n >= 0 ? n : def;
+  };
+  const _safeStrArr = (a) => Array.isArray(a)
+    ? a.filter(s => typeof s === 'string').slice(0, 10).map(s => s.slice(0, 80))
+    : [];
+
+  const fb = (body && body.feedback && typeof body.feedback === 'object') ? body.feedback : {};
+  const feedback = {
+    worked: _safeStrArr(fb.worked),
+    didnt:  _safeStrArr(fb.didnt),
+    note:   (typeof fb.note === 'string' ? fb.note.slice(0, 1000) : '')
+  };
+
+  const record = {
+    startedAt:      profile.sprintStart,
+    endedAt:        new Date().toISOString(),
+    daysPlanned:    _safeInt(profile.sprintDays, 10),
+    dailyQuota:     _safeInt(profile.sprintDailyQuota, 3),
+    daysOfWeek:     Array.isArray(profile.sprintDaysOfWeek) ? profile.sprintDaysOfWeek : [1,2,3,4,5],
+    nudgeTime:      (typeof profile.sprintNudgeTime === 'string' && profile.sprintNudgeTime) ? profile.sprintNudgeTime : '07:00',
+    appliedCount:   _safeInt(body.appliedCount, 0),
+    advancedCount:  _safeInt(body.advancedCount, 0),
+    rejectedCount:  _safeInt(body.rejectedCount, 0),
+    feedback
+  };
+
+  if (!Array.isArray(profile.sprintHistory)) profile.sprintHistory = [];
+  profile.sprintHistory.push(record);
+  // Cap history to last 12 sprints so KV value stays small
+  if (profile.sprintHistory.length > 12) {
+    profile.sprintHistory = profile.sprintHistory.slice(-12);
+  }
+  profile.sprintStart = '';
+  // sprintDays / sprintDailyQuota / sprintDaysOfWeek / sprintNudgeTime stay
+  // on the profile as the *defaults* for the next sprint config modal open.
+  profile.editedAt = new Date().toISOString();
+  await env.RESUMES.put(uk(slug, 'skills_profile'), JSON.stringify(profile));
+  return Response.json({ status: 'completed', historyLength: profile.sprintHistory.length, record }, { headers: cors });
 }
 
 

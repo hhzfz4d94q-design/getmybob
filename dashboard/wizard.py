@@ -660,17 +660,17 @@ WIZARD_V3_BLOCK = r"""
       },
     },
     {
+      // 2026-05-28: "Applications per day" moved to the dedicated sprint
+      // config modal — sprint is an activity mode, not a matcher setting.
+      // The remaining matcher concern here is the feed window. Step kept
+      // (optional) so existing wizard state machines don't break, and
+      // renamed for clarity.
       key: "daily-workflow",
-      title: "Daily workflow",
-      subtitle: "How many to apply to each day + how fresh jobs need to be.",
+      title: "Feed window",
+      subtitle: "How fresh jobs need to be to show up. (Daily application target moved to Sprint setup.)",
       optional: true,
       render(body, st) {
         body.innerHTML =
-          '<div style="margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid #eee;">' +
-            '<label for="wiz3-target"><strong>Applications per day</strong></label>' +
-            '<input type="number" id="wiz3-target" min="1" max="50" value="5" style="max-width:140px;">' +
-            '<div class="hint">5 per day is a healthy default.</div>' +
-          '</div>' +
           '<div>' +
             '<label for="wiz3-recency"><strong>Recency window</strong></label>' +
             '<select id="wiz3-recency">' +
@@ -679,24 +679,17 @@ WIZARD_V3_BLOCK = r"""
               '<option value="14">Last 14 days</option>' +
               '<option value="30">Last 30 days</option>' +
             '</select>' +
-            '<div class="hint">Older jobs are usually filled or stale.</div>' +
+            '<div class="hint">Older jobs are usually filled or stale. Daily application target is now a sprint setting — start a sprint from the dashboard to pick yours.</div>' +
           '</div>';
-        let cur = 5;
-        try { cur = parseInt(localStorage.getItem("gmj_daily_target_" + SLUG) || "5", 10); } catch (e) {}
-        if (st.data.dailyTarget) cur = st.data.dailyTarget;
-        body.querySelector("#wiz3-target").value = cur;
         let rec = "7"; try { rec = localStorage.getItem("gmj_recency_window_" + SLUG) || "7"; } catch(e) {}
         if (st.data.recencyWindow) rec = st.data.recencyWindow;
         body.querySelector("#wiz3-recency").value = rec;
       },
       async save(st, ctx) {
-        const target = parseInt((ctx.body.querySelector("#wiz3-target") || {}).value || 5, 10);
         const recency = (ctx.body.querySelector("#wiz3-recency") || {}).value || "7";
-        st.data.dailyTarget = target;
         st.data.recencyWindow = recency;
-        try { localStorage.setItem("gmj_daily_target_" + SLUG, String(target)); } catch (e) {}
         try { localStorage.setItem("gmj_recency_window_" + SLUG, recency); } catch (e) {}
-        await patchProfile({ dailyTarget: target, recencyWindow: recency });
+        await patchProfile({ recencyWindow: recency });
       },
     },
     {

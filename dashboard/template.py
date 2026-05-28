@@ -717,6 +717,43 @@ HTML_TEMPLATE = """<!doctype html>
   </div>
 </div>
 
+<!-- Sprint review modal (State C — prototype 2026-05-28) -->
+<div class="modal-overlay" id="sprint-review-modal" onclick="if(event.target===this)closeSprintReviewModal()">
+  <div class="modal sprint-review-modal" style="max-width:560px;">
+    <span class="modal-close" onclick="closeSprintReviewModal()">&times;</span>
+    <h3 style="margin:0 0 4px;display:flex;align-items:center;gap:8px;">🏁 Sprint complete</h3>
+    <p style="margin:0 0 14px;color:#666;font-size:13.5px;" id="sr-subtitle">Nice work. Here&rsquo;s how it went &mdash; a quick recap so the next sprint can be sharper.</p>
+    <div id="sr-stats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px;"></div>
+    <div class="sc-section">
+      <div class="sc-label">What worked?</div>
+      <div class="sc-pills" data-group="sr-worked">
+        <button type="button" class="sc-pill" data-val="warm-intros">Warm intros</button>
+        <button type="button" class="sc-pill" data-val="match-quality">Match quality</button>
+        <button type="button" class="sc-pill" data-val="cadence">Cadence felt right</button>
+        <button type="button" class="sc-pill" data-val="email-nudge">Daily email kept me honest</button>
+      </div>
+    </div>
+    <div class="sc-section">
+      <div class="sc-label">What didn&rsquo;t?</div>
+      <div class="sc-pills" data-group="sr-didnt">
+        <button type="button" class="sc-pill" data-val="too-many">Quota was too high</button>
+        <button type="button" class="sc-pill" data-val="too-few">Quota was too low</button>
+        <button type="button" class="sc-pill" data-val="bad-matches">Too many bad matches</button>
+        <button type="button" class="sc-pill" data-val="too-short">Sprint was too short</button>
+        <button type="button" class="sc-pill" data-val="too-long">Sprint was too long</button>
+      </div>
+    </div>
+    <div class="sc-section">
+      <div class="sc-label">Anything else? (optional)</div>
+      <textarea id="sr-note" rows="2" placeholder="One sentence that future-you should read before starting the next sprint…" style="width:100%;box-sizing:border-box;padding:8px 10px;border:1px solid #d0d4dc;border-radius:6px;font-size:13px;font-family:inherit;resize:vertical;"></textarea>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:14px;flex-wrap:wrap;">
+      <button type="button" class="btn ghost" onclick="finishSprintReview(this, false)">Save &amp; take a break</button>
+      <button type="button" class="btn primary" onclick="finishSprintReview(this, true)">Save &amp; start another sprint &rarr;</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // === Identity + Worker base — MUST be first; everything below references USER_SLUG ===
 const WORKER_BASE = 'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev';
@@ -5956,11 +5993,21 @@ async function openSprintConfigModal() {{
     if (r.ok) {{
       const j = await r.json();
       const p = (j && j.profile) || {{}};
+      // Prefer the last completed sprint's settings when the user is
+      // between sprints (no active sprintStart) — makes "start another"
+      // feel like a continuation. Active sprint? Use the live profile.
+      const lastSprint = (Array.isArray(p.sprintHistory) && p.sprintHistory.length)
+        ? p.sprintHistory[p.sprintHistory.length - 1] : null;
+      const useHistory = !p.sprintStart && lastSprint;
       const merged = {{
-        duration: parseInt(p.sprintDays || c.duration, 10),
-        quota: parseInt(p.sprintDailyQuota || c.quota, 10),
-        days: Array.isArray(p.sprintDaysOfWeek) && p.sprintDaysOfWeek.length ? p.sprintDaysOfWeek : c.days,
-        nudgeTime: (typeof p.sprintNudgeTime === 'string' && p.sprintNudgeTime) ? p.sprintNudgeTime : c.nudgeTime
+        duration:  parseInt((useHistory ? lastSprint.daysPlanned   : p.sprintDays)         || c.duration, 10),
+        quota:     parseInt((useHistory ? lastSprint.dailyQuota    : p.sprintDailyQuota)   || c.quota,    10),
+        days:     (useHistory ? lastSprint.daysOfWeek : p.sprintDaysOfWeek) && (useHistory ? lastSprint.daysOfWeek : p.sprintDaysOfWeek).length
+                   ? (useHistory ? lastSprint.daysOfWeek : p.sprintDaysOfWeek)
+                   : c.days,
+        nudgeTime: (typeof (useHistory ? lastSprint.nudgeTime : p.sprintNudgeTime) === 'string' && (useHistory ? lastSprint.nudgeTime : p.sprintNudgeTime))
+                   ? (useHistory ? lastSprint.nudgeTime : p.sprintNudgeTime)
+                   : c.nudgeTime
       }};
       _scActivatePill('duration', merged.duration);
       _scActivatePill('quota', merged.quota);
@@ -6025,6 +6072,140 @@ async function startConfiguredSprint(btn) {{
     if (btn) {{ btn.disabled = false; btn.textContent = 'Start sprint →'; }}
   }}
 }}
+
+// === Sprint review (State C — prototype 2026-05-28) ==================
+// On dashboard load, if the user's sprint window has elapsed AND we
+// haven't recorded the review yet (localStorage flag scoped to the
+// sprintStart timestamp), surface a banner + open the review modal.
+const SR_REVIEW_KEY = 'gmj_sprint_review_seen_' + USER_SLUG;
+function _srTrackerSummary() {{
+  // Mirror the stats we want to show. Uses getTracker() if available.
+  const tracker = (typeof getTracker === 'function') ? getTracker() : {{}};
+  let applied = 0, advanced = 0, rejected = 0;
+  Object.values(tracker || {{}}).forEach(r => {{
+    if (!r) return;
+    const st = String(r.status || '').toLowerCase();
+    if (['applied','phone','onsite','offer','rejected'].includes(st)) applied++;
+    if (['phone','onsite','offer'].includes(st)) advanced++;
+    if (st === 'rejected') rejected++;
+  }});
+  return {{ applied, advanced, rejected }};
+}}
+function _srRenderStats(applied, advanced, rejected, target) {{
+  const stat = (label, val, sub) =>
+    '<div style="background:#f4f4ff;border:1px solid #e0e2ed;border-radius:8px;padding:10px;text-align:center;">' +
+    '<div style="font-size:22px;font-weight:700;color:#1817B5;">' + val + '</div>' +
+    '<div style="font-size:11.5px;color:#444;text-transform:uppercase;letter-spacing:0.04em;margin-top:2px;">' + label + '</div>' +
+    (sub ? '<div style="font-size:11px;color:#777;margin-top:2px;">' + sub + '</div>' : '') +
+    '</div>';
+  const pct = target > 0 ? Math.round(100 * applied / target) : 0;
+  return [
+    stat('Applied', applied, 'of ' + target),
+    stat('Advanced', advanced, 'past applied'),
+    stat('Rejected', rejected, ''),
+    stat('Goal hit', pct + '%', '')
+  ].join('');
+}}
+function openSprintReviewModal() {{
+  const modal = document.getElementById('sprint-review-modal');
+  if (!modal) return;
+  // Read sprint params from the dashboard strip's data-* attributes if
+  // present, otherwise from the cached profile snippet on window.
+  const strip = document.getElementById('sprint-strip');
+  let days = 10, quota = 3;
+  if (strip) {{
+    days = parseInt(strip.getAttribute('data-sprint-days') || '10', 10);
+    quota = parseInt(strip.getAttribute('data-sprint-daily-quota') || '3', 10);
+  }}
+  const {{ applied, advanced, rejected }} = _srTrackerSummary();
+  const target = days * quota;
+  document.getElementById('sr-stats').innerHTML = _srRenderStats(applied, advanced, rejected, target);
+  // Wire the new pills (they live inside the modal — call after innerHTML render)
+  document.querySelectorAll('#sprint-review-modal .sc-pills .sc-pill').forEach(p => {{
+    p.onclick = () => p.classList.toggle('active');
+  }});
+  modal.classList.add('show');
+}}
+function closeSprintReviewModal() {{
+  const m = document.getElementById('sprint-review-modal');
+  if (m) m.classList.remove('show');
+}}
+async function finishSprintReview(btn, startAnother) {{
+  if (btn) {{ btn.disabled = true; btn.textContent = 'Saving…'; }}
+  const worked = Array.from(document.querySelectorAll('.sc-pills[data-group="sr-worked"] .sc-pill.active')).map(p => p.dataset.val);
+  const didnt  = Array.from(document.querySelectorAll('.sc-pills[data-group="sr-didnt"]  .sc-pill.active')).map(p => p.dataset.val);
+  const note = (document.getElementById('sr-note') || {{}}).value || '';
+  const {{ applied, advanced, rejected }} = _srTrackerSummary();
+  try {{
+    const _ek = (typeof getEditKey === 'function') ? getEditKey() : null;
+    const _ak = (typeof getAdminKey === 'function') ? getAdminKey() : null;
+    const _headers = {{ 'Content-Type': 'application/json' }};
+    if (_ek) _headers['X-Edit-Key'] = _ek;
+    else if (_ak) _headers['X-Admin-Key'] = _ak;
+    const r = await fetch(WORKER_BASE + '/api/sprint/complete' + USER_QS, {{
+      method: 'POST',
+      headers: _headers,
+      credentials: 'include',
+      body: JSON.stringify({{
+        appliedCount: applied,
+        advancedCount: advanced,
+        rejectedCount: rejected,
+        feedback: {{ worked, didnt, note }}
+      }})
+    }});
+    if (!r.ok) {{
+      const j = await r.json().catch(() => ({{}}));
+      alert('Could not save review: ' + (j.error || r.status));
+      if (btn) {{ btn.disabled = false; btn.textContent = startAnother ? 'Save & start another sprint →' : 'Save & take a break'; }}
+      return;
+    }}
+    try {{ localStorage.setItem(SR_REVIEW_KEY, new Date().toISOString()); }} catch(e) {{}}
+    closeSprintReviewModal();
+    if (startAnother) {{
+      // Tiny delay so the modal close animation doesn't overlap; then open
+      // the config modal which now hydrates from the just-saved profile.
+      setTimeout(() => {{ openSprintConfigModal(); }}, 250);
+    }} else {{
+      setTimeout(() => location.reload(), 600);
+    }}
+  }} catch (e) {{
+    alert('Network error: ' + (e.message || e));
+    if (btn) {{ btn.disabled = false; btn.textContent = startAnother ? 'Save & start another sprint →' : 'Save & take a break'; }}
+  }}
+}}
+// Detect "sprint ended" on dashboard load. The sprint strip has
+// data-sprint-start + data-sprint-days set by the server-side renderer
+// when a sprint is active. If it's active AND the end is in the past,
+// we prompt the review unless we've already recorded one for this run.
+(function _maybeOfferSprintReview() {{
+  function check() {{
+    try {{
+      const strip = document.getElementById('sprint-strip');
+      if (!strip) return; // no active sprint
+      const startStr = strip.getAttribute('data-sprint-start');
+      const days = parseInt(strip.getAttribute('data-sprint-days') || '10', 10);
+      if (!startStr || !days) return;
+      const start = new Date(startStr);
+      const end = new Date(start.getTime() + days * 86400000);
+      if (Date.now() < end.getTime()) return; // not over yet
+      // Don't re-nag if already reviewed for this sprint
+      const seen = localStorage.getItem(SR_REVIEW_KEY);
+      if (seen && new Date(seen).getTime() > start.getTime()) return;
+      // Render an "ended" banner overlay on top of the strip + auto-open modal.
+      const banner = document.createElement('div');
+      banner.style.cssText = 'background:#fff7e6;border:1px solid #fcd34d;color:#78350f;padding:10px 14px;border-radius:8px;margin:0 auto 10px;max-width:1400px;font-size:13.5px;display:flex;justify-content:space-between;align-items:center;gap:10px;';
+      banner.innerHTML = '<span>🏁 Your sprint ended. Take 30 seconds to debrief.</span>' +
+        '<button onclick="openSprintReviewModal()" style="background:#1817B5;color:#fff;border:none;padding:6px 14px;border-radius:6px;font-weight:600;cursor:pointer;font-size:13px;">Review &amp; pick next</button>';
+      strip.parentNode.insertBefore(banner, strip);
+      setTimeout(openSprintReviewModal, 800);
+    }} catch (e) {{ /* silent */ }}
+  }}
+  if (document.readyState === 'loading') {{
+    document.addEventListener('DOMContentLoaded', () => setTimeout(check, 600));
+  }} else {{
+    setTimeout(check, 600);
+  }}
+}})();
 
 // --- Tier 2: p5.js-style particle burst on Mark Applied --------------
 function _sprintParticleBurst(originEl) {{
