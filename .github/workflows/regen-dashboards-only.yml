@@ -37,9 +37,9 @@ jobs:
         id: regen
         shell: bash
         run: |
-          set -o pipefail
           export PYTHONUNBUFFERED=1
-          python3 - 2>&1 | tee /tmp/regen.log <<'PY' || true
+          # Write python to a file (heredoc + pipe is ambiguous in bash)
+          cat > /tmp/regen.py <<'PY'
           import sys, os, traceback
           sys.path.insert(0, '.')
           try:
@@ -55,6 +55,18 @@ jobs:
               traceback.print_exc()
               sys.exit(1)
           PY
+          python3 /tmp/regen.py > /tmp/regen.log 2>&1
+          PYEXIT=$?
+          echo "Python exit code: $PYEXIT"
+          echo "Log lines: $(wc -l < /tmp/regen.log)"
+          echo "::group::Regen output (full)"
+          cat /tmp/regen.log
+          echo "::endgroup::"
+          if [ "$PYEXIT" = "0" ] && grep -q "\[regen\] DONE" /tmp/regen.log; then
+            echo "status=ok" >> "$GITHUB_OUTPUT"
+          else
+            echo "status=fail" >> "$GITHUB_OUTPUT"
+          fi
           echo "PY exit code: ${PIPESTATUS[0]}"
           # Save full log + last 200 lines into a tracked file so we can read
           # it back from the API even when the run's log endpoint is blocked.
@@ -73,6 +85,12 @@ jobs:
       - name: Commit regen log so we can read it back
         if: always()
         run: |
+          mkdir -p .regen-debug
+          if [ -f /tmp/regen.log ]; then
+            cp /tmp/regen.log .regen-debug/LAST_RUN.log
+          else
+            echo "no log produced" > .regen-debug/LAST_RUN.log
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add .regen-debug/LAST_RUN.log
