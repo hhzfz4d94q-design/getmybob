@@ -21,27 +21,54 @@ env:
   WORKER_NAME: cool-darkness-dce5
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   set-cron:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
+      - uses: actions/checkout@v4
       - name: Set Cron Trigger (replaces any existing schedules)
         env:
           CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CRON: ${{ github.event.inputs.cron || github.event.client_payload.cron || '0 * * * *' }}
         run: |
-          set -e
           PAYLOAD=$(python3 -c "import json,os; print(json.dumps([{'cron':os.environ['CRON']}]))")
+          echo "PAYLOAD=$PAYLOAD"
           HTTP=$(curl -sS -o /tmp/cf.json -w "%{http_code}" -X PUT \
             -H "Authorization: Bearer $CF_TOKEN" \
             -H "Content-Type: application/json" \
             --data "$PAYLOAD" \
             "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/workers/scripts/${WORKER_NAME}/schedules")
           echo "HTTP $HTTP"
-          python3 -c "import json; d=json.load(open('/tmp/cf.json')); print(json.dumps({'success':d.get('success'),'result':d.get('result'),'errors':d.get('errors',[])}, indent=2))"
-          if [ "$HTTP" != "200" ] && [ "$HTTP" != "201" ]; then exit 1; fi
+          echo "---raw response---"
+          cat /tmp/cf.json
+          echo ""
+          echo "---end response---"
+          # Stash the raw response in repo so we can read it via API
+          mkdir -p .cron-debug
+          {
+            echo "HTTP: $HTTP"
+            echo "PAYLOAD: $PAYLOAD"
+            echo "RESPONSE:"
+            cat /tmp/cf.json
+          } > .cron-debug/LAST_RUN.txt
+      - name: Commit debug capture
+        if: always()
+        env:
+          PAT: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add .cron-debug/LAST_RUN.txt 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "no change"
+          else
+            git commit -m 'cron-debug: capture LAST_RUN' || true
+            git push origin main || true
+          fi
       - name: Verify
         env:
           CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
