@@ -23,7 +23,7 @@ jobs:
         env:
           ADMIN_KEY: ${{ secrets.WORKER_ADMIN_KEY }}
           SLUG: ${{ github.event.inputs.slug }}
-          WORKER_URL: ${{ env.WORKER_URL }}
+          WORKER_URL: https://cool-darkness-dce5.tr6jz6v7wg.workers.dev
         run: |
           if [ -z "$ADMIN_KEY" ]; then
             echo "::error::WORKER_ADMIN_KEY secret missing"

@@ -1,9 +1,17 @@
 """Push scripts/contact_uploads/<slug>.json to worker /admin/contacts."""
 import json, os, sys, urllib.request, urllib.error
 
-WORKER_URL = os.environ['WORKER_URL'].rstrip('/')
-ADMIN_KEY = os.environ['ADMIN_KEY']
-SLUG = os.environ['SLUG'].strip().lower()
+WORKER_URL = os.environ.get('WORKER_URL', '').rstrip('/') or 'https://cool-darkness-dce5.tr6jz6v7wg.workers.dev'
+ADMIN_KEY = os.environ.get('ADMIN_KEY', '')
+SLUG = os.environ.get('SLUG', '').strip().lower()
+
+print(f"WORKER_URL = {WORKER_URL}")
+print(f"SLUG       = {SLUG}")
+print(f"ADMIN_KEY  = {'set ('+str(len(ADMIN_KEY))+' chars)' if ADMIN_KEY else 'EMPTY'}")
+if not ADMIN_KEY:
+    print("::error::ADMIN_KEY env not set", file=sys.stderr); sys.exit(2)
+if not SLUG:
+    print("::error::SLUG env not set", file=sys.stderr); sys.exit(2)
 
 path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
                     'scripts', 'contact_uploads', f'{SLUG}.json')
