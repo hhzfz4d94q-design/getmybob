@@ -432,15 +432,23 @@ WIZARD_V3_BLOCK = r"""
       },
       async save(st, ctx) {
         // Collect from all 3 picker sections (companies is async via button — not blocking save)
-        const tItems = ((ctx.body.querySelector("#bs-titles-host") || {}).__bullseyeValues || (() => []))();
-        const iItems = ((ctx.body.querySelector("#bs-industries-host") || {}).__bullseyeValues || (() => []))();
-        const sItems = ((ctx.body.querySelector("#bs-skills-host") || {}).__bullseyeValues || (() => []))();
-        // Validate caps
-        if (tItems.length > 5) { setMsg(ctx.body, "err", "Pick at most 5 titles (currently " + tItems.length + ")"); throw new Error("over cap"); }
-        if (iItems.length > 5) { setMsg(ctx.body, "err", "Pick at most 5 industries (currently " + iItems.length + ")"); throw new Error("over cap"); }
-        if (sItems.length > 15) { setMsg(ctx.body, "err", "Pick at most 15 skills (currently " + sItems.length + ")"); throw new Error("over cap"); }
+        let tItems = ((ctx.body.querySelector("#bs-titles-host") || {}).__bullseyeValues || (() => []))();
+        let iItems = ((ctx.body.querySelector("#bs-industries-host") || {}).__bullseyeValues || (() => []))();
+        let sItems = ((ctx.body.querySelector("#bs-skills-host") || {}).__bullseyeValues || (() => []))();
+        // Minimum gates — these we still enforce (a profile with 0 titles or 0
+        // industries gives the matcher nothing to work with).
         if (tItems.length === 0) { setMsg(ctx.body, "err", "Pick at least 1 title."); throw new Error("empty titles"); }
         if (iItems.length === 0) { setMsg(ctx.body, "err", "Pick at least 1 industry."); throw new Error("empty industries"); }
+        // Over-cap is no longer a hard block — auto-trim to the first N and
+        // tell the user. Previously this threw, which locked over-cap users
+        // out of the wizard forever (bug 2026-05-28).
+        const trimNotes = [];
+        if (tItems.length > 5)  { trimNotes.push("titles: " + tItems.length + " → 5"); tItems = tItems.slice(0, 5); }
+        if (iItems.length > 5)  { trimNotes.push("industries: " + iItems.length + " → 5"); iItems = iItems.slice(0, 5); }
+        if (sItems.length > 15) { trimNotes.push("skills: " + sItems.length + " → 15"); sItems = sItems.slice(0, 15); }
+        if (trimNotes.length) {
+          setMsg(ctx.body, "warn", "Auto-trimmed to caps (" + trimNotes.join("; ") + "). You can adjust later from /account.html.");
+        }
         // Patch all bullseye fields in one go
         await patchProfile({
           targetTitles: tItems,
@@ -945,7 +953,11 @@ WIZARD_V3_BLOCK = r"""
         const alreadyMigrated = !!(state.data && state.data.bullseyeMigratedAt);
         if (!alreadyMigrated && (titles > 5 || inds > 5 || kwOnly > 15)) {
           needsMigration = true;
-          state.finished = false;
+          // NOTE: do NOT reset state.finished here. Doing so caused an infinite
+          // re-open loop for users whose AI-extracted profile was over-cap and
+          // who couldn't (or didn't) trim in one sitting. The bullseyeMigratedAt
+          // stamp alone is enough to ensure this only nags once per browser;
+          // state.finished is the LIFETIME completion flag and should stay sticky.
           state.currentStep = "your-bullseye";
           state.completed = state.completed.filter(k => k !== "your-bullseye");
           state.data = state.data || {};
