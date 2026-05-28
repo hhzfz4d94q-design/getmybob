@@ -596,6 +596,16 @@ HTML_TEMPLATE = """<!doctype html>
     <h3 id="prep-modal-title">Prep this application</h3>
     <p id="prep-status" class="prep-status">Generating tailored materials with Claude…</p>
     <div id="prep-output" style="display:none;">
+      <!-- Week 1: keyword diff (recruiter Boolean search check) -->
+      <div class="prep-section" id="prep-keyword-section" style="display:none;">
+        <div class="prep-label" style="display:flex;align-items:center;gap:8px;">
+          Recruiter keyword check
+          <span id="prep-keyword-summary" style="font-size:11.5px;font-weight:500;color:#666;text-transform:none;letter-spacing:0;"></span>
+        </div>
+        <div id="prep-keyword-table" style="background:#fff;border:1px solid #e2e5ea;border-radius:8px;padding:10px 0;"></div>
+        <button class="btn primary" onclick="copyKeywordFixList(this)" style="margin-top:10px;">Copy fix list</button>
+      </div>
+
       <div class="prep-section">
         <div class="prep-label">Resume Summary</div>
         <pre id="prep-summary" class="prep-text"></pre>
