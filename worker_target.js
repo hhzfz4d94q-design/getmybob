@@ -28,10 +28,12 @@ export default {
   // G2: Cloudflare scheduled (cron) handler — runs daily at 7am ET (configured
   // via wrangler.toml or dashboard cron triggers). Emails each user a digest
   // of their top-5 picks. Set CF cron to "0 11 * * *" (11am UTC = 7am ET).
+  // Cron handler — runs every hour (cron "0 * * * *"). Each call passes
+  // event.scheduledTime; sendDailyMixedToAll uses it to decide which users
+  // (if any) get an email this hour based on their nudge / recap time prefs.
   async scheduled(event, env, ctx) {
     try {
-      // Sprint-mode users get the sprint reminder; others get the regular digest.
-      await sendDailyMixedToAll(env);
+      await sendDailyMixedToAll(env, event);
     } catch (e) {
       console.error("[scheduled] failed:", e && e.message ? e.message : e);
     }
@@ -94,6 +96,7 @@ export default {
     if (url.pathname === '/admin/contacts') return handleAdminContacts(request, env, cors);
     if (url.pathname === '/api/sprint/start') return handleSprintStart(request, env, cors, slug);
     if (url.pathname === '/api/sprint/complete') return handleSprintComplete(request, env, cors, slug);
+    if (url.pathname === '/api/sprint/snooze-today') return handleSprintSnoozeToday(request, env, cors, slug);
     if (url.pathname === '/api/sprint/reset') return handleSprintReset(request, env, cors, slug);
     if (url.pathname === '/api/picks') return handlePicks(request, env, cors, slug);
     if (url.pathname === '/admin/clear-all-picks') return handleAdminClearAllPicks(request, env, cors);
@@ -652,7 +655,7 @@ async function handleSkillsProfile(request, env, cors, slug) {
       const raw = await env.RESUMES.get(uk(slug, 'skills_profile'));
       const existing = raw ? JSON.parse(raw) : {};
       const updated = Object.assign({}, existing);
-      const SCALAR_FIELDS = new Set(['salaryFloor', 'remotePreferred', 'seniorityLevel', 'careerStage', 'primaryRole', 'summary', 'companySizeMix', 'companySizePreferences', 'dailyTarget', 'recencyWindow', 'defaultSort', 'hideNoSalary', 'negativeTitles', 'matchWeights', 'signalStability', 'phone', 'email', 'location', 'linkedinUrl', 'githubUrl', 'websiteUrl', 'workAuthorization', 'requiresSponsorship', 'currentCompany', 'currentTitle', 'school', 'degree', 'graduationYear', 'firstName', 'lastName', 'excludeCompanies', 'sprintStart', 'sprintDays', 'sprintDailyQuota', 'sprintDaysOfWeek', 'sprintNudgeTime', 'networkCompanies']);
+      const SCALAR_FIELDS = new Set(['salaryFloor', 'remotePreferred', 'seniorityLevel', 'careerStage', 'primaryRole', 'summary', 'companySizeMix', 'companySizePreferences', 'dailyTarget', 'recencyWindow', 'defaultSort', 'hideNoSalary', 'negativeTitles', 'matchWeights', 'signalStability', 'phone', 'email', 'location', 'linkedinUrl', 'githubUrl', 'websiteUrl', 'workAuthorization', 'requiresSponsorship', 'currentCompany', 'currentTitle', 'school', 'degree', 'graduationYear', 'firstName', 'lastName', 'excludeCompanies', 'sprintStart', 'sprintDays', 'sprintDailyQuota', 'sprintDaysOfWeek', 'sprintNudgeTime', 'sprintRecapTime', 'sprintSnoozedDays', 'networkCompanies']);
       for (const [field, items] of Object.entries(body.patchFields)) {
         if (SCALAR_FIELDS.has(field)) {
           updated[field] = items;
@@ -1545,12 +1548,14 @@ async function handleSprintStart(request, env, cors, slug) {
   }
 
   // Nudge time: HH:MM string (24h). Default 07:00. Validated by regex.
-  let sprintNudgeTime = '07:00';
-  if (typeof body.sprintNudgeTime === 'string' && /^([01]?\d|2[0-3]):[0-5]\d$/.test(body.sprintNudgeTime)) {
-    // Normalize to HH:MM
-    const [h, m] = body.sprintNudgeTime.split(':');
-    sprintNudgeTime = String(h).padStart(2, '0') + ':' + m;
+  function _validHhmm(v, def) {
+    if (typeof v !== 'string') return def;
+    if (!/^([01]?\d|2[0-3]):[0-5]\d$/.test(v)) return def;
+    const [h, m] = v.split(':');
+    return String(h).padStart(2, '0') + ':' + m;
   }
+  const sprintNudgeTime = _validHhmm(body.sprintNudgeTime, '07:00');
+  const sprintRecapTime = _validHhmm(body.sprintRecapTime, '19:00');
 
   const raw = await env.RESUMES.get(uk(slug, 'skills_profile'));
   const profile = raw ? JSON.parse(raw) : {};
@@ -1559,6 +1564,8 @@ async function handleSprintStart(request, env, cors, slug) {
   profile.sprintDailyQuota = sprintDailyQuota;
   profile.sprintDaysOfWeek = sprintDaysOfWeek;
   profile.sprintNudgeTime = sprintNudgeTime;
+  profile.sprintRecapTime = sprintRecapTime;
+  profile.sprintSnoozedDays = []; // fresh sprint, fresh snooze list
   profile.user = slug;
   profile.editedAt = new Date().toISOString();
   await env.RESUMES.put(uk(slug, 'skills_profile'), JSON.stringify(profile));
@@ -1568,7 +1575,8 @@ async function handleSprintStart(request, env, cors, slug) {
     sprintDays,
     sprintDailyQuota,
     sprintDaysOfWeek,
-    sprintNudgeTime
+    sprintNudgeTime,
+    sprintRecapTime
   }, { headers: cors });
 }
 
@@ -1590,6 +1598,37 @@ async function handleSprintReset(request, env, cors, slug) {
   profile.editedAt = new Date().toISOString();
   await env.RESUMES.put(uk(slug, 'skills_profile'), JSON.stringify(profile));
   return Response.json({ status: 'reset' }, { headers: cors });
+}
+
+// --- /api/sprint/snooze-today (2026-05-28) -----------------------------
+// Adds today's ET date to profile.sprintSnoozedDays so the cron skips
+// sending emails on this date. Idempotent — POSTing twice on the same
+// day is a no-op (date is already in the list).
+async function handleSprintSnoozeToday(request, env, cors, slug) {
+  if (request.method !== 'POST') return new Response('POST only', { status: 405, headers: cors });
+  let authed = await checkEditKey(request, env, slug);
+  if (!authed) {
+    const sess = await sessionFromRequest(request, env);
+    if (sess && sess.slug === slug) authed = true;
+  }
+  if (!authed) {
+    const ak = request.headers.get('X-Admin-Key');
+    if (ak && env.ADMIN_KEY && ak === env.ADMIN_KEY) authed = true;
+  }
+  if (!authed) return Response.json({ error: 'Auth required' }, { status: 401, headers: cors });
+  const raw = await env.RESUMES.get(uk(slug, 'skills_profile'));
+  const profile = raw ? JSON.parse(raw) : {};
+  if (!profile.sprintStart) return Response.json({ error: 'No active sprint' }, { status: 400, headers: cors });
+  if (!Array.isArray(profile.sprintSnoozedDays)) profile.sprintSnoozedDays = [];
+  const etDate = _etDateStr(new Date());
+  if (!profile.sprintSnoozedDays.includes(etDate)) {
+    profile.sprintSnoozedDays.push(etDate);
+    // Keep list small — only last 30 entries needed
+    if (profile.sprintSnoozedDays.length > 30) profile.sprintSnoozedDays = profile.sprintSnoozedDays.slice(-30);
+  }
+  profile.editedAt = new Date().toISOString();
+  await env.RESUMES.put(uk(slug, 'skills_profile'), JSON.stringify(profile));
+  return Response.json({ status: 'snoozed', date: etDate, snoozedDays: profile.sprintSnoozedDays }, { headers: cors });
 }
 
 // --- /api/sprint/complete (2026-05-28) --------------------------------
@@ -1639,6 +1678,7 @@ async function handleSprintComplete(request, env, cors, slug) {
     dailyQuota:     _safeInt(profile.sprintDailyQuota, 3),
     daysOfWeek:     Array.isArray(profile.sprintDaysOfWeek) ? profile.sprintDaysOfWeek : [1,2,3,4,5],
     nudgeTime:      (typeof profile.sprintNudgeTime === 'string' && profile.sprintNudgeTime) ? profile.sprintNudgeTime : '07:00',
+    recapTime:      (typeof profile.sprintRecapTime === 'string' && profile.sprintRecapTime) ? profile.sprintRecapTime : '19:00',
     appliedCount:   _safeInt(body.appliedCount, 0),
     advancedCount:  _safeInt(body.advancedCount, 0),
     rejectedCount:  _safeInt(body.rejectedCount, 0),
@@ -2861,47 +2901,107 @@ async function handleAdminRejectUser(request, env, cors) {
 // =====================================================================
 
 // --- Sprint reminder (overrides digest during active sprint) -----------
-async function sendDailyMixedToAll(env) {
+// Compute the current hour in America/New_York timezone (handles DST).
+// Returns an integer 0..23. Falls back to UTC hour if Intl isn't available.
+function _etHourNow(now) {
+  try {
+    const fmt = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/New_York', hour: 'numeric', hour12: false
+    });
+    return parseInt(fmt.format(now), 10);
+  } catch (e) {
+    return now.getUTCHours();
+  }
+}
+// Same but for any HH:MM string — returns just the hour as an int.
+function _hhmmHour(s) {
+  if (typeof s !== 'string') return null;
+  const m = /^([01]?\d|2[0-3]):[0-5]\d$/.exec(s);
+  return m ? parseInt(m[1], 10) : null;
+}
+// Day-of-week in America/New_York. 0=Sun..6=Sat.
+function _etDowNow(now) {
+  try {
+    const fmt = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/New_York', weekday: 'short'
+    });
+    const map = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+    return map[fmt.format(now)] ?? now.getUTCDay();
+  } catch (e) {
+    return now.getUTCDay();
+  }
+}
+function _etDateStr(now) {
+  try {
+    const parts = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit'
+    }).formatToParts(now);
+    const y = parts.find(p => p.type === 'year').value;
+    const m = parts.find(p => p.type === 'month').value;
+    const d = parts.find(p => p.type === 'day').value;
+    return y + '-' + m + '-' + d;
+  } catch (e) {
+    return now.toISOString().slice(0, 10);
+  }
+}
+
+// 2026-05-28 — cron now fires every hour. This function decides which
+// users get an email THIS hour based on their personal nudge / recap
+// time preferences. Sprint users also get a daily progress recap email
+// in addition to the morning nudge.
+async function sendDailyMixedToAll(env, event) {
   if (!env.RESEND_API_KEY || !env.DIGEST_FROM) {
     console.log("[scheduled] RESEND_API_KEY or DIGEST_FROM missing — skipping");
     return { sent: 0, skipped: "missing-secrets" };
   }
+  const now = (event && event.scheduledTime) ? new Date(event.scheduledTime) : new Date();
+  const etHour = _etHourNow(now);   // 0..23 in ET
+  const etDow  = _etDowNow(now);    // 0=Sun..6=Sat
+  const etDate = _etDateStr(now);   // 'YYYY-MM-DD' in ET
   const users = await readUsersList(env);
-  let sprintSent = 0, digestSent = 0;
+  let nudgeSent = 0, recapSent = 0, digestSent = 0, skipped = 0;
   for (const u of users) {
     if (!u || !u.slug || !u.email) continue;
     try {
-      // Read profile to check sprint state
       const profRaw = await env.RESUMES.get(uk(u.slug, 'skills_profile'));
       const prof = profRaw ? JSON.parse(profRaw) : {};
       const sp = prof.sprintStart;
       let inSprint = false;
       if (sp) {
         const start = new Date(sp);
-        const now = new Date();
         const days = parseInt(prof.sprintDays || 10, 10);
         const dayN = Math.floor((now - start) / 86400000) + 1;
         if (dayN >= 1 && dayN <= days) inSprint = true;
       }
-      // Days-of-week gate (2026-05-28): an in-sprint user can pick which
-      // weekdays they want nudges on (e.g. M-F only). The cron fires every
-      // day; we skip on days the user excluded. UTC day-of-week is a good
-      // approximation for US-ET users at the 11 UTC = 7am ET cron time.
-      // Default is Mon-Fri when sprintDaysOfWeek is missing/empty.
-      // NOTE: sprintNudgeTime is stored but NOT yet honored — that needs
-      // an hourly cron + per-user hour filter (planned follow-up).
       if (inSprint) {
-        const allowedDays = Array.isArray(prof.sprintDaysOfWeek) && prof.sprintDaysOfWeek.length
-          ? prof.sprintDaysOfWeek
+        // Days-of-week gate
+        const allowedDays = (Array.isArray(prof.sprintDaysOfWeek) && prof.sprintDaysOfWeek.length)
+          ? prof.sprintDaysOfWeek.map(Number)
           : [1, 2, 3, 4, 5];
-        const todayDow = new Date().getUTCDay(); // 0=Sun..6=Sat
-        if (!allowedDays.map(Number).includes(todayDow)) {
-          console.log('[scheduled]', u.slug, 'skipped — sprintDaysOfWeek does not include', todayDow);
-          continue;
+        if (!allowedDays.includes(etDow)) { skipped++; continue; }
+        // Snoozed today?
+        const snoozed = Array.isArray(prof.sprintSnoozedDays) ? prof.sprintSnoozedDays : [];
+        if (snoozed.includes(etDate)) {
+          console.log('[scheduled]', u.slug, 'snoozed for', etDate);
+          skipped++; continue;
         }
-        const r = await sendSprintReminderForUser(env, u, prof);
-        if (r && r.ok) sprintSent++;
+        // Hour gate — match against either nudge or recap hour.
+        const nudgeHr = _hhmmHour(prof.sprintNudgeTime || '07:00');
+        const recapHr = _hhmmHour(prof.sprintRecapTime || '19:00');
+        if (etHour === nudgeHr) {
+          const r = await sendSprintReminderForUser(env, u, prof);
+          if (r && r.ok) nudgeSent++;
+        } else if (etHour === recapHr) {
+          const r = await sendSprintRecapForUser(env, u, prof);
+          if (r && r.ok) recapSent++;
+        } else {
+          skipped++;
+        }
       } else {
+        // Non-sprint users get the regular daily digest at the legacy
+        // 7am-ET slot only (11 UTC was the original cron time). Anything
+        // else this hour: skip them — they're not in sprint mode.
+        if (etHour !== 7) { skipped++; continue; }
         const r = await sendDigestForUser(env, u);
         if (r && r.ok) digestSent++;
       }
@@ -2909,8 +3009,8 @@ async function sendDailyMixedToAll(env) {
       console.error("[scheduled]", u.slug, "failed:", e && e.message);
     }
   }
-  console.log(`[scheduled] sprint=${sprintSent} digest=${digestSent} of ${users.length}`);
-  return { sprintSent, digestSent, total: users.length };
+  console.log(`[scheduled] etHour=${etHour} nudge=${nudgeSent} recap=${recapSent} digest=${digestSent} skipped=${skipped} of ${users.length}`);
+  return { nudgeSent, recapSent, digestSent, skipped, total: users.length };
 }
 
 // PURE function — testable without env / fetch / KV. Takes already-fetched
@@ -3036,6 +3136,75 @@ async function sendSprintReminderForUser(env, user, profile) {
   }
   return await sendEmailViaResend(env, user.email, subject, bodyHtml, ccList);
 }
+
+// 2026-05-28 — end-of-day sprint recap email. Lighter than the morning
+// reminder: just today's progress numbers and a link back to the dashboard.
+async function sendSprintRecapForUser(env, user, profile) {
+  const slug = user.slug;
+  const trackerRaw = await env.RESUMES.get(uk(slug, 'tracker'));
+  const tracker = trackerRaw ? JSON.parse(trackerRaw) : {};
+  const now = new Date();
+  const etDate = _etDateStr(now);
+  const dailyQuota = parseInt(profile.sprintDailyQuota || 3, 10);
+  const sprintDays = parseInt(profile.sprintDays || 10, 10);
+  const start = new Date(profile.sprintStart);
+  const dayN = Math.floor((now - start) / 86400000) + 1;
+  let appliedToday = 0, appliedTotal = 0, advancedTotal = 0;
+  Object.values(tracker || {}).forEach(e => {
+    if (!e) return;
+    const st = String(e.status || '').toLowerCase();
+    if (!['applied','phone','onsite','offer','rejected'].includes(st)) return;
+    appliedTotal += 1;
+    if (['phone','onsite','offer'].includes(st)) advancedTotal += 1;
+    const when = (e.statusChangedAt || e.appliedAt || e.updatedAt || '');
+    try {
+      const d = new Date(when);
+      const dStr = _etDateStr(d);
+      if (dStr === etDate) appliedToday += 1;
+    } catch (_) {}
+  });
+  const quotaTotal = sprintDays * dailyQuota;
+  const pct = quotaTotal ? Math.round(100 * appliedTotal / quotaTotal) : 0;
+  const hitToday = appliedToday >= dailyQuota;
+  const userName = (user.name || slug).split(/\s+/)[0];
+  const subject = hitToday
+    ? `🎯 Day ${dayN}/${sprintDays} done — ${appliedToday} apps today`
+    : `Day ${dayN}/${sprintDays} — ${appliedToday}/${dailyQuota} applied today`;
+  const dashUrl = `https://getmemyjob.officebeatllc.com/${slug}.html`;
+  const bodyHtml = `<!doctype html><html><body style="font-family:Inter,system-ui,sans-serif;color:#1a1a2e;line-height:1.55;max-width:560px;margin:0 auto;padding:24px;">
+    <h2 style="margin:0 0 4px;font-size:18px;">Hey ${escHtmlSafe(userName)},</h2>
+    <p style="margin:0 0 18px;color:#555;font-size:14px;">Your sprint progress at end-of-day.</p>
+    <table cellpadding="0" cellspacing="0" style="width:100%;border-collapse:separate;border-spacing:8px 0;">
+      <tr>
+        ${_recapTile('Today', appliedToday + ' / ' + dailyQuota, hitToday ? '#0a6b3a' : '#5C5CD6')}
+        ${_recapTile('Sprint total', appliedTotal + ' / ' + quotaTotal, '#5C5CD6')}
+        ${_recapTile('Advanced', String(advancedTotal), '#0a6b3a')}
+        ${_recapTile('% to goal', pct + '%', '#5C5CD6')}
+      </tr>
+    </table>
+    <p style="margin:22px 0 6px;font-size:14px;">${
+      hitToday
+        ? `You hit today's quota of ${dailyQuota}. ${sprintDays - dayN > 0 ? `${sprintDays - dayN} day(s) left.` : 'Last day of sprint!'}`
+        : `${dailyQuota - appliedToday} more to hit today's quota. You can still log late — open the dashboard before tomorrow's nudge.`
+    }</p>
+    <p style="margin:14px 0;font-size:13px;">
+      <a href="${dashUrl}" style="background:#1817B5;color:#fff;padding:10px 18px;border-radius:6px;text-decoration:none;font-weight:600;display:inline-block;">Open dashboard</a>
+    </p>
+    <p style="margin:24px 0 0;font-size:11px;color:#888;">You're getting this because you started a 10-day sprint on getmemyjob. Change the recap time or end the sprint anytime from the dashboard.</p>
+  </body></html>`;
+  return await sendEmailViaResend(env, user.email, subject, bodyHtml, []);
+}
+
+function _recapTile(label, val, color) {
+  return `<td style="background:#f4f4ff;border:1px solid #e0e2ed;border-radius:8px;padding:12px;text-align:center;width:25%;">
+    <div style="font-size:22px;font-weight:700;color:${color};">${val}</div>
+    <div style="font-size:11px;color:#444;text-transform:uppercase;letter-spacing:0.04em;margin-top:3px;">${label}</div>
+  </td>`;
+}
+function escHtmlSafe(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+}
+
 
 async function sendDailyDigestToAll(env) {
   if (!env.RESEND_API_KEY || !env.DIGEST_FROM) {

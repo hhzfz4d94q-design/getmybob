@@ -706,7 +706,14 @@ HTML_TEMPLATE = """<!doctype html>
       <div class="sc-label">Daily email nudge</div>
       <div style="display:flex;align-items:center;gap:10px;">
         <input type="time" id="sc-nudge-time" value="07:00" style="padding:6px 10px;border:1px solid #d0d4dc;border-radius:6px;font-size:13.5px;">
-        <span style="font-size:12.5px;color:#666;">your local time &middot; one email per active day with the top picks</span>
+        <span style="font-size:12.5px;color:#666;">Eastern Time &middot; morning email with the top picks</span>
+      </div>
+    </div>
+    <div class="sc-section">
+      <div class="sc-label">End-of-day recap email</div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <input type="time" id="sc-recap-time" value="19:00" style="padding:6px 10px;border:1px solid #d0d4dc;border-radius:6px;font-size:13.5px;">
+        <span style="font-size:12.5px;color:#666;">Eastern Time &middot; evening email with today&rsquo;s progress</span>
       </div>
     </div>
     <div id="sc-preview" style="margin:16px 0 4px;padding:10px 12px;background:#f4f4ff;border:1px solid #d8dbe6;border-radius:8px;font-size:13px;color:#3a3a72;"></div>
@@ -5909,10 +5916,10 @@ function _scLoadConfig() {{
     const raw = localStorage.getItem(SC_KEY);
     if (raw) {{
       const o = JSON.parse(raw);
-      if (o && typeof o === 'object') return Object.assign({{ duration:10, quota:3, days:[1,2,3,4,5], nudgeTime:'07:00' }}, o);
+      if (o && typeof o === 'object') return Object.assign({{ duration:10, quota:3, days:[1,2,3,4,5], nudgeTime:'07:00', recapTime:'19:00' }}, o);
     }}
   }} catch (e) {{}}
-  return {{ duration: 10, quota: 3, days: [1,2,3,4,5], nudgeTime: '07:00' }};
+  return {{ duration: 10, quota: 3, days: [1,2,3,4,5], nudgeTime: '07:00', recapTime: '19:00' }};
 }}
 function _scSaveConfig(o) {{
   try {{ localStorage.setItem(SC_KEY, JSON.stringify(o)); }} catch (e) {{}}
@@ -5940,11 +5947,13 @@ function _scReadConfig() {{
   const days = Array.from(document.querySelectorAll('.sc-pills[data-group="days"] .sc-pill.active'))
     .map(p => parseInt(p.dataset.val, 10));
   const t = (document.getElementById('sc-nudge-time') || {{}}).value || '07:00';
+  const rt = (document.getElementById('sc-recap-time') || {{}}).value || '19:00';
   return {{
     duration: get('duration') || 10,
     quota: get('quota') || 3,
     days: days.length ? days : [1,2,3,4,5],
-    nudgeTime: t
+    nudgeTime: t,
+    recapTime: rt
   }};
 }}
 function _scUpdatePreview() {{
@@ -5954,7 +5963,7 @@ function _scUpdatePreview() {{
   const totalApps = c.duration * c.quota;
   const skipNote = c.days.length < 7 ? ' (only on selected days)' : '';
   el.innerHTML = '<strong>' + c.duration + ' days × ' + c.quota + ' apps/day = ' + totalApps + ' applications total</strong>' +
-                 skipNote + ' &middot; daily nudge at ' + c.nudgeTime + '.';
+                 skipNote + ' &middot; morning nudge ' + c.nudgeTime + ' ET &middot; recap ' + c.recapTime + ' ET.';
 }}
 function _scWirePills() {{
   document.querySelectorAll('.sc-pills .sc-pill').forEach(p => {{
@@ -5985,6 +5994,8 @@ async function openSprintConfigModal() {{
   _scActivateDays(c.days);
   const nt = document.getElementById('sc-nudge-time');
   if (nt) nt.value = c.nudgeTime;
+  const rt = document.getElementById('sc-recap-time');
+  if (rt) rt.value = c.recapTime || '19:00';
   _scWirePills();
   _scUpdatePreview();
   modal.classList.add('show');
@@ -6013,6 +6024,8 @@ async function openSprintConfigModal() {{
       _scActivatePill('quota', merged.quota);
       _scActivateDays(merged.days);
       if (nt) nt.value = merged.nudgeTime;
+      const rt = document.getElementById('sc-recap-time');
+      if (rt) rt.value = (useHistory ? lastSprint.recapTime : p.sprintRecapTime) || merged.recapTime || c.recapTime;
       _scUpdatePreview();
     }}
   }} catch (e) {{}}
@@ -6049,7 +6062,8 @@ async function startConfiguredSprint(btn) {{
         sprintDays: c.duration,
         sprintDailyQuota: c.quota,
         sprintDaysOfWeek: c.days,
-        sprintNudgeTime: c.nudgeTime
+        sprintNudgeTime: c.nudgeTime,
+        sprintRecapTime: c.recapTime
       }})
     }});
     if (r.ok) {{
@@ -6205,6 +6219,149 @@ async function finishSprintReview(btn, startAnother) {{
   }} else {{
     setTimeout(check, 600);
   }}
+}})();
+
+// === Mid-sprint controls + past-sprints history (State B, 2026-05-28) =
+// Two pieces, both decoded from the sprint-strip's data-* attributes
+// (server already renders those when sprintStart is set).
+
+async function _spFetchProfile() {{
+  try {{
+    const r = await fetch(WORKER_BASE + '/skills-profile' + USER_QS, {{ cache: 'no-store' }});
+    if (!r.ok) return {{}};
+    const j = await r.json();
+    return (j && j.profile) || {{}};
+  }} catch (e) {{ return {{}}; }}
+}}
+
+function _spAuthHeaders() {{
+  const _ek = (typeof getEditKey === 'function') ? getEditKey() : null;
+  const _ak = (typeof getAdminKey === 'function') ? getAdminKey() : null;
+  const h = {{ 'Content-Type': 'application/json' }};
+  if (_ek) h['X-Edit-Key'] = _ek;
+  else if (_ak) h['X-Admin-Key'] = _ak;
+  return h;
+}}
+
+async function sprintSnoozeToday(btn) {{
+  if (!confirm("Snooze today's nudge + recap emails? You'll still see the dashboard.")) return;
+  if (btn) {{ btn.disabled = true; btn.textContent = 'Snoozing…'; }}
+  try {{
+    const r = await fetch(WORKER_BASE + '/api/sprint/snooze-today' + USER_QS, {{
+      method: 'POST', headers: _spAuthHeaders(), credentials: 'include', body: '{{}}'
+    }});
+    if (!r.ok) {{
+      const j = await r.json().catch(() => ({{}}));
+      alert('Could not snooze: ' + (j.error || r.status));
+      if (btn) {{ btn.disabled = false; btn.textContent = 'Snooze today'; }}
+      return;
+    }}
+    if (btn) {{ btn.textContent = 'Snoozed ✓'; }}
+  }} catch (e) {{
+    alert('Network error: ' + (e.message || e));
+    if (btn) {{ btn.disabled = false; btn.textContent = 'Snooze today'; }}
+  }}
+}}
+
+async function sprintAdjustQuota() {{
+  const cur = parseInt((document.getElementById('sprint-strip') || {{}}).getAttribute('data-sprint-daily-quota') || '3', 10);
+  const v = prompt('New apps/day (1–10):', String(cur));
+  if (!v) return;
+  const next = parseInt(v, 10);
+  if (!Number.isFinite(next) || next < 1 || next > 10) {{ alert('Pick a number 1–10.'); return; }}
+  try {{
+    const r = await fetch(WORKER_BASE + '/skills-profile' + USER_QS, {{
+      method: 'POST', headers: _spAuthHeaders(), credentials: 'include',
+      body: JSON.stringify({{ patchFields: {{ sprintDailyQuota: next }} }})
+    }});
+    if (!r.ok) {{
+      const j = await r.json().catch(() => ({{}}));
+      alert('Could not adjust: ' + (j.error || r.status));
+      return;
+    }}
+    location.reload();
+  }} catch (e) {{
+    alert('Network error: ' + (e.message || e));
+  }}
+}}
+
+async function sprintEndEarly() {{
+  if (!confirm('End this sprint now? You can fill in the review next.')) return;
+  // Just open the review modal — its "save" already calls /api/sprint/complete
+  // which clears sprintStart. Effectively the same path as a natural end.
+  if (typeof openSprintReviewModal === 'function') openSprintReviewModal();
+}}
+
+// Render mid-sprint controls into the strip header.
+(function _addMidSprintControls() {{
+  function run() {{
+    try {{
+      const strip = document.getElementById('sprint-strip');
+      if (!strip) return;
+      if (strip.querySelector('.sprint-controls')) return; // idempotent
+      const bar = document.createElement('div');
+      bar.className = 'sprint-controls';
+      bar.style.cssText = 'display:flex;justify-content:flex-end;gap:8px;margin-top:8px;font-size:11.5px;';
+      bar.innerHTML =
+        '<button onclick="sprintSnoozeToday(this)" style="background:rgba(255,255,255,0.12);color:#fff;border:1px solid rgba(255,255,255,0.25);padding:4px 12px;border-radius:6px;font-size:11.5px;font-weight:600;cursor:pointer;">Snooze today</button>' +
+        '<button onclick="sprintAdjustQuota()" style="background:rgba(255,255,255,0.12);color:#fff;border:1px solid rgba(255,255,255,0.25);padding:4px 12px;border-radius:6px;font-size:11.5px;font-weight:600;cursor:pointer;">Adjust quota</button>' +
+        '<button onclick="sprintEndEarly()" style="background:rgba(255,255,255,0.12);color:#fff;border:1px solid rgba(255,255,255,0.25);padding:4px 12px;border-radius:6px;font-size:11.5px;font-weight:600;cursor:pointer;">End early</button>';
+      strip.appendChild(bar);
+    }} catch (e) {{ /* silent */ }}
+  }}
+  if (document.readyState === 'loading') {{
+    document.addEventListener('DOMContentLoaded', () => setTimeout(run, 400));
+  }} else {{
+    setTimeout(run, 400);
+  }}
+}})();
+
+// Render Past sprints expander right under sprint strip area (or top of grid if no strip).
+(async function _renderPastSprints() {{
+  function _esc(s) {{ return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({{ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }}[c])); }}
+  function _fmtDate(iso) {{
+    try {{ return new Date(iso).toLocaleDateString(undefined, {{ month: 'short', day: 'numeric' }}); }} catch(e) {{ return iso; }}
+  }}
+  function _rowHtml(h, idx) {{
+    const target = (h.daysPlanned||0) * (h.dailyQuota||0);
+    const pct = target > 0 ? Math.round(100 * (h.appliedCount||0) / target) : 0;
+    const feedback = h.feedback || {{}};
+    const tags = [].concat(feedback.worked || []).concat((feedback.didnt || []).map(s => '–' + s)).slice(0, 3);
+    const tagHtml = tags.length
+      ? '<div style="font-size:11.5px;color:#666;margin-top:2px;">' + tags.map(t => '<span style="background:#eef0ff;border:1px solid #d8dbe6;border-radius:10px;padding:1px 8px;margin-right:4px;">' + _esc(t) + '</span>').join('') + '</div>'
+      : '';
+    const note = feedback.note ? '<div style="font-size:11.5px;color:#777;margin-top:3px;font-style:italic;">&ldquo;' + _esc(feedback.note) + '&rdquo;</div>' : '';
+    return '<div style="background:#fff;border:1px solid #e0e2ed;border-radius:8px;padding:10px 14px;margin-bottom:8px;">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;">' +
+        '<span><strong>Sprint #' + (idx+1) + '</strong> &middot; ' + _fmtDate(h.startedAt) + ' → ' + _fmtDate(h.endedAt) + '</span>' +
+        '<span style="color:#5C5CD6;font-weight:600;">' + (h.appliedCount||0) + ' / ' + target + ' applied (' + pct + '%)</span>' +
+      '</div>' +
+      '<div style="font-size:12px;color:#666;margin-top:2px;">' +
+        (h.daysPlanned||0) + ' days &middot; ' + (h.dailyQuota||0) + '/day &middot; advanced ' + (h.advancedCount||0) + ' &middot; rejected ' + (h.rejectedCount||0) +
+      '</div>' +
+      tagHtml + note +
+      '</div>';
+  }}
+  try {{
+    const p = await _spFetchProfile();
+    const hist = Array.isArray(p.sprintHistory) ? p.sprintHistory : [];
+    if (!hist.length) return;
+    // Insertion target: directly after sprint-strip or sprint-start-cta;
+    // else above #grid as a fallback.
+    const anchor = document.getElementById('sprint-strip') || document.getElementById('sprint-start-cta') || document.getElementById('focus-panel') || document.getElementById('grid');
+    if (!anchor) return;
+    if (document.getElementById('past-sprints')) return; // idempotent
+    const wrap = document.createElement('div');
+    wrap.id = 'past-sprints';
+    wrap.style.cssText = 'max-width:1400px;margin:0 auto 14px;font-family:Inter,system-ui,sans-serif;';
+    const recent = hist.slice(-5).reverse();
+    wrap.innerHTML =
+      '<details style="background:#f7f8fb;border:1px solid #e0e2ed;border-radius:10px;padding:10px 14px;">' +
+        '<summary style="cursor:pointer;font-size:13px;font-weight:600;color:#1A1A2E;">Past sprints (' + hist.length + ')</summary>' +
+        '<div style="margin-top:10px;">' + recent.map(_rowHtml).join('') + '</div>' +
+      '</details>';
+    if (anchor.parentNode) anchor.parentNode.insertBefore(wrap, anchor.nextSibling);
+  }} catch (e) {{ /* silent */ }}
 }})();
 
 // --- Tier 2: p5.js-style particle burst on Mark Applied --------------
