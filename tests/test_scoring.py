@@ -50,9 +50,12 @@ AMIT_PROFILE = {
 
 
 def score_with(profile, job):
-    """Set SKILLS_PROFILE module global, then call score_job."""
-    real = fetch_jobs.SKILLS_PROFILE
-    fetch_jobs.SKILLS_PROFILE = profile
+    """Set SKILLS_PROFILE on the scoring module (Phase 2 of split refactor),
+    then call score_job. Also sets fetch_jobs.SKILLS_PROFILE for backward compat."""
+    import matcher.scoring as _ms
+    real = _ms.SKILLS_PROFILE
+    _ms.SKILLS_PROFILE = profile
+    fetch_jobs.SKILLS_PROFILE = profile  # Mirror so legacy reads see it too
     try:
         # score_job reads job["title"], job["description"]; needs all keys defensively
         j = {
@@ -65,6 +68,8 @@ def score_with(profile, job):
         }
         return fetch_jobs.score_job(j)
     finally:
+        import matcher.scoring as _ms
+        _ms.SKILLS_PROFILE = real
         fetch_jobs.SKILLS_PROFILE = real
 
 

@@ -90,7 +90,10 @@ check(f"scrapable entries ({len(scrapable)}) all have non-empty slug",
       all(e.get('slug') for e in scrapable), "some scrapable entries missing slug")
 
 # Catalog loads into HEALTHTECH_SET correctly
-fetch_jobs._load_healthtech_catalog()
+from matcher import catalogs as _cat
+_cat.load_healthtech_catalog()
+fetch_jobs.HEALTHTECH_COMPANIES = _cat.HEALTHTECH_COMPANIES
+fetch_jobs.HEALTHTECH_SET = _cat.HEALTHTECH_SET
 check("HEALTHTECH_COMPANIES populated", len(fetch_jobs.HEALTHTECH_COMPANIES) == len(entries),
       f"in-mem {len(fetch_jobs.HEALTHTECH_COMPANIES)} vs file {len(entries)}")
 check("HEALTHTECH_SET deduped (canonical form)",
