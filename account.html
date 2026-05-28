@@ -42,6 +42,14 @@
   .grid2 .full { grid-column:1 / -1; }
   select { width:100%; padding:10px 12px; font-size:14px; font-family:inherit; border:1px solid var(--hairline); border-radius:6px; margin-bottom:14px; background:#fff; color:var(--ink); }
   select:focus { outline:none; border-color:var(--navy); }
+  /* Sprint preferences card */
+  .sp-section { margin-bottom: 16px; }
+  .sp-label { font-size: 12.5px; font-weight: 600; color: var(--ink); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .sp-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+  .sp-pill { padding: 7px 14px; background: #fff; color: var(--navy); border: 1px solid var(--hairline); border-radius: 16px; font-size: 13px; cursor: pointer; font-family: inherit; transition: all 0.1s; }
+  .sp-pill:hover { border-color: var(--navy); background: var(--lilac-soft); }
+  .sp-pill.active { background: var(--navy); color: #fff; border-color: var(--navy); font-weight: 600; }
+  .sp-pills.sp-days .sp-pill { padding: 6px 10px; min-width: 48px; text-align: center; font-size: 12px; }
   .saved-pulse { animation: pulse 0.4s ease-out; }
   @keyframes pulse { 0%{background:#fff} 50%{background:var(--ok-bg)} 100%{background:#fff} }
 </style>
@@ -106,6 +114,83 @@
       <button type="submit" class="btn primary" id="saveProfileBtn">Save profile</button>
     </form>
     <div id="profileMsg" class="msg"></div>
+  </div>
+
+  <div class="card">
+    <h1>Sprint preferences</h1>
+    <p class="sub">Defaults that pre-fill the sprint config when you start a new sprint from the dashboard. Editing here doesn&rsquo;t start anything — it just remembers what you want next time.</p>
+    <div class="sp-section">
+      <div class="sp-label">How long?</div>
+      <div class="sp-pills" data-group="duration">
+        <button type="button" class="sp-pill" data-val="5">5 days</button>
+        <button type="button" class="sp-pill" data-val="10">10 days</button>
+        <button type="button" class="sp-pill" data-val="14">14 days</button>
+        <button type="button" class="sp-pill" data-val="21">21 days</button>
+      </div>
+    </div>
+    <div class="sp-section">
+      <div class="sp-label">Apps per day</div>
+      <div class="sp-pills" data-group="quota">
+        <button type="button" class="sp-pill" data-val="2">2 / day</button>
+        <button type="button" class="sp-pill" data-val="3">3 / day</button>
+        <button type="button" class="sp-pill" data-val="5">5 / day</button>
+      </div>
+    </div>
+    <div class="sp-section">
+      <div class="sp-label">Days of the week</div>
+      <div class="sp-pills sp-days" data-group="days">
+        <button type="button" class="sp-pill" data-val="1">Mon</button>
+        <button type="button" class="sp-pill" data-val="2">Tue</button>
+        <button type="button" class="sp-pill" data-val="3">Wed</button>
+        <button type="button" class="sp-pill" data-val="4">Thu</button>
+        <button type="button" class="sp-pill" data-val="5">Fri</button>
+        <button type="button" class="sp-pill" data-val="6">Sat</button>
+        <button type="button" class="sp-pill" data-val="0">Sun</button>
+      </div>
+    </div>
+    <div class="sp-section" style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-end;">
+      <div>
+        <div class="sp-label">Morning nudge</div>
+        <input type="time" id="sp-nudge-time" value="07:00" style="padding:8px 10px;border:1px solid var(--hairline);border-radius:6px;font-size:14px;width:140px;margin-bottom:0;">
+      </div>
+      <div>
+        <div class="sp-label">Evening recap</div>
+        <input type="time" id="sp-recap-time" value="19:00" style="padding:8px 10px;border:1px solid var(--hairline);border-radius:6px;font-size:14px;width:140px;margin-bottom:0;">
+      </div>
+    </div>
+    <div class="sp-section">
+      <div class="sp-label">Your timezone</div>
+      <select id="sp-timezone" style="padding:8px 10px;border:1px solid var(--hairline);border-radius:6px;font-size:14px;min-width:260px;margin-bottom:0;">
+        <optgroup label="United States">
+          <option value="America/New_York">Eastern (New York)</option>
+          <option value="America/Chicago">Central (Chicago)</option>
+          <option value="America/Denver">Mountain (Denver)</option>
+          <option value="America/Phoenix">Mountain — no DST (Phoenix)</option>
+          <option value="America/Los_Angeles">Pacific (Los Angeles)</option>
+          <option value="America/Anchorage">Alaska</option>
+          <option value="Pacific/Honolulu">Hawaii</option>
+        </optgroup>
+        <optgroup label="Americas">
+          <option value="America/Toronto">Toronto</option>
+          <option value="America/Vancouver">Vancouver</option>
+          <option value="America/Mexico_City">Mexico City</option>
+          <option value="America/Sao_Paulo">São Paulo</option>
+        </optgroup>
+        <optgroup label="Europe">
+          <option value="Europe/London">London</option>
+          <option value="Europe/Paris">Paris / Berlin / Madrid</option>
+          <option value="Europe/Athens">Athens / Istanbul</option>
+        </optgroup>
+        <optgroup label="Asia / Pacific">
+          <option value="Asia/Kolkata">Mumbai / Bengaluru / Delhi</option>
+          <option value="Asia/Singapore">Singapore</option>
+          <option value="Asia/Tokyo">Tokyo</option>
+          <option value="Australia/Sydney">Sydney</option>
+        </optgroup>
+      </select>
+    </div>
+    <button type="button" class="btn primary" id="saveSprintPrefsBtn" style="margin-top:8px;">Save sprint preferences</button>
+    <div id="sprintPrefsMsg" class="msg"></div>
   </div>
 
   <div class="card">
@@ -432,6 +517,100 @@ document.getElementById('saveBullseyeBtn').addEventListener('click', async () =>
 });
 
 loadBullseye();
+
+// === Sprint preferences card (account-side editor for sprint defaults) ===
+async function loadSprintPrefs() {
+  const slug = localStorage.getItem('gmj_user_slug');
+  if (!slug) return;
+  let p = {};
+  try {
+    const r = await fetch(WORKER + '/skills-profile?user=' + encodeURIComponent(slug), { cache: 'no-store' });
+    if (r.ok) { const j = await r.json(); p = (j && j.profile) || {}; }
+  } catch (e) {}
+  // Last sprint from history is a reasonable seed when profile fields are absent
+  const last = (Array.isArray(p.sprintHistory) && p.sprintHistory.length) ? p.sprintHistory[p.sprintHistory.length-1] : null;
+  const c = {
+    duration:  parseInt(p.sprintDays      || (last && last.daysPlanned) || 10, 10),
+    quota:     parseInt(p.sprintDailyQuota|| (last && last.dailyQuota)  || 3,  10),
+    days:      (Array.isArray(p.sprintDaysOfWeek) && p.sprintDaysOfWeek.length) ? p.sprintDaysOfWeek
+                : (last && Array.isArray(last.daysOfWeek) && last.daysOfWeek.length) ? last.daysOfWeek
+                : [1,2,3,4,5],
+    nudgeTime: (typeof p.sprintNudgeTime === 'string' && p.sprintNudgeTime) ? p.sprintNudgeTime : ((last && last.nudgeTime) || '07:00'),
+    recapTime: (typeof p.sprintRecapTime === 'string' && p.sprintRecapTime) ? p.sprintRecapTime : ((last && last.recapTime) || '19:00'),
+    timezone:  (typeof p.sprintTimezone === 'string' && p.sprintTimezone) ? p.sprintTimezone : ((last && last.timezone) || (function() {
+      try { return Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/New_York'; } catch(e) { return 'America/New_York'; }
+    })())
+  };
+  function pillActivate(group, val) {
+    document.querySelectorAll('.sp-pills[data-group="' + group + '"] .sp-pill').forEach(p => {
+      p.classList.toggle('active', String(p.dataset.val) === String(val));
+    });
+  }
+  function pillActivateMany(group, vals) {
+    const set = new Set((vals || []).map(String));
+    document.querySelectorAll('.sp-pills[data-group="' + group + '"] .sp-pill').forEach(p => {
+      p.classList.toggle('active', set.has(String(p.dataset.val)));
+    });
+  }
+  pillActivate('duration', c.duration);
+  pillActivate('quota', c.quota);
+  pillActivateMany('days', c.days);
+  document.getElementById('sp-nudge-time').value = c.nudgeTime;
+  document.getElementById('sp-recap-time').value = c.recapTime;
+  const tzEl = document.getElementById('sp-timezone');
+  if (tzEl) tzEl.value = c.timezone;
+  // Wire pill clicks (single-select for duration/quota; multi-select for days)
+  document.querySelectorAll('.sp-pills .sp-pill').forEach(p => {
+    p.onclick = () => {
+      const wrap = p.closest('.sp-pills');
+      const group = wrap.dataset.group;
+      if (group === 'days') p.classList.toggle('active');
+      else {
+        wrap.querySelectorAll('.sp-pill').forEach(x => x.classList.remove('active'));
+        p.classList.add('active');
+      }
+    };
+  });
+}
+
+document.getElementById('saveSprintPrefsBtn').addEventListener('click', async () => {
+  const slug = localStorage.getItem('gmj_user_slug');
+  const tok  = localStorage.getItem(TOKEN_KEY);
+  const m = document.getElementById('sprintPrefsMsg');
+  if (!slug || !tok) { m.className='msg err'; m.textContent='Not signed in.'; return; }
+  const btn = document.getElementById('saveSprintPrefsBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  const dur = parseInt((document.querySelector('.sp-pills[data-group="duration"] .sp-pill.active') || {}).dataset?.val || '10', 10);
+  const qot = parseInt((document.querySelector('.sp-pills[data-group="quota"] .sp-pill.active')    || {}).dataset?.val || '3',  10);
+  const days = Array.from(document.querySelectorAll('.sp-pills[data-group="days"] .sp-pill.active')).map(p => parseInt(p.dataset.val, 10));
+  const nt  = document.getElementById('sp-nudge-time').value || '07:00';
+  const rt  = document.getElementById('sp-recap-time').value || '19:00';
+  const tz  = document.getElementById('sp-timezone').value || 'America/New_York';
+  try {
+    const r = await fetch(WORKER + '/skills-profile?user=' + encodeURIComponent(slug), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tok },
+      body: JSON.stringify({ patchFields: {
+        sprintDays: dur, sprintDailyQuota: qot,
+        sprintDaysOfWeek: days.length ? days : [1,2,3,4,5],
+        sprintNudgeTime: nt, sprintRecapTime: rt, sprintTimezone: tz
+      } })
+    });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) { m.className='msg err'; m.textContent = j.error || ('Save failed: HTTP ' + r.status); return; }
+    m.className = 'msg ok';
+    m.textContent = 'Saved. These will pre-fill the sprint setup next time you start one.';
+    document.querySelector('#saveSprintPrefsBtn').closest('.card').classList.add('saved-pulse');
+    setTimeout(() => document.querySelector('#saveSprintPrefsBtn').closest('.card').classList.remove('saved-pulse'), 600);
+  } catch (e) {
+    m.className = 'msg err';
+    m.textContent = 'Network error: ' + (e.message || e);
+  } finally {
+    btn.disabled = false; btn.textContent = 'Save sprint preferences';
+  }
+});
+
+loadSprintPrefs();
 
 
 </script>

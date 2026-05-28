@@ -655,7 +655,7 @@ async function handleSkillsProfile(request, env, cors, slug) {
       const raw = await env.RESUMES.get(uk(slug, 'skills_profile'));
       const existing = raw ? JSON.parse(raw) : {};
       const updated = Object.assign({}, existing);
-      const SCALAR_FIELDS = new Set(['salaryFloor', 'remotePreferred', 'seniorityLevel', 'careerStage', 'primaryRole', 'summary', 'companySizeMix', 'companySizePreferences', 'dailyTarget', 'recencyWindow', 'defaultSort', 'hideNoSalary', 'negativeTitles', 'matchWeights', 'signalStability', 'phone', 'email', 'location', 'linkedinUrl', 'githubUrl', 'websiteUrl', 'workAuthorization', 'requiresSponsorship', 'currentCompany', 'currentTitle', 'school', 'degree', 'graduationYear', 'firstName', 'lastName', 'excludeCompanies', 'sprintStart', 'sprintDays', 'sprintDailyQuota', 'sprintDaysOfWeek', 'sprintNudgeTime', 'sprintRecapTime', 'sprintSnoozedDays', 'networkCompanies']);
+      const SCALAR_FIELDS = new Set(['salaryFloor', 'remotePreferred', 'seniorityLevel', 'careerStage', 'primaryRole', 'summary', 'companySizeMix', 'companySizePreferences', 'dailyTarget', 'recencyWindow', 'defaultSort', 'hideNoSalary', 'negativeTitles', 'matchWeights', 'signalStability', 'phone', 'email', 'location', 'linkedinUrl', 'githubUrl', 'websiteUrl', 'workAuthorization', 'requiresSponsorship', 'currentCompany', 'currentTitle', 'school', 'degree', 'graduationYear', 'firstName', 'lastName', 'excludeCompanies', 'sprintStart', 'sprintDays', 'sprintDailyQuota', 'sprintDaysOfWeek', 'sprintNudgeTime', 'sprintRecapTime', 'sprintTimezone', 'sprintSnoozedDays', 'networkCompanies']);
       for (const [field, items] of Object.entries(body.patchFields)) {
         if (SCALAR_FIELDS.has(field)) {
           updated[field] = items;
@@ -1557,6 +1557,14 @@ async function handleSprintStart(request, env, cors, slug) {
   const sprintNudgeTime = _validHhmm(body.sprintNudgeTime, '07:00');
   const sprintRecapTime = _validHhmm(body.sprintRecapTime, '19:00');
 
+  // sprintTimezone: IANA tz name. Default America/New_York. Validate by
+  // attempting an Intl.DateTimeFormat construction — invalid tz throws.
+  let sprintTimezone = 'America/New_York';
+  if (typeof body.sprintTimezone === 'string' && body.sprintTimezone) {
+    try { new Intl.DateTimeFormat('en-US', { timeZone: body.sprintTimezone }); sprintTimezone = body.sprintTimezone; }
+    catch (e) { /* keep default */ }
+  }
+
   const raw = await env.RESUMES.get(uk(slug, 'skills_profile'));
   const profile = raw ? JSON.parse(raw) : {};
   profile.sprintStart = new Date().toISOString();
@@ -1565,6 +1573,7 @@ async function handleSprintStart(request, env, cors, slug) {
   profile.sprintDaysOfWeek = sprintDaysOfWeek;
   profile.sprintNudgeTime = sprintNudgeTime;
   profile.sprintRecapTime = sprintRecapTime;
+  profile.sprintTimezone = sprintTimezone;
   profile.sprintSnoozedDays = []; // fresh sprint, fresh snooze list
   profile.user = slug;
   profile.editedAt = new Date().toISOString();
@@ -1576,7 +1585,8 @@ async function handleSprintStart(request, env, cors, slug) {
     sprintDailyQuota,
     sprintDaysOfWeek,
     sprintNudgeTime,
-    sprintRecapTime
+    sprintRecapTime,
+    sprintTimezone
   }, { headers: cors });
 }
 
@@ -1679,6 +1689,7 @@ async function handleSprintComplete(request, env, cors, slug) {
     daysOfWeek:     Array.isArray(profile.sprintDaysOfWeek) ? profile.sprintDaysOfWeek : [1,2,3,4,5],
     nudgeTime:      (typeof profile.sprintNudgeTime === 'string' && profile.sprintNudgeTime) ? profile.sprintNudgeTime : '07:00',
     recapTime:      (typeof profile.sprintRecapTime === 'string' && profile.sprintRecapTime) ? profile.sprintRecapTime : '19:00',
+    timezone:       (typeof profile.sprintTimezone === 'string' && profile.sprintTimezone) ? profile.sprintTimezone : 'America/New_York',
     appliedCount:   _safeInt(body.appliedCount, 0),
     advancedCount:  _safeInt(body.advancedCount, 0),
     rejectedCount:  _safeInt(body.rejectedCount, 0),
@@ -2901,17 +2912,23 @@ async function handleAdminRejectUser(request, env, cors) {
 // =====================================================================
 
 // --- Sprint reminder (overrides digest during active sprint) -----------
-// Compute the current hour in America/New_York timezone (handles DST).
-// Returns an integer 0..23. Falls back to UTC hour if Intl isn't available.
-function _etHourNow(now) {
+// Compute the current hour in the given IANA timezone (handles DST via Intl).
+// Returns an integer 0..23. Falls back to UTC hour if Intl is unavailable
+// OR if the supplied tz is invalid (caught + retried with America/New_York).
+function _localHourNow(now, tz) {
+  const try1 = _tryHour(now, tz || 'America/New_York');
+  if (try1 != null) return try1;
+  // Bad tz string — retry with fallback
+  const try2 = _tryHour(now, 'America/New_York');
+  if (try2 != null) return try2;
+  return now.getUTCHours();
+}
+function _tryHour(now, tz) {
   try {
-    const fmt = new Intl.DateTimeFormat('en-US', {
-      timeZone: 'America/New_York', hour: 'numeric', hour12: false
-    });
-    return parseInt(fmt.format(now), 10);
-  } catch (e) {
-    return now.getUTCHours();
-  }
+    const fmt = new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: 'numeric', hour12: false });
+    const v = parseInt(fmt.format(now), 10);
+    return Number.isFinite(v) ? v : null;
+  } catch (e) { return null; }
 }
 // Same but for any HH:MM string — returns just the hour as an int.
 function _hhmmHour(s) {
@@ -2919,31 +2936,36 @@ function _hhmmHour(s) {
   const m = /^([01]?\d|2[0-3]):[0-5]\d$/.exec(s);
   return m ? parseInt(m[1], 10) : null;
 }
-// Day-of-week in America/New_York. 0=Sun..6=Sat.
-function _etDowNow(now) {
-  try {
-    const fmt = new Intl.DateTimeFormat('en-US', {
-      timeZone: 'America/New_York', weekday: 'short'
-    });
-    const map = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
-    return map[fmt.format(now)] ?? now.getUTCDay();
-  } catch (e) {
-    return now.getUTCDay();
+// Day-of-week in the given timezone. 0=Sun..6=Sat.
+function _localDowNow(now, tz) {
+  const dayMap = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+  function _try(zone) {
+    try {
+      const fmt = new Intl.DateTimeFormat('en-US', { timeZone: zone, weekday: 'short' });
+      const v = dayMap[fmt.format(now)];
+      return Number.isFinite(v) ? v : null;
+    } catch (e) { return null; }
   }
+  return _try(tz || 'America/New_York') ?? _try('America/New_York') ?? now.getUTCDay();
 }
-function _etDateStr(now) {
-  try {
-    const parts = new Intl.DateTimeFormat('en-CA', {
-      timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit'
-    }).formatToParts(now);
-    const y = parts.find(p => p.type === 'year').value;
-    const m = parts.find(p => p.type === 'month').value;
-    const d = parts.find(p => p.type === 'day').value;
-    return y + '-' + m + '-' + d;
-  } catch (e) {
-    return now.toISOString().slice(0, 10);
+function _localDateStr(now, tz) {
+  function _try(zone) {
+    try {
+      const parts = new Intl.DateTimeFormat('en-CA', {
+        timeZone: zone, year: 'numeric', month: '2-digit', day: '2-digit'
+      }).formatToParts(now);
+      const y = parts.find(p => p.type === 'year').value;
+      const m = parts.find(p => p.type === 'month').value;
+      const d = parts.find(p => p.type === 'day').value;
+      return y + '-' + m + '-' + d;
+    } catch (e) { return null; }
   }
+  return _try(tz || 'America/New_York') || _try('America/New_York') || now.toISOString().slice(0, 10);
 }
+// Back-compat aliases (in case anything still calls the old names)
+const _etHourNow = (now) => _localHourNow(now, 'America/New_York');
+const _etDowNow  = (now) => _localDowNow(now,  'America/New_York');
+const _etDateStr = (now) => _localDateStr(now, 'America/New_York');
 
 // 2026-05-28 — cron now fires every hour. This function decides which
 // users get an email THIS hour based on their personal nudge / recap
@@ -2955,9 +2977,6 @@ async function sendDailyMixedToAll(env, event) {
     return { sent: 0, skipped: "missing-secrets" };
   }
   const now = (event && event.scheduledTime) ? new Date(event.scheduledTime) : new Date();
-  const etHour = _etHourNow(now);   // 0..23 in ET
-  const etDow  = _etDowNow(now);    // 0=Sun..6=Sat
-  const etDate = _etDateStr(now);   // 'YYYY-MM-DD' in ET
   const users = await readUsersList(env);
   let nudgeSent = 0, recapSent = 0, digestSent = 0, skipped = 0;
   for (const u of users) {
@@ -2965,6 +2984,12 @@ async function sendDailyMixedToAll(env, event) {
     try {
       const profRaw = await env.RESUMES.get(uk(u.slug, 'skills_profile'));
       const prof = profRaw ? JSON.parse(profRaw) : {};
+      // Per-user timezone (IANA). Default ET if missing/invalid. The
+      // helpers below all gracefully fall back to ET on a bad tz string.
+      const tz = (typeof prof.sprintTimezone === 'string' && prof.sprintTimezone) || 'America/New_York';
+      const localHour = _localHourNow(now, tz);
+      const localDow  = _localDowNow(now,  tz);
+      const localDate = _localDateStr(now, tz);
       const sp = prof.sprintStart;
       let inSprint = false;
       if (sp) {
@@ -2974,34 +2999,30 @@ async function sendDailyMixedToAll(env, event) {
         if (dayN >= 1 && dayN <= days) inSprint = true;
       }
       if (inSprint) {
-        // Days-of-week gate
+        // Days-of-week gate (user's local zone)
         const allowedDays = (Array.isArray(prof.sprintDaysOfWeek) && prof.sprintDaysOfWeek.length)
           ? prof.sprintDaysOfWeek.map(Number)
           : [1, 2, 3, 4, 5];
-        if (!allowedDays.includes(etDow)) { skipped++; continue; }
-        // Snoozed today?
+        if (!allowedDays.includes(localDow)) { skipped++; continue; }
         const snoozed = Array.isArray(prof.sprintSnoozedDays) ? prof.sprintSnoozedDays : [];
-        if (snoozed.includes(etDate)) {
-          console.log('[scheduled]', u.slug, 'snoozed for', etDate);
+        if (snoozed.includes(localDate)) {
+          console.log('[scheduled]', u.slug, 'snoozed for', localDate);
           skipped++; continue;
         }
-        // Hour gate — match against either nudge or recap hour.
         const nudgeHr = _hhmmHour(prof.sprintNudgeTime || '07:00');
         const recapHr = _hhmmHour(prof.sprintRecapTime || '19:00');
-        if (etHour === nudgeHr) {
+        if (localHour === nudgeHr) {
           const r = await sendSprintReminderForUser(env, u, prof);
           if (r && r.ok) nudgeSent++;
-        } else if (etHour === recapHr) {
+        } else if (localHour === recapHr) {
           const r = await sendSprintRecapForUser(env, u, prof);
           if (r && r.ok) recapSent++;
         } else {
           skipped++;
         }
       } else {
-        // Non-sprint users get the regular daily digest at the legacy
-        // 7am-ET slot only (11 UTC was the original cron time). Anything
-        // else this hour: skip them — they're not in sprint mode.
-        if (etHour !== 7) { skipped++; continue; }
+        // Non-sprint users get the daily digest in THEIR local 7am slot.
+        if (localHour !== 7) { skipped++; continue; }
         const r = await sendDigestForUser(env, u);
         if (r && r.ok) digestSent++;
       }
@@ -3009,7 +3030,7 @@ async function sendDailyMixedToAll(env, event) {
       console.error("[scheduled]", u.slug, "failed:", e && e.message);
     }
   }
-  console.log(`[scheduled] etHour=${etHour} nudge=${nudgeSent} recap=${recapSent} digest=${digestSent} skipped=${skipped} of ${users.length}`);
+  console.log(`[scheduled] nudge=${nudgeSent} recap=${recapSent} digest=${digestSent} skipped=${skipped} of ${users.length}`);
   return { nudgeSent, recapSent, digestSent, skipped, total: users.length };
 }
 
@@ -3144,7 +3165,8 @@ async function sendSprintRecapForUser(env, user, profile) {
   const trackerRaw = await env.RESUMES.get(uk(slug, 'tracker'));
   const tracker = trackerRaw ? JSON.parse(trackerRaw) : {};
   const now = new Date();
-  const etDate = _etDateStr(now);
+  const tz = (typeof profile.sprintTimezone === 'string' && profile.sprintTimezone) || 'America/New_York';
+  const localDate = _localDateStr(now, tz);
   const dailyQuota = parseInt(profile.sprintDailyQuota || 3, 10);
   const sprintDays = parseInt(profile.sprintDays || 10, 10);
   const start = new Date(profile.sprintStart);
@@ -3159,8 +3181,8 @@ async function sendSprintRecapForUser(env, user, profile) {
     const when = (e.statusChangedAt || e.appliedAt || e.updatedAt || '');
     try {
       const d = new Date(when);
-      const dStr = _etDateStr(d);
-      if (dStr === etDate) appliedToday += 1;
+      const dStr = _localDateStr(d, tz);
+      if (dStr === localDate) appliedToday += 1;
     } catch (_) {}
   });
   const quotaTotal = sprintDays * dailyQuota;

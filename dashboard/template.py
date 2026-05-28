@@ -713,8 +713,40 @@ HTML_TEMPLATE = """<!doctype html>
       <div class="sc-label">End-of-day recap email</div>
       <div style="display:flex;align-items:center;gap:10px;">
         <input type="time" id="sc-recap-time" value="19:00" style="padding:6px 10px;border:1px solid #d0d4dc;border-radius:6px;font-size:13.5px;">
-        <span style="font-size:12.5px;color:#666;">Eastern Time &middot; evening email with today&rsquo;s progress</span>
+        <span style="font-size:12.5px;color:#666;">your local time &middot; evening email with today&rsquo;s progress</span>
       </div>
+    </div>
+    <div class="sc-section">
+      <div class="sc-label">Your timezone</div>
+      <select id="sc-timezone" style="padding:6px 10px;border:1px solid #d0d4dc;border-radius:6px;font-size:13.5px;min-width:260px;">
+        <optgroup label="United States">
+          <option value="America/New_York">Eastern (New York)</option>
+          <option value="America/Chicago">Central (Chicago)</option>
+          <option value="America/Denver">Mountain (Denver)</option>
+          <option value="America/Phoenix">Mountain — no DST (Phoenix)</option>
+          <option value="America/Los_Angeles">Pacific (Los Angeles)</option>
+          <option value="America/Anchorage">Alaska</option>
+          <option value="Pacific/Honolulu">Hawaii</option>
+        </optgroup>
+        <optgroup label="Americas">
+          <option value="America/Toronto">Toronto</option>
+          <option value="America/Vancouver">Vancouver</option>
+          <option value="America/Mexico_City">Mexico City</option>
+          <option value="America/Sao_Paulo">São Paulo</option>
+        </optgroup>
+        <optgroup label="Europe">
+          <option value="Europe/London">London</option>
+          <option value="Europe/Paris">Paris / Berlin / Madrid</option>
+          <option value="Europe/Athens">Athens / Istanbul</option>
+        </optgroup>
+        <optgroup label="Asia / Pacific">
+          <option value="Asia/Kolkata">Mumbai / Bengaluru / Delhi</option>
+          <option value="Asia/Singapore">Singapore</option>
+          <option value="Asia/Tokyo">Tokyo</option>
+          <option value="Australia/Sydney">Sydney</option>
+        </optgroup>
+      </select>
+      <div class="sc-hint">Nudge + recap emails fire at these times in your local zone.</div>
     </div>
     <div id="sc-preview" style="margin:16px 0 4px;padding:10px 12px;background:#f4f4ff;border:1px solid #d8dbe6;border-radius:8px;font-size:13px;color:#3a3a72;"></div>
     <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:14px;">
@@ -5916,10 +5948,10 @@ function _scLoadConfig() {{
     const raw = localStorage.getItem(SC_KEY);
     if (raw) {{
       const o = JSON.parse(raw);
-      if (o && typeof o === 'object') return Object.assign({{ duration:10, quota:3, days:[1,2,3,4,5], nudgeTime:'07:00', recapTime:'19:00' }}, o);
+      if (o && typeof o === 'object') return Object.assign({{ duration:10, quota:3, days:[1,2,3,4,5], nudgeTime:'07:00', recapTime:'19:00', timezone:'America/New_York' }}, o);
     }}
   }} catch (e) {{}}
-  return {{ duration: 10, quota: 3, days: [1,2,3,4,5], nudgeTime: '07:00', recapTime: '19:00' }};
+  return {{ duration: 10, quota: 3, days: [1,2,3,4,5], nudgeTime: '07:00', recapTime: '19:00', timezone: 'America/New_York' }};
 }}
 function _scSaveConfig(o) {{
   try {{ localStorage.setItem(SC_KEY, JSON.stringify(o)); }} catch (e) {{}}
@@ -5948,12 +5980,14 @@ function _scReadConfig() {{
     .map(p => parseInt(p.dataset.val, 10));
   const t = (document.getElementById('sc-nudge-time') || {{}}).value || '07:00';
   const rt = (document.getElementById('sc-recap-time') || {{}}).value || '19:00';
+  const tz = (document.getElementById('sc-timezone') || {{}}).value || 'America/New_York';
   return {{
     duration: get('duration') || 10,
     quota: get('quota') || 3,
     days: days.length ? days : [1,2,3,4,5],
     nudgeTime: t,
-    recapTime: rt
+    recapTime: rt,
+    timezone: tz
   }};
 }}
 function _scUpdatePreview() {{
@@ -5962,8 +5996,9 @@ function _scUpdatePreview() {{
   if (!el) return;
   const totalApps = c.duration * c.quota;
   const skipNote = c.days.length < 7 ? ' (only on selected days)' : '';
+  const tzShort = (c.timezone || 'America/New_York').split('/').pop().replace(/_/g, ' ');
   el.innerHTML = '<strong>' + c.duration + ' days × ' + c.quota + ' apps/day = ' + totalApps + ' applications total</strong>' +
-                 skipNote + ' &middot; morning nudge ' + c.nudgeTime + ' ET &middot; recap ' + c.recapTime + ' ET.';
+                 skipNote + ' &middot; morning nudge ' + c.nudgeTime + ' &middot; recap ' + c.recapTime + ' (' + tzShort + ').';
 }}
 function _scWirePills() {{
   document.querySelectorAll('.sc-pills .sc-pill').forEach(p => {{
@@ -5981,6 +6016,10 @@ function _scWirePills() {{
   }});
   const nt = document.getElementById('sc-nudge-time');
   if (nt) nt.oninput = _scUpdatePreview;
+  const rt2 = document.getElementById('sc-recap-time');
+  if (rt2) rt2.oninput = _scUpdatePreview;
+  const tzSel = document.getElementById('sc-timezone');
+  if (tzSel) tzSel.onchange = _scUpdatePreview;
 }}
 async function openSprintConfigModal() {{
   const modal = document.getElementById('sprint-config-modal');
@@ -5989,6 +6028,14 @@ async function openSprintConfigModal() {{
   // opens instantly. Then quietly fetch /skills-profile and let server
   // values override if present (server is canonical once a sprint exists).
   let c = _scLoadConfig();
+  // One-shot pickup of a "use N" suggestion accepted in the review modal
+  try {{
+    const sug = parseInt(localStorage.getItem('gmj_sprint_suggested_quota_' + USER_SLUG) || '', 10);
+    if (Number.isFinite(sug) && sug >= 1 && sug <= 10) {{
+      c.quota = sug;
+      localStorage.removeItem('gmj_sprint_suggested_quota_' + USER_SLUG);
+    }}
+  }} catch(e) {{}}
   _scActivatePill('duration', c.duration);
   _scActivatePill('quota', c.quota);
   _scActivateDays(c.days);
@@ -5996,6 +6043,17 @@ async function openSprintConfigModal() {{
   if (nt) nt.value = c.nudgeTime;
   const rt = document.getElementById('sc-recap-time');
   if (rt) rt.value = c.recapTime || '19:00';
+  const tzEl = document.getElementById('sc-timezone');
+  if (tzEl) {{
+    // Auto-detect on first open if no stored value
+    if (!c.timezone || c.timezone === 'America/New_York') {{
+      try {{
+        const detected = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        if (detected && Array.from(tzEl.options).some(o => o.value === detected)) c.timezone = detected;
+      }} catch(e) {{}}
+    }}
+    tzEl.value = c.timezone || 'America/New_York';
+  }}
   _scWirePills();
   _scUpdatePreview();
   modal.classList.add('show');
@@ -6018,7 +6076,10 @@ async function openSprintConfigModal() {{
                    : c.days,
         nudgeTime: (typeof (useHistory ? lastSprint.nudgeTime : p.sprintNudgeTime) === 'string' && (useHistory ? lastSprint.nudgeTime : p.sprintNudgeTime))
                    ? (useHistory ? lastSprint.nudgeTime : p.sprintNudgeTime)
-                   : c.nudgeTime
+                   : c.nudgeTime,
+        timezone:  (typeof (useHistory ? lastSprint.timezone : p.sprintTimezone) === 'string' && (useHistory ? lastSprint.timezone : p.sprintTimezone))
+                   ? (useHistory ? lastSprint.timezone : p.sprintTimezone)
+                   : c.timezone
       }};
       _scActivatePill('duration', merged.duration);
       _scActivatePill('quota', merged.quota);
@@ -6026,6 +6087,8 @@ async function openSprintConfigModal() {{
       if (nt) nt.value = merged.nudgeTime;
       const rt = document.getElementById('sc-recap-time');
       if (rt) rt.value = (useHistory ? lastSprint.recapTime : p.sprintRecapTime) || merged.recapTime || c.recapTime;
+      const tzEl = document.getElementById('sc-timezone');
+      if (tzEl) tzEl.value = merged.timezone || 'America/New_York';
       _scUpdatePreview();
     }}
   }} catch (e) {{}}
@@ -6063,7 +6126,8 @@ async function startConfiguredSprint(btn) {{
         sprintDailyQuota: c.quota,
         sprintDaysOfWeek: c.days,
         sprintNudgeTime: c.nudgeTime,
-        sprintRecapTime: c.recapTime
+        sprintRecapTime: c.recapTime,
+        sprintTimezone: c.timezone
       }})
     }});
     if (r.ok) {{
@@ -6120,11 +6184,9 @@ function _srRenderStats(applied, advanced, rejected, target) {{
     stat('Goal hit', pct + '%', '')
   ].join('');
 }}
-function openSprintReviewModal() {{
+async function openSprintReviewModal() {{
   const modal = document.getElementById('sprint-review-modal');
   if (!modal) return;
-  // Read sprint params from the dashboard strip's data-* attributes if
-  // present, otherwise from the cached profile snippet on window.
   const strip = document.getElementById('sprint-strip');
   let days = 10, quota = 3;
   if (strip) {{
@@ -6138,7 +6200,59 @@ function openSprintReviewModal() {{
   document.querySelectorAll('#sprint-review-modal .sc-pills .sc-pill').forEach(p => {{
     p.onclick = () => p.classList.toggle('active');
   }});
+  // Smart quota suggestion: pull sprintHistory and recommend a quota for
+  // the next sprint when actual ≠ planned by ≥30% across recent sprints.
+  await _srInjectQuotaSuggestion(quota);
   modal.classList.add('show');
+}}
+
+async function _srInjectQuotaSuggestion(currentQuota) {{
+  // Idempotent: remove any prior banner so we don't stack
+  const existing = document.getElementById('sr-quota-tip');
+  if (existing) existing.remove();
+  try {{
+    const r = await fetch(WORKER_BASE + '/skills-profile' + USER_QS, {{ cache: 'no-store' }});
+    if (!r.ok) return;
+    const j = await r.json();
+    const hist = ((j && j.profile && j.profile.sprintHistory) || []).slice(-3);
+    if (hist.length < 2) return; // need ≥2 sprints to suggest anything
+    let totalApplied = 0, totalQuotaDays = 0;
+    hist.forEach(h => {{
+      const daysActive = Math.max(1, (h.daysPlanned || 0)); // approximation — we don't have actual active-day count
+      totalApplied += (h.appliedCount || 0);
+      totalQuotaDays += daysActive;
+    }});
+    const avgActualPerDay = totalQuotaDays > 0 ? totalApplied / totalQuotaDays : 0;
+    if (!Number.isFinite(avgActualPerDay) || avgActualPerDay <= 0) return;
+    const ratio = avgActualPerDay / (currentQuota || 1);
+    // Round to int, clamp 1..10
+    const suggested = Math.max(1, Math.min(10, Math.round(avgActualPerDay)));
+    if (suggested === currentQuota) return; // nothing to suggest
+    let direction = '';
+    if (ratio < 0.7) direction = 'lower';
+    else if (ratio > 1.3) direction = 'higher';
+    else return; // within tolerance
+    const tip = document.createElement('div');
+    tip.id = 'sr-quota-tip';
+    tip.style.cssText = 'margin:14px 0 0;padding:10px 14px;background:#fff7e6;border:1px solid #fcd34d;color:#78350f;border-radius:8px;font-size:13px;display:flex;justify-content:space-between;align-items:center;gap:10px;';
+    const noun = hist.length === 2 ? 'sprints' : 'sprints';
+    tip.innerHTML =
+      '<span>📊 Across your last ' + hist.length + ' ' + noun + ' you averaged ' +
+        '<strong>' + avgActualPerDay.toFixed(1) + ' / day</strong> on a <strong>' + currentQuota + ' / day</strong> plan. ' +
+        'Try ' + suggested + ' / day next sprint?</span>' +
+      '<button type="button" id="sr-quota-apply" style="background:#1817B5;color:#fff;border:none;padding:5px 12px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;">Use ' + suggested + ' / day</button>';
+    // Insert above the CTAs (the action row)
+    const ctas = document.querySelector('#sprint-review-modal .modal > div[style*="justify-content:flex-end"]');
+    if (ctas) ctas.parentNode.insertBefore(tip, ctas);
+    else document.querySelector('#sprint-review-modal .modal').appendChild(tip);
+    document.getElementById('sr-quota-apply').onclick = () => {{
+      // Stash the recommendation in localStorage; the config modal will
+      // pick it up when "Save & start another" opens it next.
+      try {{ localStorage.setItem('gmj_sprint_suggested_quota_' + USER_SLUG, String(suggested)); }} catch(e) {{}}
+      tip.querySelector('button').textContent = '✓ Will use ' + suggested;
+      tip.querySelector('button').disabled = true;
+    }};
+  }} catch (e) {{ /* silent */ }}
 }}
 function closeSprintReviewModal() {{
   const m = document.getElementById('sprint-review-modal');
