@@ -1,0 +1,60 @@
+name: Regenerate per-user dashboards (no scrape)
+
+# Re-renders every per-user *.html from the existing jobs.db using the
+# current dashboard/template.py. Skips the slow + fragile scrape step in
+# refresh-jobs.yml — use this when you've changed the dashboard template
+# or fixed a JS bug and want it live in minutes, not on the 2h cron.
+#
+# Does NOT touch jobs.db, index.html, or landing.html.
+
+on:
+  workflow_dispatch: {}
+  repository_dispatch:
+    types: [regen-dashboards]
+
+permissions:
+  contents: write
+
+jobs:
+  regen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Sanity-check JS in current template
+        run: python3 scripts/validate_dashboard_js.py
+
+      - name: Regenerate every user dashboard
+        run: |
+          python3 - <<'PY'
+          import sys, os
+          sys.path.insert(0, '.')
+          # generate_all_dashboards loads users from the Worker (which works on
+          # GH runners) and renders each *.html using the existing jobs.db.
+          from fetch_jobs import generate_all_dashboards, get_conn
+          conn = get_conn()
+          generate_all_dashboards(conn)
+          conn.close()
+          print("DONE")
+          PY
+
+      - name: Commit + push regenerated dashboards
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          # Stage every per-user *.html — skip index.html and landing.html
+          for f in *.html; do
+            if [ "$f" != "index.html" ] && [ "$f" != "landing.html" ]; then
+              git add "$f" || true
+            fi
+          done
+          if git diff --cached --quiet; then
+            echo "No template-driven changes detected — nothing to push."
+            exit 0
+          fi
+          git commit -m "Regenerate per-user dashboards from current template (no scrape)"
+          git push origin main

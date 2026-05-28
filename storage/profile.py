@@ -6,6 +6,7 @@ import json
 import os
 import urllib.parse
 import urllib.request
+from urllib.request import Request, urlopen
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 USERS_JSON_PATH = os.path.join(ROOT, "users.json")
