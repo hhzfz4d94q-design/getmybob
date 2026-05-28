@@ -2171,6 +2171,28 @@ USERS_JSON_PATH = os.path.join(ROOT, "users.json")
 SKILLS_PROFILE = None  # set per user during generate_dashboard
 COMPANY_INDUSTRIES = {}  # company_slug -> list of industries (populated from companies.json)
 VC_PORTFOLIO_COMPANIES = []  # list of dicts {name, industry, fundingStage, atsHint} from VC discovery
+HEALTHTECH_COMPANIES = []  # list of dicts {name, category, atsHint} from curated healthtech catalog
+HEALTHTECH_SET = set()     # lowercase company names for fast scoring lookup
+
+def _load_healthtech_catalog():
+    """Load curated healthtech catalog from healthtech_companies.json.
+    Universal supplement to per-user targetCompanies. Adds healthcare IT
+    breadth for users who target health/pharma/digital-health industries."""
+    global HEALTHTECH_COMPANIES, HEALTHTECH_SET
+    path = os.path.join(ROOT, 'healthtech_companies.json')
+    try:
+        with open(path, 'r', encoding='utf-8') as f:
+            d = json.load(f)
+        HEALTHTECH_COMPANIES = d.get('companies', []) if isinstance(d, dict) else (d if isinstance(d, list) else [])
+        HEALTHTECH_SET = set((c.get('name') or '').lower().strip() for c in HEALTHTECH_COMPANIES if isinstance(c, dict))
+        print(f'[healthtech] loaded {len(HEALTHTECH_COMPANIES)} curated companies', flush=True)
+    except FileNotFoundError:
+        HEALTHTECH_COMPANIES = []
+        HEALTHTECH_SET = set()
+    except Exception as e:
+        print(f'[healthtech] load failed: {e}', flush=True)
+        HEALTHTECH_COMPANIES = []
+        HEALTHTECH_SET = set()
 
 def _load_vc_portfolio():
     """Load discovered VC-portfolio companies from vc_portfolio_companies.json.
@@ -2188,6 +2210,7 @@ def _load_vc_portfolio():
         print(f'[vc-portfolio] skipped: {e}', flush=True)
         VC_PORTFOLIO_COMPANIES = []
 _load_vc_portfolio()
+_load_healthtech_catalog()
 def _load_recruiters_by_company():
     try:
         with open(os.path.join(ROOT, "recruiters.json"), "r", encoding="utf-8") as f:
@@ -2733,6 +2756,29 @@ def score_job(job):
         signal = s - 50
         s = 50 + signal * fresh_mult
 
+    # Healthcare expansion boosts (added 2026-05-28) --------------------
+    # Both small, additive, only fire when user opted into healthcare industries.
+    # Stacking with warm-intro priority (+200 sprint sort) keeps these companies
+    # at the top of the feed for users who match.
+    try:
+        _co_lower = (job.get("company_name") or job.get("company_slug") or "").strip().lower()
+        if _co_lower and SKILLS_PROFILE:
+            # (A) Network-seed boost: company is in the user's LinkedIn-network
+            # healthcare list. +5 — small enough not to overpower bullseye,
+            # large enough to lift above neighbors of equal fit.
+            net_co = set(c.lower().strip() for c in (SKILLS_PROFILE.get('networkCompanies') or []) if isinstance(c, str))
+            if _co_lower in net_co:
+                s += 5
+            # (B) Curated healthtech catalog boost: company is in the
+            # universal HIT catalog. +3 — gentle, only meaningful when
+            # user's industries actually include health/pharma/digital.
+            if HEALTHTECH_SET and _co_lower in HEALTHTECH_SET:
+                user_inds = ' '.join(str(i).lower() for i in (SKILLS_PROFILE.get('industries') or []))
+                if any(kw in user_inds for kw in ('health', 'pharma', 'medic', 'bio', 'ehr', 'clinic', 'wellness', 'therapeut')):
+                    s += 3
+    except Exception:
+        pass
+
     return max(0, min(100, int(s)))
 
 
@@ -2867,6 +2913,36 @@ def _slugify_company_name(name):
     if not name:
         return ""
     return re.sub(r"[^a-z0-9]+", "", str(name).lower())
+
+
+def _merge_healthtech_catalog(companies):
+    """Path 4: merge curated healthtech catalog companies into the scrape pool.
+    Same mechanism as VC portfolio but driven by healthtech_companies.json
+    (committed in-repo, not AI-discovered)."""
+    if not HEALTHTECH_COMPANIES:
+        return
+    existing = {ats: set() for ats in ('greenhouse', 'lever', 'ashby', 'workable')}
+    for ats in existing:
+        for entry in companies.get(ats, []):
+            slug = entry if isinstance(entry, str) else (entry.get('slug') if isinstance(entry, dict) else '')
+            if slug: existing[ats].add(slug.lower())
+    added = 0
+    for c in HEALTHTECH_COMPANIES:
+        name = (c.get('name') or '').strip() if isinstance(c, dict) else str(c).strip()
+        if not name: continue
+        ats = (c.get('atsHint') or 'greenhouse').strip().lower() if isinstance(c, dict) else 'greenhouse'
+        # Only auto-add for ATSes we can scrape by slug
+        if ats not in ('greenhouse', 'lever', 'ashby', 'workable'):
+            continue
+        if ats not in companies: companies[ats] = []
+        slug = re.sub(r'[^a-z0-9]+', '-', name.lower()).strip('-')
+        if not slug: continue
+        if slug in existing.get(ats, set()): continue
+        companies[ats].append(slug)
+        existing.setdefault(ats, set()).add(slug)
+        added += 1
+    if added:
+        print(f'[healthtech] merged {added} catalog companies into scrape pool', flush=True)
 
 
 def _merge_vc_portfolio_companies(companies):
@@ -3044,6 +3120,7 @@ def run():
     # surfaced by /admin/discover-vc-portfolio + the discover-vc-portfolio.yml
     # weekly workflow. Adds them to whichever ATS hint Claude assigned.
     _merge_vc_portfolio_companies(companies)
+    _merge_healthtech_catalog(companies)
     _build_company_industries(companies)
 
     conn = get_conn()
