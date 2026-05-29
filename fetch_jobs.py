@@ -1192,11 +1192,14 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         return ld is None or ld <= GHOST_DAYS
     rows = [r for r in rows if _not_ghost(r)]
 
-    # Relevance-first top-50 (2026-05-27): cut from 1000 → 50. With heavy
-    # wizard-pick weighting + recency bonus, the top 50 are the only jobs
-    # that genuinely matter today. If user wants more, they can broaden
-    # the bullseye via the wizard.
-    TOP_N = 20  # was 50 — user asked for tighter feed
+    # Relevance-first cap (2026-05-29 evening): bumped from 20 → 150.
+    # Earlier 20-cap was a coping mechanism for stale data + broken scrapers
+    # — we knew most of the 20 would be wrong, so trimming hid the noise.
+    # With scrapers alive + 10/10/50 wider profile + dream-list catalog +
+    # banking/audit negative-keywords, top-150 is the right window for the
+    # tier classifier to grade. The borderline expander already keeps the
+    # main grid uncluttered.
+    TOP_N = 150
     rows = rows[:TOP_N]
 
     # ============================================================
