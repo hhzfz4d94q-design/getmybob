@@ -1,22 +1,1059 @@
 [vc-portfolio] loaded 105 discovered companies
-[healthtech] loaded 264 curated companies
+[healthtech] loaded 246 curated companies
 [industries] mapped 340 companies; default=['healthcare', 'healthcare-it', 'digital-health', 'health-saas', 'pharma', 'pharmaceuticals', 'biotech', 'life-sciences', 'diagnostics', 'telehealth', 'mental-health', 'clinical-ai']
 [users] loaded 4 from Worker
-Traceback (most recent call last):
-  File "/home/runner/work/getmybob/getmybob/fetch_jobs.py", line 1851, in <module>
-    run()
-  File "/home/runner/work/getmybob/getmybob/fetch_jobs.py", line 737, in run
-    _merge_user_target_companies(companies)
-  File "/home/runner/work/getmybob/getmybob/matcher/catalogs.py", line 183, in _merge_user_target_companies
-    target_slug = _slugify_company_name(t.get("slug") if isinstance(t, dict) and t.get("slug") else name)
-                  ^^^^^^^^^^^^^^^^^^^^^
-NameError: name '_slugify_company_name' is not defined
-Traceback (most recent call last):
-  File "/home/runner/work/getmybob/getmybob/fetch_jobs.py", line 1851, in <module>
-    run()
-  File "/home/runner/work/getmybob/getmybob/fetch_jobs.py", line 737, in run
-    _merge_user_target_companies(companies)
-  File "/home/runner/work/getmybob/getmybob/matcher/catalogs.py", line 183, in _merge_user_target_companies
-    target_slug = _slugify_company_name(t.get("slug") if isinstance(t, dict) and t.get("slug") else name)
-                  ^^^^^^^^^^^^^^^^^^^^^
-NameError: name '_slugify_company_name' is not defined
+[user-targets] merged 371 per-user companies (greenhouse=18, lever=30, ashby=31, wttj=31, workday=13); skipped 0 non-routable
+[vc-portfolio] merged 84 discovered companies into scrape pool
+[healthtech] merged 169 catalog companies into scrape pool
+[industries] mapped 599 companies; default=['healthcare', 'healthcare-it', 'digital-health', 'health-saas', 'pharma', 'pharmaceuticals', 'biotech', 'life-sciences', 'diagnostics', 'telehealth', 'mental-health', 'clinical-ai']
+
+[greenhouse] 384 companies
+  [1/384] oscar: ERROR — name '_strip_html' is not defined
+  [2/384] acuitymd: ERROR — name '_strip_html' is not defined
+  [3/384] sondermind: 0 jobs (slug may be invalid)
+  [4/384] linushealth: 0 jobs (slug may be invalid)
+  [5/384] clipboardhealth: 0 jobs (slug may be invalid)
+  [6/384] picnichealth: 0 jobs (slug may be invalid)
+  [7/384] carerev: 0 jobs (slug may be invalid)
+  [8/384] abarca: ERROR — name '_strip_html' is not defined
+  [9/384] modernhealth: ERROR — name '_strip_html' is not defined
+  [10/384] roivantsciences: ERROR — name '_strip_html' is not defined
+  [11/384] waymark: ERROR — name '_strip_html' is not defined
+  [12/384] freenome: ERROR — name '_strip_html' is not defined
+  [13/384] bridgebio: ERROR — name '_strip_html' is not defined
+  [14/384] formationbio: ERROR — name '_strip_html' is not defined
+  [15/384] honehealth: ERROR — name '_strip_html' is not defined
+  [16/384] cerebral: ERROR — name '_strip_html' is not defined
+  [17/384] foresightmentalhealth: ERROR — name '_strip_html' is not defined
+  [18/384] hs: ERROR — name '_strip_html' is not defined
+  [19/384] springhealth66: ERROR — name '_strip_html' is not defined
+  [20/384] prolaio: ERROR — name '_strip_html' is not defined
+  [21/384] prescriberpoint: ERROR — name '_strip_html' is not defined
+  [22/384] lumimeds: ERROR — name '_strip_html' is not defined
+  [23/384] smarterdxprivate: ERROR — name '_strip_html' is not defined
+  [24/384] smarterdx: ERROR — name '_strip_html' is not defined
+  [25/384] midihealth: ERROR — name '_strip_html' is not defined
+  [26/384] shieldshealthsolutions: ERROR — name '_strip_html' is not defined
+  [27/384] coherehealth: ERROR — name '_strip_html' is not defined
+  [28/384] allarahealth: 0 jobs (slug may be invalid)
+  [29/384] courierhealth: ERROR — name '_strip_html' is not defined
+  [30/384] garnerhealth: ERROR — name '_strip_html' is not defined
+  [31/384] evio: ERROR — name '_strip_html' is not defined
+  [32/384] cofertility: ERROR — name '_strip_html' is not defined
+  [33/384] carrotfertility: ERROR — name '_strip_html' is not defined
+  [34/384] branchcare: 0 jobs (slug may be invalid)
+  [35/384] pomelocare: ERROR — name '_strip_html' is not defined
+  [36/384] openfertility: ERROR — name '_strip_html' is not defined
+  [37/384] mavenclinic: ERROR — name '_strip_html' is not defined
+  [38/384] sparkadvisors: ERROR — name '_strip_html' is not defined
+  [39/384] wellth: 0 jobs (slug may be invalid)
+  [40/384] employerdirecthealthcare: ERROR — name '_strip_html' is not defined
+  [41/384] habitathealth: ERROR — name '_strip_html' is not defined
+  [42/384] authorhealth: 0 jobs (slug may be invalid)
+  [43/384] omadahealth: ERROR — name '_strip_html' is not defined
+  [44/384] phamily: 0 jobs (slug may be invalid)
+  [45/384] interwellhealth: ERROR — name '_strip_html' is not defined
+  [46/384] smartertechnologies: 0 jobs (slug may be invalid)
+  [47/384] redcellpartners: ERROR — name '_strip_html' is not defined
+  [48/384] inovalon: ERROR — name '_strip_html' is not defined
+  [49/384] layerhealth: ERROR — name '_strip_html' is not defined
+  [50/384] jukeboxhealth: ERROR — name '_strip_html' is not defined
+  [51/384] qualifiedhealth: 0 jobs (slug may be invalid)
+  [52/384] tuleahealth: ERROR — name '_strip_html' is not defined
+  [53/384] precisionmedicinegroup: ERROR — name '_strip_html' is not defined
+  [54/384] peptilogics: ERROR — name '_strip_html' is not defined
+  [55/384] recursionpharmaceuticals: ERROR — name '_strip_html' is not defined
+  [56/384] headlandsresearch: ERROR — name '_strip_html' is not defined
+  [57/384] yarrowbiotechnology: 0 jobs (slug may be invalid)
+  [58/384] synerg: ERROR — name '_strip_html' is not defined
+  [59/384] immunomeinc: ERROR — name '_strip_html' is not defined
+  [60/384] cedar: 0 jobs (slug may be invalid)
+  [61/384] hingehealth: 0 jobs (slug may be invalid)
+  [62/384] carbonhealth: 0 jobs (slug may be invalid)
+  [63/384] color: 0 jobs (slug may be invalid)
+  [64/384] komodohealth: ERROR — name '_strip_html' is not defined
+  [65/384] includedhealth: 0 jobs (slug may be invalid)
+  [66/384] headway: ERROR — name '_strip_html' is not defined
+  [67/384] lyrahealth: 0 jobs (slug may be invalid)
+  [68/384] ro: 0 jobs (slug may be invalid)
+  [69/384] curology: 0 jobs (slug may be invalid)
+  [70/384] khealth: 0 jobs (slug may be invalid)
+  [71/384] thirtymadison: ERROR — name '_strip_html' is not defined
+  [72/384] nourish: 0 jobs (slug may be invalid)
+  [73/384] abridge: 0 jobs (slug may be invalid)
+  [74/384] transcarent: ERROR — name '_strip_html' is not defined
+  [75/384] tempus: 0 jobs (slug may be invalid)
+  [76/384] flatiron: 0 jobs (slug may be invalid)
+  [77/384] ribbonhealth: 0 jobs (slug may be invalid)
+  [78/384] evidation: 0 jobs (slug may be invalid)
+  [79/384] alma: ERROR — name '_strip_html' is not defined
+  [80/384] talkiatry: 0 jobs (slug may be invalid)
+  [81/384] brightline: 0 jobs (slug may be invalid)
+  [82/384] amwell: ERROR — name '_strip_html' is not defined
+  [83/384] doximity: ERROR — name '_strip_html' is not defined
+  [84/384] veeva: 0 jobs (slug may be invalid)
+  [85/384] guardanthealth: 0 jobs (slug may be invalid)
+  [86/384] recursion: 0 jobs (slug may be invalid)
+  [87/384] veracyte: ERROR — name '_strip_html' is not defined
+  [88/384] benchling: 0 jobs (slug may be invalid)
+  [89/384] moderna: 0 jobs (slug may be invalid)
+  [90/384] 23andme: 0 jobs (slug may be invalid)
+  [91/384] tendo: 0 jobs (slug may be invalid)
+  [92/384] memora: 0 jobs (slug may be invalid)
+  [93/384] wellsky: 0 jobs (slug may be invalid)
+  [94/384] papacompanies: 0 jobs (slug may be invalid)
+  [95/384] vivahealth: 0 jobs (slug may be invalid)
+  [96/384] biofourmis: ERROR — name '_strip_html' is not defined
+  [97/384] ada: 0 jobs (slug may be invalid)
+  [98/384] buoy: 0 jobs (slug may be invalid)
+  [99/384] kindbody: 0 jobs (slug may be invalid)
+  [100/384] tia: ERROR — name '_strip_html' is not defined
+  [101/384] hims: 0 jobs (slug may be invalid)
+  [102/384] noom: 0 jobs (slug may be invalid)
+  [103/384] calm: ERROR — name '_strip_html' is not defined
+  [104/384] vidaheath: 0 jobs (slug may be invalid)
+  [105/384] sword: 0 jobs (slug may be invalid)
+  [106/384] kaiahealth: 0 jobs (slug may be invalid)
+  [107/384] ginger: 0 jobs (slug may be invalid)
+  [108/384] rula: 0 jobs (slug may be invalid)
+  [109/384] octave: ERROR — name '_strip_html' is not defined
+  [110/384] rightway: ERROR — name '_strip_html' is not defined
+  [111/384] centivo: 0 jobs (slug may be invalid)
+  [112/384] collectivehealth: ERROR — name '_strip_html' is not defined
+  [113/384] accolade: 0 jobs (slug may be invalid)
+  [114/384] evolenthealth: 0 jobs (slug may be invalid)
+  [115/384] iodine: 0 jobs (slug may be invalid)
+  [116/384] innovaccer: 0 jobs (slug may be invalid)
+  [117/384] cotiviti: 0 jobs (slug may be invalid)
+  [118/384] datavant: 0 jobs (slug may be invalid)
+  [119/384] trialspark: 0 jobs (slug may be invalid)
+  [120/384] paige: 0 jobs (slug may be invalid)
+  [121/384] pathai: ERROR — name '_strip_html' is not defined
+  [122/384] truveta: ERROR — name '_strip_html' is not defined
+  [123/384] athelas: 0 jobs (slug may be invalid)
+  [124/384] olive: 0 jobs (slug may be invalid)
+  [125/384] altopharmacy: 0 jobs (slug may be invalid)
+  [126/384] capsule: 0 jobs (slug may be invalid)
+  [127/384] vivante: 0 jobs (slug may be invalid)
+  [128/384] ?: ERROR — name '_strip_html' is not defined
+  [129/384] ?: 0 jobs (slug may be invalid)
+  [130/384] ?: ERROR — name '_strip_html' is not defined
+  [131/384] ?: ERROR — name '_strip_html' is not defined
+  [132/384] ?: ERROR — name '_strip_html' is not defined
+  [133/384] ?: ERROR — name '_strip_html' is not defined
+  [134/384] ?: ERROR — name '_strip_html' is not defined
+  [135/384] ?: ERROR — name '_strip_html' is not defined
+  [136/384] ?: ERROR — name '_strip_html' is not defined
+  [137/384] ?: ERROR — name '_strip_html' is not defined
+  [138/384] ?: 0 jobs (slug may be invalid)
+  [139/384] ?: 0 jobs (slug may be invalid)
+  [140/384] ?: ERROR — name '_strip_html' is not defined
+  [141/384] ?: ERROR — name '_strip_html' is not defined
+  [142/384] ?: 0 jobs (slug may be invalid)
+  [143/384] ?: 0 jobs (slug may be invalid)
+  [144/384] ?: ERROR — name '_strip_html' is not defined
+  [145/384] ?: ERROR — name '_strip_html' is not defined
+  [146/384] ?: 0 jobs (slug may be invalid)
+  [147/384] ?: 0 jobs (slug may be invalid)
+  [148/384] ?: 0 jobs (slug may be invalid)
+  [149/384] ?: 0 jobs (slug may be invalid)
+  [150/384] ?: 0 jobs (slug may be invalid)
+  [151/384] ?: ERROR — name '_strip_html' is not defined
+  [152/384] ?: ERROR — name '_strip_html' is not defined
+  [153/384] ?: 0 jobs (slug may be invalid)
+  [154/384] ?: 0 jobs (slug may be invalid)
+  [155/384] ?: ERROR — name '_strip_html' is not defined
+  [156/384] ?: 0 jobs (slug may be invalid)
+  [157/384] ?: ERROR — name '_strip_html' is not defined
+  [158/384] ?: ERROR — name '_strip_html' is not defined
+  [159/384] ?: 0 jobs (slug may be invalid)
+  [160/384] ?: ERROR — name '_strip_html' is not defined
+  [161/384] ?: 0 jobs (slug may be invalid)
+  [162/384] ?: 0 jobs (slug may be invalid)
+  [163/384] ?: ERROR — name '_strip_html' is not defined
+  [164/384] ?: ERROR — name '_strip_html' is not defined
+  [165/384] ?: 0 jobs (slug may be invalid)
+  [166/384] ?: 0 jobs (slug may be invalid)
+  [167/384] ?: ERROR — name '_strip_html' is not defined
+  [168/384] ?: 0 jobs (slug may be invalid)
+  [169/384] ?: 0 jobs (slug may be invalid)
+  [170/384] ?: 0 jobs (slug may be invalid)
+  [171/384] ?: 0 jobs (slug may be invalid)
+  [172/384] ?: 0 jobs (slug may be invalid)
+  [173/384] ?: 0 jobs (slug may be invalid)
+  [174/384] ?: ERROR — name '_strip_html' is not defined
+  [175/384] ?: 0 jobs (slug may be invalid)
+  [176/384] ?: 0 jobs (slug may be invalid)
+  [177/384] ?: ERROR — name '_strip_html' is not defined
+  [178/384] ?: 0 jobs (slug may be invalid)
+  [179/384] ?: 0 jobs (slug may be invalid)
+  [180/384] ?: 0 jobs (slug may be invalid)
+  [181/384] ?: 0 jobs (slug may be invalid)
+  [182/384] ?: 0 jobs (slug may be invalid)
+  [183/384] ?: 0 jobs (slug may be invalid)
+  [184/384] ?: 0 jobs (slug may be invalid)
+  [185/384] ?: 0 jobs (slug may be invalid)
+  [186/384] ?: ERROR — name '_strip_html' is not defined
+  [187/384] ?: 0 jobs (slug may be invalid)
+  [188/384] ?: 0 jobs (slug may be invalid)
+  [189/384] ?: ERROR — name '_strip_html' is not defined
+  [190/384] ?: 0 jobs (slug may be invalid)
+  [191/384] ?: 0 jobs (slug may be invalid)
+  [192/384] ?: ERROR — name '_strip_html' is not defined
+  [193/384] ?: 0 jobs (slug may be invalid)
+  [194/384] ?: ERROR — name '_strip_html' is not defined
+  [195/384] ?: ERROR — name '_strip_html' is not defined
+  [196/384] ?: 0 jobs (slug may be invalid)
+  [197/384] ?: 0 jobs (slug may be invalid)
+  [198/384] ?: 0 jobs (slug may be invalid)
+  [199/384] ?: 0 jobs (slug may be invalid)
+  [200/384] ?: 0 jobs (slug may be invalid)
+  [201/384] ?: ERROR — name '_strip_html' is not defined
+  [202/384] ?: ERROR — name '_strip_html' is not defined
+  [203/384] ?: 0 jobs (slug may be invalid)
+  [204/384] ?: 0 jobs (slug may be invalid)
+  [205/384] ?: 0 jobs (slug may be invalid)
+  [206/384] ?: 0 jobs (slug may be invalid)
+  [207/384] ?: 0 jobs (slug may be invalid)
+  [208/384] ?: 0 jobs (slug may be invalid)
+  [209/384] ?: ERROR — name '_strip_html' is not defined
+  [210/384] ?: 0 jobs (slug may be invalid)
+  [211/384] ?: 0 jobs (slug may be invalid)
+  [212/384] ?: 0 jobs (slug may be invalid)
+  [213/384] ?: 0 jobs (slug may be invalid)
+  [214/384] ?: 0 jobs (slug may be invalid)
+  [215/384] ?: 0 jobs (slug may be invalid)
+  [216/384] ?: 0 jobs (slug may be invalid)
+  [217/384] ?: 0 jobs (slug may be invalid)
+  [218/384] ?: 0 jobs (slug may be invalid)
+  [219/384] ?: 0 jobs (slug may be invalid)
+  [220/384] ripple: ERROR — name '_strip_html' is not defined
+  [221/384] figure-technologies: 0 jobs (slug may be invalid)
+  [222/384] wealthfront: 0 jobs (slug may be invalid)
+  [223/384] acorns: 0 jobs (slug may be invalid)
+  [224/384] blend-labs: 0 jobs (slug may be invalid)
+  [225/384] mambu: 0 jobs (slug may be invalid)
+  [226/384] upgrade: ERROR — name '_strip_html' is not defined
+  [227/384] nerdio: 0 jobs (slug may be invalid)
+  [228/384] complyadvantage: ERROR — name '_strip_html' is not defined
+  [229/384] anchorage-digital: 0 jobs (slug may be invalid)
+  [230/384] orca-security: 0 jobs (slug may be invalid)
+  [231/384] lemonade: 0 jobs (slug may be invalid)
+  [232/384] root-insurance: 0 jobs (slug may be invalid)
+  [233/384] oscar-health: 0 jobs (slug may be invalid)
+  [234/384] bright-health: 0 jobs (slug may be invalid)
+  [235/384] cityblock-health: 0 jobs (slug may be invalid)
+  [236/384] hims-hers: 0 jobs (slug may be invalid)
+  [237/384] virta-health: 0 jobs (slug may be invalid)
+  [238/384] omada-health: 0 jobs (slug may be invalid)
+  [239/384] headspace-health: 0 jobs (slug may be invalid)
+  [240/384] lyra-health: 0 jobs (slug may be invalid)
+  [241/384] spring-health: 0 jobs (slug may be invalid)
+  [242/384] devoted-health: 0 jobs (slug may be invalid)
+  [243/384] included-health: 0 jobs (slug may be invalid)
+  [244/384] waystar: 0 jobs (slug may be invalid)
+  [245/384] tempus-ai: 0 jobs (slug may be invalid)
+  [246/384] flatiron-health: 0 jobs (slug may be invalid)
+  [247/384] komodo-health: 0 jobs (slug may be invalid)
+  [248/384] collective-health: 0 jobs (slug may be invalid)
+  [249/384] cohere-health: 0 jobs (slug may be invalid)
+  [250/384] maven-clinic: 0 jobs (slug may be invalid)
+  [251/384] altruist: ERROR — name '_strip_html' is not defined
+  [252/384] argyle: 0 jobs (slug may be invalid)
+  [253/384] melio-payments: 0 jobs (slug may be invalid)
+  [254/384] nuvei: 0 jobs (slug may be invalid)
+  [255/384] trm-labs: 0 jobs (slug may be invalid)
+  [256/384] chainalysis: 0 jobs (slug may be invalid)
+  [257/384] hinge-health: 0 jobs (slug may be invalid)
+  [258/384] sword-health: 0 jobs (slug may be invalid)
+  [259/384] k-health: 0 jobs (slug may be invalid)
+  [260/384] grow-therapy: 0 jobs (slug may be invalid)
+  [261/384] veeva-systems: 0 jobs (slug may be invalid)
+  [262/384] definitive-healthcare: 0 jobs (slug may be invalid)
+  [263/384] teladoc-health: 0 jobs (slug may be invalid)
+  [264/384] bright-health-group: 0 jobs (slug may be invalid)
+  [265/384] clover-health: 0 jobs (slug may be invalid)
+  [266/384] alignment-healthcare: 0 jobs (slug may be invalid)
+  [267/384] carrot-fertility: 0 jobs (slug may be invalid)
+  [268/384] modern-health: 0 jobs (slug may be invalid)
+  [269/384] livongo: 0 jobs (slug may be invalid)
+  [270/384] pear-therapeutics: 0 jobs (slug may be invalid)
+  [271/384] akili-interactive: 0 jobs (slug may be invalid)
+  [272/384] big-health: 0 jobs (slug may be invalid)
+  [273/384] athenahealth: 0 jobs (slug may be invalid)
+  [274/384] greenway-health: 0 jobs (slug may be invalid)
+  [275/384] practice-fusion: 0 jobs (slug may be invalid)
+  [276/384] kareo: 0 jobs (slug may be invalid)
+  [277/384] tebra: ERROR — name '_strip_html' is not defined
+  [278/384] modernizing-medicine: 0 jobs (slug may be invalid)
+  [279/384] nextech-systems: 0 jobs (slug may be invalid)
+  [280/384] srs-health: 0 jobs (slug may be invalid)
+  [281/384] veradigm: 0 jobs (slug may be invalid)
+  [282/384] vatic-health: 0 jobs (slug may be invalid)
+  [283/384] iodine-software: 0 jobs (slug may be invalid)
+  [284/384] augmedix: 0 jobs (slug may be invalid)
+  [285/384] notable-health: 0 jobs (slug may be invalid)
+  [286/384] olive-ai: 0 jobs (slug may be invalid)
+  [287/384] health-catalyst: 0 jobs (slug may be invalid)
+  [288/384] arcadia: 0 jobs (slug may be invalid)
+  [289/384] carta-healthcare: 0 jobs (slug may be invalid)
+  [290/384] saama-technologies: 0 jobs (slug may be invalid)
+  [291/384] castor: 0 jobs (slug may be invalid)
+  [292/384] florence-healthcare: 0 jobs (slug may be invalid)
+  [293/384] reify-health: 0 jobs (slug may be invalid)
+  [294/384] suvoda: ERROR — name '_strip_html' is not defined
+  [295/384] foundation-medicine: 0 jobs (slug may be invalid)
+  [296/384] colorgenomics: 0 jobs (slug may be invalid)
+  [297/384] invitae: 0 jobs (slug may be invalid)
+  [298/384] helix: 0 jobs (slug may be invalid)
+  [299/384] ancestry: 0 jobs (slug may be invalid)
+  [300/384] verana-health: 0 jobs (slug may be invalid)
+  [301/384] om1: 0 jobs (slug may be invalid)
+  [302/384] prescryptive-health: 0 jobs (slug may be invalid)
+  [303/384] goodrx: 0 jobs (slug may be invalid)
+  [304/384] alto-pharmacy: 0 jobs (slug may be invalid)
+  [305/384] truepill: 0 jobs (slug may be invalid)
+  [306/384] honeybee-health: 0 jobs (slug may be invalid)
+  [307/384] drfirst: 0 jobs (slug may be invalid)
+  [308/384] rx-savings-solutions: 0 jobs (slug may be invalid)
+  [309/384] phreesia: 0 jobs (slug may be invalid)
+  [310/384] solv-health: 0 jobs (slug may be invalid)
+  [311/384] galileo-health: 0 jobs (slug may be invalid)
+  [312/384] plushcare: 0 jobs (slug may be invalid)
+  [313/384] sesame-care: 0 jobs (slug may be invalid)
+  [314/384] heal: 0 jobs (slug may be invalid)
+  [315/384] doctor-on-demand: 0 jobs (slug may be invalid)
+  [316/384] hello-heart: 0 jobs (slug may be invalid)
+  [317/384] kaia-health: 0 jobs (slug may be invalid)
+  [318/384] vida-health: 0 jobs (slug may be invalid)
+  [319/384] talkspace: ERROR — name '_strip_html' is not defined
+  [320/384] betterhelp: ERROR — name '_strip_html' is not defined
+  [321/384] found: ERROR — name '_strip_html' is not defined
+  [322/384] cala-health: 0 jobs (slug may be invalid)
+  [323/384] akasa: 0 jobs (slug may be invalid)
+  [324/384] vyne-dental: 0 jobs (slug may be invalid)
+  [325/384] sana-benefits: 0 jobs (slug may be invalid)
+  [326/384] decent: 0 jobs (slug may be invalid)
+  [327/384] imagine-pediatrics: 0 jobs (slug may be invalid)
+  [328/384] forward: ERROR — name '_strip_html' is not defined
+  [329/384] iora-health: 0 jobs (slug may be invalid)
+  [330/384] aledade: 0 jobs (slug may be invalid)
+  [331/384] strive: 0 jobs (slug may be invalid)
+  [332/384] priviahealth: 0 jobs (slug may be invalid)
+  [333/384] pearlhealth: 0 jobs (slug may be invalid)
+  [334/384] lyrichealth: 0 jobs (slug may be invalid)
+  [335/384] healthedge: 0 jobs (slug may be invalid)
+  [336/384] aetion: 0 jobs (slug may be invalid)
+  [337/384] healthverity: ERROR — name '_strip_html' is not defined
+  [338/384] apixio: 0 jobs (slug may be invalid)
+  [339/384] cleardata: 0 jobs (slug may be invalid)
+  [340/384] hippocraticai: 0 jobs (slug may be invalid)
+  [341/384] memora-health: 0 jobs (slug may be invalid)
+  [342/384] sprinterhealth: 0 jobs (slug may be invalid)
+  [343/384] tomorrow-health: 0 jobs (slug may be invalid)
+  [344/384] calibrate: 0 jobs (slug may be invalid)
+  [345/384] oakstreethealth: 0 jobs (slug may be invalid)
+  [346/384] vivantehealth: 0 jobs (slug may be invalid)
+  [347/384] natera: ERROR — name '_strip_html' is not defined
+  [348/384] medable: 0 jobs (slug may be invalid)
+  [349/384] brighthealth: 0 jobs (slug may be invalid)
+  [350/384] landmarkhealth: 0 jobs (slug may be invalid)
+  [351/384] agilonhealth: 0 jobs (slug may be invalid)
+  [352/384] signifyhealth: 0 jobs (slug may be invalid)
+  [353/384] lifestancehealth: 0 jobs (slug may be invalid)
+  [354/384] 98point6: 0 jobs (slug may be invalid)
+  [355/384] bindon-demandhealth: 0 jobs (slug may be invalid)
+  [356/384] brighthealthcare: 0 jobs (slug may be invalid)
+  [357/384] gravie: 0 jobs (slug may be invalid)
+  [358/384] zelis: 0 jobs (slug may be invalid)
+  [359/384] castlighthealth: 0 jobs (slug may be invalid)
+  [360/384] 10xgenomics: ERROR — name '_strip_html' is not defined
+  [361/384] pacificbiosciences: 0 jobs (slug may be invalid)
+  [362/384] adaptivebiotech: 0 jobs (slug may be invalid)
+  [363/384] grail: 0 jobs (slug may be invalid)
+  [364/384] bamboohealth: 0 jobs (slug may be invalid)
+  [365/384] tandemdiabetes: 0 jobs (slug may be invalid)
+  [366/384] dexcare: 0 jobs (slug may be invalid)
+  [367/384] shiftmed: 0 jobs (slug may be invalid)
+  [368/384] dispatchhealth: 0 jobs (slug may be invalid)
+  [369/384] uniteus: ERROR — name '_strip_html' is not defined
+  [370/384] notablehealth: 0 jobs (slug may be invalid)
+  [371/384] vizai: 0 jobs (slug may be invalid)
+  [372/384] insitro: 0 jobs (slug may be invalid)
+  [373/384] recursionpharma: 0 jobs (slug may be invalid)
+  [374/384] editasmedicine: 0 jobs (slug may be invalid)
+  [375/384] intelliatx: 0 jobs (slug may be invalid)
+  [376/384] sagerx: 0 jobs (slug may be invalid)
+  [377/384] ultragenyx: 0 jobs (slug may be invalid)
+  [378/384] ginkgobioworks: ERROR — name '_strip_html' is not defined
+  [379/384] sanabiotechnology: 0 jobs (slug may be invalid)
+  [380/384] denalitherapeutics: 0 jobs (slug may be invalid)
+  [381/384] slalomconsulting: 0 jobs (slug may be invalid)
+  [382/384] rewst: 0 jobs (slug may be invalid)
+  [383/384] klara: 0 jobs (slug may be invalid)
+  [384/384] laseraway: 0 jobs (slug may be invalid)
+
+[lever] 118 companies
+  [1/118] SprinterHealth: 0 jobs (slug may be invalid)
+  [2/118] CollectlyInc: ERROR — name '_strip_html' is not defined
+  [3/118] canvasmedical: ERROR — name '_strip_html' is not defined
+  [4/118] zushealth: ERROR — name '_strip_html' is not defined
+  [5/118] januaryinc: ERROR — name '_strip_html' is not defined
+  [6/118] RyzLabs: ERROR — name '_strip_html' is not defined
+  [7/118] heartbeathealth: ERROR — name '_strip_html' is not defined
+  [8/118] circadiahealth: ERROR — name '_strip_html' is not defined
+  [9/118] artera-2: ERROR — name '_strip_html' is not defined
+  [10/118] whoop: ERROR — name '_strip_html' is not defined
+  [11/118] caremessage: ERROR — name '_strip_html' is not defined
+  [12/118] h1: ERROR — name '_strip_html' is not defined
+  [13/118] mcra: 0 jobs (slug may be invalid)
+  [14/118] aledade: ERROR — name '_strip_html' is not defined
+  [15/118] includedhealth: ERROR — name '_strip_html' is not defined
+  [16/118] lyrahealth: ERROR — name '_strip_html' is not defined
+  [17/118] glooko: 0 jobs (slug may be invalid)
+  [18/118] truepill: 0 jobs (slug may be invalid)
+  [19/118] talkiatry: 0 jobs (slug may be invalid)
+  [20/118] datavant: 0 jobs (slug may be invalid)
+  [21/118] ribbonhealth: 0 jobs (slug may be invalid)
+  [22/118] alma: 0 jobs (slug may be invalid)
+  [23/118] headway: 0 jobs (slug may be invalid)
+  [24/118] betterup: 0 jobs (slug may be invalid)
+  [25/118] noom: 0 jobs (slug may be invalid)
+  [26/118] calm: 0 jobs (slug may be invalid)
+  [27/118] verily: 0 jobs (slug may be invalid)
+  [28/118] neuralink: 0 jobs (slug may be invalid)
+  [29/118] ?: ERROR — name '_strip_html' is not defined
+  [30/118] ?: 0 jobs (slug may be invalid)
+  [31/118] ?: 0 jobs (slug may be invalid)
+  [32/118] ?: 0 jobs (slug may be invalid)
+  [33/118] ?: 0 jobs (slug may be invalid)
+  [34/118] ?: 0 jobs (slug may be invalid)
+  [35/118] ?: 0 jobs (slug may be invalid)
+  [36/118] ?: 0 jobs (slug may be invalid)
+  [37/118] ?: 0 jobs (slug may be invalid)
+  [38/118] ?: 0 jobs (slug may be invalid)
+  [39/118] ?: 0 jobs (slug may be invalid)
+  [40/118] ?: 0 jobs (slug may be invalid)
+  [41/118] ?: 0 jobs (slug may be invalid)
+  [42/118] ?: 0 jobs (slug may be invalid)
+  [43/118] ?: ERROR — name '_strip_html' is not defined
+  [44/118] ?: ERROR — name '_strip_html' is not defined
+  [45/118] ?: 0 jobs (slug may be invalid)
+  [46/118] ?: 0 jobs (slug may be invalid)
+  [47/118] ?: 0 jobs (slug may be invalid)
+  [48/118] ?: 0 jobs (slug may be invalid)
+  [49/118] ?: 0 jobs (slug may be invalid)
+  [50/118] ?: 0 jobs (slug may be invalid)
+  [51/118] ?: 0 jobs (slug may be invalid)
+  [52/118] ?: 0 jobs (slug may be invalid)
+  [53/118] ?: 0 jobs (slug may be invalid)
+  [54/118] ?: 0 jobs (slug may be invalid)
+  [55/118] ?: 0 jobs (slug may be invalid)
+  [56/118] ?: 0 jobs (slug may be invalid)
+  [57/118] ?: 0 jobs (slug may be invalid)
+  [58/118] ?: ERROR — name '_strip_html' is not defined
+  [59/118] ?: 0 jobs (slug may be invalid)
+  [60/118] ?: 0 jobs (slug may be invalid)
+  [61/118] ?: 0 jobs (slug may be invalid)
+  [62/118] plaid: 0 jobs (slug may be invalid)
+  [63/118] stash-financial: 0 jobs (slug may be invalid)
+  [64/118] pipe-technologies: 0 jobs (slug may be invalid)
+  [65/118] patientco: 0 jobs (slug may be invalid)
+  [66/118] arcadia: ERROR — name '_strip_html' is not defined
+  [67/118] eden-health: 0 jobs (slug may be invalid)
+  [68/118] elation-health: 0 jobs (slug may be invalid)
+  [69/118] calibrate: 0 jobs (slug may be invalid)
+  [70/118] mezmo: 0 jobs (slug may be invalid)
+  [71/118] treasury-prime: 0 jobs (slug may be invalid)
+  [72/118] array: 0 jobs (slug may be invalid)
+  [73/118] featurespace: 0 jobs (slug may be invalid)
+  [74/118] hyperproof: 0 jobs (slug may be invalid)
+  [75/118] curai-health: 0 jobs (slug may be invalid)
+  [76/118] firefly-health: 0 jobs (slug may be invalid)
+  [77/118] equip-health: 0 jobs (slug may be invalid)
+  [78/118] hyro: 0 jobs (slug may be invalid)
+  [79/118] wayspring: 0 jobs (slug may be invalid)
+  [80/118] vaticahealth: 0 jobs (slug may be invalid)
+  [81/118] curai: ERROR — name '_strip_html' is not defined
+  [82/118] forgehealth: 0 jobs (slug may be invalid)
+  [83/118] wellth: 0 jobs (slug may be invalid)
+  [84/118] commure: 0 jobs (slug may be invalid)
+  [85/118] curanahealth: 0 jobs (slug may be invalid)
+  [86/118] redoxengine: ERROR — name '_strip_html' is not defined
+  [87/118] trinetx: 0 jobs (slug may be invalid)
+  [88/118] healthtap: 0 jobs (slug may be invalid)
+  [89/118] sidecarhealth: 0 jobs (slug may be invalid)
+  [90/118] wellthy: 0 jobs (slug may be invalid)
+  [91/118] podimetrics: 0 jobs (slug may be invalid)
+  [92/118] evidation: 0 jobs (slug may be invalid)
+  [93/118] drchrono: 0 jobs (slug may be invalid)
+  [94/118] elationhealth: 0 jobs (slug may be invalid)
+  [95/118] patientping: 0 jobs (slug may be invalid)
+  [96/118] healthgorilla: 0 jobs (slug may be invalid)
+  [97/118] 1uphealth: 0 jobs (slug may be invalid)
+  [98/118] protenus: 0 jobs (slug may be invalid)
+  [99/118] zoomcare: 0 jobs (slug may be invalid)
+  [100/118] patientpop: 0 jobs (slug may be invalid)
+  [101/118] stratadecision: 0 jobs (slug may be invalid)
+  [102/118] medely: 0 jobs (slug may be invalid)
+  [103/118] trustedhealth: 0 jobs (slug may be invalid)
+  [104/118] incrediblehealth: 0 jobs (slug may be invalid)
+  [105/118] carerev: 0 jobs (slug may be invalid)
+  [106/118] wheel: 0 jobs (slug may be invalid)
+  [107/118] caredox: 0 jobs (slug may be invalid)
+  [108/118] wingspanhealth: 0 jobs (slug may be invalid)
+  [109/118] codametrix: 0 jobs (slug may be invalid)
+  [110/118] suki: 0 jobs (slug may be invalid)
+  [111/118] deepscribe: 0 jobs (slug may be invalid)
+  [112/118] aidoc: 0 jobs (slug may be invalid)
+  [113/118] paige: 0 jobs (slug may be invalid)
+  [114/118] pathai: 0 jobs (slug may be invalid)
+  [115/118] abcellera: 0 jobs (slug may be invalid)
+  [116/118] arsenalbio: ERROR — name '_strip_html' is not defined
+  [117/118] kallyope: 0 jobs (slug may be invalid)
+  [118/118] eliseai: 0 jobs (slug may be invalid)
+
+[ashby] 74 companies
+  [1/74] Graphitehq: 0 jobs (slug may be invalid)
+  [2/74] maximustribe: ERROR — name '_strip_html' is not defined
+  [3/74] codes-health: ERROR — name '_strip_html' is not defined
+  [4/74] heidihealth.com.au: ERROR — name '_strip_html' is not defined
+  [5/74] Interrahealth: 0 jobs (slug may be invalid)
+  [6/74] fitt: ERROR — name '_strip_html' is not defined
+  [7/74] lark: ERROR — name '_strip_html' is not defined
+  [8/74] virtahealth: ERROR — name '_strip_html' is not defined
+  [9/74] Healthtech-1: ERROR — name '_strip_html' is not defined
+  [10/74] tandem-health: ERROR — name '_strip_html' is not defined
+  [11/74] Aios: 0 jobs (slug may be invalid)
+  [12/74] you-health: ERROR — name '_strip_html' is not defined
+  [13/74] versemedical: 0 jobs (slug may be invalid)
+  [14/74] abridge: 0 jobs (slug may be invalid)
+  [15/74] decagon: ERROR — name '_strip_html' is not defined
+  [16/74] rad-ai: 0 jobs (slug may be invalid)
+  [17/74] ramphealth: 0 jobs (slug may be invalid)
+  [18/74] ?: 0 jobs (slug may be invalid)
+  [19/74] ?: 0 jobs (slug may be invalid)
+  [20/74] ?: 0 jobs (slug may be invalid)
+  [21/74] ?: 0 jobs (slug may be invalid)
+  [22/74] ?: 0 jobs (slug may be invalid)
+  [23/74] ?: 0 jobs (slug may be invalid)
+  [24/74] ?: 0 jobs (slug may be invalid)
+  [25/74] ?: 0 jobs (slug may be invalid)
+  [26/74] ?: 0 jobs (slug may be invalid)
+  [27/74] ?: ERROR — name '_strip_html' is not defined
+  [28/74] ?: 0 jobs (slug may be invalid)
+  [29/74] ?: 0 jobs (slug may be invalid)
+  [30/74] ?: 0 jobs (slug may be invalid)
+  [31/74] ?: 0 jobs (slug may be invalid)
+  [32/74] ?: 0 jobs (slug may be invalid)
+  [33/74] ?: 0 jobs (slug may be invalid)
+  [34/74] ?: 0 jobs (slug may be invalid)
+  [35/74] ?: 0 jobs (slug may be invalid)
+  [36/74] ?: 0 jobs (slug may be invalid)
+  [37/74] ?: 0 jobs (slug may be invalid)
+  [38/74] ?: 0 jobs (slug may be invalid)
+  [39/74] ?: 0 jobs (slug may be invalid)
+  [40/74] ?: 0 jobs (slug may be invalid)
+  [41/74] ?: 0 jobs (slug may be invalid)
+  [42/74] ?: 0 jobs (slug may be invalid)
+  [43/74] ?: 0 jobs (slug may be invalid)
+  [44/74] ?: 0 jobs (slug may be invalid)
+  [45/74] ?: 0 jobs (slug may be invalid)
+  [46/74] ?: ERROR — name '_strip_html' is not defined
+  [47/74] ?: ERROR — name '_strip_html' is not defined
+  [48/74] ?: 0 jobs (slug may be invalid)
+  [49/74] unit21: 0 jobs (slug may be invalid)
+  [50/74] hummingbird: 0 jobs (slug may be invalid)
+  [51/74] turquoise-health: ERROR — name '_strip_html' is not defined
+  [52/74] candid-health: 0 jobs (slug may be invalid)
+  [53/74] rhyme: 0 jobs (slug may be invalid)
+  [54/74] ribbon-health: 0 jobs (slug may be invalid)
+  [55/74] particle-health: 0 jobs (slug may be invalid)
+  [56/74] canvas-medical: ERROR — name '_strip_html' is not defined
+  [57/74] junction-health: 0 jobs (slug may be invalid)
+  [58/74] vitable-health: 0 jobs (slug may be invalid)
+  [59/74] monarch-money: 0 jobs (slug may be invalid)
+  [60/74] farther-finance: 0 jobs (slug may be invalid)
+  [61/74] compound-planning: 0 jobs (slug may be invalid)
+  [62/74] lithic: 0 jobs (slug may be invalid)
+  [63/74] unit-finance: 0 jobs (slug may be invalid)
+  [64/74] synctera: ERROR — name '_strip_html' is not defined
+  [65/74] column-tax: 0 jobs (slug may be invalid)
+  [66/74] atomic-financial: 0 jobs (slug may be invalid)
+  [67/74] pinwheel: 0 jobs (slug may be invalid)
+  [68/74] methodfi: 0 jobs (slug may be invalid)
+  [69/74] zeal: 0 jobs (slug may be invalid)
+  [70/74] vanta: 0 jobs (slug may be invalid)
+  [71/74] forhims: 0 jobs (slug may be invalid)
+  [72/74] stedi: 0 jobs (slug may be invalid)
+  [73/74] spark-advisors: 0 jobs (slug may be invalid)
+  [74/74] violet: 0 jobs (slug may be invalid)
+
+[workable] 32 companies
+  [1/32] ?: 0 jobs (slug may be invalid)
+  [2/32] ?: 0 jobs (slug may be invalid)
+  [3/32] ?: 0 jobs (slug may be invalid)
+  [4/32] ?: 0 jobs (slug may be invalid)
+  [5/32] ?: 0 jobs (slug may be invalid)
+  [6/32] ?: 0 jobs (slug may be invalid)
+  [7/32] ?: 0 jobs (slug may be invalid)
+  [8/32] ?: 0 jobs (slug may be invalid)
+  [9/32] ?: 0 jobs (slug may be invalid)
+  [10/32] ?: 0 jobs (slug may be invalid)
+  [11/32] ?: 0 jobs (slug may be invalid)
+  [12/32] ?: 0 jobs (slug may be invalid)
+  [13/32] ?: 0 jobs (slug may be invalid)
+  [14/32] ?: 0 jobs (slug may be invalid)
+  [15/32] ?: 0 jobs (slug may be invalid)
+  [16/32] ?: 0 jobs (slug may be invalid)
+  [17/32] ?: 0 jobs (slug may be invalid)
+  [18/32] ?: 0 jobs (slug may be invalid)
+  [19/32] ?: 0 jobs (slug may be invalid)
+  [20/32] ?: 0 jobs (slug may be invalid)
+  [21/32] ?: 0 jobs (slug may be invalid)
+  [22/32] ?: 0 jobs (slug may be invalid)
+  [23/32] ?: 0 jobs (slug may be invalid)
+  [24/32] ?: 0 jobs (slug may be invalid)
+  [25/32] ?: 0 jobs (slug may be invalid)
+  [26/32] ?: 0 jobs (slug may be invalid)
+  [27/32] ?: 0 jobs (slug may be invalid)
+  [28/32] ?: 0 jobs (slug may be invalid)
+  [29/32] ?: 0 jobs (slug may be invalid)
+  [30/32] ?: 0 jobs (slug may be invalid)
+  [31/32] ?: 0 jobs (slug may be invalid)
+  [32/32] charm-health: 0 jobs (slug may be invalid)
+
+[workday] 124 companies
+  [1/124] Pfizer: ERROR — name 'time' is not defined
+  [2/124] Merck (MSD): ERROR — name 'time' is not defined
+  [3/124] CVS Health: ERROR — name 'time' is not defined
+  [4/124] Capital One: ERROR — name 'time' is not defined
+  [5/124] Wells Fargo: ERROR — name 'time' is not defined
+  [6/124] Bank of America: ERROR — name 'time' is not defined
+  [7/124] Citi: ERROR — name 'time' is not defined
+  [8/124] Morgan Stanley: ERROR — name 'time' is not defined
+  [9/124] American Express: 0 jobs (slug may be invalid)
+  [10/124] BlackRock: 0 jobs (slug may be invalid)
+  [11/124] Charles Schwab: 0 jobs (slug may be invalid)
+  [12/124] TD Bank: ERROR — name 'time' is not defined
+  [13/124] BMO Financial Group: ERROR — name 'time' is not defined
+  [14/124] Truist: 0 jobs (slug may be invalid)
+  [15/124] PNC: 0 jobs (slug may be invalid)
+  [16/124] US Bank: ERROR — name 'time' is not defined
+  [17/124] MUFG Americas: ERROR — name 'time' is not defined
+  [18/124] Mizuho Americas: ERROR — name 'time' is not defined
+  [19/124] Flagstar Bank: ERROR — name 'time' is not defined
+  [20/124] S&P Global: ERROR — name 'time' is not defined
+  [21/124] Protiviti: ERROR — name 'time' is not defined
+  [22/124] FIS Global: ERROR — name 'time' is not defined
+  [23/124] Fiserv: ERROR — name 'time' is not defined
+  [24/124] Regions Financial: ERROR — name 'time' is not defined
+  [25/124] UnitedHealth Group: 0 jobs (slug may be invalid)
+  [26/124] Elevance Health: 0 jobs (slug may be invalid)
+  [27/124] Humana: ERROR — name 'time' is not defined
+  [28/124] Cigna: 0 jobs (slug may be invalid)
+  [29/124] Centene: 0 jobs (slug may be invalid)
+  [30/124] Molina Healthcare: 0 jobs (slug may be invalid)
+  [31/124] Johnson & Johnson: 0 jobs (slug may be invalid)
+  [32/124] AbbVie: 0 jobs (slug may be invalid)
+  [33/124] Eli Lilly: ERROR — name 'time' is not defined
+  [34/124] Bristol Myers Squibb: 0 jobs (slug may be invalid)
+  [35/124] Gilead Sciences: ERROR — name 'time' is not defined
+  [36/124] Amgen: 0 jobs (slug may be invalid)
+  [37/124] Sanofi: ERROR — name 'time' is not defined
+  [38/124] Regeneron: 0 jobs (slug may be invalid)
+  [39/124] Takeda: 0 jobs (slug may be invalid)
+  [40/124] Kaiser Permanente: 0 jobs (slug may be invalid)
+  [41/124] HCA Healthcare: 0 jobs (slug may be invalid)
+  [42/124] Providence Health: 0 jobs (slug may be invalid)
+  [43/124] AdventHealth: 0 jobs (slug may be invalid)
+  [44/124] Mayo Clinic: 0 jobs (slug may be invalid)
+  [45/124] Veeva Systems (full): 0 jobs (slug may be invalid)
+  [46/124] Oracle Health (Cerner): 0 jobs (slug may be invalid)
+  [47/124] Medtronic: 0 jobs (slug may be invalid)
+  [48/124] Boston Scientific: 0 jobs (slug may be invalid)
+  [49/124] Abbott: ERROR — name 'time' is not defined
+  [50/124] Centene Corporation: 0 jobs (slug may be invalid)
+  [51/124] Molina Healthcare: 0 jobs (slug may be invalid)
+  [52/124] Teladoc Health: 0 jobs (slug may be invalid)
+  [53/124] HealthEquity: 0 jobs (slug may be invalid)
+  [54/124] Exact Sciences: 0 jobs (slug may be invalid)
+  [55/124] IQVIA: 0 jobs (slug may be invalid)
+  [56/124] Cerner: 0 jobs (slug may be invalid)
+  [57/124] Change Healthcare: 0 jobs (slug may be invalid)
+  [58/124] Point32Health: 0 jobs (slug may be invalid)
+  [59/124] Blue Shield of California: 0 jobs (slug may be invalid)
+  [60/124] Independence Blue Cross: 0 jobs (slug may be invalid)
+  [61/124] Blue Cross Blue Shield of Michigan: 0 jobs (slug may be invalid)
+  [62/124] Highmark Health: 0 jobs (slug may be invalid)
+  [63/124] Horizon Blue Cross Blue Shield: 0 jobs (slug may be invalid)
+  [64/124] Health Care Service Corporation: 0 jobs (slug may be invalid)
+  [65/124] Kaiser Permanente: 0 jobs (slug may be invalid)
+  [66/124] Intermountain Healthcare: 0 jobs (slug may be invalid)
+  [67/124] Cleveland Clinic: 0 jobs (slug may be invalid)
+  [68/124] Mayo Clinic: 0 jobs (slug may be invalid)
+  [69/124] Providence: 0 jobs (slug may be invalid)
+  [70/124] CommonSpirit Health: 0 jobs (slug may be invalid)
+  [71/124] Trinity Health: 0 jobs (slug may be invalid)
+  [72/124] Advocate Aurora Health: 0 jobs (slug may be invalid)
+  [73/124] Ascension: 0 jobs (slug may be invalid)
+  [74/124] HCA Healthcare: 0 jobs (slug may be invalid)
+  [75/124] Tenet Healthcare: 0 jobs (slug may be invalid)
+  [76/124] Sutter Health: 0 jobs (slug may be invalid)
+  [77/124] Banner Health: 0 jobs (slug may be invalid)
+  [78/124] Atrium Health: 0 jobs (slug may be invalid)
+  [79/124] NYU Langone Health: 0 jobs (slug may be invalid)
+  [80/124] Mass General Brigham: 0 jobs (slug may be invalid)
+  [81/124] Penn Medicine: 0 jobs (slug may be invalid)
+  [82/124] Johns Hopkins Medicine: 0 jobs (slug may be invalid)
+  [83/124] NewYork-Presbyterian Hospital: 0 jobs (slug may be invalid)
+  [84/124] Northwell Health: 0 jobs (slug may be invalid)
+  [85/124] Ochsner Health: 0 jobs (slug may be invalid)
+  [86/124] Stanford Health Care: 0 jobs (slug may be invalid)
+  [87/124] UCLA Health: 0 jobs (slug may be invalid)
+  [88/124] UCSF Health: 0 jobs (slug may be invalid)
+  [89/124] Cedars-Sinai: 0 jobs (slug may be invalid)
+  [90/124] Baylor Scott & White Health: 0 jobs (slug may be invalid)
+  [91/124] Houston Methodist: 0 jobs (slug may be invalid)
+  [92/124] Sanford Health: 0 jobs (slug may be invalid)
+  [93/124] OhioHealth: 0 jobs (slug may be invalid)
+  [94/124] Inova Health System: 0 jobs (slug may be invalid)
+  [95/124] Novant Health: 0 jobs (slug may be invalid)
+  [96/124] ChristianaCare: 0 jobs (slug may be invalid)
+  [97/124] RWJBarnabas Health: 0 jobs (slug may be invalid)
+  [98/124] Geisinger: 0 jobs (slug may be invalid)
+  [99/124] AdventHealth: 0 jobs (slug may be invalid)
+  [100/124] Humana: 0 jobs (slug may be invalid)
+  [101/124] Illumina: 0 jobs (slug may be invalid)
+  [102/124] Dexcom: 0 jobs (slug may be invalid)
+  [103/124] Insulet: 0 jobs (slug may be invalid)
+  [104/124] Moderna: 0 jobs (slug may be invalid)
+  [105/124] BioNTech: 0 jobs (slug may be invalid)
+  [106/124] Alnylam Pharmaceuticals: 0 jobs (slug may be invalid)
+  [107/124] Neurocrine Biosciences: 0 jobs (slug may be invalid)
+  [108/124] Vertex Pharmaceuticals: 0 jobs (slug may be invalid)
+  [109/124] Veradigm: 0 jobs (slug may be invalid)
+  [110/124] Athenahealth: 0 jobs (slug may be invalid)
+  [111/124] Inovalon: 0 jobs (slug may be invalid)
+  [112/124] Webster Bank: 0 jobs (slug may be invalid)
+  [113/124] Western Alliance Bank: 0 jobs (slug may be invalid)
+  [114/124] Cadence Bank: 0 jobs (slug may be invalid)
+  [115/124] Capco: 0 jobs (slug may be invalid)
+  [116/124] Slalom Consulting: 0 jobs (slug may be invalid)
+  [117/124] Crowe LLP: 0 jobs (slug may be invalid)
+  [118/124] RSM US: 0 jobs (slug may be invalid)
+  [119/124] Moody's Analytics: 0 jobs (slug may be invalid)
+  [120/124] FTI Consulting: 0 jobs (slug may be invalid)
+  [121/124] Protiviti: 0 jobs (slug may be invalid)
+  [122/124] veracyte: 0 jobs (slug may be invalid)
+  [123/124] apexon: 0 jobs (slug may be invalid)
+  [124/124] teladoc-health-ventures: 0 jobs (slug may be invalid)
+
+[wttj] 31 companies
+  [1/31] Zocdoc: 0 jobs (slug may be invalid)
+  [2/31] Doximity: 0 jobs (slug may be invalid)
+  [3/31] Komodo Health: 0 jobs (slug may be invalid)
+  [4/31] Definitive Healthcare: 0 jobs (slug may be invalid)
+  [5/31] Hinge Health: 0 jobs (slug may be invalid)
+  [6/31] Tempus: 0 jobs (slug may be invalid)
+  [7/31] Kyruus: 0 jobs (slug may be invalid)
+  [8/31] Included Health: 0 jobs (slug may be invalid)
+  [9/31] Omada Health: 0 jobs (slug may be invalid)
+  [10/31] Cedar: 0 jobs (slug may be invalid)
+  [11/31] Particle Health: 0 jobs (slug may be invalid)
+  [12/31] Medallion: 0 jobs (slug may be invalid)
+  [13/31] Sword Health: 0 jobs (slug may be invalid)
+  [14/31] Clarify Health: 0 jobs (slug may be invalid)
+  [15/31] Innovaccer: 0 jobs (slug may be invalid)
+  [16/31] Rightway Healthcare: 0 jobs (slug may be invalid)
+  [17/31] Texas Capital Bank: 0 jobs (slug may be invalid)
+  [18/31] Synovus Financial: 0 jobs (slug may be invalid)
+  [19/31] Atlantic Union Bankshares: 0 jobs (slug may be invalid)
+  [20/31] Cullen/Frost Bankers: 0 jobs (slug may be invalid)
+  [21/31] West Monroe Partners: 0 jobs (slug may be invalid)
+  [22/31] AuditBoard: 0 jobs (slug may be invalid)
+  [23/31] LogicGate: 0 jobs (slug may be invalid)
+  [24/31] ProcessUnity: 0 jobs (slug may be invalid)
+  [25/31] Resolver: 0 jobs (slug may be invalid)
+  [26/31] Aravo Solutions: 0 jobs (slug may be invalid)
+  [27/31] Riskonnect: 0 jobs (slug may be invalid)
+  [28/31] Alloy: 0 jobs (slug may be invalid)
+  [29/31] Sardine: 0 jobs (slug may be invalid)
+  [30/31] Middesk: 0 jobs (slug may be invalid)
+  [31/31] Column Financial: 0 jobs (slug may be invalid)
+
+[icims] 31 companies
+  [1/31] ?: 0 jobs (slug may be invalid)
+  [2/31] ?: 0 jobs (slug may be invalid)
+  [3/31] ?: 0 jobs (slug may be invalid)
+  [4/31] ?: 0 jobs (slug may be invalid)
+  [5/31] ?: 0 jobs (slug may be invalid)
+  [6/31] ?: 0 jobs (slug may be invalid)
+  [7/31] ?: 0 jobs (slug may be invalid)
+  [8/31] ?: 0 jobs (slug may be invalid)
+  [9/31] ?: 0 jobs (slug may be invalid)
+  [10/31] ?: 0 jobs (slug may be invalid)
+  [11/31] ?: 0 jobs (slug may be invalid)
+  [12/31] ?: 0 jobs (slug may be invalid)
+  [13/31] ?: 0 jobs (slug may be invalid)
+  [14/31] ?: 0 jobs (slug may be invalid)
+  [15/31] ?: 0 jobs (slug may be invalid)
+  [16/31] ?: 0 jobs (slug may be invalid)
+  [17/31] ?: 0 jobs (slug may be invalid)
+  [18/31] ?: 0 jobs (slug may be invalid)
+  [19/31] ?: 0 jobs (slug may be invalid)
+  [20/31] ?: 0 jobs (slug may be invalid)
+  [21/31] ?: 0 jobs (slug may be invalid)
+  [22/31] ?: 0 jobs (slug may be invalid)
+  [23/31] ?: 0 jobs (slug may be invalid)
+  [24/31] ?: 0 jobs (slug may be invalid)
+  [25/31] ?: 0 jobs (slug may be invalid)
+  [26/31] ?: 0 jobs (slug may be invalid)
+  [27/31] ?: 0 jobs (slug may be invalid)
+  [28/31] ?: 0 jobs (slug may be invalid)
+  [29/31] ?: 0 jobs (slug may be invalid)
+  [30/31] ?: 0 jobs (slug may be invalid)
+  [31/31] ?: 0 jobs (slug may be invalid)
+
+[smartrecruiters] 31 companies
+  [1/31] ?: 0 jobs (slug may be invalid)
+  [2/31] ?: 0 jobs (slug may be invalid)
+  [3/31] ?: 0 jobs (slug may be invalid)
+  [4/31] ?: 0 jobs (slug may be invalid)
+  [5/31] ?: 0 jobs (slug may be invalid)
+  [6/31] ?: 0 jobs (slug may be invalid)
+  [7/31] ?: 0 jobs (slug may be invalid)
+  [8/31] ?: 0 jobs (slug may be invalid)
+  [9/31] ?: 0 jobs (slug may be invalid)
+  [10/31] ?: 0 jobs (slug may be invalid)
+  [11/31] ?: 0 jobs (slug may be invalid)
+  [12/31] ?: 0 jobs (slug may be invalid)
+  [13/31] ?: 0 jobs (slug may be invalid)
+  [14/31] ?: 0 jobs (slug may be invalid)
+  [15/31] ?: 0 jobs (slug may be invalid)
+  [16/31] ?: 0 jobs (slug may be invalid)
+  [17/31] ?: 0 jobs (slug may be invalid)
+  [18/31] ?: 0 jobs (slug may be invalid)
+  [19/31] ?: 0 jobs (slug may be invalid)
+  [20/31] ?: 0 jobs (slug may be invalid)
+  [21/31] ?: 0 jobs (slug may be invalid)
+  [22/31] ?: 0 jobs (slug may be invalid)
+  [23/31] ?: 0 jobs (slug may be invalid)
+  [24/31] ?: 0 jobs (slug may be invalid)
+  [25/31] ?: 0 jobs (slug may be invalid)
+  [26/31] ?: 0 jobs (slug may be invalid)
+  [27/31] ?: 0 jobs (slug may be invalid)
+  [28/31] ?: 0 jobs (slug may be invalid)
+  [29/31] ?: 0 jobs (slug may be invalid)
+  [30/31] ?: 0 jobs (slug may be invalid)
+  [31/31] ?: 0 jobs (slug may be invalid)
+
+[pinpoint] 31 companies
+  [1/31] ?: 0 jobs (slug may be invalid)
+  [2/31] ?: 0 jobs (slug may be invalid)
+  [3/31] ?: 0 jobs (slug may be invalid)
+  [4/31] ?: 0 jobs (slug may be invalid)
+  [5/31] ?: 0 jobs (slug may be invalid)
+  [6/31] ?: 0 jobs (slug may be invalid)
+  [7/31] ?: 0 jobs (slug may be invalid)
+  [8/31] ?: 0 jobs (slug may be invalid)
+  [9/31] ?: 0 jobs (slug may be invalid)
+  [10/31] ?: 0 jobs (slug may be invalid)
+  [11/31] ?: 0 jobs (slug may be invalid)
+  [12/31] ?: 0 jobs (slug may be invalid)
+  [13/31] ?: 0 jobs (slug may be invalid)
+  [14/31] ?: 0 jobs (slug may be invalid)
+  [15/31] ?: 0 jobs (slug may be invalid)
+  [16/31] ?: 0 jobs (slug may be invalid)
+  [17/31] ?: 0 jobs (slug may be invalid)
+  [18/31] ?: 0 jobs (slug may be invalid)
+  [19/31] ?: 0 jobs (slug may be invalid)
+  [20/31] ?: 0 jobs (slug may be invalid)
+  [21/31] ?: 0 jobs (slug may be invalid)
+  [22/31] ?: 0 jobs (slug may be invalid)
+  [23/31] ?: 0 jobs (slug may be invalid)
+  [24/31] ?: 0 jobs (slug may be invalid)
+  [25/31] ?: 0 jobs (slug may be invalid)
+  [26/31] ?: 0 jobs (slug may be invalid)
+  [27/31] ?: 0 jobs (slug may be invalid)
+  [28/31] ?: 0 jobs (slug may be invalid)
+  [29/31] ?: 0 jobs (slug may be invalid)
+  [30/31] ?: 0 jobs (slug may be invalid)
+  [31/31] ?: 0 jobs (slug may be invalid)
+
+[teamtailor] 31 companies
+  [1/31] ?: 0 jobs (slug may be invalid)
+  [2/31] ?: 0 jobs (slug may be invalid)
+  [3/31] ?: 0 jobs (slug may be invalid)
+  [4/31] ?: 0 jobs (slug may be invalid)
+  [5/31] ?: 0 jobs (slug may be invalid)
+  [6/31] ?: 0 jobs (slug may be invalid)
+  [7/31] ?: 0 jobs (slug may be invalid)
+  [8/31] ?: 0 jobs (slug may be invalid)
+  [9/31] ?: 0 jobs (slug may be invalid)
+  [10/31] ?: 0 jobs (slug may be invalid)
+  [11/31] ?: 0 jobs (slug may be invalid)
+  [12/31] ?: 0 jobs (slug may be invalid)
+  [13/31] ?: 0 jobs (slug may be invalid)
+  [14/31] ?: 0 jobs (slug may be invalid)
+  [15/31] ?: 0 jobs (slug may be invalid)
+  [16/31] ?: 0 jobs (slug may be invalid)
+  [17/31] ?: 0 jobs (slug may be invalid)
+  [18/31] ?: 0 jobs (slug may be invalid)
+  [19/31] ?: 0 jobs (slug may be invalid)
+  [20/31] ?: 0 jobs (slug may be invalid)
+  [21/31] ?: 0 jobs (slug may be invalid)
+  [22/31] ?: 0 jobs (slug may be invalid)
+  [23/31] ?: 0 jobs (slug may be invalid)
+  [24/31] ?: 0 jobs (slug may be invalid)
+  [25/31] ?: 0 jobs (slug may be invalid)
+  [26/31] ?: 0 jobs (slug may be invalid)
+  [27/31] ?: 0 jobs (slug may be invalid)
+  [28/31] ?: 0 jobs (slug may be invalid)
+  [29/31] ?: 0 jobs (slug may be invalid)
+  [30/31] ?: 0 jobs (slug may be invalid)
+  [31/31] ?: 0 jobs (slug may be invalid)
+
+[recruitee] 31 companies
+  [1/31] ?: 0 jobs (slug may be invalid)
+  [2/31] ?: 0 jobs (slug may be invalid)
+  [3/31] ?: 0 jobs (slug may be invalid)
+  [4/31] ?: 0 jobs (slug may be invalid)
+  [5/31] ?: 0 jobs (slug may be invalid)
+  [6/31] ?: 0 jobs (slug may be invalid)
+  [7/31] ?: 0 jobs (slug may be invalid)
+  [8/31] ?: 0 jobs (slug may be invalid)
+  [9/31] ?: 0 jobs (slug may be invalid)
+  [10/31] ?: 0 jobs (slug may be invalid)
+  [11/31] ?: 0 jobs (slug may be invalid)
+  [12/31] ?: 0 jobs (slug may be invalid)
+  [13/31] ?: 0 jobs (slug may be invalid)
+  [14/31] ?: 0 jobs (slug may be invalid)
+  [15/31] ?: 0 jobs (slug may be invalid)
+  [16/31] ?: 0 jobs (slug may be invalid)
+  [17/31] ?: 0 jobs (slug may be invalid)
+  [18/31] ?: 0 jobs (slug may be invalid)
+  [19/31] ?: 0 jobs (slug may be invalid)
+  [20/31] ?: 0 jobs (slug may be invalid)
+  [21/31] ?: 0 jobs (slug may be invalid)
+  [22/31] ?: 0 jobs (slug may be invalid)
+  [23/31] ?: 0 jobs (slug may be invalid)
+  [24/31] ?: 0 jobs (slug may be invalid)
+  [25/31] ?: 0 jobs (slug may be invalid)
+  [26/31] ?: 0 jobs (slug may be invalid)
+  [27/31] ?: 0 jobs (slug may be invalid)
+  [28/31] ?: 0 jobs (slug may be invalid)
+  [29/31] ?: 0 jobs (slug may be invalid)
+  [30/31] ?: 0 jobs (slug may be invalid)
+  [31/31] ?: 0 jobs (slug may be invalid)
+
+[wellfound] 31 companies
+  [1/31] ?: 0 jobs (slug may be invalid)
+  [2/31] ?: 0 jobs (slug may be invalid)
+  [3/31] ?: 0 jobs (slug may be invalid)
+  [4/31] ?: 0 jobs (slug may be invalid)
+  [5/31] ?: 0 jobs (slug may be invalid)
+  [6/31] ?: 0 jobs (slug may be invalid)
+  [7/31] ?: 0 jobs (slug may be invalid)
+  [8/31] ?: 0 jobs (slug may be invalid)
+  [9/31] ?: 0 jobs (slug may be invalid)
+  [10/31] ?: 0 jobs (slug may be invalid)
+  [11/31] ?: 0 jobs (slug may be invalid)
+  [12/31] ?: 0 jobs (slug may be invalid)
+  [13/31] ?: 0 jobs (slug may be invalid)
+  [14/31] ?: 0 jobs (slug may be invalid)
+  [15/31] ?: 0 jobs (slug may be invalid)
+  [16/31] ?: 0 jobs (slug may be invalid)
+  [17/31] ?: 0 jobs (slug may be invalid)
+  [18/31] ?: 0 jobs (slug may be invalid)
+  [19/31] ?: 0 jobs (slug may be invalid)
+  [20/31] ?: 0 jobs (slug may be invalid)
+  [21/31] ?: 0 jobs (slug may be invalid)
+  [22/31] ?: 0 jobs (slug may be invalid)
+  [23/31] ?: 0 jobs (slug may be invalid)
+  [24/31] ?: 0 jobs (slug may be invalid)
+  [25/31] ?: 0 jobs (slug may be invalid)
+  [26/31] ?: 0 jobs (slug may be invalid)
+  [27/31] ?: 0 jobs (slug may be invalid)
+  [28/31] ?: 0 jobs (slug may be invalid)
+  [29/31] ?: 0 jobs (slug may be invalid)
+  [30/31] ?: 0 jobs (slug may be invalid)
+  [31/31] ?: 0 jobs (slug may be invalid)
+
+[trueup] 31 companies
+  [1/31] ?: 0 jobs (slug may be invalid)
+  [2/31] ?: 0 jobs (slug may be invalid)
+  [3/31] ?: 0 jobs (slug may be invalid)
+  [4/31] ?: 0 jobs (slug may be invalid)
+  [5/31] ?: 0 jobs (slug may be invalid)
+  [6/31] ?: 0 jobs (slug may be invalid)
+  [7/31] ?: 0 jobs (slug may be invalid)
+  [8/31] ?: 0 jobs (slug may be invalid)
+  [9/31] ?: 0 jobs (slug may be invalid)
+  [10/31] ?: 0 jobs (slug may be invalid)
+  [11/31] ?: 0 jobs (slug may be invalid)
+  [12/31] ?: 0 jobs (slug may be invalid)
+  [13/31] ?: 0 jobs (slug may be invalid)
+  [14/31] ?: 0 jobs (slug may be invalid)
+  [15/31] ?: 0 jobs (slug may be invalid)
+  [16/31] ?: 0 jobs (slug may be invalid)
+  [17/31] ?: 0 jobs (slug may be invalid)
+  [18/31] ?: 0 jobs (slug may be invalid)
+  [19/31] ?: 0 jobs (slug may be invalid)
+  [20/31] ?: 0 jobs (slug may be invalid)
+  [21/31] ?: 0 jobs (slug may be invalid)
+  [22/31] ?: 0 jobs (slug may be invalid)
+  [23/31] ?: 0 jobs (slug may be invalid)
+  [24/31] ?: 0 jobs (slug may be invalid)
+  [25/31] ?: 0 jobs (slug may be invalid)
+  [26/31] ?: 0 jobs (slug may be invalid)
+  [27/31] ?: 0 jobs (slug may be invalid)
+  [28/31] ?: 0 jobs (slug may be invalid)
+  [29/31] ?: 0 jobs (slug may be invalid)
+  [30/31] ?: 0 jobs (slug may be invalid)
+  [31/31] ?: 0 jobs (slug may be invalid)
+
+[remoteok] 1 companies
+  [1/1] Remote OK feed: ERROR — name '_normalize_title' is not defined
+
+[yc] 1 companies
+  [1/1] YC Work at a Startup: ERROR — name '_normalize_title' is not defined
+
+[hn_hiring] 1 companies
+  [1/1] HN Who is Hiring: ERROR — name '_normalize_title' is not defined
+
+[healthecareers] 1 companies
+  [1/1] Health eCareers: 0 jobs (slug may be invalid)
+
+[himss] 1 companies
+  [1/1] HIMSS Career Center: 0 jobs (slug may be invalid)
+
+Totals: {'greenhouse': 0, 'lever': 0, 'ashby': 0, 'workday': 0}
+Failures: 985 (companies returned no data — likely bad slugs)
+[users] loaded 4 from Worker
+
+[multi-user] generating dashboards for 4 users
+[diag:geetu] loaded profile, targetCompanies len=20, first={'name': 'Zocdoc', 'atsHint': 'greenhouse', 'why': 'Digital health marketplace actively hiring VP Product roles to scale their SaaS platform connecting patients and providers.'}
+[skills-profile:geetu] Senior digital transformation & product leader (Healthcare / Life Sciences) — targeting Director / Senior Director / Principal / VP / Group PM roles (NOT C-suite) · 15 keywords
+[velocity] 138 actively-scaling companies (3+ senior roles in 30d)
+[location-remote:geetu] filter pref='hybrid' locs=['Allendale, NJ', 'New York City', 'New Jersey'] kept 2860/2860
+[why-hidden:geetu] classified 2000 hidden jobs (of 19980 total dropped)
+
+Dashboard written: /home/runner/work/getmybob/getmybob/geetu.html
+[diag:amit-arora] loaded profile, targetCompanies len=25, first={'name': 'Webster Bank', 'atsHint': 'workday', 'atsUrl': 'https://websterbank.wd1.myworkdayjobs.com/WebsterBankCareers', 'why': "super-regional commercial bank with active digital transformation and GRC modernization initiatives aligned to Amit's deep banking tech profile"}
+[skills-profile:amit-arora] senior executive leader in banking technology, GRC, and digital transformation · 15 keywords
+[velocity] 138 actively-scaling companies (3+ senior roles in 30d)
+[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 4304/4304
+[why-hidden:amit-arora] classified 2000 hidden jobs (of 19980 total dropped)
+
+Dashboard written: /home/runner/work/getmybob/getmybob/amit-arora.html
+[skills-profile:ishika-arora] not available — using fallback themes only
+[velocity] 138 actively-scaling companies (3+ senior roles in 30d)
+[why-hidden:ishika-arora] classified 2000 hidden jobs (of 20000 total dropped)
+
+Dashboard written: /home/runner/work/getmybob/getmybob/ishika-arora.html
+[skills-profile:radhika-kalra] not available — using fallback themes only
+[velocity] 138 actively-scaling companies (3+ senior roles in 30d)
+[why-hidden:radhika-kalra] classified 2000 hidden jobs (of 20000 total dropped)
+
+Dashboard written: /home/runner/work/getmybob/getmybob/radhika-kalra.html
