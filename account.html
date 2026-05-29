@@ -199,7 +199,7 @@
 
   <div class="card">
     <h1>Matcher bullseye</h1>
-    <p class="sub">What the matcher is looking for on your behalf. Pick the top 10 titles / 10 industries / 50 skills — suggestions from your resume appear below each as "Or swap in" chips you can promote with one click.</p>
+    <p class="sub">What the matcher is looking for on your behalf. Pick the top up to 50 titles / 50 industries / 50 skills — suggestions from your resume appear below each as "Or swap in" chips you can promote with one click.</p>
     <h3 style="margin:0 0 6px;font-size:14px;color:var(--ink);">Target titles (max 5)</h3>
     <div id="bs-titles-host" style="margin-bottom:22px;"></div>
     <h3 style="margin:0 0 6px;font-size:14px;color:var(--ink);">Industries (max 5)</h3>
@@ -468,12 +468,12 @@ async function loadBullseye() {
     const j = await r.json();
     const p = j.profile || {};
     renderBullseyeAcct(document.getElementById('bs-titles-host'), {
-      max: 10, current: p.targetTitles || [], pool: p.titlesPool || [],
+      max: 50, current: p.targetTitles || [], pool: p.titlesPool || [],
       placeholder: 'e.g. vp of product management',
       hint: 'Click an "Or swap in" chip to promote a resume-derived suggestion. ×ing a selected chip drops it back into the pool.'
     });
     renderBullseyeAcct(document.getElementById('bs-industries-host'), {
-      max: 10, current: p.industries || [], pool: p.industriesPool || [],
+      max: 50, current: p.industries || [], pool: p.industriesPool || [],
       placeholder: 'e.g. healthcare technology'
     });
     const merged = [].concat(p.keywords || [], p.technologies || [], p.frameworks || []);
