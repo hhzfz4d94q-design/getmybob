@@ -1,6 +1,6 @@
 {
   "_note": "Curated Healthcare IT / digital health catalog. Used for: (a) scoring boost when company appears in feed AND user has healthcare industries (+3, all entries), (b) auto-scraping (only ATS=greenhouse/lever/ashby/workable). Workday/Google/Amazon entries are catalog-only (scored boost when found, not scraped). Slugs are canonical for matching.",
-  "version": "2026-05-29-v3+discovered+discovered+dream-list+from-contacts+dedup",
+  "version": "2026-05-29-v3+discovered+discovered+dream-list+from-contacts+dedup+dream-geetu",
   "companies": [
     {
       "name": "Doximity",
@@ -48,13 +48,17 @@
       "name": "Spring Health",
       "category": "dtx",
       "atsHint": "greenhouse",
-      "slug": "springhealth"
+      "slug": "springhealth",
+      "dreamList": true,
+      "dreamListFor": "geetu"
     },
     {
       "name": "Headway",
       "category": "provider-tech",
       "atsHint": "greenhouse",
-      "slug": "headway"
+      "slug": "headway",
+      "dreamList": true,
+      "dreamListFor": "geetu"
     },
     {
       "name": "Cedar",
@@ -66,7 +70,9 @@
       "name": "Komodo Health",
       "category": "life-sciences-data",
       "atsHint": "greenhouse",
-      "slug": "komodo-health"
+      "slug": "komodohealth",
+      "dreamList": true,
+      "dreamListFor": "geetu"
     },
     {
       "name": "Truveta",
@@ -78,7 +84,9 @@
       "name": "Oscar Health",
       "category": "payer-tech",
       "atsHint": "greenhouse",
-      "slug": "oscar"
+      "slug": "oscarhealth",
+      "dreamList": true,
+      "dreamListFor": "geetu"
     },
     {
       "name": "Devoted Health",
@@ -96,7 +104,9 @@
       "name": "Clover Health",
       "category": "payer-tech",
       "atsHint": "greenhouse",
-      "slug": "clover-health"
+      "slug": "cloverhealth",
+      "dreamList": true,
+      "dreamListFor": "geetu"
     },
     {
       "name": "Alignment Healthcare",
@@ -108,7 +118,9 @@
       "name": "Garner Health",
       "category": "payer-tech",
       "atsHint": "greenhouse",
-      "slug": "garnerhealth"
+      "slug": "garnerhealth",
+      "dreamList": true,
+      "dreamListFor": "geetu"
     },
     {
       "name": "Transcarent",
@@ -120,7 +132,9 @@
       "name": "Maven Clinic",
       "category": "telehealth",
       "atsHint": "greenhouse",
-      "slug": "mavenclinic"
+      "slug": "mavenclinic",
+      "dreamList": true,
+      "dreamListFor": "geetu"
     },
     {
       "name": "Carrot Fertility",
@@ -156,7 +170,9 @@
       "name": "Omada Health",
       "category": "dtx",
       "atsHint": "greenhouse",
-      "slug": "omada-health"
+      "slug": "omadahealth",
+      "dreamList": true,
+      "dreamListFor": "geetu"
     },
     {
       "name": "Livongo (Teladoc)",
@@ -228,7 +244,9 @@
       "name": "Tebra",
       "category": "ehr",
       "atsHint": "greenhouse",
-      "slug": "tebra"
+      "slug": "tebra",
+      "dreamList": true,
+      "dreamListFor": "geetu"
     },
     {
       "name": "Modernizing Medicine",
@@ -546,7 +564,9 @@
       "name": "Zocdoc",
       "category": "healthcare-marketplace",
       "atsHint": "greenhouse",
-      "slug": "zocdoc"
+      "slug": "zocdoc",
+      "dreamList": true,
+      "dreamListFor": "geetu"
     },
     {
       "name": "Solv Health",
@@ -606,7 +626,9 @@
       "name": "K Health",
       "category": "telehealth",
       "atsHint": "greenhouse",
-      "slug": "k-health"
+      "slug": "khealth",
+      "dreamList": true,
+      "dreamListFor": "geetu"
     },
     {
       "name": "Hello Heart",
@@ -1477,6 +1499,222 @@
       "category": "from-contacts",
       "atsHint": "greenhouse",
       "slug": "laseraway"
+    },
+    {
+      "name": "NexHealth",
+      "category": "dream-list-geetu",
+      "atsHint": "ashby",
+      "slug": "nexhealth",
+      "vertical": "healthcare",
+      "dreamList": true,
+      "dreamListFor": "geetu"
+    },
+    {
+      "name": "Pager Health",
+      "category": "dream-list-geetu",
+      "atsHint": "greenhouse",
+      "slug": "pagerhealth",
+      "vertical": "healthcare",
+      "dreamList": true,
+      "dreamListFor": "geetu"
+    },
+    {
+      "name": "Huge",
+      "category": "dream-list-geetu",
+      "atsHint": "greenhouse",
+      "slug": "huge",
+      "vertical": "media",
+      "dreamList": true,
+      "dreamListFor": "geetu"
+    },
+    {
+      "name": "Huntress",
+      "category": "dream-list-geetu",
+      "atsHint": "greenhouse",
+      "slug": "huntresslabs",
+      "vertical": "tech",
+      "dreamList": true,
+      "dreamListFor": "geetu"
+    },
+    {
+      "name": "Prescryptive",
+      "category": "dream-list-geetu",
+      "atsHint": "greenhouse",
+      "slug": "prescryptive",
+      "vertical": "healthcare",
+      "dreamList": true,
+      "dreamListFor": "geetu"
+    },
+    {
+      "name": "Qventus",
+      "category": "dream-list-geetu",
+      "atsHint": "lever",
+      "slug": "qventus",
+      "vertical": "healthcare",
+      "dreamList": true,
+      "dreamListFor": "geetu"
+    },
+    {
+      "name": "Instacart",
+      "category": "dream-list-geetu",
+      "atsHint": "greenhouse",
+      "slug": "instacart",
+      "vertical": "consumer",
+      "dreamList": true,
+      "dreamListFor": "geetu"
+    },
+    {
+      "name": "Superhuman",
+      "category": "dream-list-geetu",
+      "atsHint": "lever",
+      "slug": "superhuman",
+      "vertical": "tech",
+      "dreamList": true,
+      "dreamListFor": "geetu"
+    },
+    {
+      "name": "Smarter Dx",
+      "category": "dream-list-geetu",
+      "atsHint": "ashby",
+      "slug": "smarterdx",
+      "vertical": "healthcare",
+      "dreamList": true,
+      "dreamListFor": "geetu"
+    },
+    {
+      "name": "Elastic",
+      "category": "dream-list-geetu",
+      "atsHint": "greenhouse",
+      "slug": "elastic",
+      "vertical": "tech",
+      "dreamList": true,
+      "dreamListFor": "geetu"
+    },
+    {
+      "name": "RxBenefits",
+      "category": "dream-list-geetu",
+      "atsHint": "greenhouse",
+      "slug": "rxbenefits",
+      "vertical": "healthcare",
+      "dreamList": true,
+      "dreamListFor": "geetu"
+    },
+    {
+      "name": "Cleerly",
+      "category": "dream-list-geetu",
+      "atsHint": "ashby",
+      "slug": "cleerly",
+      "vertical": "healthcare",
+      "dreamList": true,
+      "dreamListFor": "geetu"
+    },
+    {
+      "name": "Honor",
+      "category": "dream-list-geetu",
+      "atsHint": "greenhouse",
+      "slug": "honor",
+      "vertical": "healthcare",
+      "dreamList": true,
+      "dreamListFor": "geetu"
+    },
+    {
+      "name": "Lattice",
+      "category": "dream-list-geetu",
+      "atsHint": "greenhouse",
+      "slug": "lattice",
+      "vertical": "tech",
+      "dreamList": true,
+      "dreamListFor": "geetu"
+    },
+    {
+      "name": "Dropbox",
+      "category": "dream-list-geetu",
+      "atsHint": "greenhouse",
+      "slug": "dropbox",
+      "vertical": "tech",
+      "dreamList": true,
+      "dreamListFor": "geetu"
+    },
+    {
+      "name": "Guild",
+      "category": "dream-list-geetu",
+      "atsHint": "greenhouse",
+      "slug": "guild",
+      "vertical": "tech",
+      "dreamList": true,
+      "dreamListFor": "geetu"
+    },
+    {
+      "name": "Thrive Market",
+      "category": "dream-list-geetu",
+      "atsHint": "greenhouse",
+      "slug": "thrivemarket",
+      "vertical": "consumer",
+      "dreamList": true,
+      "dreamListFor": "geetu"
+    },
+    {
+      "name": "Ascend Analytics",
+      "category": "dream-list-geetu",
+      "atsHint": "lever",
+      "slug": "ascendanalytics",
+      "vertical": "tech",
+      "dreamList": true,
+      "dreamListFor": "geetu"
+    },
+    {
+      "name": "Anthropic",
+      "category": "dream-list-geetu",
+      "atsHint": "greenhouse",
+      "slug": "anthropic",
+      "vertical": "tech",
+      "dreamList": true,
+      "dreamListFor": "geetu"
+    },
+    {
+      "name": "AlphaSense",
+      "category": "dream-list-geetu",
+      "atsHint": "greenhouse",
+      "slug": "alphasense",
+      "vertical": "finance",
+      "dreamList": true,
+      "dreamListFor": "geetu"
+    },
+    {
+      "name": "Reddit",
+      "category": "dream-list-geetu",
+      "atsHint": "greenhouse",
+      "slug": "reddit",
+      "vertical": "tech",
+      "dreamList": true,
+      "dreamListFor": "geetu"
+    },
+    {
+      "name": "Celonis",
+      "category": "dream-list-geetu",
+      "atsHint": "greenhouse",
+      "slug": "celonis",
+      "vertical": "tech",
+      "dreamList": true,
+      "dreamListFor": "geetu"
+    },
+    {
+      "name": "Notion",
+      "category": "dream-list-geetu",
+      "atsHint": "greenhouse",
+      "slug": "notion",
+      "vertical": "tech",
+      "dreamList": true,
+      "dreamListFor": "geetu"
+    },
+    {
+      "name": "SmithRx",
+      "category": "dream-list-geetu",
+      "atsHint": "ashby",
+      "slug": "smithrx",
+      "vertical": "healthcare",
+      "dreamList": true,
+      "dreamListFor": "geetu"
     }
   ],
   "non_ats_placeholders": [

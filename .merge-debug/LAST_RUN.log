@@ -1,10 +1,40 @@
 Loaded 41 unique dream companies for geetu
 Asking Claude about 41 companies...
 Claude returned 41 entries
-Traceback (most recent call last):
-  File "/home/runner/work/getmybob/getmybob/scripts/merge_dream_list.py", line 145, in <module>
-    sys.exit(main())
-             ^^^^^^
-  File "/home/runner/work/getmybob/getmybob/scripts/merge_dream_list.py", line 80, in main
-    from matcher.canonical import canonical_company
-ModuleNotFoundError: No module named 'matcher'
+  ↻ Omada Health: slug 'omada-health' → 'omadahealth'
+  + HT [ashby     ] NexHealth                      nexhealth
+  ↻ Clover Health: slug 'clover-health' → 'cloverhealth'
+  + HT [greenhouse] Pager Health                   pagerhealth
+  ? WD Citizens Bank: Claude flagged workday but no tenant/site — skipping
+  + HT [greenhouse] Huge                           huge
+  ? Kao Corporation: atsHint='other' slug='' — skipping (Claude wasn't confident)
+  + HT [greenhouse] Huntress                       huntresslabs
+  ? WD Sage: Claude flagged workday but no tenant/site — skipping
+  + HT [greenhouse] Prescryptive                   prescryptive
+  + HT [lever     ] Qventus                        qventus
+  + HT [greenhouse] Instacart                      instacart
+  + HT [lever     ] Superhuman                     superhuman
+  + HT [ashby     ] Smarter Dx                     smarterdx
+  + HT [greenhouse] Elastic                        elastic
+  + HT [greenhouse] RxBenefits                     rxbenefits
+  ? WD New York Life: Claude flagged workday but no tenant/site — skipping
+  + HT [ashby     ] Cleerly                        cleerly
+  ? WD Shark Ninja: Claude flagged workday but no tenant/site — skipping
+  + HT [greenhouse] Honor                          honor
+  + HT [greenhouse] Lattice                        lattice
+  + HT [greenhouse] Dropbox                        dropbox
+  + HT [greenhouse] Guild                          guild
+  + HT [greenhouse] Thrive Market                  thrivemarket
+  + HT [lever     ] Ascend Analytics               ascendanalytics
+  + HT [greenhouse] Anthropic                      anthropic
+  ↻ Oscar Health: slug 'oscar' → 'oscarhealth'
+  + HT [greenhouse] AlphaSense                     alphasense
+  ↻ K Health: slug 'k-health' → 'khealth'
+  + HT [greenhouse] Reddit                         reddit
+  + HT [greenhouse] Celonis                        celonis
+  + HT [greenhouse] Notion                         notion
+  ↻ Komodo Health: slug 'komodo-health' → 'komodohealth'
+  + HT [ashby     ] SmithRx                        smithrx
+  ? BGB: atsHint='other' slug='' — skipping (Claude wasn't confident)
+
+DONE — added 24 HT + 0 WD, fixed 5 existing slugs, tagged dreamListFor=geetu
