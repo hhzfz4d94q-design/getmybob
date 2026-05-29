@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "scrapedAt": "2026-05-28T17:43:35.618938+00:00",
+    "scrapedAt": "2026-05-29T14:23:07.843601+00:00",
     "count": 30,
     "source": "workatastartup.com via Playwright"
   },
@@ -24,28 +24,46 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/93495",
-      "title": "Engineering Manager",
+      "id": "https://www.workatastartup.com/jobs/93806",
+      "title": "Senior Software Developer",
       "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/93495",
+      "url": "https://www.workatastartup.com/jobs/93806",
       "location": "",
       "posted_at": "",
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/92953",
-      "title": "Senior Software Engineer - Organizations & Teams",
+      "id": "https://www.workatastartup.com/jobs/92278",
+      "title": "Python Engineer, Truework",
       "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/92953",
+      "url": "https://www.workatastartup.com/jobs/92278",
       "location": "",
       "posted_at": "",
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/92949",
-      "title": "Staff Software Engineer - Agent Core",
+      "id": "https://www.workatastartup.com/jobs/95520",
+      "title": "Senior Software Engineer, Incubator",
       "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/92949",
+      "url": "https://www.workatastartup.com/jobs/95520",
+      "location": "",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/92950",
+      "title": "Staff Software Engineer - Infrastructure",
+      "company": "YC Startup",
+      "url": "https://www.workatastartup.com/jobs/92950",
+      "location": "",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/94748",
+      "title": "Product Engineer",
+      "company": "YC Startup",
+      "url": "https://www.workatastartup.com/jobs/94748",
       "location": "",
       "posted_at": "",
       "description": ""
@@ -60,19 +78,10 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/94544",
-      "title": "Founding Autonomy Engineer (Full-Time)",
+      "id": "https://www.workatastartup.com/jobs/94542",
+      "title": "Founding Hardware Engineer (Full-Time)",
       "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/94544",
-      "location": "",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/93498",
-      "title": "Forward Deployed Engineer",
-      "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/93498",
+      "url": "https://www.workatastartup.com/jobs/94542",
       "location": "",
       "posted_at": "",
       "description": ""
@@ -82,6 +91,15 @@
       "title": "Product Engineer",
       "company": "YC Startup",
       "url": "https://www.workatastartup.com/jobs/94138",
+      "location": "",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/93498",
+      "title": "Forward Deployed Engineer",
+      "company": "YC Startup",
+      "url": "https://www.workatastartup.com/jobs/93498",
       "location": "",
       "posted_at": "",
       "description": ""
@@ -132,19 +150,19 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/94623",
-      "title": "Software Engineering Intern",
+      "id": "https://www.workatastartup.com/jobs/94262",
+      "title": "Electrical Engineering Intern",
       "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/94623",
+      "url": "https://www.workatastartup.com/jobs/94262",
       "location": "",
       "posted_at": "",
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/87862",
-      "title": "Founding Engineer (AI / ML)",
+      "id": "https://www.workatastartup.com/jobs/87775",
+      "title": "Founding Engineer (Full Stack Web)",
       "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/87862",
+      "url": "https://www.workatastartup.com/jobs/87775",
       "location": "",
       "posted_at": "",
       "description": ""
@@ -168,19 +186,19 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/94631",
-      "title": "Summer Intern - AI/ML Engineering",
+      "id": "https://www.workatastartup.com/jobs/94010",
+      "title": "Founding AI/ML Engineer",
       "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/94631",
+      "url": "https://www.workatastartup.com/jobs/94010",
       "location": "",
       "posted_at": "",
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/94010",
-      "title": "Founding AI/ML Engineer",
+      "id": "https://www.workatastartup.com/jobs/94631",
+      "title": "Summer Intern - AI/ML Engineering",
       "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/94010",
+      "url": "https://www.workatastartup.com/jobs/94631",
       "location": "",
       "posted_at": "",
       "description": ""
@@ -195,6 +213,15 @@
       "description": ""
     },
     {
+      "id": "https://www.workatastartup.com/jobs/92562",
+      "title": "Founding Software Engineer",
+      "company": "YC Startup",
+      "url": "https://www.workatastartup.com/jobs/92562",
+      "location": "",
+      "posted_at": "",
+      "description": ""
+    },
+    {
       "id": "https://www.workatastartup.com/jobs/92563",
       "title": "Founding Solutions Engineer",
       "company": "YC Startup",
@@ -204,10 +231,10 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/92562",
-      "title": "Founding Software Engineer",
+      "id": "https://www.workatastartup.com/jobs/93208",
+      "title": "AI / Full Stack Engineer",
       "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/92562",
+      "url": "https://www.workatastartup.com/jobs/93208",
       "location": "",
       "posted_at": "",
       "description": ""
@@ -222,24 +249,6 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/93206",
-      "title": "Founding Engineer",
-      "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/93206",
-      "location": "",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/87017",
-      "title": "Frontend Engineer",
-      "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/87017",
-      "location": "",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/87016",
       "title": "Backend Engineer",
       "company": "YC Startup",
@@ -249,28 +258,19 @@
       "description": ""
     },
     {
+      "id": "https://www.workatastartup.com/jobs/87018",
+      "title": "Engineering Intern",
+      "company": "YC Startup",
+      "url": "https://www.workatastartup.com/jobs/87018",
+      "location": "",
+      "posted_at": "",
+      "description": ""
+    },
+    {
       "id": "https://www.workatastartup.com/jobs/94346",
       "title": "Founding Engineer",
       "company": "YC Startup",
       "url": "https://www.workatastartup.com/jobs/94346",
-      "location": "",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/94991",
-      "title": "Research Scientist (Generative Media)",
-      "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/94991",
-      "location": "",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/86525",
-      "title": "Senior Frontend Engineer",
-      "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/86525",
       "location": "",
       "posted_at": "",
       "description": ""
