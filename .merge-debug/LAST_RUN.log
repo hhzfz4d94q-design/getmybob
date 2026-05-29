@@ -1,0 +1,10 @@
+Loaded 41 unique dream companies for geetu
+Asking Claude about 41 companies...
+Claude returned 41 entries
+Traceback (most recent call last):
+  File "/home/runner/work/getmybob/getmybob/scripts/merge_dream_list.py", line 145, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/runner/work/getmybob/getmybob/scripts/merge_dream_list.py", line 80, in main
+    from matcher.canonical import canonical_company
+ModuleNotFoundError: No module named 'matcher'
