@@ -361,8 +361,9 @@
     {
       "name": "Health Catalyst",
       "category": "hit-ai",
-      "atsHint": "workable",
-      "slug": "health"
+      "atsHint": "other",
+      "slug": "",
+      "suspectSlug": true
     },
     {
       "name": "Arcadia",
@@ -669,8 +670,9 @@
     {
       "name": "Hello Heart",
       "category": "dtx",
-      "atsHint": "workable",
-      "slug": "hello"
+      "atsHint": "other",
+      "slug": "",
+      "suspectSlug": true
     },
     {
       "name": "Sword Health",
@@ -1898,8 +1900,9 @@
     {
       "name": "Capital Rx",
       "category": "Specialty Pharmacy + 340B",
-      "atsHint": "lever",
-      "slug": "capital"
+      "atsHint": "other",
+      "slug": "",
+      "suspectSlug": true
     },
     {
       "name": "Imprivata",
