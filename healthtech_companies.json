@@ -1,6 +1,6 @@
 {
   "_note": "Curated Healthcare IT / digital health catalog. Used for: (a) scoring boost when company appears in feed AND user has healthcare industries (+3, all entries), (b) auto-scraping (only ATS=greenhouse/lever/ashby/workable). Workday/Google/Amazon entries are catalog-only (scored boost when found, not scraped). Slugs are canonical for matching.",
-  "version": "2026-05-29-v3+discovered+discovered+dream-list+from-contacts+dedup+dream-geetu+discovered+dedup-r2",
+  "version": "2026-05-29-v3+discovered+discovered+dream-list+from-contacts+dedup+dream-geetu+discovered+dedup-r2+verified",
   "companies": [
     {
       "name": "Doximity",
@@ -12,25 +12,28 @@
       "name": "Veeva Systems",
       "category": "life-sciences-data",
       "atsHint": "greenhouse",
-      "slug": "veeva-systems"
+      "slug": "veeva-systems",
+      "suspectSlug": true
     },
     {
       "name": "Definitive Healthcare",
       "category": "life-sciences-data",
       "atsHint": "greenhouse",
-      "slug": "definitive-healthcare"
+      "slug": "definitive-healthcare",
+      "suspectSlug": true
     },
     {
       "name": "Teladoc Health",
       "category": "telehealth",
       "atsHint": "greenhouse",
-      "slug": "teladoc-health"
+      "slug": "teladoc-health",
+      "suspectSlug": true
     },
     {
       "name": "Hims & Hers Health",
       "category": "telehealth",
       "atsHint": "ashby",
-      "slug": "forhims"
+      "slug": "hims"
     },
     {
       "name": "Hinge Health",
@@ -98,7 +101,8 @@
       "name": "Bright Health Group",
       "category": "payer-tech",
       "atsHint": "greenhouse",
-      "slug": "bright-health-group"
+      "slug": "bright-health-group",
+      "suspectSlug": true
     },
     {
       "name": "Clover Health",
@@ -112,7 +116,8 @@
       "name": "Alignment Healthcare",
       "category": "payer-tech",
       "atsHint": "greenhouse",
-      "slug": "alignment-healthcare"
+      "slug": "alignment-healthcare",
+      "suspectSlug": true
     },
     {
       "name": "Garner Health",
@@ -140,7 +145,7 @@
       "name": "Carrot Fertility",
       "category": "telehealth",
       "atsHint": "greenhouse",
-      "slug": "carrot-fertility"
+      "slug": "carrotfertility"
     },
     {
       "name": "Tia",
@@ -152,7 +157,7 @@
       "name": "Modern Health",
       "category": "dtx",
       "atsHint": "greenhouse",
-      "slug": "modern-health"
+      "slug": "modernhealth"
     },
     {
       "name": "Calm",
@@ -164,7 +169,7 @@
       "name": "Headspace Health",
       "category": "dtx",
       "atsHint": "greenhouse",
-      "slug": "headspace-health"
+      "slug": "headspacehealth"
     },
     {
       "name": "Omada Health",
@@ -178,31 +183,35 @@
       "name": "Livongo (Teladoc)",
       "category": "dtx",
       "atsHint": "greenhouse",
-      "slug": "livongo"
+      "slug": "livongo",
+      "suspectSlug": true
     },
     {
       "name": "Pear Therapeutics",
       "category": "dtx",
       "atsHint": "greenhouse",
-      "slug": "pear-therapeutics"
+      "slug": "pear-therapeutics",
+      "suspectSlug": true
     },
     {
       "name": "Akili Interactive",
       "category": "dtx",
       "atsHint": "greenhouse",
-      "slug": "akili-interactive"
+      "slug": "akili-interactive",
+      "suspectSlug": true
     },
     {
       "name": "Big Health",
       "category": "dtx",
       "atsHint": "greenhouse",
-      "slug": "big-health"
+      "slug": "bighealth"
     },
     {
       "name": "athenahealth",
       "category": "ehr",
       "atsHint": "greenhouse",
-      "slug": "athenahealth"
+      "slug": "athenahealth",
+      "suspectSlug": true
     },
     {
       "name": "NextGen Healthcare",
@@ -226,19 +235,22 @@
       "name": "Greenway Health",
       "category": "ehr",
       "atsHint": "greenhouse",
-      "slug": "greenway-health"
+      "slug": "greenway-health",
+      "suspectSlug": true
     },
     {
       "name": "Practice Fusion",
       "category": "ehr",
       "atsHint": "greenhouse",
-      "slug": "practice-fusion"
+      "slug": "practice-fusion",
+      "suspectSlug": true
     },
     {
       "name": "Kareo",
       "category": "ehr",
       "atsHint": "greenhouse",
-      "slug": "kareo"
+      "slug": "kareo",
+      "suspectSlug": true
     },
     {
       "name": "Tebra",
@@ -252,25 +264,29 @@
       "name": "Modernizing Medicine",
       "category": "ehr",
       "atsHint": "greenhouse",
-      "slug": "modernizing-medicine"
+      "slug": "modernizing-medicine",
+      "suspectSlug": true
     },
     {
       "name": "Nextech Systems",
       "category": "ehr",
       "atsHint": "greenhouse",
-      "slug": "nextech-systems"
+      "slug": "nextech-systems",
+      "suspectSlug": true
     },
     {
       "name": "SRS Health",
       "category": "ehr",
       "atsHint": "greenhouse",
-      "slug": "srs-health"
+      "slug": "srs-health",
+      "suspectSlug": true
     },
     {
       "name": "Veradigm",
       "category": "ehr",
       "atsHint": "greenhouse",
-      "slug": "veradigm"
+      "slug": "veradigm",
+      "suspectSlug": true
     },
     {
       "name": "Inovalon",
@@ -282,13 +298,14 @@
       "name": "Vatic Health",
       "category": "hit-ai",
       "atsHint": "greenhouse",
-      "slug": "vatic-health"
+      "slug": "vatic-health",
+      "suspectSlug": true
     },
     {
       "name": "Iodine Software",
       "category": "hit-ai",
       "atsHint": "greenhouse",
-      "slug": "iodine-software"
+      "slug": "iodinesoftware"
     },
     {
       "name": "Augmedix",
@@ -318,13 +335,14 @@
       "name": "Notable Health",
       "category": "hit-ai",
       "atsHint": "greenhouse",
-      "slug": "notable-health"
+      "slug": "notablehealth"
     },
     {
       "name": "Olive AI",
       "category": "hit-ai",
       "atsHint": "greenhouse",
-      "slug": "olive-ai"
+      "slug": "olive-ai",
+      "suspectSlug": true
     },
     {
       "name": "Innovaccer",
@@ -342,7 +360,7 @@
       "name": "Health Catalyst",
       "category": "hit-ai",
       "atsHint": "greenhouse",
-      "slug": "health-catalyst"
+      "slug": "healthcatalyst"
     },
     {
       "name": "Arcadia",
@@ -354,7 +372,8 @@
       "name": "Carta Healthcare",
       "category": "clinical-trials",
       "atsHint": "greenhouse",
-      "slug": "carta-healthcare"
+      "slug": "carta-healthcare",
+      "suspectSlug": true
     },
     {
       "name": "Medidata Solutions",
@@ -396,25 +415,29 @@
       "name": "Saama Technologies",
       "category": "clinical-trials",
       "atsHint": "greenhouse",
-      "slug": "saama-technologies"
+      "slug": "saama-technologies",
+      "suspectSlug": true
     },
     {
       "name": "Castor",
       "category": "clinical-trials",
       "atsHint": "greenhouse",
-      "slug": "castor"
+      "slug": "castor",
+      "suspectSlug": true
     },
     {
       "name": "Florence Healthcare",
       "category": "clinical-trials",
       "atsHint": "greenhouse",
-      "slug": "florence-healthcare"
+      "slug": "florence-healthcare",
+      "suspectSlug": true
     },
     {
       "name": "Reify Health",
       "category": "clinical-trials",
       "atsHint": "greenhouse",
-      "slug": "reify-health"
+      "slug": "reify-health",
+      "suspectSlug": true
     },
     {
       "name": "Suvoda",
@@ -432,25 +455,26 @@
       "name": "Flatiron Health",
       "category": "life-sciences-data",
       "atsHint": "greenhouse",
-      "slug": "flatiron-health"
+      "slug": "flatiron"
     },
     {
       "name": "Foundation Medicine",
       "category": "life-sciences-data",
       "atsHint": "greenhouse",
-      "slug": "foundation-medicine"
+      "slug": "foundationmedicine"
     },
     {
       "name": "Color Health",
       "category": "life-sciences-data",
       "atsHint": "greenhouse",
-      "slug": "colorgenomics"
+      "slug": "color"
     },
     {
       "name": "Invitae",
       "category": "life-sciences-data",
       "atsHint": "greenhouse",
-      "slug": "invitae"
+      "slug": "invitae",
+      "suspectSlug": true
     },
     {
       "name": "Helix",
@@ -468,13 +492,14 @@
       "name": "Ancestry",
       "category": "life-sciences-data",
       "atsHint": "greenhouse",
-      "slug": "ancestry"
+      "slug": "ancestry",
+      "suspectSlug": true
     },
     {
       "name": "Verana Health",
       "category": "life-sciences-data",
       "atsHint": "greenhouse",
-      "slug": "verana-health"
+      "slug": "veranahealth"
     },
     {
       "name": "OM1",
@@ -486,13 +511,14 @@
       "name": "Trialspark (Formation Bio)",
       "category": "clinical-trials",
       "atsHint": "greenhouse",
-      "slug": "trialspark"
+      "slug": "trialspark",
+      "suspectSlug": true
     },
     {
       "name": "Prescryptive Health",
       "category": "pharma-tech",
       "atsHint": "greenhouse",
-      "slug": "prescryptive-health"
+      "slug": "prescryptivehealth"
     },
     {
       "name": "GoodRx",
@@ -504,7 +530,7 @@
       "name": "Alto Pharmacy",
       "category": "pharma-tech",
       "atsHint": "greenhouse",
-      "slug": "alto-pharmacy"
+      "slug": "alto"
     },
     {
       "name": "Capsule",
@@ -528,13 +554,15 @@
       "name": "Honeybee Health",
       "category": "pharma-tech",
       "atsHint": "greenhouse",
-      "slug": "honeybee-health"
+      "slug": "honeybee-health",
+      "suspectSlug": true
     },
     {
       "name": "DrFirst",
       "category": "pharma-tech",
       "atsHint": "greenhouse",
-      "slug": "drfirst"
+      "slug": "drfirst",
+      "suspectSlug": true
     },
     {
       "name": "Surescripts",
@@ -546,7 +574,8 @@
       "name": "Rx Savings Solutions",
       "category": "pharma-tech",
       "atsHint": "greenhouse",
-      "slug": "rx-savings-solutions"
+      "slug": "rx-savings-solutions",
+      "suspectSlug": true
     },
     {
       "name": "Phreesia",
@@ -558,7 +587,8 @@
       "name": "Kyruus",
       "category": "provider-tech",
       "atsHint": "greenhouse",
-      "slug": "kyruus"
+      "slug": "kyruus",
+      "suspectSlug": true
     },
     {
       "name": "Zocdoc",
@@ -572,13 +602,13 @@
       "name": "Solv Health",
       "category": "healthcare-marketplace",
       "atsHint": "greenhouse",
-      "slug": "solv-health"
+      "slug": "solvhealth"
     },
     {
       "name": "Galileo Health",
       "category": "telehealth",
       "atsHint": "greenhouse",
-      "slug": "galileo-health"
+      "slug": "galileo"
     },
     {
       "name": "PlushCare",
@@ -596,13 +626,15 @@
       "name": "Sesame Care",
       "category": "telehealth",
       "atsHint": "greenhouse",
-      "slug": "sesame-care"
+      "slug": "sesame-care",
+      "suspectSlug": true
     },
     {
       "name": "Heal",
       "category": "telehealth",
       "atsHint": "greenhouse",
-      "slug": "heal"
+      "slug": "heal",
+      "suspectSlug": true
     },
     {
       "name": "MDLive",
@@ -620,7 +652,8 @@
       "name": "Doctor on Demand",
       "category": "telehealth",
       "atsHint": "greenhouse",
-      "slug": "doctor-on-demand"
+      "slug": "doctor-on-demand",
+      "suspectSlug": true
     },
     {
       "name": "K Health",
@@ -634,37 +667,39 @@
       "name": "Hello Heart",
       "category": "dtx",
       "atsHint": "greenhouse",
-      "slug": "hello-heart"
+      "slug": "helloheart"
     },
     {
       "name": "Sword Health",
       "category": "dtx",
       "atsHint": "greenhouse",
-      "slug": "sword-health"
+      "slug": "swordhealth"
     },
     {
       "name": "Kaia Health",
       "category": "dtx",
       "atsHint": "greenhouse",
-      "slug": "kaia-health"
+      "slug": "kaia-health",
+      "suspectSlug": true
     },
     {
       "name": "Vida Health",
       "category": "dtx",
       "atsHint": "greenhouse",
-      "slug": "vida-health"
+      "slug": "vida-health",
+      "suspectSlug": true
     },
     {
       "name": "Virta Health",
       "category": "dtx",
       "atsHint": "greenhouse",
-      "slug": "virta-health"
+      "slug": "virtahealth"
     },
     {
       "name": "Brightline",
       "category": "dtx",
       "atsHint": "greenhouse",
-      "slug": "brightline"
+      "slug": "hellobrightline"
     },
     {
       "name": "Cerebral",
@@ -706,7 +741,7 @@
       "name": "Grow Therapy",
       "category": "provider-tech",
       "atsHint": "greenhouse",
-      "slug": "grow-therapy"
+      "slug": "growtherapy"
     },
     {
       "name": "Found",
@@ -730,7 +765,8 @@
       "name": "Cala Health",
       "category": "dtx",
       "atsHint": "greenhouse",
-      "slug": "cala-health"
+      "slug": "cala-health",
+      "suspectSlug": true
     },
     {
       "name": "Verily Life Sciences",
@@ -742,7 +778,8 @@
       "name": "Tendo",
       "category": "provider-tech",
       "atsHint": "greenhouse",
-      "slug": "tendo"
+      "slug": "tendo",
+      "suspectSlug": true
     },
     {
       "name": "Stedi",
@@ -760,7 +797,8 @@
       "name": "Olive",
       "category": "healthcare-fintech",
       "atsHint": "greenhouse",
-      "slug": "olive"
+      "slug": "olive",
+      "suspectSlug": true
     },
     {
       "name": "Waystar",
@@ -772,19 +810,20 @@
       "name": "Vyne Dental",
       "category": "healthcare-fintech",
       "atsHint": "greenhouse",
-      "slug": "vyne-dental"
+      "slug": "vyne-dental",
+      "suspectSlug": true
     },
     {
       "name": "Collective Health",
       "category": "payer-tech",
       "atsHint": "greenhouse",
-      "slug": "collective-health"
+      "slug": "collectivehealth"
     },
     {
       "name": "Sana Benefits",
       "category": "payer-tech",
       "atsHint": "greenhouse",
-      "slug": "sana-benefits"
+      "slug": "sanabenefits"
     },
     {
       "name": "Decent",
@@ -802,13 +841,14 @@
       "name": "Imagine Pediatrics",
       "category": "provider-tech",
       "atsHint": "greenhouse",
-      "slug": "imagine-pediatrics"
+      "slug": "imagine-pediatrics",
+      "suspectSlug": true
     },
     {
       "name": "Cityblock Health",
       "category": "provider-tech",
       "atsHint": "greenhouse",
-      "slug": "cityblock-health"
+      "slug": "cityblock"
     },
     {
       "name": "ChenMed",
@@ -844,7 +884,8 @@
       "name": "Iora Health (One Medical)",
       "category": "provider-tech",
       "atsHint": "greenhouse",
-      "slug": "iora-health"
+      "slug": "iora-health",
+      "suspectSlug": true
     },
     {
       "name": "Aledade",
@@ -856,25 +897,27 @@
       "name": "Strive Health",
       "category": "vbc",
       "atsHint": "greenhouse",
-      "slug": "strive"
+      "slug": "strivehealth"
     },
     {
       "name": "Privia Health",
       "category": "vbc",
       "atsHint": "greenhouse",
-      "slug": "priviahealth"
+      "slug": "priviahealth",
+      "suspectSlug": true
     },
     {
       "name": "Wayspring",
       "category": "vbc",
       "atsHint": "lever",
-      "slug": "wayspring"
+      "slug": "wayspring",
+      "suspectSlug": true
     },
     {
       "name": "Pearl Health",
       "category": "vbc",
       "atsHint": "greenhouse",
-      "slug": "pearlhealth"
+      "slug": "pearl-health"
     },
     {
       "name": "Cohere Health",
@@ -886,7 +929,8 @@
       "name": "Lyric (formerly ClaimsXten)",
       "category": "payer-tech",
       "atsHint": "greenhouse",
-      "slug": "lyrichealth"
+      "slug": "lyrichealth",
+      "suspectSlug": true
     },
     {
       "name": "HealthEdge",
@@ -898,7 +942,8 @@
       "name": "Vatica Health",
       "category": "payer-tech",
       "atsHint": "lever",
-      "slug": "vaticahealth"
+      "slug": "vaticahealth",
+      "suspectSlug": true
     },
     {
       "name": "Datavant",
@@ -928,25 +973,27 @@
       "name": "Apixio",
       "category": "payer-tech",
       "atsHint": "greenhouse",
-      "slug": "apixio"
+      "slug": "apixio",
+      "suspectSlug": true
     },
     {
       "name": "ClearDATA",
       "category": "infra",
       "atsHint": "greenhouse",
-      "slug": "cleardata"
+      "slug": "cleardata",
+      "suspectSlug": true
     },
     {
       "name": "Hippocratic AI",
       "category": "clinical-ai",
       "atsHint": "greenhouse",
-      "slug": "hippocraticai"
+      "slug": "hippocratic-ai"
     },
     {
       "name": "Memora Health",
       "category": "care-navigation",
       "atsHint": "greenhouse",
-      "slug": "memora-health"
+      "slug": "memorahealth"
     },
     {
       "name": "Curai Health",
@@ -958,19 +1005,20 @@
       "name": "Sprinter Health",
       "category": "home-health",
       "atsHint": "greenhouse",
-      "slug": "sprinterhealth"
+      "slug": "sprinter"
     },
     {
       "name": "Tomorrow Health",
       "category": "home-health",
       "atsHint": "greenhouse",
-      "slug": "tomorrow-health"
+      "slug": "tomorrowhealth"
     },
     {
       "name": "Forge Health",
       "category": "behavioral",
       "atsHint": "lever",
-      "slug": "forgehealth"
+      "slug": "forgehealth",
+      "suspectSlug": true
     },
     {
       "name": "Wellth",
@@ -982,25 +1030,26 @@
       "name": "Spark Advisors",
       "category": "medicare",
       "atsHint": "ashby",
-      "slug": "spark-advisors"
+      "slug": "sparkadvisors"
     },
     {
       "name": "Hims & Hers",
       "category": "Mid-stage healthtech SaaS",
-      "atsHint": "greenhouse",
+      "atsHint": "ashby",
       "slug": "hims"
     },
     {
       "name": "Calibrate",
       "category": "Value-based care",
       "atsHint": "greenhouse",
-      "slug": "calibrate"
+      "slug": "calibrate",
+      "suspectSlug": true
     },
     {
       "name": "Included Health",
       "category": "Mid-stage healthtech SaaS",
       "atsHint": "greenhouse",
-      "slug": "includedhealth"
+      "slug": "included-health"
     },
     {
       "name": "Commure",
@@ -1018,13 +1067,14 @@
       "name": "Vivante Health",
       "category": "Mid-stage healthtech SaaS",
       "atsHint": "greenhouse",
-      "slug": "vivantehealth"
+      "slug": "vivante"
     },
     {
       "name": "Curana Health",
       "category": "Value-based care",
       "atsHint": "lever",
-      "slug": "curanahealth"
+      "slug": "curanahealth",
+      "suspectSlug": true
     },
     {
       "name": "Natera",
@@ -1066,7 +1116,8 @@
       "name": "Bright Health",
       "category": "Health insurers + payers",
       "atsHint": "greenhouse",
-      "slug": "brighthealth"
+      "slug": "brighthealth",
+      "suspectSlug": true
     },
     {
       "name": "Landmark Health",
@@ -1078,37 +1129,42 @@
       "name": "Agilon Health",
       "category": "Value-based care",
       "atsHint": "greenhouse",
-      "slug": "agilonhealth"
+      "slug": "agilonhealth",
+      "suspectSlug": true
     },
     {
       "name": "Signify Health",
       "category": "Value-based care",
       "atsHint": "greenhouse",
-      "slug": "signifyhealth"
+      "slug": "signifyhealth",
+      "suspectSlug": true
     },
     {
       "name": "LifeStance Health",
       "category": "Telehealth",
       "atsHint": "greenhouse",
-      "slug": "lifestancehealth"
+      "slug": "lifestance"
     },
     {
       "name": "Ginger",
       "category": "Telehealth",
       "atsHint": "greenhouse",
-      "slug": "ginger"
+      "slug": "ginger",
+      "suspectSlug": true
     },
     {
       "name": "HealthTap",
       "category": "Telehealth",
       "atsHint": "lever",
-      "slug": "healthtap"
+      "slug": "healthtap",
+      "suspectSlug": true
     },
     {
       "name": "98point6",
       "category": "Telehealth",
       "atsHint": "greenhouse",
-      "slug": "98point6"
+      "slug": "98point6",
+      "suspectSlug": true
     },
     {
       "name": "Accolade",
@@ -1120,13 +1176,15 @@
       "name": "Bind Benefits",
       "category": "Payer-tech",
       "atsHint": "greenhouse",
-      "slug": "bindon-demandhealth"
+      "slug": "bindon-demandhealth",
+      "suspectSlug": true
     },
     {
       "name": "Bright HealthCare",
       "category": "Payer-tech",
       "atsHint": "greenhouse",
-      "slug": "brighthealthcare"
+      "slug": "brighthealthcare",
+      "suspectSlug": true
     },
     {
       "name": "Sidecar Health",
@@ -1150,13 +1208,15 @@
       "name": "Zelis",
       "category": "Payer-tech",
       "atsHint": "greenhouse",
-      "slug": "zelis"
+      "slug": "zelis",
+      "suspectSlug": true
     },
     {
       "name": "Castlight Health",
       "category": "Payer-tech",
       "atsHint": "greenhouse",
-      "slug": "castlighthealth"
+      "slug": "castlighthealth",
+      "suspectSlug": true
     },
     {
       "name": "Glooko",
@@ -1180,7 +1240,7 @@
       "name": "Pacific Biosciences",
       "category": "Diagnostics",
       "atsHint": "greenhouse",
-      "slug": "pacificbiosciences"
+      "slug": "pacbio"
     },
     {
       "name": "Adaptive Biotechnologies",
@@ -1252,7 +1312,8 @@
       "name": "Protenus",
       "category": "Compliance",
       "atsHint": "lever",
-      "slug": "protenus"
+      "slug": "protenus",
+      "suspectSlug": true
     },
     {
       "name": "Tandem Diabetes",
@@ -1270,13 +1331,15 @@
       "name": "Zoom+Care",
       "category": "Value-based care",
       "atsHint": "lever",
-      "slug": "zoomcare"
+      "slug": "zoomcare",
+      "suspectSlug": true
     },
     {
       "name": "PatientPop",
       "category": "Healthtech SaaS",
       "atsHint": "lever",
-      "slug": "patientpop"
+      "slug": "patientpop",
+      "suspectSlug": true
     },
     {
       "name": "Strata Decision Technology",
@@ -1317,7 +1380,7 @@
     {
       "name": "Wheel",
       "category": "Healthtech SaaS",
-      "atsHint": "lever",
+      "atsHint": "greenhouse",
       "slug": "wheel"
     },
     {
@@ -1348,7 +1411,8 @@
       "name": "Wingspan Health",
       "category": "Payer-tech",
       "atsHint": "lever",
-      "slug": "wingspanhealth"
+      "slug": "wingspanhealth",
+      "suspectSlug": true
     },
     {
       "name": "CodaMetrix",
@@ -1474,7 +1538,8 @@
       "name": "Slalom",
       "category": "from-contacts",
       "atsHint": "greenhouse",
-      "slug": "slalomconsulting"
+      "slug": "slalomconsulting",
+      "suspectSlug": true
     },
     {
       "name": "EliseAI",
@@ -1540,7 +1605,7 @@
       "name": "Prescryptive",
       "category": "dream-list-geetu",
       "atsHint": "greenhouse",
-      "slug": "prescryptive",
+      "slug": "prescryptivehealth",
       "vertical": "healthcare",
       "dreamList": true,
       "dreamListFor": "geetu"
@@ -1828,7 +1893,7 @@
       "name": "Capital Rx",
       "category": "Specialty Pharmacy + 340B",
       "atsHint": "greenhouse",
-      "slug": "cap-rx"
+      "slug": "capitalrx"
     },
     {
       "name": "Imprivata",
