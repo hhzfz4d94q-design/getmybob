@@ -359,37 +359,47 @@ WIZARD_V3_BLOCK = r"""
     {
       key: "your-bullseye",
       title: "Your bullseye — what you want the matcher to look for",
-      subtitle: "up to 50 titles / 50 industries / 50 skills / 15 companies each. Trim aggressively — sharp picks beat vague ones.",
+      subtitle: "Everything from your resume is loaded by default. Trim down what you do NOT want — sharp picks beat vague ones.",
       async render(body, st) {
         body.innerHTML =
-          '<div id="bs-section-titles" style="margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid #eee;"><h3 style="margin:0 0 6px;font-size:14px;color:#1a1a2e;">1. Target job titles (max 5)</h3><p style="margin:0 0 10px;font-size:12px;color:#666;">The matcher looks for these as a fallback signal. Lowercase, multi-word.</p><div id="bs-titles-host"></div></div>' +
-          '<div id="bs-section-industries" style="margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid #eee;"><h3 style="margin:0 0 6px;font-size:14px;color:#1a1a2e;">2. Industries (max 5)</h3><p style="margin:0 0 10px;font-size:12px;color:#666;">Industries you want your NEXT job in — not every industry you have ever touched. DOMINANT match signal.</p><div id="bs-industries-host"></div></div>' +
-          '<div id="bs-section-skills" style="margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid #eee;"><h3 style="margin:0 0 6px;font-size:14px;color:#1a1a2e;">3. Skills (max 15)</h3><p style="margin:0 0 10px;font-size:12px;color:#666;">Distinct, signal-dense terms. Skip generic words. DOMINANT match signal alongside industry.</p><div id="bs-skills-host"></div></div>' +
+          '<div id="bs-section-titles" style="margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid #eee;"><h3 style="margin:0 0 6px;font-size:14px;color:#1a1a2e;">1. Target job titles</h3><p style="margin:0 0 10px;font-size:12px;color:#666;">The matcher looks for these as a fallback signal. Lowercase, multi-word.</p><div id="bs-titles-host"></div></div>' +
+          '<div id="bs-section-industries" style="margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid #eee;"><h3 style="margin:0 0 6px;font-size:14px;color:#1a1a2e;">2. Industries</h3><p style="margin:0 0 10px;font-size:12px;color:#666;">Industries you want your NEXT job in — not every industry you have ever touched. DOMINANT match signal.</p><div id="bs-industries-host"></div></div>' +
+          '<div id="bs-section-skills" style="margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid #eee;"><h3 style="margin:0 0 6px;font-size:14px;color:#1a1a2e;">3. Skills</h3><p style="margin:0 0 10px;font-size:12px;color:#666;">Distinct, signal-dense terms. Skip generic words. DOMINANT match signal alongside industry.</p><div id="bs-skills-host"></div></div>' +
           '<div id="bs-section-companies"><h3 style="margin:0 0 6px;font-size:14px;color:#1a1a2e;">4. Target companies (optional refresh)</h3><p style="margin:0 0 10px;font-size:12px;color:#666;">AI will re-derive 20 companies from your bullseye above. Click below to see the diff.</p><div id="bs-companies-host"></div></div>';
 
         const p = await getProfile();
         // 1. Titles — pool comes from titlesPool (AI-ranked, first 5 = current)
+        // Seed current from the FULL resume-derived pool when the saved set is
+        // small (< pool length) — user trims down rather than promoting one-by-one.
+        const _curTitles = (p.targetTitles || []);
+        const _poolTitles = (p.titlesPool || []);
+        const _seedTitles = (_curTitles.length >= _poolTitles.length || _poolTitles.length === 0) ? _curTitles : _poolTitles;
         renderBullseye(body.querySelector("#bs-titles-host"), {
-          max: 50, current: p.targetTitles || [],
-          pool: p.titlesPool || [],
+          max: 100, current: _seedTitles,
+          pool: _poolTitles,
           placeholder: "e.g. vp of product management",
-          hint: "Lowercase, multi-word titles match best. Click a suggestion below to swap one in."
+          hint: "Lowercase, multi-word titles match best. ×ing a chip drops it back into the pool below."
         });
         // 2. Industries — pool comes from industriesPool
+        const _curInds = (p.industries || []);
+        const _poolInds = (p.industriesPool || []);
+        const _seedInds = (_curInds.length >= _poolInds.length || _poolInds.length === 0) ? _curInds : _poolInds;
         renderBullseye(body.querySelector("#bs-industries-host"), {
-          max: 50, current: p.industries || [],
-          pool: p.industriesPool || [],
+          max: 100, current: _seedInds,
+          pool: _poolInds,
           placeholder: "e.g. healthcare technology",
-          hint: "Tight industry choice = less noise. Click a suggestion below to swap one in."
+          hint: "Tight industry choice = less noise. ×ing a chip drops it back into the pool below."
         });
         // 3. Skills (merge keywords + technologies + frameworks) — pool from skillsPool
         const merged = [].concat(p.keywords || [], p.technologies || [], p.frameworks || []);
         const skillsPool = (p.skillsPool && p.skillsPool.length) ? p.skillsPool : merged;
+        // Seed with full skillsPool so every resume-derived skill is active by default.
+        const _seedSkills = (merged.length >= skillsPool.length || skillsPool.length === 0) ? merged : skillsPool;
         renderBullseye(body.querySelector("#bs-skills-host"), {
-          max: 50, current: merged.slice(0, 50),
+          max: 100, current: _seedSkills,
           pool: skillsPool,
           placeholder: "e.g. digital transformation",
-          hint: "These boost a job\'s score when found in title or description. Suggestions below come from your resume."
+          hint: "These boost a job\'s score when found in title or description. ×ing a chip drops it back into the pool below."
         });
         // 4. Companies — same inline UI as original pick-companies step
         const cHost = body.querySelector("#bs-companies-host");
@@ -484,16 +494,8 @@ WIZARD_V3_BLOCK = r"""
         // industries gives the matcher nothing to work with).
         if (tItems.length === 0) { setMsg(ctx.body, "err", "Pick at least 1 title."); throw new Error("empty titles"); }
         if (iItems.length === 0) { setMsg(ctx.body, "err", "Pick at least 1 industry."); throw new Error("empty industries"); }
-        // Over-cap is no longer a hard block — auto-trim to the first N and
-        // tell the user. Previously this threw, which locked over-cap users
-        // out of the wizard forever (bug 2026-05-28).
-        const trimNotes = [];
-        if (tItems.length > 5)  { trimNotes.push("titles: " + tItems.length + " → 5"); tItems = tItems.slice(0, 5); }
-        if (iItems.length > 5)  { trimNotes.push("industries: " + iItems.length + " → 5"); iItems = iItems.slice(0, 5); }
-        if (sItems.length > 15) { trimNotes.push("skills: " + sItems.length + " → 15"); sItems = sItems.slice(0, 15); }
-        if (trimNotes.length) {
-          setMsg(ctx.body, "warn", "Auto-trimmed to caps (" + trimNotes.join("; ") + "). You can adjust later from /account.html.");
-        }
+        // No save-time trimming (2026-05-29). Caps removed — user keeps everything
+        // they picked. Soft safety net at 100 enforced by renderBullseye max.
         // Patch all bullseye fields in one go
         await patchProfile({
           targetTitles: tItems,

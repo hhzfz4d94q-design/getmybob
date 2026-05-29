@@ -199,12 +199,12 @@
 
   <div class="card">
     <h1>Matcher bullseye</h1>
-    <p class="sub">What the matcher is looking for on your behalf. Pick the titles / industries / skills you want the matcher to weight (up to 50 each) — suggestions from your resume appear below each as "Or swap in" chips you can promote with one click.</p>
-    <h3 style="margin:0 0 6px;font-size:14px;color:var(--ink);">Target titles (max 5)</h3>
+    <p class="sub">What the matcher is looking for on your behalf. Everything from your resume is loaded by default — trim down what you do NOT want. ×ing a chip drops it back into the "Or swap in" pool below.</p>
+    <h3 style="margin:0 0 6px;font-size:14px;color:var(--ink);">Target titles</h3>
     <div id="bs-titles-host" style="margin-bottom:22px;"></div>
-    <h3 style="margin:0 0 6px;font-size:14px;color:var(--ink);">Industries (max 5)</h3>
+    <h3 style="margin:0 0 6px;font-size:14px;color:var(--ink);">Industries</h3>
     <div id="bs-industries-host" style="margin-bottom:22px;"></div>
-    <h3 style="margin:0 0 6px;font-size:14px;color:var(--ink);">Skills (max 15)</h3>
+    <h3 style="margin:0 0 6px;font-size:14px;color:var(--ink);">Skills</h3>
     <div id="bs-skills-host" style="margin-bottom:14px;"></div>
     <button type="button" class="btn primary" id="saveBullseyeBtn">Save bullseye</button>
     <div id="bullseyeMsg" class="msg"></div>
@@ -467,19 +467,24 @@ async function loadBullseye() {
     if (!r.ok) return;
     const j = await r.json();
     const p = j.profile || {};
+    const _curT = p.targetTitles || [], _poolT = p.titlesPool || [];
+    const _seedT = (_curT.length >= _poolT.length || _poolT.length === 0) ? _curT : _poolT;
     renderBullseyeAcct(document.getElementById('bs-titles-host'), {
-      max: 50, current: p.targetTitles || [], pool: p.titlesPool || [],
+      max: 100, current: _seedT, pool: _poolT,
       placeholder: 'e.g. vp of product management',
       hint: 'Click an "Or swap in" chip to promote a resume-derived suggestion. ×ing a selected chip drops it back into the pool.'
     });
+    const _curI = p.industries || [], _poolI = p.industriesPool || [];
+    const _seedI = (_curI.length >= _poolI.length || _poolI.length === 0) ? _curI : _poolI;
     renderBullseyeAcct(document.getElementById('bs-industries-host'), {
-      max: 50, current: p.industries || [], pool: p.industriesPool || [],
+      max: 100, current: _seedI, pool: _poolI,
       placeholder: 'e.g. healthcare technology'
     });
     const merged = [].concat(p.keywords || [], p.technologies || [], p.frameworks || []);
     const skillsPool = (p.skillsPool && p.skillsPool.length) ? p.skillsPool : merged;
+    const _seedS = (merged.length >= skillsPool.length || skillsPool.length === 0) ? merged : skillsPool;
     renderBullseyeAcct(document.getElementById('bs-skills-host'), {
-      max: 50, current: merged.slice(0, 50), pool: skillsPool,
+      max: 100, current: _seedS, pool: skillsPool,
       placeholder: 'e.g. digital transformation'
     });
   } catch (e) {}
@@ -495,11 +500,8 @@ document.getElementById('saveBullseyeBtn').addEventListener('click', async () =>
   let titles = (document.getElementById('bs-titles-host').__bullseyeValues || (() => []))();
   let inds   = (document.getElementById('bs-industries-host').__bullseyeValues || (() => []))();
   let skills = (document.getElementById('bs-skills-host').__bullseyeValues || (() => []))();
-  // Auto-trim to caps (same policy as the wizard after the 2026-05-28 fix)
+  // No save-time trim (2026-05-29). Caps removed — keep everything the user picked.
   const notes = [];
-  if (titles.length > 5)  { notes.push('titles: ' + titles.length + ' → 5');     titles = titles.slice(0, 5); }
-  if (inds.length > 5)    { notes.push('industries: ' + inds.length + ' → 5');   inds   = inds.slice(0, 5); }
-  if (skills.length > 15) { notes.push('skills: ' + skills.length + ' → 15');    skills = skills.slice(0, 15); }
   try {
     const r = await fetch(WORKER + '/skills-profile?user=' + encodeURIComponent(slug), {
       method: 'POST',
