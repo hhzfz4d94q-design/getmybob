@@ -515,19 +515,19 @@
 
 [ashby] 74 companies
   [1/74] Graphitehq: ERROR — name '_strip_html' is not defined
-  [2/74] maximustribe: ERROR — name '_strip_html' is not defined
+  [2/74] maximustribe: 0 jobs (slug may be invalid)
   [3/74] codes-health: 0 jobs (slug may be invalid)
-  [4/74] heidihealth.com.au: ERROR — name '_strip_html' is not defined
+  [4/74] heidihealth.com.au: 0 jobs (slug may be invalid)
   [5/74] Interrahealth: ERROR — name '_strip_html' is not defined
-  [6/74] fitt: 0 jobs (slug may be invalid)
-  [7/74] lark: 0 jobs (slug may be invalid)
-  [8/74] virtahealth: ERROR — name '_strip_html' is not defined
+  [6/74] fitt: ERROR — name '_strip_html' is not defined
+  [7/74] lark: ERROR — name '_strip_html' is not defined
+  [8/74] virtahealth: 0 jobs (slug may be invalid)
   [9/74] Healthtech-1: ERROR — name '_strip_html' is not defined
-  [10/74] tandem-health: ERROR — name '_strip_html' is not defined
+  [10/74] tandem-health: 0 jobs (slug may be invalid)
   [11/74] Aios: 0 jobs (slug may be invalid)
   [12/74] you-health: ERROR — name '_strip_html' is not defined
-  [13/74] versemedical: ERROR — name '_strip_html' is not defined
-  [14/74] abridge: ERROR — name '_strip_html' is not defined
+  [13/74] versemedical: 0 jobs (slug may be invalid)
+  [14/74] abridge: 0 jobs (slug may be invalid)
   [15/74] decagon: 0 jobs (slug may be invalid)
   [16/74] rad-ai: 0 jobs (slug may be invalid)
   [17/74] ramphealth: 0 jobs (slug may be invalid)
@@ -579,7 +579,7 @@
   [63/74] unit-finance: 0 jobs (slug may be invalid)
   [64/74] synctera: ERROR — name '_strip_html' is not defined
   [65/74] column-tax: 0 jobs (slug may be invalid)
-  [66/74] atomic-financial: ERROR — name '_strip_html' is not defined
+  [66/74] atomic-financial: 0 jobs (slug may be invalid)
   [67/74] pinwheel: 0 jobs (slug may be invalid)
   [68/74] methodfi: 0 jobs (slug may be invalid)
   [69/74] zeal: 0 jobs (slug may be invalid)
@@ -1033,10 +1033,10 @@ Failures: 985 (companies returned no data — likely bad slugs)
 [users] loaded 4 from Worker
 
 [multi-user] generating dashboards for 4 users
-[diag:geetu] loaded profile, targetCompanies len=20, first={'name': 'Zocdoc', 'atsHint': 'greenhouse', 'why': 'Digital health marketplace actively hiring VP Product roles to scale their SaaS platform connecting patients and providers.'}
+[diag:geetu] loaded profile, targetCompanies len=20, first={'name': 'Tempus', 'atsHint': 'greenhouse', 'why': 'Healthcare AI and precision medicine platform hiring VP-level product leaders to scale their SaaS EHR-integrated diagnostics portfolio.'}
 [skills-profile:geetu] Senior digital transformation & product leader (Healthcare / Life Sciences) — targeting Director / Senior Director / Principal / VP / Group PM roles (NOT C-suite) · 15 keywords
 [velocity] 138 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:geetu] filter pref='hybrid' locs=['Allendale, NJ', 'New York City', 'New Jersey'] kept 2860/2860
+[location-remote:geetu] filter pref='hybrid' locs=['allendale', 'nj', 'new york city'] kept 2860/2860
 [why-hidden:geetu] classified 2000 hidden jobs (of 19980 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/geetu.html
