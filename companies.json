@@ -1349,17 +1349,6 @@
       ]
     },
     {
-      "name": "Citi",
-      "tenant": "citi",
-      "subdomain": "wd5",
-      "site": "2",
-      "industries": [
-        "banking",
-        "finance",
-        "wealth management"
-      ]
-    },
-    {
       "name": "Morgan Stanley",
       "tenant": "ms",
       "subdomain": "wd5",

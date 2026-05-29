@@ -1,46 +1,21 @@
 {
-  "_note": "Healthcare expansion v1 (2026-05-28): seed networkCompanies with 39 healthcare-adjacent companies from Geetu's LinkedIn. Scorer adds +5 boost when a job's company is in this list \u2014 combined with +200 warm-intro sprint priority, these float to the top of her sprint.",
   "patchFields": {
-    "networkCompanies": [
-      "Nextech Systems",
-      "BioReference Laboratories",
-      "Pfizer",
-      "SRS Health",
-      "Prescryptive Health, Inc.",
-      "SpectraMedix",
-      "rater8",
-      "Northwell Health",
-      "Express Scripts Pharmacy Benefit Services",
-      "UnitedHealth Group",
-      "Stryker",
-      "Quest Diagnostics",
-      "DrFirst, Inc.",
-      "Alto Pharmacy",
-      "Healthfirst",
-      "Bio-Reference Laboratories/PSImedica",
-      "US HealthTek",
-      "Cardinal Health",
-      "ClearView Healthcare Partners",
-      "Equum Medical",
-      "Oak Street Health",
-      "Johnson & Johnson Innovative Medicine",
-      "One Medical",
-      "Tal Healthcare",
-      "Delaware Health Information Network",
-      "HealtheConnections",
-      "Eye Care Leaders",
-      "Medidata Solutions",
-      "DentalFynd",
-      "Fedora Healthcare Solutions",
-      "LucyRx",
-      "Vosita Healthcare",
-      "RxBenefits, Inc.",
-      "Topcon Healthcare Solutions",
-      "Oshi Health, Inc.",
-      "SANOFI AVENTIS US LLC",
-      "Optum",
-      "Merck",
-      "Regeneron"
+    "negativeKeywords": [
+      "intern", "entry level", "new grad", "graduate program",
+      "banking", "investment banking", "commercial banking", "retail banking",
+      "credit risk", "credit officer", "loan officer",
+      "audit", "internal audit", "chief audit officer", "head of audit", "audit director",
+      "capital markets", "treasury", "fixed income", "equity research",
+      "compliance officer", "bsa", "aml", "anti-money laundering",
+      "actuary", "actuarial",
+      "claims adjuster", "underwriter", "insurance broker"
+    ],
+    "negativeTitles": [
+      "chief audit officer", "chief credit officer", "chief risk officer banking",
+      "head of audit", "head of credit", "head of banking",
+      "vp banking", "vp audit", "vp credit risk", "vp capital markets",
+      "director of audit", "director of banking", "director of credit",
+      "actuary", "underwriter"
     ]
   }
 }
