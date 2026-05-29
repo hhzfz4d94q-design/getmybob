@@ -1,6 +1,6 @@
 {
   "_note": "Curated Healthcare IT / digital health catalog. Used for: (a) scoring boost when company appears in feed AND user has healthcare industries (+3, all entries), (b) auto-scraping (only ATS=greenhouse/lever/ashby/workable). Workday/Google/Amazon entries are catalog-only (scored boost when found, not scraped). Slugs are canonical for matching.",
-  "version": "2026-05-29-v3+discovered+discovered+dream-list+from-contacts+dedup+dream-geetu+discovered+dedup-r2+verified",
+  "version": "2026-05-29-v3+discovered+discovered+dream-list+from-contacts+dedup+dream-geetu+discovered+dedup-r2+verified+slug-recover",
   "companies": [
     {
       "name": "Doximity",
@@ -33,7 +33,8 @@
       "name": "Hims & Hers Health",
       "category": "telehealth",
       "atsHint": "ashby",
-      "slug": "hims"
+      "slug": "hims",
+      "suspectSlug": true
     },
     {
       "name": "Hinge Health",
@@ -50,8 +51,8 @@
     {
       "name": "Spring Health",
       "category": "dtx",
-      "atsHint": "greenhouse",
-      "slug": "springhealth",
+      "atsHint": "workable",
+      "slug": "spring",
       "dreamList": true,
       "dreamListFor": "geetu"
     },
@@ -87,7 +88,7 @@
       "name": "Oscar Health",
       "category": "payer-tech",
       "atsHint": "greenhouse",
-      "slug": "oscarhealth",
+      "slug": "oscar",
       "dreamList": true,
       "dreamListFor": "geetu"
     },
@@ -95,7 +96,8 @@
       "name": "Devoted Health",
       "category": "payer-tech",
       "atsHint": "greenhouse",
-      "slug": "devoted-health"
+      "slug": "devoted-health",
+      "suspectSlug": true
     },
     {
       "name": "Bright Health Group",
@@ -107,8 +109,8 @@
     {
       "name": "Clover Health",
       "category": "payer-tech",
-      "atsHint": "greenhouse",
-      "slug": "cloverhealth",
+      "atsHint": "workable",
+      "slug": "clover",
       "dreamList": true,
       "dreamListFor": "geetu"
     },
@@ -156,8 +158,8 @@
     {
       "name": "Modern Health",
       "category": "dtx",
-      "atsHint": "greenhouse",
-      "slug": "modernhealth"
+      "atsHint": "workable",
+      "slug": "modern"
     },
     {
       "name": "Calm",
@@ -168,8 +170,8 @@
     {
       "name": "Headspace Health",
       "category": "dtx",
-      "atsHint": "greenhouse",
-      "slug": "headspacehealth"
+      "atsHint": "workable",
+      "slug": "headspace"
     },
     {
       "name": "Omada Health",
@@ -359,8 +361,8 @@
     {
       "name": "Health Catalyst",
       "category": "hit-ai",
-      "atsHint": "greenhouse",
-      "slug": "healthcatalyst"
+      "atsHint": "workable",
+      "slug": "health"
     },
     {
       "name": "Arcadia",
@@ -455,7 +457,7 @@
       "name": "Flatiron Health",
       "category": "life-sciences-data",
       "atsHint": "greenhouse",
-      "slug": "flatiron"
+      "slug": "flatironhealth"
     },
     {
       "name": "Foundation Medicine",
@@ -466,7 +468,7 @@
     {
       "name": "Color Health",
       "category": "life-sciences-data",
-      "atsHint": "greenhouse",
+      "atsHint": "lever",
       "slug": "color"
     },
     {
@@ -517,8 +519,8 @@
     {
       "name": "Prescryptive Health",
       "category": "pharma-tech",
-      "atsHint": "greenhouse",
-      "slug": "prescryptivehealth"
+      "atsHint": "workable",
+      "slug": "prescryptive"
     },
     {
       "name": "GoodRx",
@@ -661,18 +663,19 @@
       "atsHint": "greenhouse",
       "slug": "khealth",
       "dreamList": true,
-      "dreamListFor": "geetu"
+      "dreamListFor": "geetu",
+      "suspectSlug": true
     },
     {
       "name": "Hello Heart",
       "category": "dtx",
-      "atsHint": "greenhouse",
-      "slug": "helloheart"
+      "atsHint": "workable",
+      "slug": "hello"
     },
     {
       "name": "Sword Health",
       "category": "dtx",
-      "atsHint": "greenhouse",
+      "atsHint": "lever",
       "slug": "swordhealth"
     },
     {
@@ -734,7 +737,7 @@
     {
       "name": "SonderMind",
       "category": "provider-tech",
-      "atsHint": "greenhouse",
+      "atsHint": "ashby",
       "slug": "sondermind"
     },
     {
@@ -847,7 +850,7 @@
     {
       "name": "Cityblock Health",
       "category": "provider-tech",
-      "atsHint": "greenhouse",
+      "atsHint": "ashby",
       "slug": "cityblock"
     },
     {
@@ -877,7 +880,7 @@
     {
       "name": "Carbon Health",
       "category": "provider-tech",
-      "atsHint": "greenhouse",
+      "atsHint": "lever",
       "slug": "carbonhealth"
     },
     {
@@ -890,7 +893,7 @@
     {
       "name": "Aledade",
       "category": "vbc",
-      "atsHint": "greenhouse",
+      "atsHint": "lever",
       "slug": "aledade"
     },
     {
@@ -1011,7 +1014,7 @@
       "name": "Tomorrow Health",
       "category": "home-health",
       "atsHint": "greenhouse",
-      "slug": "tomorrowhealth"
+      "slug": "tomorrow"
     },
     {
       "name": "Forge Health",
@@ -1036,20 +1039,20 @@
       "name": "Hims & Hers",
       "category": "Mid-stage healthtech SaaS",
       "atsHint": "ashby",
-      "slug": "hims"
+      "slug": "hims",
+      "suspectSlug": true
     },
     {
       "name": "Calibrate",
       "category": "Value-based care",
-      "atsHint": "greenhouse",
-      "slug": "calibrate",
-      "suspectSlug": true
+      "atsHint": "workable",
+      "slug": "calibrate"
     },
     {
       "name": "Included Health",
       "category": "Mid-stage healthtech SaaS",
-      "atsHint": "greenhouse",
-      "slug": "included-health"
+      "atsHint": "lever",
+      "slug": "includedhealth"
     },
     {
       "name": "Commure",
@@ -1086,7 +1089,8 @@
       "name": "Guardant Health",
       "category": "Medical devices + diagnostics",
       "atsHint": "greenhouse",
-      "slug": "guardanthealth"
+      "slug": "guardanthealth",
+      "suspectSlug": true
     },
     {
       "name": "Clarify Health",
@@ -1590,7 +1594,8 @@
       "slug": "huge",
       "vertical": "media",
       "dreamList": true,
-      "dreamListFor": "geetu"
+      "dreamListFor": "geetu",
+      "suspectSlug": true
     },
     {
       "name": "Huntress",
@@ -1640,7 +1645,7 @@
     {
       "name": "Smarter Dx",
       "category": "dream-list-geetu",
-      "atsHint": "ashby",
+      "atsHint": "greenhouse",
       "slug": "smarterdx",
       "vertical": "healthcare",
       "dreamList": true,
@@ -1761,12 +1766,13 @@
       "slug": "celonis",
       "vertical": "tech",
       "dreamList": true,
-      "dreamListFor": "geetu"
+      "dreamListFor": "geetu",
+      "suspectSlug": true
     },
     {
       "name": "Notion",
       "category": "dream-list-geetu",
-      "atsHint": "greenhouse",
+      "atsHint": "ashby",
       "slug": "notion",
       "vertical": "tech",
       "dreamList": true,
@@ -1856,13 +1862,13 @@
     {
       "name": "Boulder Care",
       "category": "Behavioral Health + Addiction Recovery",
-      "atsHint": "lever",
-      "slug": "boulder-care"
+      "atsHint": "greenhouse",
+      "slug": "bouldercare"
     },
     {
       "name": "Ophelia",
       "category": "Behavioral Health + Addiction Recovery",
-      "atsHint": "lever",
+      "atsHint": "greenhouse",
       "slug": "ophelia"
     },
     {
@@ -1892,8 +1898,8 @@
     {
       "name": "Capital Rx",
       "category": "Specialty Pharmacy + 340B",
-      "atsHint": "greenhouse",
-      "slug": "capitalrx"
+      "atsHint": "lever",
+      "slug": "capital"
     },
     {
       "name": "Imprivata",
@@ -1929,7 +1935,8 @@
       "name": "Nurx",
       "category": "Med-Aesthetic / Consumer Health",
       "atsHint": "lever",
-      "slug": "nurx"
+      "slug": "nurx",
+      "suspectSlug": true
     },
     {
       "name": "Curology",

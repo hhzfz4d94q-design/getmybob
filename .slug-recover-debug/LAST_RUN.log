@@ -1,0 +1,51 @@
+Probing 47 priority companies across all ATSes...
+
+  ✓ FIXED Spring Health                  greenhouse/'springhealth' → workable/'spring'
+  = ALREADY OK Headway                        greenhouse/headway
+  = ALREADY OK Komodo Health                  greenhouse/komodohealth
+  ✓ FIXED Oscar Health                   greenhouse/'oscarhealth' → greenhouse/'oscar'
+  ✓ FIXED Clover Health                  greenhouse/'cloverhealth' → workable/'clover'
+  = ALREADY OK Garner Health                  greenhouse/garnerhealth
+  = ALREADY OK Transcarent                    greenhouse/transcarent
+  ✓ FIXED Modern Health                  greenhouse/'modernhealth' → workable/'modern'
+  ✓ FIXED Headspace Health               greenhouse/'headspacehealth' → workable/'headspace'
+  = ALREADY OK Omada Health                   greenhouse/omadahealth
+  ✓ FIXED Health Catalyst                greenhouse/'healthcatalyst' → workable/'health'
+  ✓ FIXED Flatiron Health                greenhouse/'flatiron' → greenhouse/'flatironhealth'
+  ✓ FIXED Color Health                   greenhouse/'color' → lever/'color'
+  ✓ FIXED Prescryptive Health            greenhouse/'prescryptivehealth' → workable/'prescryptive'
+  ✓ FIXED Hello Heart                    greenhouse/'helloheart' → workable/'hello'
+  ✓ FIXED Sword Health                   greenhouse/'swordhealth' → lever/'swordhealth'
+  ✓ FIXED SonderMind                     greenhouse/'sondermind' → ashby/'sondermind'
+  ✓ FIXED Cityblock Health               greenhouse/'cityblock' → ashby/'cityblock'
+  ✓ FIXED Carbon Health                  greenhouse/'carbonhealth' → lever/'carbonhealth'
+  ✓ FIXED Aledade                        greenhouse/'aledade' → lever/'aledade'
+  ✓ FIXED Tomorrow Health                greenhouse/'tomorrowhealth' → greenhouse/'tomorrow'
+  ✓ FIXED Calibrate                      greenhouse/'calibrate' → workable/'calibrate'
+  ✓ FIXED Included Health                greenhouse/'included-health' → lever/'includedhealth'
+  = ALREADY OK Pager Health                   greenhouse/pagerhealth
+  = ALREADY OK Instacart                      greenhouse/instacart
+  ✓ FIXED Smarter Dx                     ashby/'smarterdx' → greenhouse/'smarterdx'
+  = ALREADY OK Elastic                        greenhouse/elastic
+  = ALREADY OK Lattice                        greenhouse/lattice
+  = ALREADY OK Dropbox                        greenhouse/dropbox
+  = ALREADY OK Anthropic                      greenhouse/anthropic
+  = ALREADY OK AlphaSense                     greenhouse/alphasense
+  = ALREADY OK Reddit                         greenhouse/reddit
+  ✓ FIXED Notion                         greenhouse/'notion' → ashby/'notion'
+  ✓ FIXED Boulder Care                   lever/'boulder-care' → greenhouse/'bouldercare'
+  ✓ FIXED Ophelia                        lever/'ophelia' → greenhouse/'ophelia'
+  ✓ FIXED Capital Rx                     greenhouse/'capitalrx' → lever/'capital'
+
+DONE — fixed 23 slugs, 11 still no working slug:
+  - Hims & Hers Health
+  - Devoted Health
+  - K Health
+  - Kaia Health
+  - Hims & Hers
+  - Guardant Health
+  - Agilon Health
+  - Ginger
+  - Huge
+  - Celonis
+  - Nurx
