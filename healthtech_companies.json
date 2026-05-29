@@ -359,13 +359,6 @@
       "slug": "persistent-systems-healthcare"
     },
     {
-      "name": "Health Catalyst",
-      "category": "hit-ai",
-      "atsHint": "other",
-      "slug": "",
-      "suspectSlug": true
-    },
-    {
       "name": "Arcadia",
       "category": "hit-ai",
       "atsHint": "greenhouse",
@@ -665,13 +658,6 @@
       "slug": "khealth",
       "dreamList": true,
       "dreamListFor": "geetu",
-      "suspectSlug": true
-    },
-    {
-      "name": "Hello Heart",
-      "category": "dtx",
-      "atsHint": "other",
-      "slug": "",
       "suspectSlug": true
     },
     {
@@ -1898,13 +1884,6 @@
       "slug": "civicarx"
     },
     {
-      "name": "Capital Rx",
-      "category": "Specialty Pharmacy + 340B",
-      "atsHint": "other",
-      "slug": "",
-      "suspectSlug": true
-    },
-    {
       "name": "Imprivata",
       "category": "Healthcare Cybersecurity + Privacy",
       "atsHint": "greenhouse",
@@ -1982,6 +1961,27 @@
       "dreamList": true,
       "dreamListFor": "geetu",
       "note": "Proprietary careers portal \u2014 needs custom scraper (Apify candidate)"
+    },
+    {
+      "name": "Health Catalyst",
+      "category": "hit-ai",
+      "atsHint": "other",
+      "slug": "",
+      "suspectSlug": true
+    },
+    {
+      "name": "Hello Heart",
+      "category": "dtx",
+      "atsHint": "other",
+      "slug": "",
+      "suspectSlug": true
+    },
+    {
+      "name": "Capital Rx",
+      "category": "Specialty Pharmacy + 340B",
+      "atsHint": "other",
+      "slug": "",
+      "suspectSlug": true
     }
   ]
 }
