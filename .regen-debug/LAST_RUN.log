@@ -1,22 +1,22 @@
 [vc-portfolio] loaded 105 discovered companies
-[healthtech] loaded 137 curated companies
+[healthtech] loaded 270 curated companies
 [regen] imported ok
 [regen] db connected
-[industries] mapped 263 companies; default=['healthcare', 'healthcare-it', 'digital-health', 'health-saas', 'pharma', 'pharmaceuticals', 'biotech', 'life-sciences', 'diagnostics', 'telehealth', 'mental-health', 'clinical-ai']
+[industries] mapped 340 companies; default=['healthcare', 'healthcare-it', 'digital-health', 'health-saas', 'pharma', 'pharmaceuticals', 'biotech', 'life-sciences', 'diagnostics', 'telehealth', 'mental-health', 'clinical-ai']
 [users] loaded 4 from Worker
 
 [multi-user] generating dashboards for 4 users
-[diag:geetu] loaded profile, targetCompanies len=20, first={'name': 'Zocdoc', 'atsHint': 'greenhouse', 'why': 'Digital health marketplace actively hiring VP Product roles to scale their SaaS platform connecting patients and providers.'}
+[diag:geetu] loaded profile, targetCompanies len=20, first={'name': 'Tempus', 'atsHint': 'greenhouse', 'why': 'Healthcare AI and precision medicine platform hiring VP-level product leaders to scale their SaaS EHR-integrated diagnostics portfolio.'}
 [skills-profile:geetu] Senior digital transformation & product leader (Healthcare / Life Sciences) — targeting Director / Senior Director / Principal / VP / Group PM roles (NOT C-suite) · 15 keywords
 [velocity] 138 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:geetu] filter pref='hybrid' locs=['Allendale, NJ', 'New York City', 'New Jersey'] kept 2860/2860
+[location-remote:geetu] filter pref='hybrid' locs=['allendale', 'nj', 'new york city'] kept 2860/2860
 [why-hidden:geetu] classified 2000 hidden jobs (of 19980 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/geetu.html
-[diag:amit-arora] loaded profile, targetCompanies len=25, first={'name': 'Webster Bank', 'atsHint': 'workday', 'atsUrl': 'https://webster.wd1.myworkdayjobs.com/Webster_Bank_Careers', 'why': 'Super-regional commercial bank actively investing in technology modernization and GRC; strong fit for a CIO or CRO-level leader with commercial lending depth'}
-[skills-profile:amit-arora] Senior technology and GRC executive targeting transformation, risk, and digital strategy leadership at financial institutions · 15 keywords
+[diag:amit-arora] loaded profile, targetCompanies len=25, first={'name': 'Webster Bank', 'atsHint': 'workday', 'atsUrl': 'https://websterbank.wd1.myworkdayjobs.com/WebsterBankCareers', 'why': "Super-regional commercial bank actively scaling GRC and digital banking programs — strong fit for Amit's enterprise transformation and commercial lending background"}
+[skills-profile:amit-arora] Senior technology and GRC executive targeting VP / Managing Director roles in banking, capital markets, and financial services transformation · 13 keywords
 [velocity] 138 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:amit-arora] filter pref='hybrid' locs=['new york city', 'remote (us)'] kept 4377/4377
+[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 4415/4415
 [why-hidden:amit-arora] classified 2000 hidden jobs (of 19980 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/amit-arora.html
