@@ -448,6 +448,7 @@ HTML_TEMPLATE = """<!doctype html>
   <div id="focus-list" style="margin-top:14px; display:flex; flex-direction:column; gap:10px; font-size:13.5px;">
     <!-- populated by JS -->
   </div>
+  <div id="focus-footer" style="margin-top:14px; padding-top:12px; border-top:1px solid #d0d4dc; font-size:13px; color:#555; display:none;"></div>
   <div id="focus-feed-toggle" style="margin-top:14px; text-align:center;">
     <button onclick="toggleFullFeed()" id="focus-feed-toggle-btn" style="background:rgba(24,23,181,0.08);border:1px solid rgba(24,23,181,0.2);color:#1817B5;padding:8px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">
       View more matches ↓
@@ -4932,6 +4933,48 @@ async function _refreshFocusPanelBody(panel) {{
         _focusDismiss(b.dataset.skipFp, b.dataset.skipReason, b.dataset.skipCo, b.dataset.skipTitle, b);
       }});
     }});
+
+    // Populate "View all matches" footer — shows count of strong+good in the
+    // main grid and scrolls to it on click. The grid itself is always
+    // rendered with all jobs; this just makes it discoverable from sprint mode.
+    try {{
+      const footer = document.getElementById('focus-footer');
+      const grid = document.getElementById('grid');
+      if (footer && grid) {{
+        const strong = grid.querySelectorAll('.card[data-tier="strong"]').length;
+        const good   = grid.querySelectorAll('.card[data-tier="good"]').length;
+        const totalGrade = strong + good;
+        // Subtract picks already shown in the panel from the "more below" count
+        const pickFps = new Set(picks.map(c => c.getAttribute("data-fp")));
+        let moreBelow = 0;
+        grid.querySelectorAll('.card[data-tier="strong"], .card[data-tier="good"]').forEach(c => {{
+          if (!pickFps.has(c.getAttribute("data-fp"))) moreBelow += 1;
+        }});
+        if (totalGrade > 0) {{
+          footer.style.display = 'flex';
+          footer.style.alignItems = 'center';
+          footer.style.justifyContent = 'space-between';
+          footer.style.gap = '12px';
+          footer.innerHTML =
+            '<div>' +
+              '<span style="color:#0a6b3a;font-weight:600;">' + strong + ' strong</span> + ' +
+              '<span style="color:#1817B5;font-weight:600;">' + good + ' good</span> matches in your feed today' +
+              (moreBelow > 0 ? ' &middot; <strong>' + moreBelow + ' more below the daily picks</strong>' : '') +
+            '</div>' +
+            (moreBelow > 0
+              ? '<button id="ff-browse-btn" style="background:#5C5CD6;color:#fff;border:none;padding:6px 14px;border-radius:6px;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap;">Browse all matches &darr;</button>'
+              : '');
+        // Wire the button (avoid inline onclick + JS string escape hell)
+        const _ffBtn = document.getElementById('ff-browse-btn');
+        if (_ffBtn) _ffBtn.addEventListener('click', function() {{
+          const _g = document.getElementById('grid');
+          if (_g) _g.scrollIntoView({{behavior:'smooth', block:'start'}});
+        }});
+        }} else {{
+          footer.style.display = 'none';
+        }}
+      }}
+    }} catch (_e) {{ /* silent */ }}
   }}
 }}
 
