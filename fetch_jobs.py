@@ -1508,17 +1508,21 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         # A 'Lead Legal Counsel' or 'Support Process Manager' at a fintech
         # gets industry=100 but is the WRONG KIND of role. Don't let
         # industry alone promote them.
-        if t < 50:
+        # 2026-05-29 evening: relaxed from 50 → 40 — title fuzzy-match was
+        # killing too many fits (Geetu's 15 titles still miss variants).
+        if t < 40:
             return 'borderline'  # title fundamentally off
         # Strong: title clearly matches targetTitles AND industry + seniority
         # are solid AND location is acceptable.
         if t >= 70 and i >= 60 and s >= 60 and l >= 60:
             return 'strong'
-        # Good: title at least partially matches AND 2 of the other 3
-        # dimensions clear 50. Note: t already known ≥50 by the gate above,
-        # so we only require 2 of {i, k, s} ≥ 50 here.
+        # Good: title at least partially matches AND at least 1 of the
+        # other 3 dimensions clears 50 (relaxed 2026-05-29 from 2-of-3 →
+        # 1-of-3). Pairs with the title-gate relaxation above to surface
+        # legit healthcare leadership roles whose JD wording doesn't
+        # exactly match her 15 stored titles.
         passed_other = sum(1 for v in (i, k, s) if v >= 50)
-        if passed_other >= 2 and l >= 50:
+        if passed_other >= 1 and l >= 50:
             return 'good'
         return 'borderline'
 
