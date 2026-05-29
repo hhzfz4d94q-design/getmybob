@@ -1,0 +1,61 @@
+name: Merge user dream list into catalog
+
+# One-shot: feeds a per-user hand-curated dream list to Claude, gets
+# ATS+slug per name, merges into healthtech_companies.json + companies.json
+# tagged dreamList=true. Also fixes broken slugs on existing entries.
+#
+# Trigger: Actions → "Merge user dream list into catalog" → Run workflow.
+
+on:
+  workflow_dispatch:
+    inputs:
+      user:
+        description: "User slug whose dream list to merge"
+        required: true
+        default: "geetu"
+
+permissions:
+  contents: write
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run merge
+        id: merge
+        shell: bash
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          DREAM_USER: ${{ github.event.inputs.user }}
+        run: |
+          export PYTHONUNBUFFERED=1
+          set +e
+          python3 scripts/merge_dream_list.py > /tmp/merge.log 2>&1
+          PYEXIT=$?
+          echo "::group::Merge output"
+          cat /tmp/merge.log
+          echo "::endgroup::"
+          mkdir -p .merge-debug
+          cp /tmp/merge.log .merge-debug/LAST_RUN.log
+          echo "$PYEXIT" > .merge-debug/LAST_EXIT_CODE
+          if [ "$PYEXIT" = "0" ]; then echo "status=ok" >> "$GITHUB_OUTPUT"; else echo "status=fail" >> "$GITHUB_OUTPUT"; fi
+      - name: Commit log + catalog
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .merge-debug/ healthtech_companies.json companies.json 2>/dev/null
+          if git diff --cached --quiet; then
+            echo "No changes."
+          else
+            git commit -m "dream-list: merged ${{ github.event.inputs.user }}'s dream companies"
+            git pull --rebase origin main 2>/dev/null || true
+            git push origin main || echo "push failed (non-fatal)"
+          fi
+      - name: Surface failure
+        if: steps.merge.outputs.status != 'ok'
+        run: exit 1
