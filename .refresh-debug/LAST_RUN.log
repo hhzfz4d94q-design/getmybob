@@ -1,5 +1,5 @@
 [vc-portfolio] loaded 105 discovered companies
-[healthtech] loaded 300 curated companies
+[healthtech] loaded 297 curated companies
 [industries] mapped 358 companies; default=['healthcare', 'healthcare-it', 'digital-health', 'health-saas', 'pharma', 'pharmaceuticals', 'biotech', 'life-sciences', 'diagnostics', 'telehealth', 'mental-health', 'clinical-ai']
 [users] loaded 4 from Worker
 [user-targets] merged 473 per-user companies (greenhouse=28, lever=40, ashby=39, wttj=40, workday=6); skipped 0 non-routable
@@ -441,7 +441,7 @@
   [13/145] mcra: 0 jobs (slug may be invalid)
   [14/145] aledade: ERROR — name '_normalize_title' is not defined
   [15/145] includedhealth: ERROR — name '_normalize_title' is not defined
-  [16/145] lyrahealth: 0 jobs (slug may be invalid)
+  [16/145] lyrahealth: ERROR — name '_normalize_title' is not defined
   [17/145] glooko: 0 jobs (slug may be invalid)
   [18/145] truepill: 0 jobs (slug may be invalid)
   [19/145] talkiatry: 0 jobs (slug may be invalid)
