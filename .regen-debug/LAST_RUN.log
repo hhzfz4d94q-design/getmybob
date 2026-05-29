@@ -1,15 +1,15 @@
 [vc-portfolio] loaded 105 discovered companies
-[healthtech] loaded 270 curated companies
+[healthtech] loaded 300 curated companies
 [regen] imported ok
 [regen] db connected
-[industries] mapped 340 companies; default=['healthcare', 'healthcare-it', 'digital-health', 'health-saas', 'pharma', 'pharmaceuticals', 'biotech', 'life-sciences', 'diagnostics', 'telehealth', 'mental-health', 'clinical-ai']
+[industries] mapped 359 companies; default=['healthcare', 'healthcare-it', 'digital-health', 'health-saas', 'pharma', 'pharmaceuticals', 'biotech', 'life-sciences', 'diagnostics', 'telehealth', 'mental-health', 'clinical-ai']
 [users] loaded 4 from Worker
 
 [multi-user] generating dashboards for 4 users
-[diag:geetu] loaded profile, targetCompanies len=20, first={'name': 'Tempus', 'atsHint': 'greenhouse', 'why': 'Healthcare AI and precision medicine platform hiring VP-level product leaders to scale their SaaS EHR-integrated diagnostics portfolio.'}
-[skills-profile:geetu] Senior digital transformation & product leader (Healthcare / Life Sciences) — targeting Director / Senior Director / Principal / VP / Group PM roles (NOT C-suite) · 15 keywords
+[diag:geetu] loaded profile, targetCompanies len=23, first={'name': 'Veeva Systems', 'atsHint': 'workday', 'atsUrl': 'https://veeva.wd1.myworkdayjobs.com/veeva_careers', 'why': 'Cloud SaaS leader in life sciences with constant demand for senior product and transformation leaders who bridge pharma and technology'}
+[skills-profile:geetu] Senior digital transformation and product leader at the intersection of healthcare and technology · 15 keywords
 [velocity] 138 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:geetu] filter pref='hybrid' locs=['allendale', 'nj', 'new york city'] kept 2860/2860
+[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 2962/2962
 [why-hidden:geetu] classified 2000 hidden jobs (of 19980 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/geetu.html
