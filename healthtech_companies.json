@@ -1,6 +1,6 @@
 {
   "_note": "Curated Healthcare IT / digital health catalog. Used for: (a) scoring boost when company appears in feed AND user has healthcare industries (+3, all entries), (b) auto-scraping (only ATS=greenhouse/lever/ashby/workable). Workday/Google/Amazon entries are catalog-only (scored boost when found, not scraped). Slugs are canonical for matching.",
-  "version": "2026-05-29-v3+discovered+discovered+dream-list+from-contacts+dedup+dream-geetu",
+  "version": "2026-05-29-v3+discovered+discovered+dream-list+from-contacts+dedup+dream-geetu+discovered",
   "companies": [
     {
       "name": "Doximity",
@@ -1715,6 +1715,216 @@
       "vertical": "healthcare",
       "dreamList": true,
       "dreamListFor": "geetu"
+    },
+    {
+      "name": "Velocity Clinical Research",
+      "category": "Clinical Research / CRO",
+      "atsHint": "lever",
+      "slug": "velocityclinical"
+    },
+    {
+      "name": "WCG Clinical",
+      "category": "Clinical Research / CRO",
+      "atsHint": "greenhouse",
+      "slug": "wcgclinical"
+    },
+    {
+      "name": "Byte",
+      "category": "Dental + Vision Tech",
+      "atsHint": "greenhouse",
+      "slug": "byteme"
+    },
+    {
+      "name": "Candid",
+      "category": "Dental + Vision Tech",
+      "atsHint": "greenhouse",
+      "slug": "candidco"
+    },
+    {
+      "name": "Progyny",
+      "category": "Women's Health + Fertility",
+      "atsHint": "greenhouse",
+      "slug": "progyny"
+    },
+    {
+      "name": "Kindbody",
+      "category": "Women's Health + Fertility",
+      "atsHint": "greenhouse",
+      "slug": "kindbody"
+    },
+    {
+      "name": "Tia",
+      "category": "Women's Health + Fertility",
+      "atsHint": "ashby",
+      "slug": "asktia"
+    },
+    {
+      "name": "Carrot Fertility",
+      "category": "Women's Health + Fertility",
+      "atsHint": "greenhouse",
+      "slug": "carrotfertility"
+    },
+    {
+      "name": "Stork Club",
+      "category": "Women's Health + Fertility",
+      "atsHint": "lever",
+      "slug": "storkclub"
+    },
+    {
+      "name": "Ovia Health",
+      "category": "Women's Health + Fertility",
+      "atsHint": "greenhouse",
+      "slug": "oviahealth"
+    },
+    {
+      "name": "Mahmee",
+      "category": "Women's Health + Fertility",
+      "atsHint": "lever",
+      "slug": "mahmee"
+    },
+    {
+      "name": "Cleo",
+      "category": "Women's Health + Fertility",
+      "atsHint": "lever",
+      "slug": "meetcleo"
+    },
+    {
+      "name": "Bicycle Health",
+      "category": "Behavioral Health + Addiction Recovery",
+      "atsHint": "lever",
+      "slug": "bicyclehealth"
+    },
+    {
+      "name": "Eleanor Health",
+      "category": "Behavioral Health + Addiction Recovery",
+      "atsHint": "greenhouse",
+      "slug": "eleanorhealth"
+    },
+    {
+      "name": "Boulder Care",
+      "category": "Behavioral Health + Addiction Recovery",
+      "atsHint": "lever",
+      "slug": "boulder-care"
+    },
+    {
+      "name": "Ophelia",
+      "category": "Behavioral Health + Addiction Recovery",
+      "atsHint": "lever",
+      "slug": "ophelia"
+    },
+    {
+      "name": "Brightside Health",
+      "category": "Behavioral Health + Addiction Recovery",
+      "atsHint": "lever",
+      "slug": "brightside"
+    },
+    {
+      "name": "Alma",
+      "category": "Behavioral Health + Addiction Recovery",
+      "atsHint": "greenhouse",
+      "slug": "helloalma"
+    },
+    {
+      "name": "PointClickCare",
+      "category": "Post-Acute + Home Health + Long-Term Care",
+      "atsHint": "greenhouse",
+      "slug": "pointclickcare"
+    },
+    {
+      "name": "MatrixCare",
+      "category": "Post-Acute + Home Health + Long-Term Care",
+      "atsHint": "greenhouse",
+      "slug": "matrixcare"
+    },
+    {
+      "name": "CivicaRx",
+      "category": "Specialty Pharmacy + 340B",
+      "atsHint": "greenhouse",
+      "slug": "civicarx"
+    },
+    {
+      "name": "Capital Rx",
+      "category": "Specialty Pharmacy + 340B",
+      "atsHint": "greenhouse",
+      "slug": "cap-rx"
+    },
+    {
+      "name": "Imprivata",
+      "category": "Healthcare Cybersecurity + Privacy",
+      "atsHint": "greenhouse",
+      "slug": "imprivata"
+    },
+    {
+      "name": "Censinet",
+      "category": "Healthcare Cybersecurity + Privacy",
+      "atsHint": "lever",
+      "slug": "censinet"
+    },
+    {
+      "name": "Verana Health",
+      "category": "Health IT Infrastructure",
+      "atsHint": "greenhouse",
+      "slug": "veranahealth"
+    },
+    {
+      "name": "Arcadia",
+      "category": "Health IT Infrastructure",
+      "atsHint": "greenhouse",
+      "slug": "arcadia-io"
+    },
+    {
+      "name": "Papa",
+      "category": "Senior Care + Caregiving Platforms",
+      "atsHint": "greenhouse",
+      "slug": "papa"
+    },
+    {
+      "name": "Carewell",
+      "category": "Senior Care + Caregiving Platforms",
+      "atsHint": "lever",
+      "slug": "carewell"
+    },
+    {
+      "name": "A Place for Mom",
+      "category": "Senior Care + Caregiving Platforms",
+      "atsHint": "greenhouse",
+      "slug": "aplaceformom"
+    },
+    {
+      "name": "Nurx",
+      "category": "Med-Aesthetic / Consumer Health",
+      "atsHint": "lever",
+      "slug": "nurx"
+    },
+    {
+      "name": "Curology",
+      "category": "Med-Aesthetic / Consumer Health",
+      "atsHint": "greenhouse",
+      "slug": "curology"
+    },
+    {
+      "name": "Keeps",
+      "category": "Med-Aesthetic / Consumer Health",
+      "atsHint": "lever",
+      "slug": "keeps"
+    },
+    {
+      "name": "Wisp",
+      "category": "Med-Aesthetic / Consumer Health",
+      "atsHint": "lever",
+      "slug": "helowisp"
+    },
+    {
+      "name": "Thirty Madison",
+      "category": "Med-Aesthetic / Consumer Health",
+      "atsHint": "greenhouse",
+      "slug": "thirtymadison"
+    },
+    {
+      "name": "Vetcove",
+      "category": "Veterinary Tech",
+      "atsHint": "lever",
+      "slug": "vetcove"
     }
   ],
   "non_ats_placeholders": [

@@ -2394,6 +2394,196 @@
         "healthcare",
         "health-saas"
       ]
+    },
+    {
+      "name": "Parexel",
+      "tenant": "parexel",
+      "subdomain": "wd1",
+      "site": "Parexel",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "ICON plc",
+      "tenant": "iconplc",
+      "subdomain": "wd5",
+      "site": "ICON",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Syneos Health",
+      "tenant": "syneoshealth",
+      "subdomain": "wd5",
+      "site": "Syneos_Health",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Medpace",
+      "tenant": "medpace",
+      "subdomain": "wd5",
+      "site": "Medpace",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "PPD (Thermo Fisher Clinical Research)",
+      "tenant": "thermofisher",
+      "subdomain": "wd5",
+      "site": "Thermo_Fisher_Scientific_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Labcorp Drug Development",
+      "tenant": "labcorp",
+      "subdomain": "wd5",
+      "site": "Labcorp_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Heartland Dental",
+      "tenant": "heartlanddental",
+      "subdomain": "wd5",
+      "site": "Heartland_Dental",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "VSP Vision Care",
+      "tenant": "vspvision",
+      "subdomain": "wd1",
+      "site": "VSP",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "LifeStance Health",
+      "tenant": "lifestance",
+      "subdomain": "wd5",
+      "site": "LifeStance_Health",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Amedisys",
+      "tenant": "amedisys",
+      "subdomain": "wd5",
+      "site": "Amedisys_Home_Health",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Encompass Health",
+      "tenant": "encompasshealth",
+      "subdomain": "wd5",
+      "site": "Encompass_Health",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "BrightSpring Health Services",
+      "tenant": "brightspringhealth",
+      "subdomain": "wd5",
+      "site": "BrightSpring",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Symplr",
+      "tenant": "symplr",
+      "subdomain": "wd5",
+      "site": "symplr",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "R1 RCM",
+      "tenant": "r1rcm",
+      "subdomain": "wd5",
+      "site": "R1RCM",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Conifer Health Solutions",
+      "tenant": "coniferhealth",
+      "subdomain": "wd5",
+      "site": "Conifer_Health_Solutions",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Optum360",
+      "tenant": "unitedhealthgroup",
+      "subdomain": "wd5",
+      "site": "UnitedHealth_Group",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Covetrus",
+      "tenant": "covetrus",
+      "subdomain": "wd5",
+      "site": "Covetrus",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Petco Health & Wellness",
+      "tenant": "petco",
+      "subdomain": "wd5",
+      "site": "Petco",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Zoetis",
+      "tenant": "zoetis",
+      "subdomain": "wd5",
+      "site": "Zoetis",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
     }
   ],
   "remoteok": [
