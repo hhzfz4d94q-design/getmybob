@@ -1,0 +1,55 @@
+name: Verify catalog slugs (probe + fix)
+
+# Hits the public ATS APIs (greenhouse/lever/ashby/workable) for every
+# entry in healthtech_companies.json. For each 404, asks Claude for the
+# correct slug. Merges fixes back.
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "0 5 * * 6"  # Saturdays 5 UTC — weekly hygiene pass
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Probe + fix slugs
+        id: verify
+        shell: bash
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          export PYTHONUNBUFFERED=1
+          set +e
+          python3 scripts/verify_slugs.py > /tmp/verify.log 2>&1
+          PYEXIT=$?
+          echo "::group::Verify output"
+          cat /tmp/verify.log
+          echo "::endgroup::"
+          mkdir -p .verify-debug
+          cp /tmp/verify.log .verify-debug/LAST_RUN.log
+          echo "$PYEXIT" > .verify-debug/LAST_EXIT_CODE
+          if [ "$PYEXIT" = "0" ]; then echo "status=ok" >> "$GITHUB_OUTPUT"; else echo "status=fail" >> "$GITHUB_OUTPUT"; fi
+      - name: Commit fixes + log
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .verify-debug/ healthtech_companies.json 2>/dev/null
+          if git diff --cached --quiet; then
+            echo "No changes."
+          else
+            git commit -m "verify-slugs: probe + fix dead catalog entries"
+            git pull --rebase origin main 2>/dev/null || true
+            git push origin main || echo "push failed (non-fatal)"
+          fi
+      - name: Surface failure
+        if: steps.verify.outputs.status != 'ok'
+        run: exit 1
