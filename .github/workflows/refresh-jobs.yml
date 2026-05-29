@@ -79,11 +79,15 @@ jobs:
           python3 tests/test_scoring.py
           python3 tests/test_catalog_integrity.py
           python3 tests/test_scrapers_fixture.py
+          python3 tests/test_match_goldens.py
           if command -v node >/dev/null 2>&1; then
             node tests/test_sprint_reminder.mjs
             node tests/test_align_pool.mjs
+            # P2 e2e: install jsdom once, then run dashboard render gate
+            npm install --silent --no-save jsdom 2>&1 | tail -1 || true
+            node tests/test_e2e_dashboard.mjs
           else
-            echo "node not available — skipping sprint reminder + align-pool tests"
+            echo "node not available — skipping sprint reminder + align-pool + e2e tests"
           fi
 
       - name: Commit updated per-user dashboards and jobs.db
