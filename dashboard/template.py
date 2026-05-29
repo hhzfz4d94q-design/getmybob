@@ -4907,7 +4907,7 @@ async function _refreshFocusPanelBody(panel) {{
         html += '<div style="color:#5C5CD6;font-size:12.5px;font-style:italic;line-height:1.4;">→ ' + _esc(why) + '</div>';
       }}
       html += '<div style="display:flex;gap:8px;align-items:center;margin-top:2px;flex-wrap:wrap;">';
-      html += '<a href="' + applyUrl + '" target="_blank" rel="noopener" style="background:linear-gradient(135deg,#1817B5,#7C7CF0);color:#fff;padding:7px 14px;border-radius:6px;font-size:13px;font-weight:600;text-decoration:none;">Apply →</a>';
+      html += '<a href="' + applyUrl + '" target="_blank" rel="noopener" data-apply-fp="' + fp + '" data-apply-co="' + _esc(compTxt) + '" data-apply-title="' + _esc(titleTxt) + '" data-apply-url="' + applyUrl + '" class="fp-apply-btn" style="background:linear-gradient(135deg,#1817B5,#7C7CF0);color:#fff;padding:7px 14px;border-radius:6px;font-size:13px;font-weight:600;text-decoration:none;">Apply →</a>';
       html += '<button data-jump-fp="' + fp + '" style="background:none;border:1px solid #d0d4dc;color:#666;padding:6px 12px;border-radius:6px;font-size:12.5px;cursor:pointer;">View full card</button>';
       // Week 2: structured Skip-with-reason buttons
       html += '<div style="display:inline-flex;gap:4px;margin-left:8px;">';
