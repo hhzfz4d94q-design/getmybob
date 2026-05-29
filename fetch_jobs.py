@@ -1455,8 +1455,49 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
     #   strong     — title>=70 AND industry>=60 AND seniority>=60
     #   good       — at least 3 of {title,industry,keywords,seniority}>=50
     #   borderline — everything else that still passed score thresholds
-    def _tier(subs):
+    # Far-country veto: non-US locations (without explicit US-remote signal)
+    # can NEVER reach strong-fit. A Warsaw VP, Product role with the right title
+    # otherwise scored 91 — but Geetu can't take it. Forces these to borderline
+    # regardless of subscores.
+    _US_TOKENS = {' us', 'usa', 'united states', 'u.s.', 'remote (us)', 'remote-us',
+                  'nyc', 'new york', 'new jersey', 'san francisco', 'boston',
+                  'chicago', 'austin', 'seattle', 'los angeles', 'atlanta',
+                  'denver', 'washington', 'dallas', 'miami', 'philadelphia',
+                  'cleveland', 'minneapolis', 'phoenix', 'pittsburgh', 'baltimore',
+                  'detroit', 'memphis', 'remote-friendly', 'anywhere',
+                  ', tx', ', ca', ', ny', ', nj', ', ma', ', pa', ', il', ', oh',
+                  ', co', ', ga', ', fl', ', wa', ', or', ', az', ', mi', ', mn',
+                  ', nc', ', sc', ', va', ', md', ', dc', ', in', ', tn', ', mo'}
+    _FOREIGN_HINTS = {'poland', 'portugal', 'spain', 'germany', 'france', 'italy',
+                       'netherlands', 'belgium', 'sweden', 'finland', 'denmark',
+                       'norway', 'ireland', 'uk', 'u.k.', 'united kingdom', 'london',
+                       'paris', 'berlin', 'amsterdam', 'warsaw', 'lisboa', 'lisbon',
+                       'madrid', 'barcelona', 'dublin', 'munich', 'zurich', 'sweden',
+                       'india', 'bangalore', 'mumbai', 'delhi', 'china', 'shanghai',
+                       'singapore', 'hong kong', 'japan', 'tokyo', 'south korea', 'seoul',
+                       'australia', 'sydney', 'melbourne', 'canada', 'toronto', 'vancouver',
+                       'mexico', 'brazil', 'argentina', 'chile', 'colombia',
+                       'philippines', 'manila', 'thailand', 'bangkok', 'vietnam',
+                       'malaysia', 'kuala lumpur', 'indonesia', 'south africa',
+                       'uae', 'dubai', 'israel', 'tel aviv', 'turkey', 'istanbul'}
+
+    def _is_far_country(loc, remote_flag):
+        s = (loc or "").lower()
+        # If location contains a foreign hint AND no US hint, it's far-country.
+        # If it contains "remote" but doesn't claim US, treat as suspicious.
+        has_foreign = any(h in s for h in _FOREIGN_HINTS)
+        has_us = any(t in s for t in _US_TOKENS)
+        # Remote that's clearly NOT US-eligible (e.g., "Remote- EMEA", "Remote-EU")
+        if 'remote' in s and not has_us:
+            if any(reg in s for reg in ('emea', 'apac', 'latam', 'europe', 'asia')):
+                return True
+        return has_foreign and not has_us
+
+    def _tier(subs, loc=None, remote_flag=0):
         t, i, k, s, l = subs
+        # Far-country veto — overrides everything else.
+        if loc is not None and _is_far_country(loc, remote_flag):
+            return 'borderline'
         # Location fit < 30 is a strong veto. Bangkok for a US user = no.
         if l < 30:
             return 'borderline'
@@ -1592,7 +1633,7 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
 
         _subs = _subscores(r)
         _fit_t, _fit_i, _fit_k, _fit_s, _fit_l = _subs
-        _tier_name = _tier(_subs)
+        _tier_name = _tier(_subs, loc=loc, remote_flag=remote)
         _tier_counts[_tier_name] = _tier_counts.get(_tier_name, 0) + 1
         # Honest match reason — overrides the legacy _why for the per-card
         # match-reason line. The old _why is kept for diagnostics.
