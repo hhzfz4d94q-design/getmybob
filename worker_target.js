@@ -472,15 +472,15 @@ POOL FIELDS — RANKED SWAP-IN SUGGESTIONS:
 
 In addition to the primary selection fields (targetTitles, industries, keywords/technologies/frameworks), emit three "pool" fields with WIDER ranked candidate lists the user can swap into the primary set via the wizard UI:
 
-  - titlesPool (up to 15): the same shape and rules as targetTitles, but a wider ranked list. The first 5 entries MUST be identical to targetTitles in the same order. Entries 6-15 are your next-best title alternatives (still respecting the seniority-rung rule). The user picks one to swap when they remove a top-5 chip.
+  - titlesPool (up to 25): the same shape and rules as targetTitles, but a wider ranked list. The first 10 entries MUST be identical to targetTitles in the same order. Entries 11-25 are your next-best title alternatives (still respecting the seniority-rung rule). The user picks one to swap when they remove a top-10 chip.
 
-  - industriesPool (up to 15): same shape as industries. First 5 entries identical to industries; entries 6-15 are next-best industry candidates the user can promote.
+  - industriesPool (up to 25): same shape as industries. First 5 entries identical to industries; entries 6-15 are next-best industry candidates the user can promote.
 
   - skillsPool (up to 45): a SINGLE merged, deduped, ranked list of distinct skill terms drawn from keywords + technologies + frameworks. The first 15 entries are the ones you'd put in front of the user as their default "skills" set (most signal-dense, most distinctive). Entries 16-45 are next-best alternatives. Skip generic words; favor distinctive terms a recruiter would scan for. The wizard merges keywords/technologies/frameworks into a single bullseye, so skillsPool is what powers that picker — make the first 15 the BEST 15.
 
   Pools must be in strict descending order of usefulness — the user assumes earlier = more important. Lowercase strings, no duplicates.
 
-- targetTitles (up to 5): SPECIFIC titles matching the candidate's ACTUAL current level and at most ONE rung above. Do NOT jump 2-3 rungs (e.g. a Sr Director should NOT see Chief titles — only Director, Sr Director, VP, Head of). Concrete and varied within the band. e.g. for a Sr Director banking-tech leader targeting director/vp roles: ["head of digital transformation", "vp banking technology", "vp grc", "director of enterprise architecture", "senior director, technology", "head of it strategy", "vp third-party risk management", "director of digital banking"]. Each title must be tokenizable into 2+ meaningful words.
+- targetTitles (up to 10): SPECIFIC titles matching the candidate's ACTUAL current level and at most ONE rung above. Do NOT jump 2-3 rungs (e.g. a Sr Director should NOT see Chief titles — only Director, Sr Director, VP, Head of). Concrete and varied within the band. e.g. for a Sr Director banking-tech leader targeting director/vp roles: ["head of digital transformation", "vp banking technology", "vp grc", "director of enterprise architecture", "senior director, technology", "head of it strategy", "vp third-party risk management", "director of digital banking"]. Each title must be tokenizable into 2+ meaningful words.
 
 - industries (up to 5): broad sectors where the candidate has DIRECT hands-on experience (not just employer-adjacent). Each industry will be a heavy match signal, so be selective — only the sectors they'd actually target. e.g. ["banking", "commercial banking", "fintech", "consulting", "regtech"]. AVOID umbrella terms like "saas" or "enterprise software" unless the candidate specifically targets B2B software.
 
@@ -580,11 +580,11 @@ ${resumeJson}`;
       }
       return out;
     }
-    parsed.titlesPool = _alignPool(parsed.targetTitles, parsed.titlesPool, 5).slice(0, 15);
-    parsed.industriesPool = _alignPool(parsed.industries, parsed.industriesPool, 5).slice(0, 15);
+    parsed.titlesPool = _alignPool(parsed.targetTitles, parsed.titlesPool, 10).slice(0, 25);
+    parsed.industriesPool = _alignPool(parsed.industries, parsed.industriesPool, 10).slice(0, 25);
     // skillsPool: align against the merged keywords+technologies+frameworks (top 15)
     const mergedTop15 = [].concat(parsed.keywords || [], parsed.technologies || [], parsed.frameworks || []).slice(0, 15);
-    parsed.skillsPool = _alignPool(mergedTop15, parsed.skillsPool, 15).slice(0, 45);
+    parsed.skillsPool = _alignPool(mergedTop15, parsed.skillsPool, 50).slice(0, 80);
     // Extract structured contact + biographical fields from the raw resume JSON
     // (already produced by /parse-resume in shape {personal: {name,phone,email,location,linkedin}, education, experience}).
     // These power the auto-fill extension and the wizard's "Application profile" step.
