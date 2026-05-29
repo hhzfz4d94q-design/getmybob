@@ -514,21 +514,21 @@
   [118/118] eliseai: 0 jobs (slug may be invalid)
 
 [ashby] 74 companies
-  [1/74] Graphitehq: 0 jobs (slug may be invalid)
+  [1/74] Graphitehq: ERROR — name '_strip_html' is not defined
   [2/74] maximustribe: ERROR — name '_strip_html' is not defined
-  [3/74] codes-health: ERROR — name '_strip_html' is not defined
+  [3/74] codes-health: 0 jobs (slug may be invalid)
   [4/74] heidihealth.com.au: ERROR — name '_strip_html' is not defined
-  [5/74] Interrahealth: 0 jobs (slug may be invalid)
-  [6/74] fitt: ERROR — name '_strip_html' is not defined
-  [7/74] lark: ERROR — name '_strip_html' is not defined
+  [5/74] Interrahealth: ERROR — name '_strip_html' is not defined
+  [6/74] fitt: 0 jobs (slug may be invalid)
+  [7/74] lark: 0 jobs (slug may be invalid)
   [8/74] virtahealth: ERROR — name '_strip_html' is not defined
   [9/74] Healthtech-1: ERROR — name '_strip_html' is not defined
   [10/74] tandem-health: ERROR — name '_strip_html' is not defined
   [11/74] Aios: 0 jobs (slug may be invalid)
   [12/74] you-health: ERROR — name '_strip_html' is not defined
-  [13/74] versemedical: 0 jobs (slug may be invalid)
-  [14/74] abridge: 0 jobs (slug may be invalid)
-  [15/74] decagon: ERROR — name '_strip_html' is not defined
+  [13/74] versemedical: ERROR — name '_strip_html' is not defined
+  [14/74] abridge: ERROR — name '_strip_html' is not defined
+  [15/74] decagon: 0 jobs (slug may be invalid)
   [16/74] rad-ai: 0 jobs (slug may be invalid)
   [17/74] ramphealth: 0 jobs (slug may be invalid)
   [18/74] ?: 0 jobs (slug may be invalid)
@@ -559,7 +559,7 @@
   [43/74] ?: 0 jobs (slug may be invalid)
   [44/74] ?: 0 jobs (slug may be invalid)
   [45/74] ?: 0 jobs (slug may be invalid)
-  [46/74] ?: ERROR — name '_strip_html' is not defined
+  [46/74] ?: 0 jobs (slug may be invalid)
   [47/74] ?: ERROR — name '_strip_html' is not defined
   [48/74] ?: 0 jobs (slug may be invalid)
   [49/74] unit21: 0 jobs (slug may be invalid)
@@ -579,7 +579,7 @@
   [63/74] unit-finance: 0 jobs (slug may be invalid)
   [64/74] synctera: ERROR — name '_strip_html' is not defined
   [65/74] column-tax: 0 jobs (slug may be invalid)
-  [66/74] atomic-financial: 0 jobs (slug may be invalid)
+  [66/74] atomic-financial: ERROR — name '_strip_html' is not defined
   [67/74] pinwheel: 0 jobs (slug may be invalid)
   [68/74] methodfi: 0 jobs (slug may be invalid)
   [69/74] zeal: 0 jobs (slug may be invalid)
