@@ -9,7 +9,7 @@ import urllib.parse
 import urllib.request
 from datetime import datetime, timezone, timedelta
 
-from scrapers._http import fetch_json
+from scrapers._http import fetch_json, _strip_html
 
 
 def fetch_workable(slug):

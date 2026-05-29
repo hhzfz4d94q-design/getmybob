@@ -1,6 +1,6 @@
 {
   "_note": "Curated Healthcare IT / digital health catalog. Used for: (a) scoring boost when company appears in feed AND user has healthcare industries (+3, all entries), (b) auto-scraping (only ATS=greenhouse/lever/ashby/workable). Workday/Google/Amazon entries are catalog-only (scored boost when found, not scraped). Slugs are canonical for matching.",
-  "version": "2026-05-29-v3+discovered+discovered+dream-list+from-contacts+dedup+dream-geetu+discovered",
+  "version": "2026-05-29-v3+discovered+discovered+dream-list+from-contacts+dedup+dream-geetu+discovered+dedup-r2",
   "companies": [
     {
       "name": "Doximity",
@@ -1753,18 +1753,6 @@
       "slug": "kindbody"
     },
     {
-      "name": "Tia",
-      "category": "Women's Health + Fertility",
-      "atsHint": "ashby",
-      "slug": "asktia"
-    },
-    {
-      "name": "Carrot Fertility",
-      "category": "Women's Health + Fertility",
-      "atsHint": "greenhouse",
-      "slug": "carrotfertility"
-    },
-    {
       "name": "Stork Club",
       "category": "Women's Health + Fertility",
       "atsHint": "lever",
@@ -1819,12 +1807,6 @@
       "slug": "brightside"
     },
     {
-      "name": "Alma",
-      "category": "Behavioral Health + Addiction Recovery",
-      "atsHint": "greenhouse",
-      "slug": "helloalma"
-    },
-    {
       "name": "PointClickCare",
       "category": "Post-Acute + Home Health + Long-Term Care",
       "atsHint": "greenhouse",
@@ -1859,18 +1841,6 @@
       "category": "Healthcare Cybersecurity + Privacy",
       "atsHint": "lever",
       "slug": "censinet"
-    },
-    {
-      "name": "Verana Health",
-      "category": "Health IT Infrastructure",
-      "atsHint": "greenhouse",
-      "slug": "veranahealth"
-    },
-    {
-      "name": "Arcadia",
-      "category": "Health IT Infrastructure",
-      "atsHint": "greenhouse",
-      "slug": "arcadia-io"
     },
     {
       "name": "Papa",

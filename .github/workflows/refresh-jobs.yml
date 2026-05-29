@@ -78,10 +78,12 @@ jobs:
           python3 scripts/validate_dashboard_js.py
           python3 tests/test_scoring.py
           python3 tests/test_catalog_integrity.py
+          python3 tests/test_scrapers_fixture.py
           if command -v node >/dev/null 2>&1; then
             node tests/test_sprint_reminder.mjs
+            node tests/test_align_pool.mjs
           else
-            echo "node not available — skipping sprint reminder tests"
+            echo "node not available — skipping sprint reminder + align-pool tests"
           fi
 
       - name: Commit updated per-user dashboards and jobs.db

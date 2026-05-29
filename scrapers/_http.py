@@ -25,3 +25,14 @@ def fetch_json(url, timeout=15, data=None, method=None):
         return None
     except Exception:
         return None
+import re as _re
+import html as _html_mod
+
+
+def _strip_html(s):
+    """Strip HTML tags + decode entities. Used by every scraper for description."""
+    s = s or ""
+    s = _html_mod.unescape(_html_mod.unescape(s))
+    s = _re.sub(r"<[^>]+>", " ", s)
+    s = _re.sub(r"\s+", " ", s).strip()
+    return s[:4000]

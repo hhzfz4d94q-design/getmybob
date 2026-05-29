@@ -1,0 +1,32 @@
+{
+  "jobs": [
+    {
+      "id": 12345678,
+      "internal_job_id": 9876543,
+      "title": "VP, Product Management — Care Delivery",
+      "location": {"name": "Remote (US)"},
+      "absolute_url": "https://boards.greenhouse.io/devotedhealth/jobs/12345678",
+      "updated_at": "2026-05-28T14:30:00-04:00",
+      "first_published": "2026-05-27T10:00:00-04:00",
+      "departments": [{"name": "Product"}],
+      "offices": [{"name": "Remote"}],
+      "content": "<p>Lead the product strategy for our care delivery platform...</p>",
+      "metadata": [
+        {"id": 1, "name": "Salary Range", "value": "$200,000 - $260,000"}
+      ],
+      "pay_input_ranges": [
+        {"min_cents": 20000000, "max_cents": 26000000, "currency_type": "USD"}
+      ]
+    },
+    {
+      "id": 12345679,
+      "title": "Director of Product, Member Experience",
+      "location": {"name": "New York, NY"},
+      "absolute_url": "https://boards.greenhouse.io/devotedhealth/jobs/12345679",
+      "updated_at": "2026-05-26T09:00:00-04:00",
+      "first_published": "2026-05-25T09:00:00-04:00",
+      "content": "<p>Own the member-facing experience...</p>"
+    },
+    null
+  ]
+}
