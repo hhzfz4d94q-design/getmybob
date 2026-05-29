@@ -359,7 +359,7 @@ WIZARD_V3_BLOCK = r"""
     {
       key: "your-bullseye",
       title: "Your bullseye — what you want the matcher to look for",
-      subtitle: "up to 50 titles / 50 industries / 50 skills / 15 companies. Trim aggressively — sharp picks beat vague ones.",
+      subtitle: "up to 50 titles / 50 industries / 50 skills / 15 companies each. Trim aggressively — sharp picks beat vague ones.",
       async render(body, st) {
         body.innerHTML =
           '<div id="bs-section-titles" style="margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid #eee;"><h3 style="margin:0 0 6px;font-size:14px;color:#1a1a2e;">1. Target job titles (max 5)</h3><p style="margin:0 0 10px;font-size:12px;color:#666;">The matcher looks for these as a fallback signal. Lowercase, multi-word.</p><div id="bs-titles-host"></div></div>' +
