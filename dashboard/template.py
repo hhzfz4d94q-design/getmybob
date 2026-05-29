@@ -4868,7 +4868,7 @@ async function _refreshFocusPanelBody(panel) {{
       if (mode === 'strict') {{
         modeMsg = 'Strict matching filtered every candidate today. <button id="fp-switch-balanced" style="background:#1817B5;color:#fff;border:none;padding:4px 10px;border-radius:5px;font-size:12px;font-weight:600;cursor:pointer;margin-left:6px;">Switch to Balanced</button>';
       }} else {{
-        modeMsg = '✨ You’ve applied to everything in today’s picks, or no jobs passed the match gates. Check the feed below for more, or come back tomorrow for fresh jobs.';
+        modeMsg = '<strong style="color:#0a6b3a;">✨ You hit today’s goal!</strong><br><span style="font-size:12.5px;color:#666;">Want another batch of 5 strong/good matches?</span><br><button id="fp-next-batch" style="background:#5C5CD6;color:#fff;border:none;padding:8px 18px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;margin-top:10px;">Get next 5 →</button>';
       }}
       list.innerHTML = '<div style="padding:20px;text-align:center;color:#666;font-size:13.5px;">' + modeMsg + '</div>';
       try {{
@@ -4876,6 +4876,19 @@ async function _refreshFocusPanelBody(panel) {{
         if (sb) sb.addEventListener('click', function() {{
           try {{ const c = JSON.parse(localStorage.getItem(SC_KEY) || '{{}}'); c.strictness = 'balanced'; localStorage.setItem(SC_KEY, JSON.stringify(c)); }} catch(e){{}}
           location.reload();
+        }});
+        const nb = document.getElementById('fp-next-batch');
+        if (nb) nb.addEventListener('click', async function() {{
+          nb.disabled = true; nb.textContent = 'Loading…';
+          try {{
+            const _ek = (typeof getEditKey === 'function') ? getEditKey() : null;
+            const _ak = (typeof getAdminKey === 'function') ? getAdminKey() : null;
+            const _h = {{}};
+            if (_ek) _h['X-Edit-Key'] = _ek;
+            else if (_ak) _h['X-Admin-Key'] = _ak;
+            await fetch(WORKER_BASE + '/api/picks' + USER_QS, {{ method: 'DELETE', headers: _h }});
+          }} catch (e) {{}}
+          if (typeof refreshFocusPanel === 'function') await refreshFocusPanel();
         }});
       }} catch(e){{}}
     }}
@@ -4931,6 +4944,24 @@ async function _refreshFocusPanelBody(panel) {{
     list.querySelectorAll('.fp-skip-btn').forEach(function(b) {{
       b.addEventListener('click', function() {{
         _focusDismiss(b.dataset.skipFp, b.dataset.skipReason, b.dataset.skipCo, b.dataset.skipTitle, b);
+      }});
+    }});
+    // Smart rotation: clicking Apply auto-marks the job as applied so the
+    // refresh-panel topup branch slides in a fresh strong/good pick. setTimeout
+    // 600ms lets the new-tab navigation start before we refresh the panel.
+    list.querySelectorAll('.fp-apply-btn').forEach(function(a) {{
+      a.addEventListener('click', async function() {{
+        const fp = a.dataset.applyFp;
+        const co = a.dataset.applyCo;
+        const title = a.dataset.applyTitle;
+        const url = a.dataset.applyUrl;
+        try {{
+          if (typeof _trackerAction === 'function') {{
+            const r = await _trackerAction('setStatus', {{ fp, status: 'applied', jobMeta: {{ title, company: co, url }} }});
+            if (r && r.record && typeof _trackerCache !== 'undefined') _trackerCache[fp] = r.record;
+          }}
+        }} catch (e) {{ try {{ console.warn('[fp-apply auto-mark failed]', e); }} catch(_){{}} }}
+        setTimeout(function() {{ if (typeof refreshFocusPanel === 'function') refreshFocusPanel(); }}, 600);
       }});
     }});
 
