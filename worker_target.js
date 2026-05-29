@@ -358,6 +358,7 @@ async function regenerateSkillsProfile(env, slug) {
   let sizeMix = null;
   let preservedMix = null;
   let preservedPrefs = null;
+  let preservedBullseye = null;
   try {
     const existingRaw = await env.RESUMES.get(uk(slug, 'skills_profile'));
     if (existingRaw) {
@@ -377,6 +378,23 @@ async function regenerateSkillsProfile(env, slug) {
           });
         }
       }
+      // 2026-05-29: ALSO preserve the user's bullseye picks across regen.
+      // The AI prompt caps at 5/5/15 — without this, every regen wipes
+      // any manual expansion the user did via the wizard or patch-profiles.
+      // Strategy: snapshot the bullseye AND pool fields; we'll restore them
+      // after the AI run so the user-set lists survive intact.
+      preservedBullseye = {
+        targetTitles:  Array.isArray(existing.targetTitles)  ? existing.targetTitles  : null,
+        industries:    Array.isArray(existing.industries)    ? existing.industries    : null,
+        keywords:      Array.isArray(existing.keywords)      ? existing.keywords      : null,
+        technologies:  Array.isArray(existing.technologies)  ? existing.technologies  : null,
+        frameworks:    Array.isArray(existing.frameworks)    ? existing.frameworks    : null,
+        titlesPool:    Array.isArray(existing.titlesPool)    ? existing.titlesPool    : null,
+        industriesPool:Array.isArray(existing.industriesPool)? existing.industriesPool: null,
+        skillsPool:    Array.isArray(existing.skillsPool)    ? existing.skillsPool    : null,
+        negativeKeywords: Array.isArray(existing.negativeKeywords) ? existing.negativeKeywords : null,
+        negativeTitles:   Array.isArray(existing.negativeTitles)   ? existing.negativeTitles   : null,
+      };
     }
   } catch (e) { /* fall through with defaults */ }
   if (!sizeMix) sizeMix = { startup: 33, midsize: 33, large: 34 };
@@ -631,6 +649,33 @@ ${resumeJson}`;
       }
     } catch (e) { /* ignore */ }
     if (preservedPrefs) profile.companySizePreferences = preservedPrefs;
+    // 2026-05-29: restore the user's bullseye picks if they had any. AI
+    // output is treated as ADVISORY (lands in *Pool fields), but the user's
+    // saved picks ARE the matcher input.
+    if (preservedBullseye) {
+      // Preserve user's selected fields. Fall back to AI output only if the
+      // user had nothing saved.
+      if (preservedBullseye.targetTitles && preservedBullseye.targetTitles.length) profile.targetTitles = preservedBullseye.targetTitles;
+      if (preservedBullseye.industries   && preservedBullseye.industries.length)   profile.industries   = preservedBullseye.industries;
+      if (preservedBullseye.keywords     && preservedBullseye.keywords.length)     profile.keywords     = preservedBullseye.keywords;
+      if (preservedBullseye.technologies && preservedBullseye.technologies.length) profile.technologies = preservedBullseye.technologies;
+      if (preservedBullseye.frameworks   && preservedBullseye.frameworks.length)   profile.frameworks   = preservedBullseye.frameworks;
+      // Pools: union AI-fresh suggestions with previously-stored pool so users
+      // never lose options they could swap to.
+      const _u = (a, b) => {
+        const seen = new Set(); const out = [];
+        for (const arr of [a, b]) for (const x of (arr || [])) {
+          const xn = String(x).toLowerCase().trim();
+          if (xn && !seen.has(xn)) { seen.add(xn); out.push(xn); }
+        }
+        return out;
+      };
+      if (preservedBullseye.titlesPool)     profile.titlesPool     = _u(profile.titlesPool, preservedBullseye.titlesPool);
+      if (preservedBullseye.industriesPool) profile.industriesPool = _u(profile.industriesPool, preservedBullseye.industriesPool);
+      if (preservedBullseye.skillsPool)     profile.skillsPool     = _u(profile.skillsPool, preservedBullseye.skillsPool);
+      if (preservedBullseye.negativeKeywords && preservedBullseye.negativeKeywords.length) profile.negativeKeywords = preservedBullseye.negativeKeywords;
+      if (preservedBullseye.negativeTitles && preservedBullseye.negativeTitles.length)     profile.negativeTitles   = preservedBullseye.negativeTitles;
+    }
     await env.RESUMES.put(uk(slug, 'skills_profile'), JSON.stringify(profile));
     return profile;
   } catch (e) { return null; }
