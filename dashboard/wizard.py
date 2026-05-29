@@ -359,7 +359,7 @@ WIZARD_V3_BLOCK = r"""
     {
       key: "your-bullseye",
       title: "Your bullseye — what you want the matcher to look for",
-      subtitle: "5 titles / 5 industries / 15 skills / 15 companies. Trim aggressively — sharp picks beat vague ones.",
+      subtitle: "10 titles / 10 industries / 50 skills / 15 companies. Trim aggressively — sharp picks beat vague ones.",
       async render(body, st) {
         body.innerHTML =
           '<div id="bs-section-titles" style="margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid #eee;"><h3 style="margin:0 0 6px;font-size:14px;color:#1a1a2e;">1. Target job titles (max 5)</h3><p style="margin:0 0 10px;font-size:12px;color:#666;">The matcher looks for these as a fallback signal. Lowercase, multi-word.</p><div id="bs-titles-host"></div></div>' +
@@ -370,14 +370,14 @@ WIZARD_V3_BLOCK = r"""
         const p = await getProfile();
         // 1. Titles — pool comes from titlesPool (AI-ranked, first 5 = current)
         renderBullseye(body.querySelector("#bs-titles-host"), {
-          max: 5, current: p.targetTitles || [],
+          max: 10, current: p.targetTitles || [],
           pool: p.titlesPool || [],
           placeholder: "e.g. vp of product management",
           hint: "Lowercase, multi-word titles match best. Click a suggestion below to swap one in."
         });
         // 2. Industries — pool comes from industriesPool
         renderBullseye(body.querySelector("#bs-industries-host"), {
-          max: 5, current: p.industries || [],
+          max: 10, current: p.industries || [],
           pool: p.industriesPool || [],
           placeholder: "e.g. healthcare technology",
           hint: "Tight industry choice = less noise. Click a suggestion below to swap one in."
@@ -386,7 +386,7 @@ WIZARD_V3_BLOCK = r"""
         const merged = [].concat(p.keywords || [], p.technologies || [], p.frameworks || []);
         const skillsPool = (p.skillsPool && p.skillsPool.length) ? p.skillsPool : merged;
         renderBullseye(body.querySelector("#bs-skills-host"), {
-          max: 15, current: merged.slice(0, 15),
+          max: 50, current: merged.slice(0, 50),
           pool: skillsPool,
           placeholder: "e.g. digital transformation",
           hint: "These boost a job\'s score when found in title or description. Suggestions below come from your resume."
