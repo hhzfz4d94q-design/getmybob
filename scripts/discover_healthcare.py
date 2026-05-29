@@ -31,15 +31,27 @@ def main():
 
 Target band: {focus_clause}
 
-Return exactly {count} distinct US-based healthcare-domain companies that hire senior product / transformation / GRC / IT leaders. Include verticals:
+Return exactly {count} distinct US-based healthcare-domain companies that hire senior product / transformation / GRC / IT leaders. We ALREADY have heavy coverage of:
 - Mid-stage healthtech SaaS (telehealth, payer-tech, EHR-adjacent, clinical-AI)
 - Value-based care / risk-bearing care delivery
 - Real-world data / life-sciences analytics
-- Medical devices + diagnostics (mid-cap)
-- Pharma + biotech (mid-cap)
-- Health insurers + payers (regional + national)
-- Major US health systems (Workday-hosted)
-- Health-IT compliance / interoperability vendors
+- Major US health systems (Northwell, Stanford, UCLA, UCSF, Cedars-Sinai, etc.)
+
+PRIORITIZE these UNDER-REPRESENTED verticals (aim for ~70% of your list):
+- Clinical research / CROs (Parexel, ICON, Syneos, Medpace, Velocity Clinical, etc.)
+- Dental + vision tech (Smile Direct, Onsite, SmileBus, VSP, etc.)
+- Women's health + fertility (Maven, Tia, Kindbody, Progyny, Stork Club, etc.)
+- Behavioral health + addiction recovery (Bicycle Health, Brightside, Eleanor Health, Boulder Care, etc.)
+- Post-acute + home health + long-term care (PointClickCare, MatrixCare, BAYADA, etc.)
+- Specialty pharmacy + 340B (CivicaScript, Capital Rx, Capital BlueCross specialty, etc.)
+- Healthcare cybersecurity + privacy (Censinet, Imprivata, ClearDATA, Symplr, etc.)
+- Health IT infrastructure (Datavant, Verana Health, Truveta, Particle Health, etc.)
+- Senior care + caregiving platforms (Honor, Papa, CareYaya, Comfort Keepers, etc.)
+- Healthcare BPO / RCM (R1 RCM, Conifer, MedeAnalytics, etc.)
+- Med-aesthetic / consumer health (Hims & Hers, Ro, Curex, Wisp, etc.)
+- Veterinary tech (Vetcove, Galaxy Vets, Mars Veterinary, etc.)
+
+The other ~30% can be additional mid-stage healthtech we may have missed.
 
 For each company, output a JSON object with these fields:
   name (string), vertical (string), atsHint (one of greenhouse|lever|ashby|workday|icims|smartrecruiters|other), slug (lowercased ATS slug — omit for workday), workday (object with tenant, subdomain like wd1/wd3/wd5/wd12, and site — only for workday entries you have HIGH confidence about).
