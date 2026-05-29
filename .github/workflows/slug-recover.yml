@@ -1,0 +1,41 @@
+name: Slug recover (cross-ATS probe)
+on:
+  workflow_dispatch: {}
+permissions:
+  contents: write
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run slug recover
+        id: rec
+        shell: bash
+        run: |
+          export PYTHONUNBUFFERED=1
+          set +e
+          python3 scripts/slug_recover.py > /tmp/sr.log 2>&1
+          PYEXIT=$?
+          echo "::group::Slug recover output"
+          cat /tmp/sr.log
+          echo "::endgroup::"
+          mkdir -p .slug-recover-debug
+          cp /tmp/sr.log .slug-recover-debug/LAST_RUN.log
+          if [ "$PYEXIT" = "0" ]; then echo "status=ok" >> "$GITHUB_OUTPUT"; else echo "status=fail" >> "$GITHUB_OUTPUT"; fi
+      - name: Commit fixes + log
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .slug-recover-debug/ healthtech_companies.json 2>/dev/null
+          if ! git diff --cached --quiet; then
+            git commit -m "slug-recover: cross-ATS probe + fixes"
+            git pull --rebase origin main 2>/dev/null || true
+            git push origin main || true
+          fi
+      - name: Fail if needed
+        if: steps.rec.outputs.status != 'ok'
+        run: exit 1
