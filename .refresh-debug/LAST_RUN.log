@@ -332,7 +332,7 @@
   [322/415] hellobrightline: 0 jobs (slug may be invalid)
   [323/415] talkspace: ERROR — name '_normalize_title' is not defined
   [324/415] betterhelp: ERROR — name '_normalize_title' is not defined
-  [325/415] growtherapy: ERROR — name '_normalize_title' is not defined
+  [325/415] growtherapy: 0 jobs (slug may be invalid)
   [326/415] found: ERROR — name '_normalize_title' is not defined
   [327/415] cala-health: 0 jobs (slug may be invalid)
   [328/415] akasa: 0 jobs (slug may be invalid)
@@ -510,7 +510,7 @@
   [83/142] equip-health: 0 jobs (slug may be invalid)
   [84/142] hyro: 0 jobs (slug may be invalid)
   [85/142] color: 0 jobs (slug may be invalid)
-  [86/142] swordhealth: 0 jobs (slug may be invalid)
+  [86/142] swordhealth: ERROR — name '_normalize_title' is not defined
   [87/142] carbonhealth: 0 jobs (slug may be invalid)
   [88/142] wayspring: 0 jobs (slug may be invalid)
   [89/142] vaticahealth: 0 jobs (slug may be invalid)
