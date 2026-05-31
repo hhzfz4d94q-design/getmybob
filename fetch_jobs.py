@@ -1561,6 +1561,11 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         return " · ".join(parts) if parts else "passed default gates"
 
     cards = []
+    # 2026-05-31 fix: bucket cards by tier so HTML is ordered
+    # strong → good → borderline. The digest email reads first N cards
+    # in HTML order, so this guarantees top-tier picks are sent first.
+    # The dashboard JS still reshuffles borderlines into a collapsed section.
+    _cards_by_tier = {'strong': [], 'good': [], 'borderline': []}
     # Track tier counts for the "borderline matches" expander logic.
     _tier_counts = {'strong': 0, 'good': 0, 'borderline': 0}
     for r in rows:
@@ -1645,7 +1650,7 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         # Honest match reason — overrides the legacy _why for the per-card
         # match-reason line. The old _why is kept for diagnostics.
         _why = _honest_why(r, _subs)
-        cards.append(f"""
+        _cards_by_tier[_tier_name].append(f"""
         <div class="card" data-fp="{fp}" data-score="{score}" data-senior="{senior}" data-remote="{remote}" data-employment="{emp}" data-listed-days="{listed_days if listed_days is not None else 9999}" data-salary-max="{salary_max}" data-last-seen="{last_seen or ''}" data-first-seen="{first_seen or ''}" data-recruiter="{_is_recr}" data-why="{_esc(_why)}" data-cluster-count="{_xc_count}" data-cluster-companies="{_esc(_xc_label)}" data-title-norm="{_norm_key}" data-repost-days="{_repost_days or ''}" data-fit-title="{_fit_t}" data-fit-industry="{_fit_i}" data-fit-keywords="{_fit_k}" data-fit-seniority="{_fit_s}" data-fit-location="{_fit_l}" data-tier="{_tier_name}">
           <div class="row1">
             <div class="title"><a href="{url}" target="_blank">{_esc(title)}</a></div>
@@ -1680,6 +1685,10 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         subtitle = (primary + " · " + remote_pref) if primary else remote_pref
     else:
         subtitle = "Awaiting resume upload — click Resume to get started"
+
+    # Flatten tier buckets in priority order (strong → good → borderline)
+    # so the digest email picks from the top tier first (2026-05-31 fix).
+    cards = _cards_by_tier['strong'] + _cards_by_tier['good'] + _cards_by_tier['borderline']
 
     # Friendlier empty-state message depending on why we have 0 cards
     if cards:

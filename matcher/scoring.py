@@ -313,6 +313,23 @@ _CONSULTING_NAME_PATTERNS = (
     "& co", "and partners", "partners llp",
 )
 
+# 2026-05-31 fix: explicit list of well-known consulting / staffing-style firms
+# whose names don't contain the words "consulting" / "advisory" but whose
+# business model is consulting/outsourcing. Classify these via name match
+# regardless of JD wording so the user's companySizeMix.consulting % applies.
+_CONSULTING_NAME_EXPLICIT = {
+    "capco", "accenture", "deloitte", "pwc", "pricewaterhousecoopers",
+    "kpmg", "mckinsey", "mckinsey & company", "bain", "bcg",
+    "boston consulting group", "wipro", "infosys", "cognizant",
+    "tata consultancy services", "ltimindtree", "lti", "mindtree",
+    "genpact", "exl service", "exl", "iqvia", "zs associates",
+    "west monroe", "west monroe partners", "slalom", "fti consulting",
+    "fti", "crowe", "crowe llp", "rsm us", "rsm", "bdo",
+    "alvarez & marsal", "alixpartners", "north highland", "huron",
+    "guidehouse", "navigant", "protiviti", "kearney", "at kearney",
+    "oliver wyman", "monitor deloitte", "ibm consulting",
+}
+
 _JD_SECTION_HEADERS = {
     "responsibilities": ("responsibilities", "what you'll do", "what you will do", "the role",
                          "the opportunity", "your role", "in this role", "key responsibilities",
@@ -515,12 +532,20 @@ _POSITIVE_THEME_RE = None
 
 
 def classify_company_type(company_name, description):
-    name = (company_name or "").lower()
+    name = (company_name or "").lower().strip()
     desc = (description or "")[:3000].lower()
     # Staffing signals are strongest — check first
     for p in _STAFFING_NAME_PATTERNS:
         if p in name:
             return "staffing"
+    # 2026-05-31 fix: explicit consulting firms whose names lack the word
+    # "consulting" (Capco, Accenture, Deloitte, etc.). Match by exact
+    # company-name token boundary to avoid false positives.
+    _name_tokens = set(__import__('re').findall(r"[a-z0-9&]+", name))
+    for firm in _CONSULTING_NAME_EXPLICIT:
+        firm_tokens = set(__import__('re').findall(r"[a-z0-9&]+", firm))
+        if firm_tokens and firm_tokens.issubset(_name_tokens):
+            return "consulting"
     # Explicit consulting in name
     for p in _CONSULTING_NAME_PATTERNS:
         if p in name:
