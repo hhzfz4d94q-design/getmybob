@@ -7,16 +7,16 @@
 
 [multi-user] generating dashboards for 4 users
 [diag:geetu] loaded profile, targetCompanies len=23, first={'name': 'Veeva Systems', 'atsHint': 'workday', 'atsUrl': 'https://veeva.wd1.myworkdayjobs.com/veeva_careers', 'why': 'Cloud SaaS leader in life sciences with constant demand for senior product and transformation leaders who bridge pharma and technology'}
-[skills-profile:geetu] Senior digital transformation and product leader at the intersection of healthcare and technology · 15 keywords
+[skills-profile:geetu] Senior digital transformation and product leader at the intersection of healthcare and technology · 65 keywords
 [velocity] 138 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 3127/3127
+[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 3915/3915
 [why-hidden:geetu] classified 2000 hidden jobs (of 19850 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/geetu.html
-[diag:amit-arora] loaded profile, targetCompanies len=25, first={'name': 'Webster Bank', 'atsHint': 'workday', 'atsUrl': 'https://websterbank.wd1.myworkdayjobs.com/WebsterBankCareers', 'why': "Super-regional commercial bank actively scaling GRC and digital banking programs — strong fit for Amit's enterprise transformation and commercial lending background"}
-[skills-profile:amit-arora] Senior technology and GRC executive targeting VP / Managing Director roles in banking, capital markets, and financial services transformation · 13 keywords
+[diag:amit-arora] loaded profile, targetCompanies len=23, first={'name': 'Webster Bank', 'atsHint': 'workday', 'atsUrl': 'https://websterbank.wd1.myworkdayjobs.com/WebsterCareers', 'why': "Super-regional commercial bank with active digital transformation and GRC buildout — strong fit for Amit's commercial lending and IT governance depth"}
+[skills-profile:amit-arora] Senior technology and GRC executive targeting transformation, risk, and digital banking leadership roles in financial services · 13 keywords
 [velocity] 138 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 4415/4415
+[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 4423/4423
 [why-hidden:amit-arora] classified 2000 hidden jobs (of 19850 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/amit-arora.html
