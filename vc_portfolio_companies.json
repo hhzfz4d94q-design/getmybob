@@ -1,25 +1,13 @@
 {
   "companies": [
     {
-      "name": "Stripe",
+      "name": "Brex",
       "industry": "fintech",
       "fundingStage": "series-d",
       "atsHint": "greenhouse"
-    },
-    {
-      "name": "Plaid",
-      "industry": "fintech",
-      "fundingStage": "series-d",
-      "atsHint": "lever"
     },
     {
       "name": "Chime",
-      "industry": "fintech",
-      "fundingStage": "series-d",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Brex",
       "industry": "fintech",
       "fundingStage": "series-d",
       "atsHint": "greenhouse"
@@ -31,46 +19,16 @@
       "atsHint": "greenhouse"
     },
     {
-      "name": "Carta",
-      "industry": "capital markets",
-      "fundingStage": "series-d",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Ripple",
+      "name": "Stripe",
       "industry": "fintech",
       "fundingStage": "series-d",
       "atsHint": "greenhouse"
     },
     {
-      "name": "Figure Technologies",
+      "name": "Plaid",
       "industry": "fintech",
       "fundingStage": "series-d",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Betterment",
-      "industry": "wealth management",
-      "fundingStage": "series-d",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Wealthfront",
-      "industry": "wealth management",
-      "fundingStage": "series-d",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Acorns",
-      "industry": "wealth management",
-      "fundingStage": "series-d",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Stash Financial",
-      "industry": "wealth management",
-      "fundingStage": "series-d",
-      "atsHint": "lever"
+      "atsHint": "workday"
     },
     {
       "name": "Marqeta",
@@ -79,146 +37,362 @@
       "atsHint": "greenhouse"
     },
     {
+      "name": "Varo Bank",
+      "industry": "commercial banking",
+      "fundingStage": "series-d",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Navan",
+      "industry": "fintech",
+      "fundingStage": "series-d",
+      "atsHint": "workday"
+    },
+    {
+      "name": "Stash",
+      "industry": "fintech",
+      "fundingStage": "series-d",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Dave",
+      "industry": "fintech",
+      "fundingStage": "series-c",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Acorns",
+      "industry": "fintech",
+      "fundingStage": "series-d",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Betterment",
+      "industry": "fintech",
+      "fundingStage": "series-d",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Wealthfront",
+      "industry": "fintech",
+      "fundingStage": "series-d",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "SoFi Technologies",
+      "industry": "financial services consulting",
+      "fundingStage": "series-d",
+      "atsHint": "workday"
+    },
+    {
       "name": "Blend Labs",
       "industry": "fintech",
       "fundingStage": "series-d",
       "atsHint": "greenhouse"
     },
     {
-      "name": "Mambu",
+      "name": "Alliance Bernstein (Pontera)",
+      "industry": "capital markets",
+      "fundingStage": "series-c",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Pontera",
+      "industry": "capital markets",
+      "fundingStage": "series-c",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Apex Fintech Solutions",
+      "industry": "capital markets",
+      "fundingStage": "series-c",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Alpaca",
+      "industry": "capital markets",
+      "fundingStage": "series-b",
+      "atsHint": "ashby"
+    },
+    {
+      "name": "Carta",
+      "industry": "capital markets",
+      "fundingStage": "series-d",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "AngelList",
+      "industry": "capital markets",
+      "fundingStage": "series-c",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Archax",
+      "industry": "capital markets",
+      "fundingStage": "series-b",
+      "atsHint": "unknown"
+    },
+    {
+      "name": "Symphony AyasdiAI",
+      "industry": "capital markets",
+      "fundingStage": "series-c",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Clearbit",
+      "industry": "fintech",
+      "fundingStage": "series-b",
+      "atsHint": "lever"
+    },
+    {
+      "name": "Pipe",
+      "industry": "fintech",
+      "fundingStage": "series-c",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Settle",
+      "industry": "fintech",
+      "fundingStage": "series-b",
+      "atsHint": "ashby"
+    },
+    {
+      "name": "Unit",
+      "industry": "fintech",
+      "fundingStage": "series-c",
+      "atsHint": "ashby"
+    },
+    {
+      "name": "Treasury Prime",
+      "industry": "fintech",
+      "fundingStage": "series-c",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Synctera",
+      "industry": "fintech",
+      "fundingStage": "series-b",
+      "atsHint": "lever"
+    },
+    {
+      "name": "Column",
       "industry": "commercial banking",
-      "fundingStage": "series-d",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Upgrade",
-      "industry": "fintech",
-      "fundingStage": "series-d",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Nerdio",
-      "industry": "fintech",
-      "fundingStage": "series-c",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Alloy",
-      "industry": "regtech",
-      "fundingStage": "series-c",
-      "atsHint": "lever"
-    },
-    {
-      "name": "Unit21",
-      "industry": "regtech",
-      "fundingStage": "series-c",
-      "atsHint": "ashby"
-    },
-    {
-      "name": "Sardine",
-      "industry": "regtech",
       "fundingStage": "series-b",
       "atsHint": "ashby"
     },
     {
-      "name": "Hummingbird",
-      "industry": "regtech",
-      "fundingStage": "series-b",
-      "atsHint": "ashby"
-    },
-    {
-      "name": "ComplyAdvantage",
-      "industry": "regtech",
+      "name": "Grasshopper Bank",
+      "industry": "commercial banking",
       "fundingStage": "series-c",
       "atsHint": "greenhouse"
     },
     {
-      "name": "Ramp",
-      "industry": "fintech",
-      "fundingStage": "series-d",
+      "name": "Nearside",
+      "industry": "commercial banking",
+      "fundingStage": "series-b",
+      "atsHint": "lever"
+    },
+    {
+      "name": "Relay Financial",
+      "industry": "commercial banking",
+      "fundingStage": "series-b",
       "atsHint": "greenhouse"
     },
     {
-      "name": "Pipe Technologies",
-      "industry": "capital markets",
+      "name": "Oxygen",
+      "industry": "commercial banking",
+      "fundingStage": "series-b",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Mercury",
+      "industry": "commercial banking",
       "fundingStage": "series-c",
       "atsHint": "lever"
     },
     {
-      "name": "Anchorage Digital",
+      "name": "Rho",
+      "industry": "commercial banking",
+      "fundingStage": "series-c",
+      "atsHint": "lever"
+    },
+    {
+      "name": "Jeeves",
+      "industry": "fintech",
+      "fundingStage": "series-c",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Parafin",
+      "industry": "fintech",
+      "fundingStage": "series-c",
+      "atsHint": "ashby"
+    },
+    {
+      "name": "Addepar",
       "industry": "capital markets",
       "fundingStage": "series-d",
       "atsHint": "greenhouse"
     },
     {
-      "name": "Orca Security",
-      "industry": "fintech",
+      "name": "Riskalyze",
+      "industry": "capital markets",
       "fundingStage": "series-c",
       "atsHint": "greenhouse"
     },
     {
-      "name": "Lemonade",
-      "industry": "fintech",
-      "fundingStage": "series-d",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Root Insurance",
-      "industry": "fintech",
-      "fundingStage": "series-d",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Oscar Health",
-      "industry": "health it",
-      "fundingStage": "series-d",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Bright Health",
-      "industry": "health it",
-      "fundingStage": "series-d",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Cityblock Health",
-      "industry": "digital health",
-      "fundingStage": "series-d",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Hims & Hers",
-      "industry": "digital health",
-      "fundingStage": "series-d",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Noom",
-      "industry": "digital health",
-      "fundingStage": "series-d",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Virta Health",
-      "industry": "digital health",
-      "fundingStage": "series-d",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Omada Health",
-      "industry": "digital health",
-      "fundingStage": "series-d",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Headspace Health",
-      "industry": "digital health",
+      "name": "Orion Advisor Solutions",
+      "industry": "capital markets",
       "fundingStage": "series-c",
       "atsHint": "greenhouse"
     },
     {
-      "name": "Lyra Health",
+      "name": "Arcesium",
+      "industry": "capital markets",
+      "fundingStage": "series-c",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Ellevest",
+      "industry": "capital markets",
+      "fundingStage": "series-c",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Flywire",
+      "industry": "fintech",
+      "fundingStage": "series-d",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Transcarent",
       "industry": "digital health",
+      "fundingStage": "series-d",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Accolade Health",
+      "industry": "consumer health",
+      "fundingStage": "series-d",
+      "atsHint": "workday"
+    },
+    {
+      "name": "Hims & Hers Health",
+      "industry": "consumer health",
+      "fundingStage": "series-d",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Commure",
+      "industry": "health information technology",
+      "fundingStage": "series-c",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Innovaccer",
+      "industry": "health information technology",
+      "fundingStage": "series-d",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Inovalon",
+      "industry": "clinical informatics",
+      "fundingStage": "series-d",
+      "atsHint": "workday"
+    },
+    {
+      "name": "Veeva Systems",
+      "industry": "clinical research",
+      "fundingStage": "series-d",
+      "atsHint": "workday"
+    },
+    {
+      "name": "Medidata Solutions",
+      "industry": "clinical research",
+      "fundingStage": "series-d",
+      "atsHint": "workday"
+    },
+    {
+      "name": "Ciox Health",
+      "industry": "health information technology",
+      "fundingStage": "series-c",
+      "atsHint": "workday"
+    },
+    {
+      "name": "Arcadia",
+      "industry": "health information technology",
+      "fundingStage": "series-c",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Kyruus Health",
+      "industry": "health information technology",
+      "fundingStage": "series-d",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Lightbeam Health Solutions",
+      "industry": "clinical informatics",
+      "fundingStage": "series-c",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Particle Health",
+      "industry": "health information technology",
+      "fundingStage": "series-b",
+      "atsHint": "ashby"
+    },
+    {
+      "name": "Collectly",
+      "industry": "health information technology",
+      "fundingStage": "series-b",
+      "atsHint": "ashby"
+    },
+    {
+      "name": "Apixio",
+      "industry": "clinical informatics",
+      "fundingStage": "series-d",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Veradigm",
+      "industry": "clinical informatics",
+      "fundingStage": "series-c",
+      "atsHint": "workday"
+    },
+    {
+      "name": "Medallion",
+      "industry": "health information technology",
+      "fundingStage": "series-c",
+      "atsHint": "lever"
+    },
+    {
+      "name": "Ribbon Health",
+      "industry": "health information technology",
+      "fundingStage": "series-b",
+      "atsHint": "lever"
+    },
+    {
+      "name": "Definitive Healthcare",
+      "industry": "clinical informatics",
+      "fundingStage": "series-d",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Komodo Health",
+      "industry": "clinical informatics",
+      "fundingStage": "series-d",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Redox",
+      "industry": "health information technology",
+      "fundingStage": "series-c",
+      "atsHint": "lever"
+    },
+    {
+      "name": "Ro Health",
+      "industry": "consumer health",
       "fundingStage": "series-d",
       "atsHint": "greenhouse"
     },
@@ -229,355 +403,7 @@
       "atsHint": "greenhouse"
     },
     {
-      "name": "Devoted Health",
-      "industry": "health it",
-      "fundingStage": "series-d",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Accolade",
-      "industry": "health it",
-      "fundingStage": "series-d",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Transcarent",
-      "industry": "health it",
-      "fundingStage": "series-d",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Included Health",
-      "industry": "digital health",
-      "fundingStage": "series-d",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Patientco",
-      "industry": "health it",
-      "fundingStage": "series-b",
-      "atsHint": "lever"
-    },
-    {
-      "name": "Cedar",
-      "industry": "health it",
-      "fundingStage": "series-c",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Waystar",
-      "industry": "health it",
-      "fundingStage": "series-d",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Veracyte",
-      "industry": "pharmaceuticals",
-      "fundingStage": "series-d",
-      "atsHint": "workday"
-    },
-    {
-      "name": "Tempus AI",
-      "industry": "healthcare technology",
-      "fundingStage": "series-d",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Flatiron Health",
-      "industry": "healthcare technology",
-      "fundingStage": "series-d",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Datavant",
-      "industry": "healthcare technology",
-      "fundingStage": "series-c",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Innovaccer",
-      "industry": "health it",
-      "fundingStage": "series-d",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Arcadia",
-      "industry": "health it",
-      "fundingStage": "series-c",
-      "atsHint": "lever"
-    },
-    {
-      "name": "Komodo Health",
-      "industry": "healthcare technology",
-      "fundingStage": "series-d",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Collective Health",
-      "industry": "health it",
-      "fundingStage": "series-d",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Eden Health",
-      "industry": "digital health",
-      "fundingStage": "series-c",
-      "atsHint": "lever"
-    },
-    {
-      "name": "Turquoise Health",
-      "industry": "health it",
-      "fundingStage": "series-b",
-      "atsHint": "ashby"
-    },
-    {
-      "name": "Candid Health",
-      "industry": "health it",
-      "fundingStage": "series-b",
-      "atsHint": "ashby"
-    },
-    {
-      "name": "Cohere Health",
-      "industry": "health it",
-      "fundingStage": "series-c",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Rhyme",
-      "industry": "health it",
-      "fundingStage": "series-b",
-      "atsHint": "ashby"
-    },
-    {
-      "name": "Ribbon Health",
-      "industry": "health it",
-      "fundingStage": "series-b",
-      "atsHint": "ashby"
-    },
-    {
-      "name": "Particle Health",
-      "industry": "health it",
-      "fundingStage": "series-b",
-      "atsHint": "ashby"
-    },
-    {
-      "name": "Elation Health",
-      "industry": "specialty ehr",
-      "fundingStage": "series-c",
-      "atsHint": "lever"
-    },
-    {
-      "name": "Canvas Medical",
-      "industry": "specialty ehr",
-      "fundingStage": "series-b",
-      "atsHint": "ashby"
-    },
-    {
-      "name": "Charm Health",
-      "industry": "specialty ehr",
-      "fundingStage": "series-a",
-      "atsHint": "workable"
-    },
-    {
-      "name": "Junction Health",
-      "industry": "specialty ehr",
-      "fundingStage": "series-a",
-      "atsHint": "ashby"
-    },
-    {
-      "name": "Vitable Health",
-      "industry": "digital health",
-      "fundingStage": "series-a",
-      "atsHint": "ashby"
-    },
-    {
-      "name": "Maven Clinic",
-      "industry": "digital health",
-      "fundingStage": "series-d",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Calibrate",
-      "industry": "digital health",
-      "fundingStage": "series-b",
-      "atsHint": "lever"
-    },
-    {
-      "name": "Brightline",
-      "industry": "digital health",
-      "fundingStage": "series-c",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Alma",
-      "industry": "digital health",
-      "fundingStage": "series-d",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Monarch Money",
-      "industry": "wealth management",
-      "fundingStage": "series-b",
-      "atsHint": "ashby"
-    },
-    {
-      "name": "Altruist",
-      "industry": "wealth management",
-      "fundingStage": "series-c",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Farther Finance",
-      "industry": "wealth management",
-      "fundingStage": "series-b",
-      "atsHint": "ashby"
-    },
-    {
-      "name": "Compound Planning",
-      "industry": "wealth management",
-      "fundingStage": "series-b",
-      "atsHint": "ashby"
-    },
-    {
-      "name": "Mezmo",
-      "industry": "fintech",
-      "fundingStage": "series-c",
-      "atsHint": "lever"
-    },
-    {
-      "name": "Lithic",
-      "industry": "fintech",
-      "fundingStage": "series-c",
-      "atsHint": "ashby"
-    },
-    {
-      "name": "Unit Finance",
-      "industry": "commercial banking",
-      "fundingStage": "series-c",
-      "atsHint": "ashby"
-    },
-    {
-      "name": "Treasury Prime",
-      "industry": "commercial banking",
-      "fundingStage": "series-c",
-      "atsHint": "lever"
-    },
-    {
-      "name": "Synctera",
-      "industry": "commercial banking",
-      "fundingStage": "series-b",
-      "atsHint": "ashby"
-    },
-    {
-      "name": "Column Tax",
-      "industry": "fintech",
-      "fundingStage": "series-b",
-      "atsHint": "ashby"
-    },
-    {
-      "name": "Atomic Financial",
-      "industry": "fintech",
-      "fundingStage": "series-b",
-      "atsHint": "ashby"
-    },
-    {
-      "name": "Pinwheel",
-      "industry": "fintech",
-      "fundingStage": "series-b",
-      "atsHint": "ashby"
-    },
-    {
-      "name": "Argyle",
-      "industry": "fintech",
-      "fundingStage": "series-c",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Methodfi",
-      "industry": "fintech",
-      "fundingStage": "series-b",
-      "atsHint": "ashby"
-    },
-    {
-      "name": "Array",
-      "industry": "fintech",
-      "fundingStage": "series-b",
-      "atsHint": "lever"
-    },
-    {
-      "name": "Zeal",
-      "industry": "fintech",
-      "fundingStage": "series-b",
-      "atsHint": "ashby"
-    },
-    {
-      "name": "Melio Payments",
-      "industry": "fintech",
-      "fundingStage": "series-d",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Nuvei",
-      "industry": "fintech",
-      "fundingStage": "series-d",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "TRM Labs",
-      "industry": "regtech",
-      "fundingStage": "series-c",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Chainalysis",
-      "industry": "regtech",
-      "fundingStage": "series-d",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Featurespace",
-      "industry": "regtech",
-      "fundingStage": "series-c",
-      "atsHint": "lever"
-    },
-    {
-      "name": "Behavioral Signals",
-      "industry": "regtech",
-      "fundingStage": "series-a",
-      "atsHint": "unknown"
-    },
-    {
-      "name": "Vanta",
-      "industry": "regtech",
-      "fundingStage": "series-c",
-      "atsHint": "ashby"
-    },
-    {
-      "name": "Drata",
-      "industry": "regtech",
-      "fundingStage": "series-c",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Hyperproof",
-      "industry": "regtech",
-      "fundingStage": "series-b",
-      "atsHint": "lever"
-    },
-    {
-      "name": "LogicGate",
-      "industry": "regtech",
-      "fundingStage": "series-c",
-      "atsHint": "greenhouse"
-    },
-    {
-      "name": "Apexon",
-      "industry": "healthcare technology",
-      "fundingStage": "series-c",
-      "atsHint": "workday"
-    },
-    {
-      "name": "Hinge Health",
+      "name": "Lyra Health",
       "industry": "digital health",
       "fundingStage": "series-d",
       "atsHint": "greenhouse"
@@ -589,46 +415,280 @@
       "atsHint": "greenhouse"
     },
     {
-      "name": "Curai Health",
-      "industry": "digital health",
-      "fundingStage": "series-b",
-      "atsHint": "lever"
-    },
-    {
-      "name": "K Health",
+      "name": "Cityblock Health",
       "industry": "digital health",
       "fundingStage": "series-d",
       "atsHint": "greenhouse"
     },
     {
-      "name": "Firefly Health",
+      "name": "Iora Health",
       "industry": "digital health",
-      "fundingStage": "series-b",
-      "atsHint": "lever"
+      "fundingStage": "series-d",
+      "atsHint": "greenhouse"
     },
     {
-      "name": "Teladoc Health Ventures",
+      "name": "Bright Health",
       "industry": "digital health",
       "fundingStage": "series-d",
       "atsHint": "workday"
     },
     {
-      "name": "Grow Therapy",
+      "name": "Devoted Health",
       "industry": "digital health",
+      "fundingStage": "series-d",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Oscar Health",
+      "industry": "digital health",
+      "fundingStage": "series-d",
+      "atsHint": "workday"
+    },
+    {
+      "name": "Alignment Health",
+      "industry": "digital health",
+      "fundingStage": "series-d",
+      "atsHint": "workday"
+    },
+    {
+      "name": "Aetion",
+      "industry": "clinical research",
       "fundingStage": "series-c",
       "atsHint": "greenhouse"
     },
     {
-      "name": "Equip Health",
-      "industry": "digital health",
+      "name": "Flatiron Health",
+      "industry": "clinical informatics",
+      "fundingStage": "series-d",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Tempus AI",
+      "industry": "clinical informatics",
+      "fundingStage": "series-d",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Veracyte",
+      "industry": "clinical informatics",
+      "fundingStage": "series-c",
+      "atsHint": "workday"
+    },
+    {
+      "name": "Genalyte",
+      "industry": "clinical research",
+      "fundingStage": "series-b",
+      "atsHint": "unknown"
+    },
+    {
+      "name": "Science 37",
+      "industry": "clinical research",
+      "fundingStage": "series-d",
+      "atsHint": "workday"
+    },
+    {
+      "name": "Medable",
+      "industry": "clinical research",
+      "fundingStage": "series-d",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Unlearn.AI",
+      "industry": "clinical research",
       "fundingStage": "series-c",
       "atsHint": "lever"
     },
     {
-      "name": "Talkiatry",
-      "industry": "digital health",
+      "name": "Translational Drug Development",
+      "industry": "clinical research",
+      "fundingStage": "series-b",
+      "atsHint": "unknown"
+    },
+    {
+      "name": "Formation Bio",
+      "industry": "clinical research",
       "fundingStage": "series-c",
+      "atsHint": "ashby"
+    },
+    {
+      "name": "Palantir Technologies",
+      "industry": "consulting",
+      "fundingStage": "series-d",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Gartner Digital Markets",
+      "industry": "consulting",
+      "fundingStage": "series-c",
+      "atsHint": "workday"
+    },
+    {
+      "name": "Bain Capital Ventures portfolio: Flatiron School",
+      "industry": "consulting",
+      "fundingStage": "series-c",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Guidehouse",
+      "industry": "financial services consulting",
+      "fundingStage": "series-d",
+      "atsHint": "workday"
+    },
+    {
+      "name": "West Monroe Partners",
+      "industry": "consulting",
+      "fundingStage": "series-d",
+      "atsHint": "workday"
+    },
+    {
+      "name": "Slalom",
+      "industry": "consulting",
+      "fundingStage": "series-d",
+      "atsHint": "workday"
+    },
+    {
+      "name": "CrossCountry Consulting",
+      "industry": "financial services consulting",
+      "fundingStage": "series-b",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Publicis Sapient",
+      "industry": "consulting",
+      "fundingStage": "series-d",
+      "atsHint": "workday"
+    },
+    {
+      "name": "10Pearls",
+      "industry": "consulting",
+      "fundingStage": "series-b",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Kin + Carta",
+      "industry": "consulting",
+      "fundingStage": "series-c",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Thoughtworks",
+      "industry": "consulting",
+      "fundingStage": "series-d",
+      "atsHint": "workday"
+    },
+    {
+      "name": "Nerdery",
+      "industry": "consulting",
+      "fundingStage": "series-b",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Intellicheck",
+      "industry": "fintech",
+      "fundingStage": "series-b",
+      "atsHint": "unknown"
+    },
+    {
+      "name": "Oportun",
+      "industry": "fintech",
+      "fundingStage": "series-d",
+      "atsHint": "workday"
+    },
+    {
+      "name": "LendingClub",
+      "industry": "fintech",
+      "fundingStage": "series-d",
+      "atsHint": "workday"
+    },
+    {
+      "name": "Upgrade",
+      "industry": "fintech",
+      "fundingStage": "series-d",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Petal Card",
+      "industry": "fintech",
+      "fundingStage": "series-c",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "TomoCredit",
+      "industry": "fintech",
+      "fundingStage": "series-b",
       "atsHint": "lever"
+    },
+    {
+      "name": "Deserve",
+      "industry": "fintech",
+      "fundingStage": "series-c",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Greenlight Financial Technology",
+      "industry": "fintech",
+      "fundingStage": "series-d",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Step",
+      "industry": "fintech",
+      "fundingStage": "series-c",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Current",
+      "industry": "fintech",
+      "fundingStage": "series-d",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "One Finance",
+      "industry": "commercial banking",
+      "fundingStage": "series-c",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Zeta Financial",
+      "industry": "commercial banking",
+      "fundingStage": "series-b",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "HM Bradley",
+      "industry": "commercial banking",
+      "fundingStage": "series-b",
+      "atsHint": "lever"
+    },
+    {
+      "name": "Lili",
+      "industry": "commercial banking",
+      "fundingStage": "series-c",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "Found",
+      "industry": "commercial banking",
+      "fundingStage": "series-b",
+      "atsHint": "ashby"
+    },
+    {
+      "name": "Novo",
+      "industry": "commercial banking",
+      "fundingStage": "series-b",
+      "atsHint": "greenhouse"
+    },
+    {
+      "name": "NorthOne",
+      "industry": "commercial banking",
+      "fundingStage": "series-b",
+      "atsHint": "lever"
+    },
+    {
+      "name": "Bluevine",
+      "industry": "commercial banking",
+      "fundingStage": "series-d",
+      "atsHint": "greenhouse"
     }
   ],
   "vcFirms": [
@@ -647,15 +707,15 @@
   ],
   "industries": [
     "capital markets",
+    "clinical informatics",
+    "clinical research",
     "commercial banking",
+    "consulting",
+    "consumer health",
     "digital health",
+    "financial services consulting",
     "fintech",
-    "health it",
-    "healthcare technology",
-    "pharmaceuticals",
-    "regtech",
-    "specialty ehr",
-    "wealth management"
+    "health information technology"
   ],
-  "analyzedAt": "2026-05-28T00:07:11.170Z"
+  "analyzedAt": "2026-06-02T19:58:00.222Z"
 }
