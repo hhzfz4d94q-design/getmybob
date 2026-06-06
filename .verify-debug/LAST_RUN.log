@@ -207,5 +207,11 @@ Probe done — valid:79 dead:198 skipped:20
 
 Asking Claude for correct slugs for 198 dead entries...
 Claude returned 198 fix entries
+  ↻ Abridge: greenhouse/abridge → ashby/abridge
+  ↻ Carta Healthcare: greenhouse/carta-healthcare → lever/cartahealthcare
+  ↻ Trialspark (Formation Bio): greenhouse/trialspark → ashby/formationbio
+  ↻ Honeybee Health: greenhouse/honeybee-health → ashby/honeybeehealth
+  ↻ Sesame Care: greenhouse/sesame-care → ashby/sesame
+  ↻ Hippocratic AI: greenhouse/hippocratic-ai → ashby/hippocratic-ai
 
-DONE — fixed 0 slugs, 36 marked suspectSlug (Claude unsure)
+DONE — fixed 6 slugs, 69 marked suspectSlug (Claude unsure)

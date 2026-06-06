@@ -1,6 +1,6 @@
 {
   "_note": "Curated Healthcare IT / digital health catalog. Used for: (a) scoring boost when company appears in feed AND user has healthcare industries (+3, all entries), (b) auto-scraping (only ATS=greenhouse/lever/ashby/workable). Workday/Google/Amazon entries are catalog-only (scored boost when found, not scraped). Slugs are canonical for matching.",
-  "version": "2026-05-29-v3+discovered+discovered+dream-list+from-contacts+dedup+dream-geetu+discovered+dedup-r2+verified+slug-recover+verified",
+  "version": "2026-05-29-v3+discovered+discovered+dream-list+from-contacts+dedup+dream-geetu+discovered+dedup-r2+verified+slug-recover+verified+verified",
   "companies": [
     {
       "name": "Doximity",
@@ -318,7 +318,7 @@
     {
       "name": "Abridge",
       "category": "hit-ai",
-      "atsHint": "greenhouse",
+      "atsHint": "ashby",
       "slug": "abridge"
     },
     {
@@ -367,9 +367,8 @@
     {
       "name": "Carta Healthcare",
       "category": "clinical-trials",
-      "atsHint": "greenhouse",
-      "slug": "carta-healthcare",
-      "suspectSlug": true
+      "atsHint": "lever",
+      "slug": "cartahealthcare"
     },
     {
       "name": "Medidata Solutions",
@@ -445,7 +444,8 @@
       "name": "Tempus",
       "category": "life-sciences-data",
       "atsHint": "greenhouse",
-      "slug": "tempus"
+      "slug": "tempus",
+      "suspectSlug": true
     },
     {
       "name": "Flatiron Health",
@@ -507,9 +507,8 @@
     {
       "name": "Trialspark (Formation Bio)",
       "category": "clinical-trials",
-      "atsHint": "greenhouse",
-      "slug": "trialspark",
-      "suspectSlug": true
+      "atsHint": "ashby",
+      "slug": "formationbio"
     },
     {
       "name": "Prescryptive Health",
@@ -550,9 +549,8 @@
     {
       "name": "Honeybee Health",
       "category": "pharma-tech",
-      "atsHint": "greenhouse",
-      "slug": "honeybee-health",
-      "suspectSlug": true
+      "atsHint": "ashby",
+      "slug": "honeybeehealth"
     },
     {
       "name": "DrFirst",
@@ -612,7 +610,8 @@
       "name": "PlushCare",
       "category": "telehealth",
       "atsHint": "greenhouse",
-      "slug": "plushcare"
+      "slug": "plushcare",
+      "suspectSlug": true
     },
     {
       "name": "Ro",
@@ -623,9 +622,8 @@
     {
       "name": "Sesame Care",
       "category": "telehealth",
-      "atsHint": "greenhouse",
-      "slug": "sesame-care",
-      "suspectSlug": true
+      "atsHint": "ashby",
+      "slug": "sesame"
     },
     {
       "name": "Heal",
@@ -746,7 +744,8 @@
       "name": "Noom",
       "category": "dtx",
       "atsHint": "greenhouse",
-      "slug": "noom"
+      "slug": "noom",
+      "suspectSlug": true
     },
     {
       "name": "WW (Weight Watchers)",
@@ -929,7 +928,8 @@
       "name": "HealthEdge",
       "category": "payer-tech",
       "atsHint": "greenhouse",
-      "slug": "healthedge"
+      "slug": "healthedge",
+      "suspectSlug": true
     },
     {
       "name": "Vatica Health",
@@ -979,7 +979,7 @@
     {
       "name": "Hippocratic AI",
       "category": "clinical-ai",
-      "atsHint": "greenhouse",
+      "atsHint": "ashby",
       "slug": "hippocratic-ai"
     },
     {
@@ -1138,7 +1138,8 @@
       "name": "LifeStance Health",
       "category": "Telehealth",
       "atsHint": "greenhouse",
-      "slug": "lifestance"
+      "slug": "lifestance",
+      "suspectSlug": true
     },
     {
       "name": "Ginger",
@@ -1165,7 +1166,8 @@
       "name": "Accolade",
       "category": "Payer-tech",
       "atsHint": "greenhouse",
-      "slug": "accolade"
+      "slug": "accolade",
+      "suspectSlug": true
     },
     {
       "name": "Bind Benefits",
@@ -1235,13 +1237,15 @@
       "name": "Pacific Biosciences",
       "category": "Diagnostics",
       "atsHint": "greenhouse",
-      "slug": "pacbio"
+      "slug": "pacbio",
+      "suspectSlug": true
     },
     {
       "name": "Adaptive Biotechnologies",
       "category": "Diagnostics",
       "atsHint": "greenhouse",
-      "slug": "adaptivebiotech"
+      "slug": "adaptivebiotech",
+      "suspectSlug": true
     },
     {
       "name": "Freenome",
@@ -1253,7 +1257,8 @@
       "name": "Grail",
       "category": "Diagnostics",
       "atsHint": "greenhouse",
-      "slug": "grail"
+      "slug": "grail",
+      "suspectSlug": true
     },
     {
       "name": "Evidation Health",
@@ -1295,7 +1300,8 @@
       "name": "Bamboo Health",
       "category": "Interoperability",
       "atsHint": "greenhouse",
-      "slug": "bamboohealth"
+      "slug": "bamboohealth",
+      "suspectSlug": true
     },
     {
       "name": "1upHealth",
@@ -1314,7 +1320,8 @@
       "name": "Tandem Diabetes",
       "category": "Medical devices",
       "atsHint": "greenhouse",
-      "slug": "tandemdiabetes"
+      "slug": "tandemdiabetes",
+      "suspectSlug": true
     },
     {
       "name": "DexCare",
@@ -1467,7 +1474,8 @@
       "name": "Recursion Pharmaceuticals",
       "category": "Pharma + biotech",
       "atsHint": "greenhouse",
-      "slug": "recursionpharma"
+      "slug": "recursionpharma",
+      "suspectSlug": true
     },
     {
       "name": "AbCellera",
@@ -1479,25 +1487,29 @@
       "name": "Editas Medicine",
       "category": "Pharma + biotech",
       "atsHint": "greenhouse",
-      "slug": "editasmedicine"
+      "slug": "editasmedicine",
+      "suspectSlug": true
     },
     {
       "name": "Intellia Therapeutics",
       "category": "Pharma + biotech",
       "atsHint": "greenhouse",
-      "slug": "intelliatx"
+      "slug": "intelliatx",
+      "suspectSlug": true
     },
     {
       "name": "Sage Therapeutics",
       "category": "Pharma + biotech",
       "atsHint": "greenhouse",
-      "slug": "sagerx"
+      "slug": "sagerx",
+      "suspectSlug": true
     },
     {
       "name": "Ultragenyx",
       "category": "Pharma + biotech",
       "atsHint": "greenhouse",
-      "slug": "ultragenyx"
+      "slug": "ultragenyx",
+      "suspectSlug": true
     },
     {
       "name": "Ginkgo Bioworks",
@@ -1527,7 +1539,8 @@
       "name": "Denali Therapeutics",
       "category": "Pharma + biotech",
       "atsHint": "greenhouse",
-      "slug": "denalitherapeutics"
+      "slug": "denalitherapeutics",
+      "suspectSlug": true
     },
     {
       "name": "Slalom",
@@ -1604,7 +1617,8 @@
       "slug": "prescryptivehealth",
       "vertical": "healthcare",
       "dreamList": true,
-      "dreamListFor": "geetu"
+      "dreamListFor": "geetu",
+      "suspectSlug": true
     },
     {
       "name": "Qventus",
@@ -1788,7 +1802,8 @@
       "name": "WCG Clinical",
       "category": "Clinical Research / CRO",
       "atsHint": "greenhouse",
-      "slug": "wcgclinical"
+      "slug": "wcgclinical",
+      "suspectSlug": true
     },
     {
       "name": "Byte",
@@ -1806,7 +1821,8 @@
       "name": "Progyny",
       "category": "Women's Health + Fertility",
       "atsHint": "greenhouse",
-      "slug": "progyny"
+      "slug": "progyny",
+      "suspectSlug": true
     },
     {
       "name": "Kindbody",
@@ -1872,13 +1888,15 @@
       "name": "PointClickCare",
       "category": "Post-Acute + Home Health + Long-Term Care",
       "atsHint": "greenhouse",
-      "slug": "pointclickcare"
+      "slug": "pointclickcare",
+      "suspectSlug": true
     },
     {
       "name": "MatrixCare",
       "category": "Post-Acute + Home Health + Long-Term Care",
       "atsHint": "greenhouse",
-      "slug": "matrixcare"
+      "slug": "matrixcare",
+      "suspectSlug": true
     },
     {
       "name": "CivicaRx",
@@ -1890,7 +1908,8 @@
       "name": "Imprivata",
       "category": "Healthcare Cybersecurity + Privacy",
       "atsHint": "greenhouse",
-      "slug": "imprivata"
+      "slug": "imprivata",
+      "suspectSlug": true
     },
     {
       "name": "Censinet",
