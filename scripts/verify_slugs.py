@@ -74,7 +74,36 @@ def main():
         return 0
 
     print(f"\nAsking Claude for correct slugs for {len(dead)} dead entries...", flush=True)
-    prompt = (
+
+    def _ask_claude_batch(batch):
+        """One API call for <=40 companies. Returns list of fix dicts ([] on failure)."""
+        prompt = _build_prompt(batch)
+        req = urllib.request.Request(
+            "https://api.anthropic.com/v1/messages",
+            method="POST",
+            headers={
+                "Content-Type": "application/json",
+                "x-api-key": api_key,
+                "anthropic-version": "2023-06-01",
+            },
+            data=json.dumps({
+                "model": os.environ.get("CLAUDE_MODEL", "claude-sonnet-4-5"),
+                "max_tokens": 8000,
+                "messages": [{"role": "user", "content": prompt}],
+            }).encode(),
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=180) as r:
+                resp = json.loads(r.read().decode())
+            text = resp.get("content", [{}])[0].get("text", "")
+            cleaned = re.sub(r"^```json\s*|```$", "", text.strip(), flags=re.MULTILINE)
+            return json.loads(cleaned)
+        except Exception as e:
+            print(f"  batch of {len(batch)} failed ({type(e).__name__}: {e}) — skipping batch", flush=True)
+            return []
+
+    def _build_prompt(batch):
+        return (
         "For each US-based company below, identify the CORRECT current ATS slug. "
         "We currently have the wrong slug in our catalog — the API returned 404. "
         "Return a JSON array, one object per company:\n"
@@ -84,33 +113,20 @@ def main():
         "  - workday (only if the company moved off the original ATS to Workday; {tenant, subdomain, site})\n\n"
         "Be conservative: if you don't know the current slug for sure, use atsHint='unknown' and omit slug. "
         "Don't invent slugs.\n\nCompanies (with old/wrong slug shown for context):\n" +
-        "\n".join(f"- {d['name']} (old slug was {d['atsHint']}/{d['old_slug']})" for d in dead) +
+        "\n".join(f"- {d['name']} (old slug was {d['atsHint']}/{d['old_slug']})" for d in batch) +
         "\n\nReturn ONLY the JSON array, no prose."
     )
-    req = urllib.request.Request(
-        "https://api.anthropic.com/v1/messages",
-        method="POST",
-        headers={
-            "Content-Type": "application/json",
-            "x-api-key": api_key,
-            "anthropic-version": "2023-06-01",
-        },
-        data=json.dumps({
-            "model": os.environ.get("CLAUDE_MODEL", "claude-sonnet-4-5"),
-            "max_tokens": 8000,
-            "messages": [{"role": "user", "content": prompt}],
-        }).encode(),
-    )
-    try:
-        with urllib.request.urlopen(req, timeout=180) as r:
-            resp = json.loads(r.read().decode())
-    except urllib.error.HTTPError as e:
-        print(f"FATAL: API HTTP {e.code}: {e.read().decode()[:500]}", file=sys.stderr)
-        return 1
-    text = resp.get("content", [{}])[0].get("text", "")
-    cleaned = re.sub(r"^```json\s*|```$", "", text.strip(), flags=re.MULTILINE)
-    fixes = json.loads(cleaned)
-    print(f"Claude returned {len(fixes)} fix entries", flush=True)
+
+    # Batch the dead list — one giant call truncates the response JSON
+    # (296 dead entries blew past max_tokens on 2026-06-07 and crashed the run).
+    BATCH = 40
+    fixes = []
+    for i in range(0, len(dead), BATCH):
+        chunk = dead[i:i+BATCH]
+        got = _ask_claude_batch(chunk)
+        fixes.extend(got)
+        print(f"  batch {i//BATCH+1}/{(len(dead)+BATCH-1)//BATCH}: {len(got)} fixes", flush=True)
+    print(f"Claude returned {len(fixes)} fix entries total", flush=True)
 
     by_name = {f.get("name","").lower(): f for f in fixes}
     fixed = 0; removed = 0; skipped_no_fix = 0
