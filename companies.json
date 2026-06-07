@@ -1,6 +1,3139 @@
 {
-  "_comment": "Companies organized by ATS. Entries can be a slug string (uses _default_industries) or {slug, industries: [...]} for per-company overrides. To add finance/legal/etc. companies, add a new top-level industry block AND tag those entries with industries matching the target user's profile.",
-  "_default_industries": [
+ "_comment": "Companies organized by ATS. Entries can be a slug string (uses _default_industries) or {slug, industries: [...]} for per-company overrides. To add finance/legal/etc. companies, add a new top-level industry block AND tag those entries with industries matching the target user's profile.",
+ "_default_industries": [
+  "healthcare",
+  "healthcare-it",
+  "digital-health",
+  "health-saas",
+  "pharma",
+  "pharmaceuticals",
+  "biotech",
+  "life-sciences",
+  "diagnostics",
+  "telehealth",
+  "mental-health",
+  "clinical-ai"
+ ],
+ "_company_sizes": {
+  "oscar": "midsize",
+  "acuitymd": "startup",
+  "sondermind": "startup",
+  "linushealth": "startup",
+  "clipboardhealth": "midsize",
+  "picnichealth": "startup",
+  "carerev": "startup",
+  "abarca": "midsize",
+  "modernhealth": "startup",
+  "roivantsciences": "midsize",
+  "waymark": "startup",
+  "freenome": "midsize",
+  "bridgebio": "midsize",
+  "formationbio": "startup",
+  "honehealth": "startup",
+  "cerebral": "midsize",
+  "foresightmentalhealth": "startup",
+  "hs": "startup",
+  "springhealth66": "midsize",
+  "prolaio": "startup",
+  "prescriberpoint": "startup",
+  "lumimeds": "startup",
+  "smarterdxprivate": "startup",
+  "smarterdx": "startup",
+  "midihealth": "startup",
+  "shieldshealthsolutions": "midsize",
+  "coherehealth": "midsize",
+  "allarahealth": "startup",
+  "courierhealth": "startup",
+  "garnerhealth": "startup",
+  "abridge": "startup",
+  "aledade": "midsize",
+  "alma": "startup",
+  "ambry": "midsize",
+  "athelas": "startup",
+  "basis-health": "startup",
+  "biofourmis": "midsize",
+  "blueprintmedicines": "midsize",
+  "brightline": "startup",
+  "calmclinic": "startup",
+  "cedar": "midsize",
+  "clearstory": "startup",
+  "climbhealth": "startup",
+  "cohere": "midsize",
+  "color": "midsize",
+  "decagon": "startup",
+  "ellipsishealth": "startup",
+  "evidation": "midsize",
+  "evio": "startup",
+  "flatironhealth": "midsize",
+  "forwardhealth": "startup",
+  "ginger": "startup",
+  "glassbox": "startup",
+  "glooko": "midsize",
+  "grail": "midsize",
+  "headway": "midsize",
+  "hidoc": "startup",
+  "hims": "midsize",
+  "h1insights": "midsize",
+  "hingehealth": "midsize",
+  "hopelab": "startup",
+  "hsblox": "startup",
+  "included-health": "midsize",
+  "indexhealth": "startup",
+  "inspire": "midsize",
+  "ironclad": "midsize",
+  "k-health": "startup",
+  "kindbody": "midsize",
+  "kintsugi": "startup",
+  "lextant": "startup",
+  "lifelens": "startup",
+  "lyrahealth": "midsize",
+  "magnifai": "startup",
+  "medable": "midsize",
+  "medallia": "midsize",
+  "mednet": "startup",
+  "memberfocus": "startup",
+  "midi": "startup",
+  "mindstrong": "startup",
+  "naturalcycles": "startup",
+  "niahealth": "startup",
+  "nomi": "startup",
+  "notable": "midsize",
+  "nourishhealth": "startup",
+  "novahealth": "startup",
+  "onepeloton": "midsize",
+  "orchard": "midsize",
+  "papa": "midsize",
+  "paragonbiosciences": "midsize",
+  "paragoncorporate": "midsize",
+  "parsley": "startup",
+  "peerwell": "startup",
+  "peripheral": "startup",
+  "pluralvision": "startup",
+  "polkadot": "startup",
+  "prima": "startup",
+  "prognos": "startup",
+  "prolacta": "midsize",
+  "protege": "startup",
+  "providencehealth": "large",
+  "qventus": "midsize",
+  "regard": "startup",
+  "reify": "startup",
+  "rexrothbosch": "large",
+  "ribbonhealth": "startup",
+  "ridehealth": "startup",
+  "ritual": "midsize",
+  "rivian": "midsize",
+  "riverside": "midsize",
+  "sage": "startup",
+  "semjoinx": "startup",
+  "sema4": "midsize",
+  "sensus": "startup",
+  "simbo": "startup",
+  "sketchgrid": "startup",
+  "spire": "midsize",
+  "springworks": "midsize",
+  "suki": "startup",
+  "sunhealth": "startup",
+  "surepath": "startup",
+  "talkiatry": "midsize",
+  "thirty-madison": "midsize",
+  "tribecahealth": "startup",
+  "twinhealth": "startup",
+  "twobillion": "startup",
+  "unite": "startup",
+  "untold": "startup",
+  "validic": "startup",
+  "vault": "startup",
+  "ventures": "startup",
+  "verana": "startup",
+  "vida": "midsize",
+  "vow": "startup",
+  "waterfowl": "startup",
+  "wavemaker": "startup",
+  "wayup": "startup",
+  "wellhive": "startup",
+  "wellth": "startup",
+  "withpower": "startup",
+  "wiz": "midsize",
+  "woebot": "startup",
+  "yumi": "startup",
+  "zen": "startup",
+  "zola": "midsize",
+  "zus": "startup",
+  "drchrono": "midsize",
+  "athenahealth": "large",
+  "biocadenza": "startup",
+  "boundless": "startup",
+  "calmly": "startup",
+  "careology": "startup",
+  "careship": "startup",
+  "carefoldio": "startup",
+  "cherished": "startup",
+  "contracancer": "startup",
+  "cura": "startup",
+  "cure": "startup",
+  "dynamic": "startup",
+  "edgeforward": "startup",
+  "embrace": "startup",
+  "evolent": "midsize",
+  "exome": "startup",
+  "family": "startup",
+  "fairwell": "startup",
+  "fasten": "startup",
+  "finquery": "startup",
+  "geoffrey": "startup",
+  "gomesh": "startup",
+  "onetrust": "midsize",
+  "SprinterHealth": "startup",
+  "CollectlyInc": "startup",
+  "canvasmedical": "startup",
+  "zushealth": "startup",
+  "januaryinc": "startup",
+  "RyzLabs": "startup",
+  "heartbeathealth": "startup",
+  "circadiahealth": "startup",
+  "artera-2": "startup",
+  "whoop": "midsize",
+  "caremessage": "startup",
+  "h1": "midsize",
+  "mcra": "startup",
+  "includedhealth": "midsize",
+  "truepill": "midsize",
+  "datavant": "midsize",
+  "betterup": "midsize",
+  "noom": "midsize",
+  "calm": "midsize",
+  "verily": "midsize",
+  "neuralink": "midsize",
+  "fluent-health": "startup",
+  "ben": "startup",
+  "hims-and-hers": "midsize",
+  "riskindex": "startup",
+  "sword-health": "midsize",
+  "sketch": "startup",
+  "Pfizer": "large",
+  "Merck (MSD)": "large",
+  "CVS Health": "large",
+  "Capital One": "large",
+  "Wells Fargo": "large",
+  "Bank of America": "large",
+  "Citi": "large",
+  "Morgan Stanley": "large",
+  "American Express": "large",
+  "BlackRock": "large",
+  "Charles Schwab": "large",
+  "TD Bank": "large",
+  "BMO Financial Group": "large",
+  "Truist": "large",
+  "PNC": "large",
+  "US Bank": "large",
+  "MUFG Americas": "large",
+  "Mizuho Americas": "large",
+  "Flagstar Bank": "large",
+  "S&P Global": "large",
+  "Protiviti": "midsize",
+  "FIS Global": "large",
+  "Fiserv": "large",
+  "Regions Financial": "large"
+ },
+ "_recruiting_firms": [
+  "Robert Half",
+  "Insight Global",
+  "TEKsystems",
+  "Diversant",
+  "Akkodis",
+  "Modis",
+  "Randstad",
+  "Adecco",
+  "ManpowerGroup",
+  "Manpower",
+  "Aerotek",
+  "Allegis Group",
+  "Kelly Services",
+  "Kforce",
+  "Apex Systems",
+  "Beacon Hill Staffing Group",
+  "Beacon Hill",
+  "Eliassen Group",
+  "The Judge Group",
+  "Judge Group",
+  "Brunel",
+  "Hays",
+  "Robert Walters",
+  "Michael Page",
+  "Page Group",
+  "LaSalle Network",
+  "Atrium Staffing",
+  "Mondo",
+  "Russell Tobin",
+  "CyberCoders",
+  "Motion Recruitment",
+  "Vaco",
+  "Brooksource",
+  "Maxim Healthcare",
+  "Maxim Healthcare Services",
+  "Cross Country Healthcare",
+  "AMN Healthcare",
+  "Aya Healthcare",
+  "Software Guidance & Assistance",
+  "SGA",
+  "Mitchell Martin",
+  "Mathys+Potestio"
+ ],
+ "_wttj_blocked": {
+  "_reason": "WTTJ public API only returns org metadata; jobs require partner WK_API_KEY auth (see developers.welcomekit.co). All 10 endpoint shapes tried returned 404. Web pages blocked by Cloudflare bot rule (HTTP 202). Restore this list under 'wttj' if/when partner key is obtained.",
+  "companies": [
+   {
+    "slug": "alan",
+    "name": "Alan",
+    "industries": [
+     "healthcare",
+     "health-insurance",
+     "digital-health",
+     "insurtech"
+    ]
+   },
+   {
+    "slug": "doctolib",
+    "name": "Doctolib",
+    "industries": [
+     "healthcare",
+     "healthcare-it",
+     "digital-health",
+     "telehealth"
+    ]
+   },
+   {
+    "slug": "withings",
+    "name": "Withings",
+    "industries": [
+     "healthcare",
+     "health-devices",
+     "digital-health",
+     "wearables"
+    ]
+   },
+   {
+    "slug": "owkin",
+    "name": "Owkin",
+    "industries": [
+     "healthcare",
+     "biotech",
+     "clinical-ai",
+     "life-sciences"
+    ]
+   },
+   {
+    "slug": "qonto",
+    "name": "Qonto",
+    "industries": [
+     "fintech",
+     "banking",
+     "business-banking",
+     "sme-banking"
+    ]
+   },
+   {
+    "slug": "spendesk",
+    "name": "Spendesk",
+    "industries": [
+     "fintech",
+     "spend-management",
+     "b2b-saas",
+     "corporate-cards"
+    ]
+   },
+   {
+    "slug": "pennylane-2",
+    "name": "Pennylane",
+    "industries": [
+     "fintech",
+     "accounting",
+     "b2b-saas"
+    ]
+   },
+   {
+    "slug": "ledger",
+    "name": "Ledger",
+    "industries": [
+     "fintech",
+     "crypto",
+     "wallets",
+     "security"
+    ]
+   },
+   {
+    "slug": "swile",
+    "name": "Swile",
+    "industries": [
+     "fintech",
+     "payments",
+     "employee-benefits"
+    ]
+   },
+   {
+    "slug": "algolia",
+    "name": "Algolia",
+    "industries": [
+     "search",
+     "developer-tools",
+     "saas"
+    ]
+   },
+   {
+    "slug": "datadog",
+    "name": "Datadog",
+    "industries": [
+     "observability",
+     "cybersecurity",
+     "developer-tools",
+     "saas"
+    ]
+   },
+   {
+    "slug": "datadome",
+    "name": "DataDome",
+    "industries": [
+     "cybersecurity",
+     "bot-protection",
+     "saas"
+    ]
+   },
+   {
+    "slug": "blablacar",
+    "name": "BlaBlaCar",
+    "industries": [
+     "marketplace",
+     "mobility",
+     "consumer-tech"
+    ]
+   },
+   {
+    "slug": "back-market",
+    "name": "Back Market",
+    "industries": [
+     "marketplace",
+     "sustainability",
+     "e-commerce"
+    ]
+   },
+   {
+    "slug": "mirakl",
+    "name": "Mirakl",
+    "industries": [
+     "marketplace",
+     "b2b-saas",
+     "retail-tech"
+    ]
+   },
+   {
+    "slug": "shift-technology",
+    "name": "Shift Technology",
+    "industries": [
+     "insurtech",
+     "fraud-detection",
+     "ai"
+    ]
+   }
+  ]
+ },
+ "greenhouse": [
+  "oscar",
+  "acuitymd",
+  "sondermind",
+  "linushealth",
+  "clipboardhealth",
+  "picnichealth",
+  "carerev",
+  "abarca",
+  "modernhealth",
+  "roivantsciences",
+  "waymark",
+  "freenome",
+  "bridgebio",
+  "formationbio",
+  "honehealth",
+  "cerebral",
+  "foresightmentalhealth",
+  "hs",
+  "springhealth66",
+  "prolaio",
+  "prescriberpoint",
+  "lumimeds",
+  "smarterdxprivate",
+  "smarterdx",
+  "midihealth",
+  "shieldshealthsolutions",
+  "coherehealth",
+  "allarahealth",
+  "courierhealth",
+  "garnerhealth",
+  "evio",
+  "cofertility",
+  "carrotfertility",
+  "branchcare",
+  "pomelocare",
+  "openfertility",
+  "mavenclinic",
+  "sparkadvisors",
+  "wellth",
+  "employerdirecthealthcare",
+  "habitathealth",
+  "authorhealth",
+  "omadahealth",
+  "phamily",
+  "interwellhealth",
+  "smartertechnologies",
+  "redcellpartners",
+  "inovalon",
+  "layerhealth",
+  "jukeboxhealth",
+  "qualifiedhealth",
+  "tuleahealth",
+  "precisionmedicinegroup",
+  "peptilogics",
+  "recursionpharmaceuticals",
+  "headlandsresearch",
+  "yarrowbiotechnology",
+  "synerg",
+  "immunomeinc",
+  "cedar",
+  "hingehealth",
+  "carbonhealth",
+  "color",
+  "komodohealth",
+  "includedhealth",
+  "headway",
+  "lyrahealth",
+  "ro",
+  "curology",
+  "khealth",
+  "thirtymadison",
+  "nourish",
+  "abridge",
+  "transcarent",
+  "tempus",
+  "flatiron",
+  "ribbonhealth",
+  "evidation",
+  "alma",
+  "talkiatry",
+  "brightline",
+  "amwell",
+  "doximity",
+  "veeva",
+  "guardanthealth",
+  "recursion",
+  "veracyte",
+  "benchling",
+  "moderna",
+  "23andme",
+  "tendo",
+  "memora",
+  "wellsky",
+  "papacompanies",
+  "vivahealth",
+  "biofourmis",
+  "ada",
+  "buoy",
+  "kindbody",
+  "tia",
+  "hims",
+  "noom",
+  "calm",
+  "vidaheath",
+  "sword",
+  "kaiahealth",
+  "ginger",
+  "rula",
+  "octave",
+  "rightway",
+  "centivo",
+  "collectivehealth",
+  "accolade",
+  "evolenthealth",
+  "iodine",
+  "innovaccer",
+  "cotiviti",
+  "datavant",
+  "trialspark",
+  "paige",
+  "pathai",
+  "truveta",
+  "athelas",
+  "olive",
+  "altopharmacy",
+  "capsule",
+  "vivante",
+  {
+   "slug": "stripe",
+   "industries": [
+    "fintech",
+    "payments",
+    "financial-services",
+    "banking"
+   ]
+  },
+  {
+   "slug": "plaid",
+   "industries": [
+    "fintech",
+    "banking",
+    "financial-services"
+   ]
+  },
+  {
+   "slug": "brex",
+   "industries": [
+    "fintech",
+    "banking",
+    "financial-services",
+    "corporate-cards"
+   ]
+  },
+  {
+   "slug": "chime",
+   "industries": [
+    "fintech",
+    "banking",
+    "consumer-banking"
+   ]
+  },
+  {
+   "slug": "mercury",
+   "industries": [
+    "fintech",
+    "banking",
+    "business-banking"
+   ]
+  },
+  {
+   "slug": "robinhood",
+   "industries": [
+    "fintech",
+    "wealth-management",
+    "capital-markets",
+    "brokerage"
+   ]
+  },
+  {
+   "slug": "affirm",
+   "industries": [
+    "fintech",
+    "lending",
+    "consumer-finance"
+   ]
+  },
+  {
+   "slug": "carta",
+   "industries": [
+    "fintech",
+    "capital-markets",
+    "wealth-management",
+    "equity"
+   ]
+  },
+  {
+   "slug": "coinbase",
+   "industries": [
+    "fintech",
+    "crypto",
+    "capital-markets"
+   ]
+  },
+  {
+   "slug": "marqeta",
+   "industries": [
+    "fintech",
+    "payments",
+    "banking"
+   ]
+  },
+  {
+   "slug": "wise",
+   "industries": [
+    "fintech",
+    "banking",
+    "payments",
+    "financial-services"
+   ]
+  },
+  {
+   "slug": "klarna",
+   "industries": [
+    "fintech",
+    "consumer-finance",
+    "lending"
+   ]
+  },
+  {
+   "slug": "sofi",
+   "industries": [
+    "fintech",
+    "banking",
+    "consumer-banking",
+    "lending"
+   ]
+  },
+  {
+   "slug": "betterment",
+   "industries": [
+    "fintech",
+    "wealth-management",
+    "financial-services"
+   ]
+  },
+  {
+   "slug": "addepar",
+   "industries": [
+    "fintech",
+    "wealth-management",
+    "financial-services"
+   ]
+  },
+  {
+   "slug": "ironclad",
+   "industries": [
+    "enterprise-saas",
+    "legal-tech",
+    "grc"
+   ]
+  },
+  {
+   "slug": "hudl",
+   "industries": [
+    "enterprise-saas"
+   ]
+  },
+  {
+   "slug": "cloudflare",
+   "industries": [
+    "cybersecurity",
+    "infrastructure",
+    "enterprise-saas",
+    "developer-tools",
+    "security"
+   ]
+  },
+  {
+   "slug": "snyk",
+   "industries": [
+    "cybersecurity",
+    "security",
+    "developer-tools",
+    "application-security"
+   ]
+  },
+  {
+   "slug": "vanta",
+   "industries": [
+    "cybersecurity",
+    "grc",
+    "compliance",
+    "enterprise-saas",
+    "security"
+   ]
+  },
+  {
+   "slug": "drata",
+   "industries": [
+    "cybersecurity",
+    "grc",
+    "compliance",
+    "enterprise-saas",
+    "security"
+   ]
+  },
+  {
+   "slug": "wiz",
+   "industries": [
+    "cybersecurity",
+    "cloud-security",
+    "security",
+    "enterprise-saas"
+   ]
+  },
+  {
+   "slug": "sentinelone",
+   "industries": [
+    "cybersecurity",
+    "endpoint-security",
+    "security",
+    "enterprise-saas"
+   ]
+  },
+  {
+   "slug": "okta",
+   "industries": [
+    "cybersecurity",
+    "identity",
+    "security",
+    "enterprise-saas"
+   ]
+  },
+  {
+   "slug": "onetrust",
+   "industries": [
+    "grc",
+    "compliance",
+    "privacy",
+    "enterprise-saas",
+    "security"
+   ]
+  },
+  {
+   "slug": "secureframe",
+   "industries": [
+    "cybersecurity",
+    "grc",
+    "compliance",
+    "enterprise-saas"
+   ]
+  },
+  {
+   "slug": "1password",
+   "industries": [
+    "cybersecurity",
+    "identity",
+    "security",
+    "enterprise-saas"
+   ]
+  },
+  {
+   "slug": "huntress",
+   "industries": [
+    "cybersecurity",
+    "security",
+    "managed-detection",
+    "enterprise-saas"
+   ]
+  },
+  {
+   "slug": "crowdstrike",
+   "industries": [
+    "cybersecurity",
+    "endpoint-security",
+    "security",
+    "enterprise-saas"
+   ]
+  },
+  {
+   "slug": "upstart",
+   "industries": [
+    "fintech",
+    "lending",
+    "credit-risk",
+    "consumer-finance",
+    "financial-services"
+   ]
+  },
+  {
+   "slug": "novacredit",
+   "industries": [
+    "fintech",
+    "credit",
+    "credit-risk",
+    "alternative-data",
+    "financial-services"
+   ]
+  },
+  {
+   "slug": "pinwheel",
+   "industries": [
+    "fintech",
+    "credit",
+    "credit-risk",
+    "payroll-data",
+    "financial-services"
+   ]
+  },
+  {
+   "slug": "pagaya",
+   "industries": [
+    "fintech",
+    "credit-risk",
+    "lending",
+    "financial-services",
+    "ai"
+   ]
+  },
+  {
+   "slug": "lendio",
+   "industries": [
+    "fintech",
+    "lending",
+    "credit-risk",
+    "small-business-finance"
+   ]
+  },
+  {
+   "slug": "auditboard",
+   "industries": [
+    "grc",
+    "risk",
+    "compliance",
+    "audit",
+    "saas"
+   ]
+  },
+  {
+   "slug": "logicgate",
+   "industries": [
+    "grc",
+    "risk",
+    "compliance",
+    "saas"
+   ]
+  },
+  {
+   "slug": "diligent",
+   "industries": [
+    "grc",
+    "governance",
+    "risk",
+    "compliance",
+    "audit"
+   ]
+  },
+  {
+   "slug": "sprinto",
+   "industries": [
+    "grc",
+    "soc2",
+    "compliance",
+    "saas"
+   ]
+  },
+  {
+   "slug": "tugboatlogic",
+   "industries": [
+    "grc",
+    "compliance",
+    "saas"
+   ]
+  },
+  {
+   "slug": "alloy",
+   "industries": [
+    "fintech",
+    "kyc",
+    "identity",
+    "fraud",
+    "risk"
+   ]
+  },
+  {
+   "slug": "middesk",
+   "industries": [
+    "fintech",
+    "kyb",
+    "identity",
+    "compliance"
+   ]
+  },
+  {
+   "slug": "persona",
+   "industries": [
+    "identity",
+    "kyc",
+    "fraud",
+    "compliance",
+    "fintech"
+   ]
+  },
+  {
+   "slug": "socure",
+   "industries": [
+    "identity",
+    "kyc",
+    "fraud",
+    "compliance",
+    "fintech"
+   ]
+  },
+  {
+   "slug": "sardine",
+   "industries": [
+    "fraud",
+    "fintech",
+    "aml",
+    "kyc",
+    "compliance"
+   ]
+  },
+  {
+   "slug": "atbay",
+   "industries": [
+    "cyber-insurance",
+    "cybersecurity",
+    "risk",
+    "insurtech"
+   ]
+  },
+  {
+   "slug": "coalitioninc",
+   "industries": [
+    "cyber-insurance",
+    "cybersecurity",
+    "risk",
+    "insurtech"
+   ]
+  },
+  {
+   "slug": "resilience",
+   "industries": [
+    "cyber-insurance",
+    "cybersecurity",
+    "risk",
+    "insurtech"
+   ]
+  },
+  {
+   "slug": "corvusinsurance",
+   "industries": [
+    "cyber-insurance",
+    "cybersecurity",
+    "risk",
+    "insurtech"
+   ]
+  },
+  {
+   "slug": "ramp",
+   "industries": [
+    "fintech",
+    "spend-management",
+    "saas",
+    "b2b"
+   ]
+  },
+  {
+   "slug": "lithic",
+   "industries": [
+    "fintech",
+    "payments",
+    "card-issuing",
+    "b2b"
+   ]
+  },
+  {
+   "slug": "moderntreasury",
+   "industries": [
+    "fintech",
+    "payments",
+    "treasury",
+    "b2b"
+   ]
+  },
+  {
+   "slug": "column",
+   "industries": [
+    "fintech",
+    "banking",
+    "infra"
+   ]
+  },
+  {
+   "slug": "pipehq",
+   "industries": [
+    "fintech",
+    "revenue-financing",
+    "b2b"
+   ]
+  },
+  {
+   "slug": "treasury-prime",
+   "industries": [
+    "fintech",
+    "banking",
+    "baas",
+    "b2b"
+   ]
+  },
+  {
+   "slug": "unit",
+   "industries": [
+    "fintech",
+    "banking",
+    "baas",
+    "b2b"
+   ]
+  },
+  {
+   "slug": "increase",
+   "industries": [
+    "fintech",
+    "payments",
+    "ach",
+    "infra"
+   ]
+  },
+  {
+   "slug": "springhealth",
+   "industries": [
+    "digital-health",
+    "mental-health",
+    "behavioral-health"
+   ]
+  },
+  {
+   "slug": "rohealth",
+   "industries": [
+    "digital-health",
+    "telehealth",
+    "consumer-health"
+   ]
+  },
+  {
+   "slug": "forgehealth",
+   "industries": [
+    "digital-health",
+    "value-based-care"
+   ]
+  },
+  {
+   "slug": "maven",
+   "industries": [
+    "digital-health",
+    "womens-health",
+    "fertility"
+   ]
+  },
+  {
+   "slug": "westmonroe",
+   "industries": [
+    "consulting",
+    "tech-strategy",
+    "digital-transformation"
+   ]
+  },
+  {
+   "slug": "capco",
+   "industries": [
+    "consulting",
+    "banking",
+    "fintech",
+    "risk",
+    "transformation"
+   ]
+  },
+  {
+   "slug": "siapartners",
+   "industries": [
+    "consulting",
+    "transformation",
+    "risk",
+    "strategy"
+   ]
+  },
+  {
+   "slug": "riveronconsulting",
+   "industries": [
+    "consulting",
+    "finance",
+    "transformation",
+    "restructuring"
+   ]
+  },
+  {
+   "slug": "watershed",
+   "industries": [
+    "climate",
+    "esg",
+    "carbon-accounting",
+    "saas"
+   ]
+  },
+  {
+   "slug": "persefoni",
+   "industries": [
+    "climate",
+    "esg",
+    "carbon-accounting",
+    "saas"
+   ]
+  },
+  {
+   "slug": "vercel",
+   "industries": [
+    "developer-tools",
+    "infrastructure",
+    "saas"
+   ]
+  },
+  {
+   "slug": "planetscale",
+   "industries": [
+    "developer-tools",
+    "database",
+    "infrastructure"
+   ]
+  },
+  {
+   "slug": "supabase",
+   "industries": [
+    "developer-tools",
+    "database",
+    "infrastructure"
+   ]
+  },
+  {
+   "slug": "pineconeio",
+   "industries": [
+    "developer-tools",
+    "vector-database",
+    "ai",
+    "infrastructure"
+   ]
+  },
+  {
+   "slug": "modal",
+   "industries": [
+    "developer-tools",
+    "ai",
+    "infrastructure"
+   ]
+  },
+  {
+   "slug": "replicate",
+   "industries": [
+    "developer-tools",
+    "ai",
+    "infrastructure"
+   ]
+  },
+  {
+   "slug": "huggingface",
+   "industries": [
+    "ai",
+    "ml",
+    "developer-tools",
+    "open-source"
+   ]
+  },
+  {
+   "slug": "anthropic",
+   "industries": [
+    "ai",
+    "research",
+    "safety"
+   ]
+  }
+ ],
+ "lever": [
+  "SprinterHealth",
+  "CollectlyInc",
+  "canvasmedical",
+  "zushealth",
+  "januaryinc",
+  "RyzLabs",
+  "heartbeathealth",
+  "circadiahealth",
+  "artera-2",
+  "whoop",
+  "caremessage",
+  "h1",
+  "mcra",
+  "aledade",
+  "includedhealth",
+  "lyrahealth",
+  "glooko",
+  "truepill",
+  "talkiatry",
+  "datavant",
+  "ribbonhealth",
+  "alma",
+  "headway",
+  "betterup",
+  "noom",
+  "calm",
+  "verily",
+  "neuralink",
+  {
+   "slug": "ledger",
+   "industries": [
+    "fintech",
+    "crypto",
+    "wallets",
+    "security"
+   ]
+  },
+  {
+   "slug": "smartcat",
+   "industries": [
+    "saas",
+    "translation",
+    "developer-tools"
+   ]
+  },
+  {
+   "slug": "instabase",
+   "industries": [
+    "ai",
+    "document-ai",
+    "saas"
+   ]
+  }
+ ],
+ "ashby": [
+  "Graphitehq",
+  "maximustribe",
+  "codes-health",
+  "heidihealth.com.au",
+  "Interrahealth",
+  "fitt",
+  "lark",
+  "virtahealth",
+  "Healthtech-1",
+  "tandem-health",
+  "Aios",
+  "you-health",
+  "versemedical",
+  "abridge",
+  "decagon",
+  "rad-ai",
+  "ramphealth"
+ ],
+ "workday": [
+  {
+   "name": "Pfizer",
+   "tenant": "pfizer",
+   "subdomain": "wd1",
+   "site": "PfizerCareers"
+  },
+  {
+   "name": "Merck (MSD)",
+   "tenant": "msd",
+   "subdomain": "wd5",
+   "site": "SearchJobs",
+   "dreamList": true,
+   "dreamListFor": "geetu"
+  },
+  {
+   "name": "CVS Health",
+   "tenant": "cvshealth",
+   "subdomain": "wd1",
+   "site": "cvs_health_careers"
+  },
+  {
+   "name": "Capital One",
+   "tenant": "capitalone",
+   "subdomain": "wd12",
+   "site": "Capital_One",
+   "industries": [
+    "banking",
+    "financial-services",
+    "consumer-banking",
+    "credit-risk",
+    "credit-cards"
+   ]
+  },
+  {
+   "name": "Wells Fargo",
+   "tenant": "wf",
+   "subdomain": "wd1",
+   "site": "WellsFargoJobs",
+   "industries": [
+    "banking",
+    "finance"
+   ]
+  },
+  {
+   "name": "Bank of America",
+   "tenant": "ghr",
+   "subdomain": "wd1",
+   "site": "Lateral-US",
+   "industries": [
+    "banking",
+    "finance",
+    "wealth management"
+   ]
+  },
+  {
+   "name": "Morgan Stanley",
+   "tenant": "ms",
+   "subdomain": "wd5",
+   "site": "External",
+   "industries": [
+    "banking",
+    "finance",
+    "wealth management"
+   ]
+  },
+  {
+   "name": "American Express",
+   "tenant": "aexp",
+   "subdomain": "wd1",
+   "site": "aexp",
+   "industries": [
+    "financial-services",
+    "payments",
+    "credit-cards",
+    "banking"
+   ]
+  },
+  {
+   "name": "BlackRock",
+   "tenant": "blackrock",
+   "subdomain": "wd1",
+   "site": "BlackRock",
+   "industries": [
+    "asset-management",
+    "wealth-management",
+    "capital-markets",
+    "financial-services"
+   ]
+  },
+  {
+   "name": "Charles Schwab",
+   "tenant": "schwab",
+   "subdomain": "wd5",
+   "site": "schwabjobs",
+   "industries": [
+    "wealth-management",
+    "brokerage",
+    "financial-services",
+    "capital-markets"
+   ]
+  },
+  {
+   "name": "TD Bank",
+   "tenant": "td",
+   "subdomain": "wd3",
+   "site": "TD_Bank_Careers",
+   "industries": [
+    "banking",
+    "financial-services",
+    "consumer-banking",
+    "commercial-banking"
+   ]
+  },
+  {
+   "name": "BMO Financial Group",
+   "tenant": "bmo",
+   "subdomain": "wd3",
+   "site": "External",
+   "industries": [
+    "banking",
+    "financial-services",
+    "consumer-banking",
+    "capital-markets"
+   ]
+  },
+  {
+   "name": "Truist",
+   "tenant": "truist",
+   "subdomain": "wd5",
+   "site": "Truist_Careers",
+   "industries": [
+    "banking",
+    "financial-services",
+    "commercial-banking",
+    "consumer-banking"
+   ]
+  },
+  {
+   "name": "PNC",
+   "tenant": "pnc",
+   "subdomain": "wd1",
+   "site": "External",
+   "industries": [
+    "banking",
+    "financial-services",
+    "consumer-banking",
+    "commercial-banking"
+   ]
+  },
+  {
+   "name": "US Bank",
+   "tenant": "usbank",
+   "subdomain": "wd1",
+   "site": "US_Bank_Careers",
+   "industries": [
+    "banking",
+    "finance"
+   ]
+  },
+  {
+   "name": "MUFG Americas",
+   "tenant": "mufgub",
+   "subdomain": "wd3",
+   "site": "MUFG-Careers",
+   "industries": [
+    "banking",
+    "finance"
+   ]
+  },
+  {
+   "name": "Mizuho Americas",
+   "tenant": "mizuho",
+   "subdomain": "wd1",
+   "site": "mizuhoamericas",
+   "industries": [
+    "banking",
+    "finance"
+   ]
+  },
+  {
+   "name": "Flagstar Bank",
+   "tenant": "flagstar",
+   "subdomain": "wd5",
+   "site": "flagstar",
+   "industries": [
+    "banking",
+    "finance"
+   ]
+  },
+  {
+   "name": "S&P Global",
+   "tenant": "spgi",
+   "subdomain": "wd5",
+   "site": "SPGI_Careers",
+   "industries": [
+    "finance",
+    "analytics",
+    "ratings"
+   ]
+  },
+  {
+   "name": "Protiviti",
+   "tenant": "roberthalf",
+   "subdomain": "wd1",
+   "site": "ProtivitiNA",
+   "industries": [
+    "consulting",
+    "audit",
+    "risk"
+   ]
+  },
+  {
+   "name": "FIS Global",
+   "tenant": "fis",
+   "subdomain": "wd5",
+   "site": "SearchJobs",
+   "industries": [
+    "fintech",
+    "payments",
+    "banking"
+   ]
+  },
+  {
+   "name": "Fiserv",
+   "tenant": "fiserv",
+   "subdomain": "wd5",
+   "site": "EXT",
+   "industries": [
+    "fintech",
+    "payments",
+    "banking"
+   ]
+  },
+  {
+   "name": "Regions Financial",
+   "tenant": "regions",
+   "subdomain": "wd5",
+   "site": "Regions_Careers",
+   "industries": [
+    "banking",
+    "finance"
+   ]
+  },
+  {
+   "name": "UnitedHealth Group",
+   "tenant": "uhg",
+   "subdomain": "wd5",
+   "site": "UnitedHealthGroup",
+   "industries": [
+    "healthcare",
+    "health-saas",
+    "healthcare-it"
+   ]
+  },
+  {
+   "name": "Elevance Health",
+   "tenant": "elevancehealth",
+   "subdomain": "wd1",
+   "site": "ElevanceHealth",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Humana",
+   "tenant": "humana",
+   "subdomain": "wd5",
+   "site": "Humana_External_Career_Site",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Cigna",
+   "tenant": "cigna",
+   "subdomain": "wd5",
+   "site": "cigna_careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Centene",
+   "tenant": "centene",
+   "subdomain": "wd1",
+   "site": "Centene",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Molina Healthcare",
+   "tenant": "molinahealthcare",
+   "subdomain": "wd1",
+   "site": "MolinaCareers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Johnson & Johnson",
+   "tenant": "jnj",
+   "subdomain": "wd5",
+   "site": "jnjcareers",
+   "industries": [
+    "pharmaceuticals",
+    "life-sciences"
+   ],
+   "dreamList": true,
+   "dreamListFor": "geetu"
+  },
+  {
+   "name": "AbbVie",
+   "tenant": "abbvie",
+   "subdomain": "wd5",
+   "site": "abbviecareers",
+   "industries": [
+    "pharmaceuticals",
+    "life-sciences"
+   ]
+  },
+  {
+   "name": "Eli Lilly",
+   "tenant": "lilly",
+   "subdomain": "wd5",
+   "site": "LLY",
+   "industries": [
+    "pharmaceuticals",
+    "life-sciences"
+   ],
+   "dreamList": true,
+   "dreamListFor": "geetu"
+  },
+  {
+   "name": "Bristol Myers Squibb",
+   "tenant": "bms",
+   "subdomain": "wd5",
+   "site": "BMS",
+   "industries": [
+    "pharmaceuticals",
+    "life-sciences"
+   ]
+  },
+  {
+   "name": "Gilead Sciences",
+   "tenant": "gilead",
+   "subdomain": "wd1",
+   "site": "gileadcareers",
+   "industries": [
+    "pharmaceuticals",
+    "biotech",
+    "life-sciences"
+   ]
+  },
+  {
+   "name": "Amgen",
+   "tenant": "amgen",
+   "subdomain": "wd1",
+   "site": "Amgen",
+   "industries": [
+    "pharmaceuticals",
+    "biotech",
+    "life-sciences"
+   ]
+  },
+  {
+   "name": "Sanofi",
+   "tenant": "sanofi",
+   "subdomain": "wd3",
+   "site": "SanofiCareers",
+   "industries": [
+    "pharmaceuticals",
+    "life-sciences"
+   ],
+   "dreamList": true,
+   "dreamListFor": "geetu"
+  },
+  {
+   "name": "Regeneron",
+   "tenant": "regeneron",
+   "subdomain": "wd1",
+   "site": "Regeneron_Careers",
+   "industries": [
+    "pharmaceuticals",
+    "biotech",
+    "life-sciences"
+   ]
+  },
+  {
+   "name": "Takeda",
+   "tenant": "takeda",
+   "subdomain": "wd3",
+   "site": "Takeda",
+   "industries": [
+    "pharmaceuticals",
+    "life-sciences"
+   ]
+  },
+  {
+   "name": "Kaiser Permanente",
+   "tenant": "kp",
+   "subdomain": "wd5",
+   "site": "KaiserPermanenteCareers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "HCA Healthcare",
+   "tenant": "hcahealthcare",
+   "subdomain": "wd1",
+   "site": "HCA",
+   "industries": [
+    "healthcare"
+   ]
+  },
+  {
+   "name": "Providence Health",
+   "tenant": "providence",
+   "subdomain": "wd1",
+   "site": "Providence",
+   "industries": [
+    "healthcare"
+   ]
+  },
+  {
+   "name": "AdventHealth",
+   "tenant": "adventhealth",
+   "subdomain": "wd1",
+   "site": "adventhealth",
+   "industries": [
+    "healthcare"
+   ]
+  },
+  {
+   "name": "Mayo Clinic",
+   "tenant": "mayo",
+   "subdomain": "wd5",
+   "site": "mayo-careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Veeva Systems (full)",
+   "tenant": "veeva",
+   "subdomain": "wd1",
+   "site": "veeva_careers",
+   "industries": [
+    "healthcare-it",
+    "life-sciences"
+   ]
+  },
+  {
+   "name": "Oracle Health (Cerner)",
+   "tenant": "oracle",
+   "subdomain": "wd5",
+   "site": "OracleCareers",
+   "industries": [
+    "healthcare-it",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Medtronic",
+   "tenant": "medtronic",
+   "subdomain": "wd5",
+   "site": "MedtronicCareers",
+   "industries": [
+    "healthcare",
+    "life-sciences"
+   ]
+  },
+  {
+   "name": "Boston Scientific",
+   "tenant": "bsci",
+   "subdomain": "wd1",
+   "site": "BSC",
+   "industries": [
+    "healthcare",
+    "life-sciences"
+   ]
+  },
+  {
+   "name": "Abbott",
+   "tenant": "abbott",
+   "subdomain": "wd5",
+   "site": "abbottcareers",
+   "industries": [
+    "healthcare",
+    "life-sciences"
+   ]
+  },
+  {
+   "name": "Centene Corporation",
+   "tenant": "centene",
+   "subdomain": "wd5",
+   "site": "Centene_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Molina Healthcare",
+   "tenant": "molinahealthcare",
+   "subdomain": "wd5",
+   "site": "Molina",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Teladoc Health",
+   "tenant": "teladoc",
+   "subdomain": "wd5",
+   "site": "Teladoc_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "HealthEquity",
+   "tenant": "healthequity",
+   "subdomain": "wd5",
+   "site": "HealthEquity_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Exact Sciences",
+   "tenant": "exactsciences",
+   "subdomain": "wd5",
+   "site": "Exact_Sciences_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "IQVIA",
+   "tenant": "iqvia",
+   "subdomain": "wd3",
+   "site": "IQVIA_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Cerner",
+   "tenant": "cerner",
+   "subdomain": "wd5",
+   "site": "Cerner_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Change Healthcare",
+   "tenant": "changehealthcare",
+   "subdomain": "wd5",
+   "site": "Change_Healthcare_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Point32Health",
+   "tenant": "point32health",
+   "subdomain": "wd5",
+   "site": "Point32Health_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Blue Shield of California",
+   "tenant": "blueshieldca",
+   "subdomain": "wd5",
+   "site": "BSC_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Independence Blue Cross",
+   "tenant": "ibx",
+   "subdomain": "wd5",
+   "site": "IBX_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Blue Cross Blue Shield of Michigan",
+   "tenant": "bcbsm",
+   "subdomain": "wd5",
+   "site": "BCBSM_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Highmark Health",
+   "tenant": "highmarkhealth",
+   "subdomain": "wd5",
+   "site": "Highmark_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Horizon Blue Cross Blue Shield",
+   "tenant": "horizonblue",
+   "subdomain": "wd5",
+   "site": "Horizon_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Health Care Service Corporation",
+   "tenant": "hcsc",
+   "subdomain": "wd5",
+   "site": "HCSC_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Kaiser Permanente",
+   "tenant": "kaiserpermanente",
+   "subdomain": "wd5",
+   "site": "Kaiser_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Intermountain Healthcare",
+   "tenant": "intermountain",
+   "subdomain": "wd5",
+   "site": "Intermountain_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Cleveland Clinic",
+   "tenant": "ccf",
+   "subdomain": "wd5",
+   "site": "CCF_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Mayo Clinic",
+   "tenant": "mayoclinic",
+   "subdomain": "wd5",
+   "site": "Mayo_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Providence",
+   "tenant": "providence",
+   "subdomain": "wd5",
+   "site": "Providence_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "CommonSpirit Health",
+   "tenant": "commonspirit",
+   "subdomain": "wd5",
+   "site": "CommonSpirit_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Trinity Health",
+   "tenant": "trinityhealth",
+   "subdomain": "wd5",
+   "site": "Trinity_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Advocate Aurora Health",
+   "tenant": "advocatehealth",
+   "subdomain": "wd5",
+   "site": "Advocate_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Ascension",
+   "tenant": "ascension",
+   "subdomain": "wd5",
+   "site": "Ascension_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "HCA Healthcare",
+   "tenant": "hcahealthcare",
+   "subdomain": "wd5",
+   "site": "HCA_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Tenet Healthcare",
+   "tenant": "tenethealth",
+   "subdomain": "wd5",
+   "site": "Tenet_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Sutter Health",
+   "tenant": "sutterhealth",
+   "subdomain": "wd5",
+   "site": "Sutter_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Banner Health",
+   "tenant": "bannerhealth",
+   "subdomain": "wd5",
+   "site": "Banner_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Atrium Health",
+   "tenant": "atriumhealth",
+   "subdomain": "wd5",
+   "site": "Atrium_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "NYU Langone Health",
+   "tenant": "nyulangone",
+   "subdomain": "wd5",
+   "site": "NYU_Langone_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Mass General Brigham",
+   "tenant": "massgeneralbrigham",
+   "subdomain": "wd5",
+   "site": "MGB_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Penn Medicine",
+   "tenant": "pennmedicine",
+   "subdomain": "wd5",
+   "site": "Penn_Medicine_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Johns Hopkins Medicine",
+   "tenant": "johnshopkinsmedicine",
+   "subdomain": "wd5",
+   "site": "JHM_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "NewYork-Presbyterian Hospital",
+   "tenant": "nyp",
+   "subdomain": "wd5",
+   "site": "NYP_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Northwell Health",
+   "tenant": "northwell",
+   "subdomain": "wd5",
+   "site": "Northwell_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Ochsner Health",
+   "tenant": "ochsner",
+   "subdomain": "wd5",
+   "site": "Ochsner_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Stanford Health Care",
+   "tenant": "stanfordhealthcare",
+   "subdomain": "wd5",
+   "site": "Stanford_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "UCLA Health",
+   "tenant": "uclahealth",
+   "subdomain": "wd5",
+   "site": "UCLA_Health_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "UCSF Health",
+   "tenant": "ucsfhealth",
+   "subdomain": "wd5",
+   "site": "UCSF_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Cedars-Sinai",
+   "tenant": "cedarssinai",
+   "subdomain": "wd5",
+   "site": "Cedars_Sinai_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Baylor Scott & White Health",
+   "tenant": "bswhealth",
+   "subdomain": "wd5",
+   "site": "BSW_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Houston Methodist",
+   "tenant": "houstonmethodist",
+   "subdomain": "wd5",
+   "site": "Houston_Methodist_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Sanford Health",
+   "tenant": "sanfordhealth",
+   "subdomain": "wd5",
+   "site": "Sanford_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "OhioHealth",
+   "tenant": "ohiohealth",
+   "subdomain": "wd5",
+   "site": "OhioHealth_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Inova Health System",
+   "tenant": "inova",
+   "subdomain": "wd5",
+   "site": "Inova_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Novant Health",
+   "tenant": "novanthealth",
+   "subdomain": "wd5",
+   "site": "Novant_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "ChristianaCare",
+   "tenant": "christianacare",
+   "subdomain": "wd5",
+   "site": "ChristianaCare_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "RWJBarnabas Health",
+   "tenant": "rwjbh",
+   "subdomain": "wd5",
+   "site": "RWJBH_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Geisinger",
+   "tenant": "geisinger",
+   "subdomain": "wd5",
+   "site": "Geisinger_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "AdventHealth",
+   "tenant": "adventhealth",
+   "subdomain": "wd5",
+   "site": "AdventHealth_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Humana",
+   "tenant": "humana",
+   "subdomain": "wd5",
+   "site": "Humana_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Illumina",
+   "tenant": "illumina",
+   "subdomain": "wd5",
+   "site": "Illumina_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Dexcom",
+   "tenant": "dexcom",
+   "subdomain": "wd5",
+   "site": "Dexcom_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Insulet",
+   "tenant": "insulet",
+   "subdomain": "wd5",
+   "site": "Insulet_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Moderna",
+   "tenant": "modernatx",
+   "subdomain": "wd5",
+   "site": "Moderna_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "BioNTech",
+   "tenant": "biontech",
+   "subdomain": "wd5",
+   "site": "BioNTech_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Alnylam Pharmaceuticals",
+   "tenant": "alnylam",
+   "subdomain": "wd5",
+   "site": "Alnylam_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Neurocrine Biosciences",
+   "tenant": "neurocrine",
+   "subdomain": "wd5",
+   "site": "Neurocrine_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Vertex Pharmaceuticals",
+   "tenant": "vrtx",
+   "subdomain": "wd5",
+   "site": "Vertex_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Parexel",
+   "tenant": "parexel",
+   "subdomain": "wd1",
+   "site": "Parexel",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "ICON plc",
+   "tenant": "iconplc",
+   "subdomain": "wd5",
+   "site": "ICON",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Syneos Health",
+   "tenant": "syneoshealth",
+   "subdomain": "wd5",
+   "site": "Syneos_Health",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Medpace",
+   "tenant": "medpace",
+   "subdomain": "wd5",
+   "site": "Medpace",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "PPD (Thermo Fisher Clinical Research)",
+   "tenant": "thermofisher",
+   "subdomain": "wd5",
+   "site": "Thermo_Fisher_Scientific_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Labcorp Drug Development",
+   "tenant": "labcorp",
+   "subdomain": "wd5",
+   "site": "Labcorp_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Heartland Dental",
+   "tenant": "heartlanddental",
+   "subdomain": "wd5",
+   "site": "Heartland_Dental",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "VSP Vision Care",
+   "tenant": "vspvision",
+   "subdomain": "wd1",
+   "site": "VSP",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "LifeStance Health",
+   "tenant": "lifestance",
+   "subdomain": "wd5",
+   "site": "LifeStance_Health",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Amedisys",
+   "tenant": "amedisys",
+   "subdomain": "wd5",
+   "site": "Amedisys_Home_Health",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Encompass Health",
+   "tenant": "encompasshealth",
+   "subdomain": "wd5",
+   "site": "Encompass_Health",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "BrightSpring Health Services",
+   "tenant": "brightspringhealth",
+   "subdomain": "wd5",
+   "site": "BrightSpring",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Symplr",
+   "tenant": "symplr",
+   "subdomain": "wd5",
+   "site": "symplr",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "R1 RCM",
+   "tenant": "r1rcm",
+   "subdomain": "wd5",
+   "site": "R1RCM",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Conifer Health Solutions",
+   "tenant": "coniferhealth",
+   "subdomain": "wd5",
+   "site": "Conifer_Health_Solutions",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Optum360",
+   "tenant": "unitedhealthgroup",
+   "subdomain": "wd5",
+   "site": "UnitedHealth_Group",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Covetrus",
+   "tenant": "covetrus",
+   "subdomain": "wd5",
+   "site": "Covetrus",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Petco Health & Wellness",
+   "tenant": "petco",
+   "subdomain": "wd5",
+   "site": "Petco",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Zoetis",
+   "tenant": "zoetis",
+   "subdomain": "wd5",
+   "site": "Zoetis",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Parexel",
+   "tenant": "parexel",
+   "subdomain": "wd3",
+   "site": "Parexel_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "ICON plc",
+   "tenant": "iconplc",
+   "subdomain": "wd5",
+   "site": "ICON_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Syneos Health",
+   "tenant": "syneoshealth",
+   "subdomain": "wd5",
+   "site": "Syneos_Health_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Medpace",
+   "tenant": "medpace",
+   "subdomain": "wd5",
+   "site": "Medpace_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "VSP Vision Care",
+   "tenant": "vsp",
+   "subdomain": "wd5",
+   "site": "VSP_Vision_Care",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Heartland Dental",
+   "tenant": "heartland",
+   "subdomain": "wd5",
+   "site": "Heartland_Dental",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Amedisys",
+   "tenant": "amedisys",
+   "subdomain": "wd5",
+   "site": "Amedisys_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Encompass Health",
+   "tenant": "encompasshealth",
+   "subdomain": "wd5",
+   "site": "Encompass_Health_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "BrightSpring Health Services",
+   "tenant": "brightspring",
+   "subdomain": "wd5",
+   "site": "BrightSpring_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Imprivata",
+   "tenant": "imprivata",
+   "subdomain": "wd5",
+   "site": "Imprivata_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Brookdale Senior Living",
+   "tenant": "brookdale",
+   "subdomain": "wd5",
+   "site": "Brookdale_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "R1 RCM",
+   "tenant": "r1rcm",
+   "subdomain": "wd5",
+   "site": "R1_RCM_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Covetrus",
+   "tenant": "covetrus",
+   "subdomain": "wd5",
+   "site": "Covetrus_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "IQVIA",
+   "tenant": "iqvia",
+   "subdomain": "wd5",
+   "site": "IQVIA",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Charles River Laboratories",
+   "tenant": "criver",
+   "subdomain": "wd5",
+   "site": "CRL",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "R1 RCM",
+   "tenant": "r1rcm",
+   "subdomain": "wd5",
+   "site": "R1_RCM",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Amedisys",
+   "tenant": "amedisys",
+   "subdomain": "wd5",
+   "site": "Amedisys",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Brookdale Senior Living",
+   "tenant": "brookdale",
+   "subdomain": "wd5",
+   "site": "Brookdale",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Henry Schein",
+   "tenant": "henryschein",
+   "subdomain": "wd5",
+   "site": "Henry_Schein",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Teladoc Health",
+   "tenant": "teladoc",
+   "subdomain": "wd5",
+   "site": "Teladoc_Health",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Acadia Healthcare",
+   "tenant": "acadiahealthcare",
+   "subdomain": "wd5",
+   "site": "Acadia_Healthcare",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Universal Health Services",
+   "tenant": "uhsinc",
+   "subdomain": "wd5",
+   "site": "UHS",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "CVS Health",
+   "tenant": "cvshealth",
+   "subdomain": "wd5",
+   "site": "CVS_Health",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Walgreens Boots Alliance",
+   "tenant": "walgreens",
+   "subdomain": "wd5",
+   "site": "Walgreens",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Quest Diagnostics",
+   "tenant": "questdiagnostics",
+   "subdomain": "wd5",
+   "site": "Quest_Diagnostics",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Laboratory Corporation of America",
+   "tenant": "labcorp",
+   "subdomain": "wd5",
+   "site": "Labcorp",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Exact Sciences",
+   "tenant": "exactsciences",
+   "subdomain": "wd5",
+   "site": "Exact_Sciences",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Fresenius Medical Care",
+   "tenant": "fmcna",
+   "subdomain": "wd5",
+   "site": "FMCNA",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "DaVita",
+   "tenant": "davita",
+   "subdomain": "wd5",
+   "site": "DaVita",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Optum",
+   "tenant": "optum",
+   "subdomain": "wd5",
+   "site": "Optum",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Vizient",
+   "tenant": "vizientinc",
+   "subdomain": "wd5",
+   "site": "Vizient",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Premier Inc",
+   "tenant": "premierinc",
+   "subdomain": "wd5",
+   "site": "Premier",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Cardinal Health",
+   "tenant": "cardinalhealth",
+   "subdomain": "wd5",
+   "site": "Cardinal_Health",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "McKesson Corporation",
+   "tenant": "mckesson",
+   "subdomain": "wd5",
+   "site": "McKesson",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "AmerisourceBergen",
+   "tenant": "cencora",
+   "subdomain": "wd5",
+   "site": "Cencora",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "VSP Vision Care",
+   "tenant": "vsp",
+   "subdomain": "wd5",
+   "site": "VSP_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Align Technology",
+   "tenant": "aligntech",
+   "subdomain": "wd5",
+   "site": "Align_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "PointClickCare",
+   "tenant": "pointclickcare",
+   "subdomain": "wd5",
+   "site": "PointClickCare_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "R1 RCM",
+   "tenant": "r1rcm",
+   "subdomain": "wd5",
+   "site": "R1_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "Accolade",
+   "tenant": "accolade",
+   "subdomain": "wd5",
+   "site": "Accolade_Careers",
+   "industries": [
+    "healthcare",
+    "health-saas"
+   ]
+  },
+  {
+   "name": "athenahealth",
+   "tenant": "athenahealth",
+   "subdomain": "wd1",
+   "site": "External",
+   "unverified": true
+  },
+  {
+   "name": "Becton Dickinson",
+   "tenant": "bdx",
+   "subdomain": "wd1",
+   "site": "EXTERNAL_CAREER_SITE_USA",
+   "unverified": true
+  },
+  {
+   "name": "Stryker",
+   "tenant": "stryker",
+   "subdomain": "wd1",
+   "site": "StrykerCareers",
+   "unverified": true
+  },
+  {
+   "name": "Baxter International",
+   "tenant": "baxter",
+   "subdomain": "wd1",
+   "site": "Baxter_JOBS",
+   "unverified": true
+  },
+  {
+   "name": "Organon",
+   "tenant": "organon",
+   "subdomain": "wd3",
+   "site": "ORG",
+   "unverified": true
+  },
+  {
+   "name": "Cotiviti",
+   "tenant": "cotiviti",
+   "subdomain": "wd1",
+   "site": "Cotiviti",
+   "unverified": true
+  },
+  {
+   "name": "Availity",
+   "tenant": "availity",
+   "subdomain": "wd1",
+   "site": "Availity_Careers",
+   "unverified": true
+  },
+  {
+   "name": "GE HealthCare",
+   "tenant": "gehealthcare",
+   "subdomain": "wd5",
+   "site": "GEHC_ExternalSite",
+   "unverified": true
+  },
+  {
+   "name": "ResMed",
+   "tenant": "resmed",
+   "subdomain": "wd3",
+   "site": "ResMed_External_Careers",
+   "unverified": true
+  },
+  {
+   "name": "Hologic",
+   "tenant": "hologic",
+   "subdomain": "wd1",
+   "site": "Hologic",
+   "unverified": true
+  },
+  {
+   "name": "Edwards Lifesciences",
+   "tenant": "edwards",
+   "subdomain": "wd5",
+   "site": "Edwards_Careers",
+   "unverified": true
+  },
+  {
+   "name": "Healthfirst",
+   "tenant": "healthfirst",
+   "subdomain": "wd1",
+   "site": "healthfirst",
+   "unverified": true
+  },
+  {
+   "name": "EmblemHealth",
+   "tenant": "emblemhealth",
+   "subdomain": "wd1",
+   "site": "External",
+   "unverified": true
+  },
+  {
+   "name": "Hackensack Meridian Health",
+   "tenant": "hmhn",
+   "subdomain": "wd1",
+   "site": "hmhn_careers",
+   "unverified": true
+  },
+  {
+   "name": "Memorial Sloan Kettering",
+   "tenant": "mskcc",
+   "subdomain": "wd1",
+   "site": "MSK",
+   "unverified": true
+  },
+  {
+   "name": "Teva Pharmaceuticals",
+   "tenant": "teva",
+   "subdomain": "wd3",
+   "site": "Teva_External",
+   "unverified": true
+  },
+  {
+   "name": "Daiichi Sankyo US",
+   "tenant": "daiichisankyo",
+   "subdomain": "wd3",
+   "site": "DSI",
+   "unverified": true
+  },
+  {
+   "name": "Otsuka US",
+   "tenant": "otsuka",
+   "subdomain": "wd5",
+   "site": "Otsuka",
+   "unverified": true
+  },
+  {
+   "name": "Eisai US",
+   "tenant": "eisai",
+   "subdomain": "wd3",
+   "site": "EisaiCareers",
+   "unverified": true
+  },
+  {
+   "name": "Press Ganey",
+   "tenant": "pressganey",
+   "subdomain": "wd1",
+   "site": "PG",
+   "unverified": true
+  },
+  {
+   "name": "Quantum Health",
+   "tenant": "quantumhealth",
+   "subdomain": "wd1",
+   "site": "QH",
+   "unverified": true
+  },
+  {
+   "name": "Ensemble Health Partners",
+   "tenant": "ensemblehp",
+   "subdomain": "wd1",
+   "site": "EnsembleHealthPartners",
+   "unverified": true
+  }
+ ],
+ "remoteok": [
+  {
+   "slug": "_all",
+   "name": "Remote OK feed",
+   "industries": [
     "healthcare",
     "healthcare-it",
     "digital-health",
@@ -13,3035 +3146,56 @@
     "telehealth",
     "mental-health",
     "clinical-ai"
-  ],
-  "_company_sizes": {
-    "oscar": "midsize",
-    "acuitymd": "startup",
-    "sondermind": "startup",
-    "linushealth": "startup",
-    "clipboardhealth": "midsize",
-    "picnichealth": "startup",
-    "carerev": "startup",
-    "abarca": "midsize",
-    "modernhealth": "startup",
-    "roivantsciences": "midsize",
-    "waymark": "startup",
-    "freenome": "midsize",
-    "bridgebio": "midsize",
-    "formationbio": "startup",
-    "honehealth": "startup",
-    "cerebral": "midsize",
-    "foresightmentalhealth": "startup",
-    "hs": "startup",
-    "springhealth66": "midsize",
-    "prolaio": "startup",
-    "prescriberpoint": "startup",
-    "lumimeds": "startup",
-    "smarterdxprivate": "startup",
-    "smarterdx": "startup",
-    "midihealth": "startup",
-    "shieldshealthsolutions": "midsize",
-    "coherehealth": "midsize",
-    "allarahealth": "startup",
-    "courierhealth": "startup",
-    "garnerhealth": "startup",
-    "abridge": "startup",
-    "aledade": "midsize",
-    "alma": "startup",
-    "ambry": "midsize",
-    "athelas": "startup",
-    "basis-health": "startup",
-    "biofourmis": "midsize",
-    "blueprintmedicines": "midsize",
-    "brightline": "startup",
-    "calmclinic": "startup",
-    "cedar": "midsize",
-    "clearstory": "startup",
-    "climbhealth": "startup",
-    "cohere": "midsize",
-    "color": "midsize",
-    "decagon": "startup",
-    "ellipsishealth": "startup",
-    "evidation": "midsize",
-    "evio": "startup",
-    "flatironhealth": "midsize",
-    "forwardhealth": "startup",
-    "ginger": "startup",
-    "glassbox": "startup",
-    "glooko": "midsize",
-    "grail": "midsize",
-    "headway": "midsize",
-    "hidoc": "startup",
-    "hims": "midsize",
-    "h1insights": "midsize",
-    "hingehealth": "midsize",
-    "hopelab": "startup",
-    "hsblox": "startup",
-    "included-health": "midsize",
-    "indexhealth": "startup",
-    "inspire": "midsize",
-    "ironclad": "midsize",
-    "k-health": "startup",
-    "kindbody": "midsize",
-    "kintsugi": "startup",
-    "lextant": "startup",
-    "lifelens": "startup",
-    "lyrahealth": "midsize",
-    "magnifai": "startup",
-    "medable": "midsize",
-    "medallia": "midsize",
-    "mednet": "startup",
-    "memberfocus": "startup",
-    "midi": "startup",
-    "mindstrong": "startup",
-    "naturalcycles": "startup",
-    "niahealth": "startup",
-    "nomi": "startup",
-    "notable": "midsize",
-    "nourishhealth": "startup",
-    "novahealth": "startup",
-    "onepeloton": "midsize",
-    "orchard": "midsize",
-    "papa": "midsize",
-    "paragonbiosciences": "midsize",
-    "paragoncorporate": "midsize",
-    "parsley": "startup",
-    "peerwell": "startup",
-    "peripheral": "startup",
-    "pluralvision": "startup",
-    "polkadot": "startup",
-    "prima": "startup",
-    "prognos": "startup",
-    "prolacta": "midsize",
-    "protege": "startup",
-    "providencehealth": "large",
-    "qventus": "midsize",
-    "regard": "startup",
-    "reify": "startup",
-    "rexrothbosch": "large",
-    "ribbonhealth": "startup",
-    "ridehealth": "startup",
-    "ritual": "midsize",
-    "rivian": "midsize",
-    "riverside": "midsize",
-    "sage": "startup",
-    "semjoinx": "startup",
-    "sema4": "midsize",
-    "sensus": "startup",
-    "simbo": "startup",
-    "sketchgrid": "startup",
-    "spire": "midsize",
-    "springworks": "midsize",
-    "suki": "startup",
-    "sunhealth": "startup",
-    "surepath": "startup",
-    "talkiatry": "midsize",
-    "thirty-madison": "midsize",
-    "tribecahealth": "startup",
-    "twinhealth": "startup",
-    "twobillion": "startup",
-    "unite": "startup",
-    "untold": "startup",
-    "validic": "startup",
-    "vault": "startup",
-    "ventures": "startup",
-    "verana": "startup",
-    "vida": "midsize",
-    "vow": "startup",
-    "waterfowl": "startup",
-    "wavemaker": "startup",
-    "wayup": "startup",
-    "wellhive": "startup",
-    "wellth": "startup",
-    "withpower": "startup",
-    "wiz": "midsize",
-    "woebot": "startup",
-    "yumi": "startup",
-    "zen": "startup",
-    "zola": "midsize",
-    "zus": "startup",
-    "drchrono": "midsize",
-    "athenahealth": "large",
-    "biocadenza": "startup",
-    "boundless": "startup",
-    "calmly": "startup",
-    "careology": "startup",
-    "careship": "startup",
-    "carefoldio": "startup",
-    "cherished": "startup",
-    "contracancer": "startup",
-    "cura": "startup",
-    "cure": "startup",
-    "dynamic": "startup",
-    "edgeforward": "startup",
-    "embrace": "startup",
-    "evolent": "midsize",
-    "exome": "startup",
-    "family": "startup",
-    "fairwell": "startup",
-    "fasten": "startup",
-    "finquery": "startup",
-    "geoffrey": "startup",
-    "gomesh": "startup",
-    "onetrust": "midsize",
-    "SprinterHealth": "startup",
-    "CollectlyInc": "startup",
-    "canvasmedical": "startup",
-    "zushealth": "startup",
-    "januaryinc": "startup",
-    "RyzLabs": "startup",
-    "heartbeathealth": "startup",
-    "circadiahealth": "startup",
-    "artera-2": "startup",
-    "whoop": "midsize",
-    "caremessage": "startup",
-    "h1": "midsize",
-    "mcra": "startup",
-    "includedhealth": "midsize",
-    "truepill": "midsize",
-    "datavant": "midsize",
-    "betterup": "midsize",
-    "noom": "midsize",
-    "calm": "midsize",
-    "verily": "midsize",
-    "neuralink": "midsize",
-    "fluent-health": "startup",
-    "ben": "startup",
-    "hims-and-hers": "midsize",
-    "riskindex": "startup",
-    "sword-health": "midsize",
-    "sketch": "startup",
-    "Pfizer": "large",
-    "Merck (MSD)": "large",
-    "CVS Health": "large",
-    "Capital One": "large",
-    "Wells Fargo": "large",
-    "Bank of America": "large",
-    "Citi": "large",
-    "Morgan Stanley": "large",
-    "American Express": "large",
-    "BlackRock": "large",
-    "Charles Schwab": "large",
-    "TD Bank": "large",
-    "BMO Financial Group": "large",
-    "Truist": "large",
-    "PNC": "large",
-    "US Bank": "large",
-    "MUFG Americas": "large",
-    "Mizuho Americas": "large",
-    "Flagstar Bank": "large",
-    "S&P Global": "large",
-    "Protiviti": "midsize",
-    "FIS Global": "large",
-    "Fiserv": "large",
-    "Regions Financial": "large"
-  },
-  "_recruiting_firms": [
-    "Robert Half",
-    "Insight Global",
-    "TEKsystems",
-    "Diversant",
-    "Akkodis",
-    "Modis",
-    "Randstad",
-    "Adecco",
-    "ManpowerGroup",
-    "Manpower",
-    "Aerotek",
-    "Allegis Group",
-    "Kelly Services",
-    "Kforce",
-    "Apex Systems",
-    "Beacon Hill Staffing Group",
-    "Beacon Hill",
-    "Eliassen Group",
-    "The Judge Group",
-    "Judge Group",
-    "Brunel",
-    "Hays",
-    "Robert Walters",
-    "Michael Page",
-    "Page Group",
-    "LaSalle Network",
-    "Atrium Staffing",
-    "Mondo",
-    "Russell Tobin",
-    "CyberCoders",
-    "Motion Recruitment",
-    "Vaco",
-    "Brooksource",
-    "Maxim Healthcare",
-    "Maxim Healthcare Services",
-    "Cross Country Healthcare",
-    "AMN Healthcare",
-    "Aya Healthcare",
-    "Software Guidance & Assistance",
-    "SGA",
-    "Mitchell Martin",
-    "Mathys+Potestio"
-  ],
-  "_wttj_blocked": {
-    "_reason": "WTTJ public API only returns org metadata; jobs require partner WK_API_KEY auth (see developers.welcomekit.co). All 10 endpoint shapes tried returned 404. Web pages blocked by Cloudflare bot rule (HTTP 202). Restore this list under 'wttj' if/when partner key is obtained.",
-    "companies": [
-      {
-        "slug": "alan",
-        "name": "Alan",
-        "industries": [
-          "healthcare",
-          "health-insurance",
-          "digital-health",
-          "insurtech"
-        ]
-      },
-      {
-        "slug": "doctolib",
-        "name": "Doctolib",
-        "industries": [
-          "healthcare",
-          "healthcare-it",
-          "digital-health",
-          "telehealth"
-        ]
-      },
-      {
-        "slug": "withings",
-        "name": "Withings",
-        "industries": [
-          "healthcare",
-          "health-devices",
-          "digital-health",
-          "wearables"
-        ]
-      },
-      {
-        "slug": "owkin",
-        "name": "Owkin",
-        "industries": [
-          "healthcare",
-          "biotech",
-          "clinical-ai",
-          "life-sciences"
-        ]
-      },
-      {
-        "slug": "qonto",
-        "name": "Qonto",
-        "industries": [
-          "fintech",
-          "banking",
-          "business-banking",
-          "sme-banking"
-        ]
-      },
-      {
-        "slug": "spendesk",
-        "name": "Spendesk",
-        "industries": [
-          "fintech",
-          "spend-management",
-          "b2b-saas",
-          "corporate-cards"
-        ]
-      },
-      {
-        "slug": "pennylane-2",
-        "name": "Pennylane",
-        "industries": [
-          "fintech",
-          "accounting",
-          "b2b-saas"
-        ]
-      },
-      {
-        "slug": "ledger",
-        "name": "Ledger",
-        "industries": [
-          "fintech",
-          "crypto",
-          "wallets",
-          "security"
-        ]
-      },
-      {
-        "slug": "swile",
-        "name": "Swile",
-        "industries": [
-          "fintech",
-          "payments",
-          "employee-benefits"
-        ]
-      },
-      {
-        "slug": "algolia",
-        "name": "Algolia",
-        "industries": [
-          "search",
-          "developer-tools",
-          "saas"
-        ]
-      },
-      {
-        "slug": "datadog",
-        "name": "Datadog",
-        "industries": [
-          "observability",
-          "cybersecurity",
-          "developer-tools",
-          "saas"
-        ]
-      },
-      {
-        "slug": "datadome",
-        "name": "DataDome",
-        "industries": [
-          "cybersecurity",
-          "bot-protection",
-          "saas"
-        ]
-      },
-      {
-        "slug": "blablacar",
-        "name": "BlaBlaCar",
-        "industries": [
-          "marketplace",
-          "mobility",
-          "consumer-tech"
-        ]
-      },
-      {
-        "slug": "back-market",
-        "name": "Back Market",
-        "industries": [
-          "marketplace",
-          "sustainability",
-          "e-commerce"
-        ]
-      },
-      {
-        "slug": "mirakl",
-        "name": "Mirakl",
-        "industries": [
-          "marketplace",
-          "b2b-saas",
-          "retail-tech"
-        ]
-      },
-      {
-        "slug": "shift-technology",
-        "name": "Shift Technology",
-        "industries": [
-          "insurtech",
-          "fraud-detection",
-          "ai"
-        ]
-      }
-    ]
-  },
-  "greenhouse": [
-    "oscar",
-    "acuitymd",
-    "sondermind",
-    "linushealth",
-    "clipboardhealth",
-    "picnichealth",
-    "carerev",
-    "abarca",
-    "modernhealth",
-    "roivantsciences",
-    "waymark",
-    "freenome",
-    "bridgebio",
-    "formationbio",
-    "honehealth",
-    "cerebral",
-    "foresightmentalhealth",
-    "hs",
-    "springhealth66",
-    "prolaio",
-    "prescriberpoint",
-    "lumimeds",
-    "smarterdxprivate",
-    "smarterdx",
-    "midihealth",
-    "shieldshealthsolutions",
-    "coherehealth",
-    "allarahealth",
-    "courierhealth",
-    "garnerhealth",
-    "evio",
-    "cofertility",
-    "carrotfertility",
-    "branchcare",
-    "pomelocare",
-    "openfertility",
-    "mavenclinic",
-    "sparkadvisors",
-    "wellth",
-    "employerdirecthealthcare",
-    "habitathealth",
-    "authorhealth",
-    "omadahealth",
-    "phamily",
-    "interwellhealth",
-    "smartertechnologies",
-    "redcellpartners",
-    "inovalon",
-    "layerhealth",
-    "jukeboxhealth",
-    "qualifiedhealth",
-    "tuleahealth",
-    "precisionmedicinegroup",
-    "peptilogics",
-    "recursionpharmaceuticals",
-    "headlandsresearch",
-    "yarrowbiotechnology",
-    "synerg",
-    "immunomeinc",
-    "cedar",
-    "hingehealth",
-    "carbonhealth",
-    "color",
-    "komodohealth",
-    "includedhealth",
-    "headway",
-    "lyrahealth",
-    "ro",
-    "curology",
-    "khealth",
-    "thirtymadison",
-    "nourish",
-    "abridge",
-    "transcarent",
-    "tempus",
-    "flatiron",
-    "ribbonhealth",
-    "evidation",
-    "alma",
-    "talkiatry",
-    "brightline",
-    "amwell",
-    "doximity",
-    "veeva",
-    "guardanthealth",
-    "recursion",
-    "veracyte",
-    "benchling",
-    "moderna",
-    "23andme",
-    "tendo",
-    "memora",
-    "wellsky",
-    "papacompanies",
-    "vivahealth",
-    "biofourmis",
-    "ada",
-    "buoy",
-    "kindbody",
-    "tia",
-    "hims",
-    "noom",
-    "calm",
-    "vidaheath",
-    "sword",
-    "kaiahealth",
-    "ginger",
-    "rula",
-    "octave",
-    "rightway",
-    "centivo",
-    "collectivehealth",
-    "accolade",
-    "evolenthealth",
-    "iodine",
-    "innovaccer",
-    "cotiviti",
-    "datavant",
-    "trialspark",
-    "paige",
-    "pathai",
-    "truveta",
-    "athelas",
-    "olive",
-    "altopharmacy",
-    "capsule",
-    "vivante",
-    {
-      "slug": "stripe",
-      "industries": [
-        "fintech",
-        "payments",
-        "financial-services",
-        "banking"
-      ]
-    },
-    {
-      "slug": "plaid",
-      "industries": [
-        "fintech",
-        "banking",
-        "financial-services"
-      ]
-    },
-    {
-      "slug": "brex",
-      "industries": [
-        "fintech",
-        "banking",
-        "financial-services",
-        "corporate-cards"
-      ]
-    },
-    {
-      "slug": "chime",
-      "industries": [
-        "fintech",
-        "banking",
-        "consumer-banking"
-      ]
-    },
-    {
-      "slug": "mercury",
-      "industries": [
-        "fintech",
-        "banking",
-        "business-banking"
-      ]
-    },
-    {
-      "slug": "robinhood",
-      "industries": [
-        "fintech",
-        "wealth-management",
-        "capital-markets",
-        "brokerage"
-      ]
-    },
-    {
-      "slug": "affirm",
-      "industries": [
-        "fintech",
-        "lending",
-        "consumer-finance"
-      ]
-    },
-    {
-      "slug": "carta",
-      "industries": [
-        "fintech",
-        "capital-markets",
-        "wealth-management",
-        "equity"
-      ]
-    },
-    {
-      "slug": "coinbase",
-      "industries": [
-        "fintech",
-        "crypto",
-        "capital-markets"
-      ]
-    },
-    {
-      "slug": "marqeta",
-      "industries": [
-        "fintech",
-        "payments",
-        "banking"
-      ]
-    },
-    {
-      "slug": "wise",
-      "industries": [
-        "fintech",
-        "banking",
-        "payments",
-        "financial-services"
-      ]
-    },
-    {
-      "slug": "klarna",
-      "industries": [
-        "fintech",
-        "consumer-finance",
-        "lending"
-      ]
-    },
-    {
-      "slug": "sofi",
-      "industries": [
-        "fintech",
-        "banking",
-        "consumer-banking",
-        "lending"
-      ]
-    },
-    {
-      "slug": "betterment",
-      "industries": [
-        "fintech",
-        "wealth-management",
-        "financial-services"
-      ]
-    },
-    {
-      "slug": "addepar",
-      "industries": [
-        "fintech",
-        "wealth-management",
-        "financial-services"
-      ]
-    },
-    {
-      "slug": "ironclad",
-      "industries": [
-        "enterprise-saas",
-        "legal-tech",
-        "grc"
-      ]
-    },
-    {
-      "slug": "hudl",
-      "industries": [
-        "enterprise-saas"
-      ]
-    },
-    {
-      "slug": "cloudflare",
-      "industries": [
-        "cybersecurity",
-        "infrastructure",
-        "enterprise-saas",
-        "developer-tools",
-        "security"
-      ]
-    },
-    {
-      "slug": "snyk",
-      "industries": [
-        "cybersecurity",
-        "security",
-        "developer-tools",
-        "application-security"
-      ]
-    },
-    {
-      "slug": "vanta",
-      "industries": [
-        "cybersecurity",
-        "grc",
-        "compliance",
-        "enterprise-saas",
-        "security"
-      ]
-    },
-    {
-      "slug": "drata",
-      "industries": [
-        "cybersecurity",
-        "grc",
-        "compliance",
-        "enterprise-saas",
-        "security"
-      ]
-    },
-    {
-      "slug": "wiz",
-      "industries": [
-        "cybersecurity",
-        "cloud-security",
-        "security",
-        "enterprise-saas"
-      ]
-    },
-    {
-      "slug": "sentinelone",
-      "industries": [
-        "cybersecurity",
-        "endpoint-security",
-        "security",
-        "enterprise-saas"
-      ]
-    },
-    {
-      "slug": "okta",
-      "industries": [
-        "cybersecurity",
-        "identity",
-        "security",
-        "enterprise-saas"
-      ]
-    },
-    {
-      "slug": "onetrust",
-      "industries": [
-        "grc",
-        "compliance",
-        "privacy",
-        "enterprise-saas",
-        "security"
-      ]
-    },
-    {
-      "slug": "secureframe",
-      "industries": [
-        "cybersecurity",
-        "grc",
-        "compliance",
-        "enterprise-saas"
-      ]
-    },
-    {
-      "slug": "1password",
-      "industries": [
-        "cybersecurity",
-        "identity",
-        "security",
-        "enterprise-saas"
-      ]
-    },
-    {
-      "slug": "huntress",
-      "industries": [
-        "cybersecurity",
-        "security",
-        "managed-detection",
-        "enterprise-saas"
-      ]
-    },
-    {
-      "slug": "crowdstrike",
-      "industries": [
-        "cybersecurity",
-        "endpoint-security",
-        "security",
-        "enterprise-saas"
-      ]
-    },
-    {
-      "slug": "upstart",
-      "industries": [
-        "fintech",
-        "lending",
-        "credit-risk",
-        "consumer-finance",
-        "financial-services"
-      ]
-    },
-    {
-      "slug": "novacredit",
-      "industries": [
-        "fintech",
-        "credit",
-        "credit-risk",
-        "alternative-data",
-        "financial-services"
-      ]
-    },
-    {
-      "slug": "pinwheel",
-      "industries": [
-        "fintech",
-        "credit",
-        "credit-risk",
-        "payroll-data",
-        "financial-services"
-      ]
-    },
-    {
-      "slug": "pagaya",
-      "industries": [
-        "fintech",
-        "credit-risk",
-        "lending",
-        "financial-services",
-        "ai"
-      ]
-    },
-    {
-      "slug": "lendio",
-      "industries": [
-        "fintech",
-        "lending",
-        "credit-risk",
-        "small-business-finance"
-      ]
-    },
-    {
-      "slug": "auditboard",
-      "industries": [
-        "grc",
-        "risk",
-        "compliance",
-        "audit",
-        "saas"
-      ]
-    },
-    {
-      "slug": "logicgate",
-      "industries": [
-        "grc",
-        "risk",
-        "compliance",
-        "saas"
-      ]
-    },
-    {
-      "slug": "diligent",
-      "industries": [
-        "grc",
-        "governance",
-        "risk",
-        "compliance",
-        "audit"
-      ]
-    },
-    {
-      "slug": "sprinto",
-      "industries": [
-        "grc",
-        "soc2",
-        "compliance",
-        "saas"
-      ]
-    },
-    {
-      "slug": "tugboatlogic",
-      "industries": [
-        "grc",
-        "compliance",
-        "saas"
-      ]
-    },
-    {
-      "slug": "alloy",
-      "industries": [
-        "fintech",
-        "kyc",
-        "identity",
-        "fraud",
-        "risk"
-      ]
-    },
-    {
-      "slug": "middesk",
-      "industries": [
-        "fintech",
-        "kyb",
-        "identity",
-        "compliance"
-      ]
-    },
-    {
-      "slug": "persona",
-      "industries": [
-        "identity",
-        "kyc",
-        "fraud",
-        "compliance",
-        "fintech"
-      ]
-    },
-    {
-      "slug": "socure",
-      "industries": [
-        "identity",
-        "kyc",
-        "fraud",
-        "compliance",
-        "fintech"
-      ]
-    },
-    {
-      "slug": "sardine",
-      "industries": [
-        "fraud",
-        "fintech",
-        "aml",
-        "kyc",
-        "compliance"
-      ]
-    },
-    {
-      "slug": "atbay",
-      "industries": [
-        "cyber-insurance",
-        "cybersecurity",
-        "risk",
-        "insurtech"
-      ]
-    },
-    {
-      "slug": "coalitioninc",
-      "industries": [
-        "cyber-insurance",
-        "cybersecurity",
-        "risk",
-        "insurtech"
-      ]
-    },
-    {
-      "slug": "resilience",
-      "industries": [
-        "cyber-insurance",
-        "cybersecurity",
-        "risk",
-        "insurtech"
-      ]
-    },
-    {
-      "slug": "corvusinsurance",
-      "industries": [
-        "cyber-insurance",
-        "cybersecurity",
-        "risk",
-        "insurtech"
-      ]
-    },
-    {
-      "slug": "ramp",
-      "industries": [
-        "fintech",
-        "spend-management",
-        "saas",
-        "b2b"
-      ]
-    },
-    {
-      "slug": "lithic",
-      "industries": [
-        "fintech",
-        "payments",
-        "card-issuing",
-        "b2b"
-      ]
-    },
-    {
-      "slug": "moderntreasury",
-      "industries": [
-        "fintech",
-        "payments",
-        "treasury",
-        "b2b"
-      ]
-    },
-    {
-      "slug": "column",
-      "industries": [
-        "fintech",
-        "banking",
-        "infra"
-      ]
-    },
-    {
-      "slug": "pipehq",
-      "industries": [
-        "fintech",
-        "revenue-financing",
-        "b2b"
-      ]
-    },
-    {
-      "slug": "treasury-prime",
-      "industries": [
-        "fintech",
-        "banking",
-        "baas",
-        "b2b"
-      ]
-    },
-    {
-      "slug": "unit",
-      "industries": [
-        "fintech",
-        "banking",
-        "baas",
-        "b2b"
-      ]
-    },
-    {
-      "slug": "increase",
-      "industries": [
-        "fintech",
-        "payments",
-        "ach",
-        "infra"
-      ]
-    },
-    {
-      "slug": "springhealth",
-      "industries": [
-        "digital-health",
-        "mental-health",
-        "behavioral-health"
-      ]
-    },
-    {
-      "slug": "rohealth",
-      "industries": [
-        "digital-health",
-        "telehealth",
-        "consumer-health"
-      ]
-    },
-    {
-      "slug": "forgehealth",
-      "industries": [
-        "digital-health",
-        "value-based-care"
-      ]
-    },
-    {
-      "slug": "maven",
-      "industries": [
-        "digital-health",
-        "womens-health",
-        "fertility"
-      ]
-    },
-    {
-      "slug": "westmonroe",
-      "industries": [
-        "consulting",
-        "tech-strategy",
-        "digital-transformation"
-      ]
-    },
-    {
-      "slug": "capco",
-      "industries": [
-        "consulting",
-        "banking",
-        "fintech",
-        "risk",
-        "transformation"
-      ]
-    },
-    {
-      "slug": "siapartners",
-      "industries": [
-        "consulting",
-        "transformation",
-        "risk",
-        "strategy"
-      ]
-    },
-    {
-      "slug": "riveronconsulting",
-      "industries": [
-        "consulting",
-        "finance",
-        "transformation",
-        "restructuring"
-      ]
-    },
-    {
-      "slug": "watershed",
-      "industries": [
-        "climate",
-        "esg",
-        "carbon-accounting",
-        "saas"
-      ]
-    },
-    {
-      "slug": "persefoni",
-      "industries": [
-        "climate",
-        "esg",
-        "carbon-accounting",
-        "saas"
-      ]
-    },
-    {
-      "slug": "vercel",
-      "industries": [
-        "developer-tools",
-        "infrastructure",
-        "saas"
-      ]
-    },
-    {
-      "slug": "planetscale",
-      "industries": [
-        "developer-tools",
-        "database",
-        "infrastructure"
-      ]
-    },
-    {
-      "slug": "supabase",
-      "industries": [
-        "developer-tools",
-        "database",
-        "infrastructure"
-      ]
-    },
-    {
-      "slug": "pineconeio",
-      "industries": [
-        "developer-tools",
-        "vector-database",
-        "ai",
-        "infrastructure"
-      ]
-    },
-    {
-      "slug": "modal",
-      "industries": [
-        "developer-tools",
-        "ai",
-        "infrastructure"
-      ]
-    },
-    {
-      "slug": "replicate",
-      "industries": [
-        "developer-tools",
-        "ai",
-        "infrastructure"
-      ]
-    },
-    {
-      "slug": "huggingface",
-      "industries": [
-        "ai",
-        "ml",
-        "developer-tools",
-        "open-source"
-      ]
-    },
-    {
-      "slug": "anthropic",
-      "industries": [
-        "ai",
-        "research",
-        "safety"
-      ]
-    }
-  ],
-  "lever": [
-    "SprinterHealth",
-    "CollectlyInc",
-    "canvasmedical",
-    "zushealth",
-    "januaryinc",
-    "RyzLabs",
-    "heartbeathealth",
-    "circadiahealth",
-    "artera-2",
-    "whoop",
-    "caremessage",
-    "h1",
-    "mcra",
-    "aledade",
-    "includedhealth",
-    "lyrahealth",
-    "glooko",
-    "truepill",
-    "talkiatry",
-    "datavant",
-    "ribbonhealth",
-    "alma",
-    "headway",
-    "betterup",
-    "noom",
-    "calm",
-    "verily",
-    "neuralink",
-    {
-      "slug": "ledger",
-      "industries": [
-        "fintech",
-        "crypto",
-        "wallets",
-        "security"
-      ]
-    },
-    {
-      "slug": "smartcat",
-      "industries": [
-        "saas",
-        "translation",
-        "developer-tools"
-      ]
-    },
-    {
-      "slug": "instabase",
-      "industries": [
-        "ai",
-        "document-ai",
-        "saas"
-      ]
-    }
-  ],
-  "ashby": [
-    "Graphitehq",
-    "maximustribe",
-    "codes-health",
-    "heidihealth.com.au",
-    "Interrahealth",
-    "fitt",
-    "lark",
-    "virtahealth",
-    "Healthtech-1",
-    "tandem-health",
-    "Aios",
-    "you-health",
-    "versemedical",
-    "abridge",
-    "decagon",
-    "rad-ai",
-    "ramphealth"
-  ],
-  "workday": [
-    {
-      "name": "Pfizer",
-      "tenant": "pfizer",
-      "subdomain": "wd1",
-      "site": "PfizerCareers"
-    },
-    {
-      "name": "Merck (MSD)",
-      "tenant": "msd",
-      "subdomain": "wd5",
-      "site": "SearchJobs",
-      "dreamList": true,
-      "dreamListFor": "geetu"
-    },
-    {
-      "name": "CVS Health",
-      "tenant": "cvshealth",
-      "subdomain": "wd1",
-      "site": "cvs_health_careers"
-    },
-    {
-      "name": "Capital One",
-      "tenant": "capitalone",
-      "subdomain": "wd12",
-      "site": "Capital_One",
-      "industries": [
-        "banking",
-        "financial-services",
-        "consumer-banking",
-        "credit-risk",
-        "credit-cards"
-      ]
-    },
-    {
-      "name": "Wells Fargo",
-      "tenant": "wf",
-      "subdomain": "wd1",
-      "site": "WellsFargoJobs",
-      "industries": [
-        "banking",
-        "finance"
-      ]
-    },
-    {
-      "name": "Bank of America",
-      "tenant": "ghr",
-      "subdomain": "wd1",
-      "site": "Lateral-US",
-      "industries": [
-        "banking",
-        "finance",
-        "wealth management"
-      ]
-    },
-    {
-      "name": "Morgan Stanley",
-      "tenant": "ms",
-      "subdomain": "wd5",
-      "site": "External",
-      "industries": [
-        "banking",
-        "finance",
-        "wealth management"
-      ]
-    },
-    {
-      "name": "American Express",
-      "tenant": "aexp",
-      "subdomain": "wd1",
-      "site": "aexp",
-      "industries": [
-        "financial-services",
-        "payments",
-        "credit-cards",
-        "banking"
-      ]
-    },
-    {
-      "name": "BlackRock",
-      "tenant": "blackrock",
-      "subdomain": "wd1",
-      "site": "BlackRock",
-      "industries": [
-        "asset-management",
-        "wealth-management",
-        "capital-markets",
-        "financial-services"
-      ]
-    },
-    {
-      "name": "Charles Schwab",
-      "tenant": "schwab",
-      "subdomain": "wd5",
-      "site": "schwabjobs",
-      "industries": [
-        "wealth-management",
-        "brokerage",
-        "financial-services",
-        "capital-markets"
-      ]
-    },
-    {
-      "name": "TD Bank",
-      "tenant": "td",
-      "subdomain": "wd3",
-      "site": "TD_Bank_Careers",
-      "industries": [
-        "banking",
-        "financial-services",
-        "consumer-banking",
-        "commercial-banking"
-      ]
-    },
-    {
-      "name": "BMO Financial Group",
-      "tenant": "bmo",
-      "subdomain": "wd3",
-      "site": "External",
-      "industries": [
-        "banking",
-        "financial-services",
-        "consumer-banking",
-        "capital-markets"
-      ]
-    },
-    {
-      "name": "Truist",
-      "tenant": "truist",
-      "subdomain": "wd5",
-      "site": "Truist_Careers",
-      "industries": [
-        "banking",
-        "financial-services",
-        "commercial-banking",
-        "consumer-banking"
-      ]
-    },
-    {
-      "name": "PNC",
-      "tenant": "pnc",
-      "subdomain": "wd1",
-      "site": "External",
-      "industries": [
-        "banking",
-        "financial-services",
-        "consumer-banking",
-        "commercial-banking"
-      ]
-    },
-    {
-      "name": "US Bank",
-      "tenant": "usbank",
-      "subdomain": "wd1",
-      "site": "US_Bank_Careers",
-      "industries": [
-        "banking",
-        "finance"
-      ]
-    },
-    {
-      "name": "MUFG Americas",
-      "tenant": "mufgub",
-      "subdomain": "wd3",
-      "site": "MUFG-Careers",
-      "industries": [
-        "banking",
-        "finance"
-      ]
-    },
-    {
-      "name": "Mizuho Americas",
-      "tenant": "mizuho",
-      "subdomain": "wd1",
-      "site": "mizuhoamericas",
-      "industries": [
-        "banking",
-        "finance"
-      ]
-    },
-    {
-      "name": "Flagstar Bank",
-      "tenant": "flagstar",
-      "subdomain": "wd5",
-      "site": "flagstar",
-      "industries": [
-        "banking",
-        "finance"
-      ]
-    },
-    {
-      "name": "S&P Global",
-      "tenant": "spgi",
-      "subdomain": "wd5",
-      "site": "SPGI_Careers",
-      "industries": [
-        "finance",
-        "analytics",
-        "ratings"
-      ]
-    },
-    {
-      "name": "Protiviti",
-      "tenant": "roberthalf",
-      "subdomain": "wd1",
-      "site": "ProtivitiNA",
-      "industries": [
-        "consulting",
-        "audit",
-        "risk"
-      ]
-    },
-    {
-      "name": "FIS Global",
-      "tenant": "fis",
-      "subdomain": "wd5",
-      "site": "SearchJobs",
-      "industries": [
-        "fintech",
-        "payments",
-        "banking"
-      ]
-    },
-    {
-      "name": "Fiserv",
-      "tenant": "fiserv",
-      "subdomain": "wd5",
-      "site": "EXT",
-      "industries": [
-        "fintech",
-        "payments",
-        "banking"
-      ]
-    },
-    {
-      "name": "Regions Financial",
-      "tenant": "regions",
-      "subdomain": "wd5",
-      "site": "Regions_Careers",
-      "industries": [
-        "banking",
-        "finance"
-      ]
-    },
-    {
-      "name": "UnitedHealth Group",
-      "tenant": "uhg",
-      "subdomain": "wd5",
-      "site": "UnitedHealthGroup",
-      "industries": [
-        "healthcare",
-        "health-saas",
-        "healthcare-it"
-      ]
-    },
-    {
-      "name": "Elevance Health",
-      "tenant": "elevancehealth",
-      "subdomain": "wd1",
-      "site": "ElevanceHealth",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Humana",
-      "tenant": "humana",
-      "subdomain": "wd5",
-      "site": "Humana_External_Career_Site",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Cigna",
-      "tenant": "cigna",
-      "subdomain": "wd5",
-      "site": "cigna_careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Centene",
-      "tenant": "centene",
-      "subdomain": "wd1",
-      "site": "Centene",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Molina Healthcare",
-      "tenant": "molinahealthcare",
-      "subdomain": "wd1",
-      "site": "MolinaCareers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Johnson & Johnson",
-      "tenant": "jnj",
-      "subdomain": "wd5",
-      "site": "jnjcareers",
-      "industries": [
-        "pharmaceuticals",
-        "life-sciences"
-      ],
-      "dreamList": true,
-      "dreamListFor": "geetu"
-    },
-    {
-      "name": "AbbVie",
-      "tenant": "abbvie",
-      "subdomain": "wd5",
-      "site": "abbviecareers",
-      "industries": [
-        "pharmaceuticals",
-        "life-sciences"
-      ]
-    },
-    {
-      "name": "Eli Lilly",
-      "tenant": "lilly",
-      "subdomain": "wd5",
-      "site": "LLY",
-      "industries": [
-        "pharmaceuticals",
-        "life-sciences"
-      ],
-      "dreamList": true,
-      "dreamListFor": "geetu"
-    },
-    {
-      "name": "Bristol Myers Squibb",
-      "tenant": "bms",
-      "subdomain": "wd5",
-      "site": "BMS",
-      "industries": [
-        "pharmaceuticals",
-        "life-sciences"
-      ]
-    },
-    {
-      "name": "Gilead Sciences",
-      "tenant": "gilead",
-      "subdomain": "wd1",
-      "site": "gileadcareers",
-      "industries": [
-        "pharmaceuticals",
-        "biotech",
-        "life-sciences"
-      ]
-    },
-    {
-      "name": "Amgen",
-      "tenant": "amgen",
-      "subdomain": "wd1",
-      "site": "Amgen",
-      "industries": [
-        "pharmaceuticals",
-        "biotech",
-        "life-sciences"
-      ]
-    },
-    {
-      "name": "Sanofi",
-      "tenant": "sanofi",
-      "subdomain": "wd3",
-      "site": "SanofiCareers",
-      "industries": [
-        "pharmaceuticals",
-        "life-sciences"
-      ],
-      "dreamList": true,
-      "dreamListFor": "geetu"
-    },
-    {
-      "name": "Regeneron",
-      "tenant": "regeneron",
-      "subdomain": "wd1",
-      "site": "Regeneron_Careers",
-      "industries": [
-        "pharmaceuticals",
-        "biotech",
-        "life-sciences"
-      ]
-    },
-    {
-      "name": "Takeda",
-      "tenant": "takeda",
-      "subdomain": "wd3",
-      "site": "Takeda",
-      "industries": [
-        "pharmaceuticals",
-        "life-sciences"
-      ]
-    },
-    {
-      "name": "Kaiser Permanente",
-      "tenant": "kp",
-      "subdomain": "wd5",
-      "site": "KaiserPermanenteCareers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "HCA Healthcare",
-      "tenant": "hcahealthcare",
-      "subdomain": "wd1",
-      "site": "HCA",
-      "industries": [
-        "healthcare"
-      ]
-    },
-    {
-      "name": "Providence Health",
-      "tenant": "providence",
-      "subdomain": "wd1",
-      "site": "Providence",
-      "industries": [
-        "healthcare"
-      ]
-    },
-    {
-      "name": "AdventHealth",
-      "tenant": "adventhealth",
-      "subdomain": "wd1",
-      "site": "adventhealth",
-      "industries": [
-        "healthcare"
-      ]
-    },
-    {
-      "name": "Mayo Clinic",
-      "tenant": "mayo",
-      "subdomain": "wd5",
-      "site": "mayo-careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Veeva Systems (full)",
-      "tenant": "veeva",
-      "subdomain": "wd1",
-      "site": "veeva_careers",
-      "industries": [
-        "healthcare-it",
-        "life-sciences"
-      ]
-    },
-    {
-      "name": "Oracle Health (Cerner)",
-      "tenant": "oracle",
-      "subdomain": "wd5",
-      "site": "OracleCareers",
-      "industries": [
-        "healthcare-it",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Medtronic",
-      "tenant": "medtronic",
-      "subdomain": "wd5",
-      "site": "MedtronicCareers",
-      "industries": [
-        "healthcare",
-        "life-sciences"
-      ]
-    },
-    {
-      "name": "Boston Scientific",
-      "tenant": "bsci",
-      "subdomain": "wd1",
-      "site": "BSC",
-      "industries": [
-        "healthcare",
-        "life-sciences"
-      ]
-    },
-    {
-      "name": "Abbott",
-      "tenant": "abbott",
-      "subdomain": "wd5",
-      "site": "abbottcareers",
-      "industries": [
-        "healthcare",
-        "life-sciences"
-      ]
-    },
-    {
-      "name": "Centene Corporation",
-      "tenant": "centene",
-      "subdomain": "wd5",
-      "site": "Centene_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Molina Healthcare",
-      "tenant": "molinahealthcare",
-      "subdomain": "wd5",
-      "site": "Molina",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Teladoc Health",
-      "tenant": "teladoc",
-      "subdomain": "wd5",
-      "site": "Teladoc_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "HealthEquity",
-      "tenant": "healthequity",
-      "subdomain": "wd5",
-      "site": "HealthEquity_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Exact Sciences",
-      "tenant": "exactsciences",
-      "subdomain": "wd5",
-      "site": "Exact_Sciences_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "IQVIA",
-      "tenant": "iqvia",
-      "subdomain": "wd3",
-      "site": "IQVIA_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Cerner",
-      "tenant": "cerner",
-      "subdomain": "wd5",
-      "site": "Cerner_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Change Healthcare",
-      "tenant": "changehealthcare",
-      "subdomain": "wd5",
-      "site": "Change_Healthcare_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Point32Health",
-      "tenant": "point32health",
-      "subdomain": "wd5",
-      "site": "Point32Health_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Blue Shield of California",
-      "tenant": "blueshieldca",
-      "subdomain": "wd5",
-      "site": "BSC_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Independence Blue Cross",
-      "tenant": "ibx",
-      "subdomain": "wd5",
-      "site": "IBX_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Blue Cross Blue Shield of Michigan",
-      "tenant": "bcbsm",
-      "subdomain": "wd5",
-      "site": "BCBSM_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Highmark Health",
-      "tenant": "highmarkhealth",
-      "subdomain": "wd5",
-      "site": "Highmark_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Horizon Blue Cross Blue Shield",
-      "tenant": "horizonblue",
-      "subdomain": "wd5",
-      "site": "Horizon_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Health Care Service Corporation",
-      "tenant": "hcsc",
-      "subdomain": "wd5",
-      "site": "HCSC_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Kaiser Permanente",
-      "tenant": "kaiserpermanente",
-      "subdomain": "wd5",
-      "site": "Kaiser_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Intermountain Healthcare",
-      "tenant": "intermountain",
-      "subdomain": "wd5",
-      "site": "Intermountain_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Cleveland Clinic",
-      "tenant": "ccf",
-      "subdomain": "wd5",
-      "site": "CCF_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Mayo Clinic",
-      "tenant": "mayoclinic",
-      "subdomain": "wd5",
-      "site": "Mayo_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Providence",
-      "tenant": "providence",
-      "subdomain": "wd5",
-      "site": "Providence_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "CommonSpirit Health",
-      "tenant": "commonspirit",
-      "subdomain": "wd5",
-      "site": "CommonSpirit_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Trinity Health",
-      "tenant": "trinityhealth",
-      "subdomain": "wd5",
-      "site": "Trinity_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Advocate Aurora Health",
-      "tenant": "advocatehealth",
-      "subdomain": "wd5",
-      "site": "Advocate_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Ascension",
-      "tenant": "ascension",
-      "subdomain": "wd5",
-      "site": "Ascension_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "HCA Healthcare",
-      "tenant": "hcahealthcare",
-      "subdomain": "wd5",
-      "site": "HCA_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Tenet Healthcare",
-      "tenant": "tenethealth",
-      "subdomain": "wd5",
-      "site": "Tenet_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Sutter Health",
-      "tenant": "sutterhealth",
-      "subdomain": "wd5",
-      "site": "Sutter_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Banner Health",
-      "tenant": "bannerhealth",
-      "subdomain": "wd5",
-      "site": "Banner_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Atrium Health",
-      "tenant": "atriumhealth",
-      "subdomain": "wd5",
-      "site": "Atrium_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "NYU Langone Health",
-      "tenant": "nyulangone",
-      "subdomain": "wd5",
-      "site": "NYU_Langone_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Mass General Brigham",
-      "tenant": "massgeneralbrigham",
-      "subdomain": "wd5",
-      "site": "MGB_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Penn Medicine",
-      "tenant": "pennmedicine",
-      "subdomain": "wd5",
-      "site": "Penn_Medicine_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Johns Hopkins Medicine",
-      "tenant": "johnshopkinsmedicine",
-      "subdomain": "wd5",
-      "site": "JHM_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "NewYork-Presbyterian Hospital",
-      "tenant": "nyp",
-      "subdomain": "wd5",
-      "site": "NYP_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Northwell Health",
-      "tenant": "northwell",
-      "subdomain": "wd5",
-      "site": "Northwell_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Ochsner Health",
-      "tenant": "ochsner",
-      "subdomain": "wd5",
-      "site": "Ochsner_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Stanford Health Care",
-      "tenant": "stanfordhealthcare",
-      "subdomain": "wd5",
-      "site": "Stanford_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "UCLA Health",
-      "tenant": "uclahealth",
-      "subdomain": "wd5",
-      "site": "UCLA_Health_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "UCSF Health",
-      "tenant": "ucsfhealth",
-      "subdomain": "wd5",
-      "site": "UCSF_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Cedars-Sinai",
-      "tenant": "cedarssinai",
-      "subdomain": "wd5",
-      "site": "Cedars_Sinai_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Baylor Scott & White Health",
-      "tenant": "bswhealth",
-      "subdomain": "wd5",
-      "site": "BSW_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Houston Methodist",
-      "tenant": "houstonmethodist",
-      "subdomain": "wd5",
-      "site": "Houston_Methodist_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Sanford Health",
-      "tenant": "sanfordhealth",
-      "subdomain": "wd5",
-      "site": "Sanford_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "OhioHealth",
-      "tenant": "ohiohealth",
-      "subdomain": "wd5",
-      "site": "OhioHealth_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Inova Health System",
-      "tenant": "inova",
-      "subdomain": "wd5",
-      "site": "Inova_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Novant Health",
-      "tenant": "novanthealth",
-      "subdomain": "wd5",
-      "site": "Novant_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "ChristianaCare",
-      "tenant": "christianacare",
-      "subdomain": "wd5",
-      "site": "ChristianaCare_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "RWJBarnabas Health",
-      "tenant": "rwjbh",
-      "subdomain": "wd5",
-      "site": "RWJBH_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Geisinger",
-      "tenant": "geisinger",
-      "subdomain": "wd5",
-      "site": "Geisinger_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "AdventHealth",
-      "tenant": "adventhealth",
-      "subdomain": "wd5",
-      "site": "AdventHealth_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Humana",
-      "tenant": "humana",
-      "subdomain": "wd5",
-      "site": "Humana_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Illumina",
-      "tenant": "illumina",
-      "subdomain": "wd5",
-      "site": "Illumina_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Dexcom",
-      "tenant": "dexcom",
-      "subdomain": "wd5",
-      "site": "Dexcom_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Insulet",
-      "tenant": "insulet",
-      "subdomain": "wd5",
-      "site": "Insulet_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Moderna",
-      "tenant": "modernatx",
-      "subdomain": "wd5",
-      "site": "Moderna_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "BioNTech",
-      "tenant": "biontech",
-      "subdomain": "wd5",
-      "site": "BioNTech_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Alnylam Pharmaceuticals",
-      "tenant": "alnylam",
-      "subdomain": "wd5",
-      "site": "Alnylam_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Neurocrine Biosciences",
-      "tenant": "neurocrine",
-      "subdomain": "wd5",
-      "site": "Neurocrine_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Vertex Pharmaceuticals",
-      "tenant": "vrtx",
-      "subdomain": "wd5",
-      "site": "Vertex_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Parexel",
-      "tenant": "parexel",
-      "subdomain": "wd1",
-      "site": "Parexel",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "ICON plc",
-      "tenant": "iconplc",
-      "subdomain": "wd5",
-      "site": "ICON",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Syneos Health",
-      "tenant": "syneoshealth",
-      "subdomain": "wd5",
-      "site": "Syneos_Health",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Medpace",
-      "tenant": "medpace",
-      "subdomain": "wd5",
-      "site": "Medpace",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "PPD (Thermo Fisher Clinical Research)",
-      "tenant": "thermofisher",
-      "subdomain": "wd5",
-      "site": "Thermo_Fisher_Scientific_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Labcorp Drug Development",
-      "tenant": "labcorp",
-      "subdomain": "wd5",
-      "site": "Labcorp_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Heartland Dental",
-      "tenant": "heartlanddental",
-      "subdomain": "wd5",
-      "site": "Heartland_Dental",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "VSP Vision Care",
-      "tenant": "vspvision",
-      "subdomain": "wd1",
-      "site": "VSP",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "LifeStance Health",
-      "tenant": "lifestance",
-      "subdomain": "wd5",
-      "site": "LifeStance_Health",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Amedisys",
-      "tenant": "amedisys",
-      "subdomain": "wd5",
-      "site": "Amedisys_Home_Health",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Encompass Health",
-      "tenant": "encompasshealth",
-      "subdomain": "wd5",
-      "site": "Encompass_Health",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "BrightSpring Health Services",
-      "tenant": "brightspringhealth",
-      "subdomain": "wd5",
-      "site": "BrightSpring",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Symplr",
-      "tenant": "symplr",
-      "subdomain": "wd5",
-      "site": "symplr",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "R1 RCM",
-      "tenant": "r1rcm",
-      "subdomain": "wd5",
-      "site": "R1RCM",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Conifer Health Solutions",
-      "tenant": "coniferhealth",
-      "subdomain": "wd5",
-      "site": "Conifer_Health_Solutions",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Optum360",
-      "tenant": "unitedhealthgroup",
-      "subdomain": "wd5",
-      "site": "UnitedHealth_Group",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Covetrus",
-      "tenant": "covetrus",
-      "subdomain": "wd5",
-      "site": "Covetrus",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Petco Health & Wellness",
-      "tenant": "petco",
-      "subdomain": "wd5",
-      "site": "Petco",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Zoetis",
-      "tenant": "zoetis",
-      "subdomain": "wd5",
-      "site": "Zoetis",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Parexel",
-      "tenant": "parexel",
-      "subdomain": "wd3",
-      "site": "Parexel_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "ICON plc",
-      "tenant": "iconplc",
-      "subdomain": "wd5",
-      "site": "ICON_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Syneos Health",
-      "tenant": "syneoshealth",
-      "subdomain": "wd5",
-      "site": "Syneos_Health_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Medpace",
-      "tenant": "medpace",
-      "subdomain": "wd5",
-      "site": "Medpace_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "VSP Vision Care",
-      "tenant": "vsp",
-      "subdomain": "wd5",
-      "site": "VSP_Vision_Care",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Heartland Dental",
-      "tenant": "heartland",
-      "subdomain": "wd5",
-      "site": "Heartland_Dental",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Amedisys",
-      "tenant": "amedisys",
-      "subdomain": "wd5",
-      "site": "Amedisys_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Encompass Health",
-      "tenant": "encompasshealth",
-      "subdomain": "wd5",
-      "site": "Encompass_Health_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "BrightSpring Health Services",
-      "tenant": "brightspring",
-      "subdomain": "wd5",
-      "site": "BrightSpring_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Imprivata",
-      "tenant": "imprivata",
-      "subdomain": "wd5",
-      "site": "Imprivata_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Brookdale Senior Living",
-      "tenant": "brookdale",
-      "subdomain": "wd5",
-      "site": "Brookdale_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "R1 RCM",
-      "tenant": "r1rcm",
-      "subdomain": "wd5",
-      "site": "R1_RCM_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Covetrus",
-      "tenant": "covetrus",
-      "subdomain": "wd5",
-      "site": "Covetrus_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "IQVIA",
-      "tenant": "iqvia",
-      "subdomain": "wd5",
-      "site": "IQVIA",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Charles River Laboratories",
-      "tenant": "criver",
-      "subdomain": "wd5",
-      "site": "CRL",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "R1 RCM",
-      "tenant": "r1rcm",
-      "subdomain": "wd5",
-      "site": "R1_RCM",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Amedisys",
-      "tenant": "amedisys",
-      "subdomain": "wd5",
-      "site": "Amedisys",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Brookdale Senior Living",
-      "tenant": "brookdale",
-      "subdomain": "wd5",
-      "site": "Brookdale",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Henry Schein",
-      "tenant": "henryschein",
-      "subdomain": "wd5",
-      "site": "Henry_Schein",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Teladoc Health",
-      "tenant": "teladoc",
-      "subdomain": "wd5",
-      "site": "Teladoc_Health",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Acadia Healthcare",
-      "tenant": "acadiahealthcare",
-      "subdomain": "wd5",
-      "site": "Acadia_Healthcare",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Universal Health Services",
-      "tenant": "uhsinc",
-      "subdomain": "wd5",
-      "site": "UHS",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "CVS Health",
-      "tenant": "cvshealth",
-      "subdomain": "wd5",
-      "site": "CVS_Health",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Walgreens Boots Alliance",
-      "tenant": "walgreens",
-      "subdomain": "wd5",
-      "site": "Walgreens",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Quest Diagnostics",
-      "tenant": "questdiagnostics",
-      "subdomain": "wd5",
-      "site": "Quest_Diagnostics",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Laboratory Corporation of America",
-      "tenant": "labcorp",
-      "subdomain": "wd5",
-      "site": "Labcorp",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Exact Sciences",
-      "tenant": "exactsciences",
-      "subdomain": "wd5",
-      "site": "Exact_Sciences",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Fresenius Medical Care",
-      "tenant": "fmcna",
-      "subdomain": "wd5",
-      "site": "FMCNA",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "DaVita",
-      "tenant": "davita",
-      "subdomain": "wd5",
-      "site": "DaVita",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Optum",
-      "tenant": "optum",
-      "subdomain": "wd5",
-      "site": "Optum",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Vizient",
-      "tenant": "vizientinc",
-      "subdomain": "wd5",
-      "site": "Vizient",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Premier Inc",
-      "tenant": "premierinc",
-      "subdomain": "wd5",
-      "site": "Premier",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Cardinal Health",
-      "tenant": "cardinalhealth",
-      "subdomain": "wd5",
-      "site": "Cardinal_Health",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "McKesson Corporation",
-      "tenant": "mckesson",
-      "subdomain": "wd5",
-      "site": "McKesson",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "AmerisourceBergen",
-      "tenant": "cencora",
-      "subdomain": "wd5",
-      "site": "Cencora",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "VSP Vision Care",
-      "tenant": "vsp",
-      "subdomain": "wd5",
-      "site": "VSP_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Align Technology",
-      "tenant": "aligntech",
-      "subdomain": "wd5",
-      "site": "Align_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "PointClickCare",
-      "tenant": "pointclickcare",
-      "subdomain": "wd5",
-      "site": "PointClickCare_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "R1 RCM",
-      "tenant": "r1rcm",
-      "subdomain": "wd5",
-      "site": "R1_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    },
-    {
-      "name": "Accolade",
-      "tenant": "accolade",
-      "subdomain": "wd5",
-      "site": "Accolade_Careers",
-      "industries": [
-        "healthcare",
-        "health-saas"
-      ]
-    }
-  ],
-  "remoteok": [
-    {
-      "slug": "_all",
-      "name": "Remote OK feed",
-      "industries": [
-        "healthcare",
-        "healthcare-it",
-        "digital-health",
-        "health-saas",
-        "pharma",
-        "pharmaceuticals",
-        "biotech",
-        "life-sciences",
-        "diagnostics",
-        "telehealth",
-        "mental-health",
-        "clinical-ai"
-      ]
-    }
-  ],
-  "yc": [
-    {
-      "slug": "_all",
-      "name": "YC Work at a Startup",
-      "industries": [
-        "startup",
-        "fintech",
-        "healthtech",
-        "ai",
-        "saas"
-      ]
-    }
-  ],
-  "hn_hiring": [
-    {
-      "slug": "_all",
-      "name": "HN Who is Hiring",
-      "industries": [
-        "startup",
-        "tech",
-        "engineering"
-      ]
-    }
-  ],
-  "healthecareers": [
-    {
-      "slug": "_all",
-      "name": "Health eCareers",
-      "industries": [
-        "healthcare",
-        "healthcare-it",
-        "clinical",
-        "health-saas"
-      ]
-    }
-  ],
-  "himss": [
-    {
-      "slug": "_all",
-      "name": "HIMSS Career Center",
-      "industries": [
-        "healthcare-it",
-        "digital-health",
-        "health-saas",
-        "informatics"
-      ]
-    }
-  ],
-  "_notes": "~135 Greenhouse, ~28 Lever, ~17 Ashby, 3 Workday companies. Workday URLs follow pattern: https://{tenant}.{subdomain}.myworkdayjobs.com/{site}. To find a company's Workday details, visit their careers page and look at the URL once you're on the job search. UnitedHealth/Optum use a non-Workday careers portal (careers.unitedhealthgroup.com) and aren't easily scraped via public API; they're not included here. To add a Workday entry, append to the workday array."
+   ]
+  }
+ ],
+ "yc": [
+  {
+   "slug": "_all",
+   "name": "YC Work at a Startup",
+   "industries": [
+    "startup",
+    "fintech",
+    "healthtech",
+    "ai",
+    "saas"
+   ]
+  }
+ ],
+ "hn_hiring": [
+  {
+   "slug": "_all",
+   "name": "HN Who is Hiring",
+   "industries": [
+    "startup",
+    "tech",
+    "engineering"
+   ]
+  }
+ ],
+ "healthecareers": [
+  {
+   "slug": "_all",
+   "name": "Health eCareers",
+   "industries": [
+    "healthcare",
+    "healthcare-it",
+    "clinical",
+    "health-saas"
+   ]
+  }
+ ],
+ "himss": [
+  {
+   "slug": "_all",
+   "name": "HIMSS Career Center",
+   "industries": [
+    "healthcare-it",
+    "digital-health",
+    "health-saas",
+    "informatics"
+   ]
+  }
+ ],
+ "_notes": "~135 Greenhouse, ~28 Lever, ~17 Ashby, 3 Workday companies. Workday URLs follow pattern: https://{tenant}.{subdomain}.myworkdayjobs.com/{site}. To find a company's Workday details, visit their careers page and look at the URL once you're on the job search. UnitedHealth/Optum use a non-Workday careers portal (careers.unitedhealthgroup.com) and aren't easily scraped via public API; they're not included here. To add a Workday entry, append to the workday array."
 }
