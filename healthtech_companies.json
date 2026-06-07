@@ -1,2561 +1,2898 @@
 {
-  "_note": "Curated Healthcare IT / digital health catalog. Used for: (a) scoring boost when company appears in feed AND user has healthcare industries (+3, all entries), (b) auto-scraping (only ATS=greenhouse/lever/ashby/workable). Workday/Google/Amazon entries are catalog-only (scored boost when found, not scraped). Slugs are canonical for matching.",
-  "version": "2026-05-29-v3+discovered+discovered+dream-list+from-contacts+dedup+dream-geetu+discovered+dedup-r2+verified+slug-recover+verified+verified+discovered+discovered+discovered",
-  "companies": [
-    {
-      "name": "Doximity",
-      "category": "provider-tech",
-      "atsHint": "greenhouse",
-      "slug": "doximity"
-    },
-    {
-      "name": "Veeva Systems",
-      "category": "life-sciences-data",
-      "atsHint": "greenhouse",
-      "slug": "veeva-systems",
-      "suspectSlug": true
-    },
-    {
-      "name": "Definitive Healthcare",
-      "category": "life-sciences-data",
-      "atsHint": "greenhouse",
-      "slug": "definitive-healthcare",
-      "suspectSlug": true
-    },
-    {
-      "name": "Teladoc Health",
-      "category": "telehealth",
-      "atsHint": "greenhouse",
-      "slug": "teladoc-health",
-      "suspectSlug": true
-    },
-    {
-      "name": "Hims & Hers Health",
-      "category": "telehealth",
-      "atsHint": "ashby",
-      "slug": "hims",
-      "suspectSlug": true
-    },
-    {
-      "name": "Hinge Health",
-      "category": "dtx",
-      "atsHint": "greenhouse",
-      "slug": "hingehealth"
-    },
-    {
-      "name": "Lyra Health",
-      "category": "dtx",
-      "atsHint": "greenhouse",
-      "slug": "lyrahealth"
-    },
-    {
-      "name": "Spring Health",
-      "category": "dtx",
-      "atsHint": "workable",
-      "slug": "spring",
-      "dreamList": true,
-      "dreamListFor": "geetu"
-    },
-    {
-      "name": "Headway",
-      "category": "provider-tech",
-      "atsHint": "greenhouse",
-      "slug": "headway",
-      "dreamList": true,
-      "dreamListFor": "geetu"
-    },
-    {
-      "name": "Cedar",
-      "category": "healthcare-fintech",
-      "atsHint": "greenhouse",
-      "slug": "cedar"
-    },
-    {
-      "name": "Komodo Health",
-      "category": "life-sciences-data",
-      "atsHint": "greenhouse",
-      "slug": "komodohealth",
-      "dreamList": true,
-      "dreamListFor": "geetu"
-    },
-    {
-      "name": "Truveta",
-      "category": "life-sciences-data",
-      "atsHint": "greenhouse",
-      "slug": "truveta"
-    },
-    {
-      "name": "Oscar Health",
-      "category": "payer-tech",
-      "atsHint": "greenhouse",
-      "slug": "oscar",
-      "dreamList": true,
-      "dreamListFor": "geetu"
-    },
-    {
-      "name": "Devoted Health",
-      "category": "payer-tech",
-      "atsHint": "greenhouse",
-      "slug": "devoted-health",
-      "suspectSlug": true
-    },
-    {
-      "name": "Bright Health Group",
-      "category": "payer-tech",
-      "atsHint": "greenhouse",
-      "slug": "bright-health-group",
-      "suspectSlug": true
-    },
-    {
-      "name": "Clover Health",
-      "category": "payer-tech",
-      "atsHint": "workable",
-      "slug": "clover",
-      "dreamList": true,
-      "dreamListFor": "geetu"
-    },
-    {
-      "name": "Alignment Healthcare",
-      "category": "payer-tech",
-      "atsHint": "greenhouse",
-      "slug": "alignment-healthcare",
-      "suspectSlug": true
-    },
-    {
-      "name": "Garner Health",
-      "category": "payer-tech",
-      "atsHint": "greenhouse",
-      "slug": "garnerhealth",
-      "dreamList": true,
-      "dreamListFor": "geetu"
-    },
-    {
-      "name": "Transcarent",
-      "category": "payer-tech",
-      "atsHint": "greenhouse",
-      "slug": "transcarent"
-    },
-    {
-      "name": "Maven Clinic",
-      "category": "telehealth",
-      "atsHint": "greenhouse",
-      "slug": "mavenclinic",
-      "dreamList": true,
-      "dreamListFor": "geetu"
-    },
-    {
-      "name": "Carrot Fertility",
-      "category": "telehealth",
-      "atsHint": "greenhouse",
-      "slug": "carrotfertility"
-    },
-    {
-      "name": "Tia",
-      "category": "provider-tech",
-      "atsHint": "greenhouse",
-      "slug": "tia"
-    },
-    {
-      "name": "Modern Health",
-      "category": "dtx",
-      "atsHint": "workable",
-      "slug": "modern"
-    },
-    {
-      "name": "Calm",
-      "category": "dtx",
-      "atsHint": "greenhouse",
-      "slug": "calm"
-    },
-    {
-      "name": "Headspace Health",
-      "category": "dtx",
-      "atsHint": "workable",
-      "slug": "headspace"
-    },
-    {
-      "name": "Omada Health",
-      "category": "dtx",
-      "atsHint": "greenhouse",
-      "slug": "omadahealth",
-      "dreamList": true,
-      "dreamListFor": "geetu"
-    },
-    {
-      "name": "Livongo (Teladoc)",
-      "category": "dtx",
-      "atsHint": "greenhouse",
-      "slug": "livongo",
-      "suspectSlug": true
-    },
-    {
-      "name": "Pear Therapeutics",
-      "category": "dtx",
-      "atsHint": "greenhouse",
-      "slug": "pear-therapeutics",
-      "suspectSlug": true
-    },
-    {
-      "name": "Akili Interactive",
-      "category": "dtx",
-      "atsHint": "greenhouse",
-      "slug": "akili-interactive",
-      "suspectSlug": true
-    },
-    {
-      "name": "Big Health",
-      "category": "dtx",
-      "atsHint": "greenhouse",
-      "slug": "bighealth"
-    },
-    {
-      "name": "athenahealth",
-      "category": "ehr",
-      "atsHint": "greenhouse",
-      "slug": "athenahealth",
-      "suspectSlug": true
-    },
-    {
-      "name": "NextGen Healthcare",
-      "category": "ehr",
-      "atsHint": "workday",
-      "slug": "nextgen-healthcare"
-    },
-    {
-      "name": "eClinicalWorks",
-      "category": "ehr",
-      "atsHint": "workday",
-      "slug": "eclinicalworks"
-    },
-    {
-      "name": "Allscripts",
-      "category": "ehr",
-      "atsHint": "workday",
-      "slug": "allscripts"
-    },
-    {
-      "name": "Greenway Health",
-      "category": "ehr",
-      "atsHint": "greenhouse",
-      "slug": "greenway-health",
-      "suspectSlug": true
-    },
-    {
-      "name": "Practice Fusion",
-      "category": "ehr",
-      "atsHint": "greenhouse",
-      "slug": "practice-fusion",
-      "suspectSlug": true
-    },
-    {
-      "name": "Kareo",
-      "category": "ehr",
-      "atsHint": "greenhouse",
-      "slug": "kareo",
-      "suspectSlug": true
-    },
-    {
-      "name": "Tebra",
-      "category": "ehr",
-      "atsHint": "greenhouse",
-      "slug": "tebra",
-      "dreamList": true,
-      "dreamListFor": "geetu"
-    },
-    {
-      "name": "Modernizing Medicine",
-      "category": "ehr",
-      "atsHint": "greenhouse",
-      "slug": "modernizing-medicine",
-      "suspectSlug": true
-    },
-    {
-      "name": "Nextech Systems",
-      "category": "ehr",
-      "atsHint": "greenhouse",
-      "slug": "nextech-systems",
-      "suspectSlug": true
-    },
-    {
-      "name": "SRS Health",
-      "category": "ehr",
-      "atsHint": "greenhouse",
-      "slug": "srs-health",
-      "suspectSlug": true
-    },
-    {
-      "name": "Veradigm",
-      "category": "ehr",
-      "atsHint": "greenhouse",
-      "slug": "veradigm",
-      "suspectSlug": true
-    },
-    {
-      "name": "Inovalon",
-      "category": "life-sciences-data",
-      "atsHint": "greenhouse",
-      "slug": "inovalon"
-    },
-    {
-      "name": "Vatic Health",
-      "category": "hit-ai",
-      "atsHint": "greenhouse",
-      "slug": "vatic-health",
-      "suspectSlug": true
-    },
-    {
-      "name": "Iodine Software",
-      "category": "hit-ai",
-      "atsHint": "greenhouse",
-      "slug": "iodinesoftware"
-    },
-    {
-      "name": "Augmedix",
-      "category": "hit-ai",
-      "atsHint": "greenhouse",
-      "slug": "augmedix"
-    },
-    {
-      "name": "Abridge",
-      "category": "hit-ai",
-      "atsHint": "ashby",
-      "slug": "abridge"
-    },
-    {
-      "name": "Nuance Communications",
-      "category": "hit-ai",
-      "atsHint": "workday",
-      "slug": "nuance-communications"
-    },
-    {
-      "name": "Hyro",
-      "category": "hit-ai",
-      "atsHint": "lever",
-      "slug": "hyro"
-    },
-    {
-      "name": "Notable Health",
-      "category": "hit-ai",
-      "atsHint": "greenhouse",
-      "slug": "notablehealth"
-    },
-    {
-      "name": "Olive AI",
-      "category": "hit-ai",
-      "atsHint": "greenhouse",
-      "slug": "olive-ai",
-      "suspectSlug": true
-    },
-    {
-      "name": "Innovaccer",
-      "category": "hit-ai",
-      "atsHint": "greenhouse",
-      "slug": "innovaccer"
-    },
-    {
-      "name": "Persistent Systems Healthcare",
-      "category": "hit-ai",
-      "atsHint": "workday",
-      "slug": "persistent-systems-healthcare"
-    },
-    {
-      "name": "Arcadia",
-      "category": "hit-ai",
-      "atsHint": "greenhouse",
-      "slug": "arcadia"
-    },
-    {
-      "name": "Carta Healthcare",
-      "category": "clinical-trials",
-      "atsHint": "lever",
-      "slug": "cartahealthcare"
-    },
-    {
-      "name": "Medidata Solutions",
-      "category": "clinical-trials",
-      "atsHint": "workday",
-      "slug": "medidata-solutions"
-    },
-    {
-      "name": "IQVIA",
-      "category": "clinical-trials",
-      "atsHint": "workday",
-      "slug": "iqvia"
-    },
-    {
-      "name": "ICON plc",
-      "category": "clinical-trials",
-      "atsHint": "workday",
-      "slug": "icon"
-    },
-    {
-      "name": "Parexel",
-      "category": "clinical-trials",
-      "atsHint": "workday",
-      "slug": "parexel"
-    },
-    {
-      "name": "Syneos Health",
-      "category": "clinical-trials",
-      "atsHint": "workday",
-      "slug": "syneos-health"
-    },
-    {
-      "name": "PPD",
-      "category": "clinical-trials",
-      "atsHint": "workday",
-      "slug": "ppd"
-    },
-    {
-      "name": "Saama Technologies",
-      "category": "clinical-trials",
-      "atsHint": "greenhouse",
-      "slug": "saama-technologies",
-      "suspectSlug": true
-    },
-    {
-      "name": "Castor",
-      "category": "clinical-trials",
-      "atsHint": "greenhouse",
-      "slug": "castor",
-      "suspectSlug": true
-    },
-    {
-      "name": "Florence Healthcare",
-      "category": "clinical-trials",
-      "atsHint": "greenhouse",
-      "slug": "florence-healthcare",
-      "suspectSlug": true
-    },
-    {
-      "name": "Reify Health",
-      "category": "clinical-trials",
-      "atsHint": "greenhouse",
-      "slug": "reify-health",
-      "suspectSlug": true
-    },
-    {
-      "name": "Suvoda",
-      "category": "clinical-trials",
-      "atsHint": "greenhouse",
-      "slug": "suvoda"
-    },
-    {
-      "name": "Tempus",
-      "category": "life-sciences-data",
-      "atsHint": "greenhouse",
-      "slug": "tempus",
-      "suspectSlug": true
-    },
-    {
-      "name": "Flatiron Health",
-      "category": "life-sciences-data",
-      "atsHint": "greenhouse",
-      "slug": "flatironhealth"
-    },
-    {
-      "name": "Foundation Medicine",
-      "category": "life-sciences-data",
-      "atsHint": "greenhouse",
-      "slug": "foundationmedicine",
-      "suspectSlug": true
-    },
-    {
-      "name": "Color Health",
-      "category": "life-sciences-data",
-      "atsHint": "lever",
-      "slug": "color"
-    },
-    {
-      "name": "Invitae",
-      "category": "life-sciences-data",
-      "atsHint": "greenhouse",
-      "slug": "invitae",
-      "suspectSlug": true
-    },
-    {
-      "name": "Helix",
-      "category": "life-sciences-data",
-      "atsHint": "greenhouse",
-      "slug": "helix"
-    },
-    {
-      "name": "23andMe",
-      "category": "life-sciences-data",
-      "atsHint": "greenhouse",
-      "slug": "23andme"
-    },
-    {
-      "name": "Ancestry",
-      "category": "life-sciences-data",
-      "atsHint": "greenhouse",
-      "slug": "ancestry",
-      "suspectSlug": true
-    },
-    {
-      "name": "Verana Health",
-      "category": "life-sciences-data",
-      "atsHint": "greenhouse",
-      "slug": "veranahealth"
-    },
-    {
-      "name": "OM1",
-      "category": "life-sciences-data",
-      "atsHint": "greenhouse",
-      "slug": "om1"
-    },
-    {
-      "name": "Trialspark (Formation Bio)",
-      "category": "clinical-trials",
-      "atsHint": "ashby",
-      "slug": "formationbio"
-    },
-    {
-      "name": "Prescryptive Health",
-      "category": "pharma-tech",
-      "atsHint": "workable",
-      "slug": "prescryptive"
-    },
-    {
-      "name": "GoodRx",
-      "category": "pharma-tech",
-      "atsHint": "greenhouse",
-      "slug": "goodrx"
-    },
-    {
-      "name": "Alto Pharmacy",
-      "category": "pharma-tech",
-      "atsHint": "greenhouse",
-      "slug": "alto"
-    },
-    {
-      "name": "Capsule",
-      "category": "pharma-tech",
-      "atsHint": "greenhouse",
-      "slug": "capsule"
-    },
-    {
-      "name": "PillPack (Amazon)",
-      "category": "pharma-tech",
-      "atsHint": "amazon",
-      "slug": "pillpack"
-    },
-    {
-      "name": "Truepill",
-      "category": "pharma-tech",
-      "atsHint": "greenhouse",
-      "slug": "truepill"
-    },
-    {
-      "name": "Honeybee Health",
-      "category": "pharma-tech",
-      "atsHint": "ashby",
-      "slug": "honeybeehealth"
-    },
-    {
-      "name": "DrFirst",
-      "category": "pharma-tech",
-      "atsHint": "greenhouse",
-      "slug": "drfirst",
-      "suspectSlug": true
-    },
-    {
-      "name": "Surescripts",
-      "category": "pharma-tech",
-      "atsHint": "workday",
-      "slug": "surescripts"
-    },
-    {
-      "name": "Rx Savings Solutions",
-      "category": "pharma-tech",
-      "atsHint": "greenhouse",
-      "slug": "rx-savings-solutions",
-      "suspectSlug": true
-    },
-    {
-      "name": "Phreesia",
-      "category": "provider-tech",
-      "atsHint": "greenhouse",
-      "slug": "phreesia",
-      "suspectSlug": true
-    },
-    {
-      "name": "Kyruus",
-      "category": "provider-tech",
-      "atsHint": "greenhouse",
-      "slug": "kyruus",
-      "suspectSlug": true
-    },
-    {
-      "name": "Zocdoc",
-      "category": "healthcare-marketplace",
-      "atsHint": "greenhouse",
-      "slug": "zocdoc",
-      "dreamList": true,
-      "dreamListFor": "geetu"
-    },
-    {
-      "name": "Solv Health",
-      "category": "healthcare-marketplace",
-      "atsHint": "greenhouse",
-      "slug": "solvhealth"
-    },
-    {
-      "name": "Galileo Health",
-      "category": "telehealth",
-      "atsHint": "greenhouse",
-      "slug": "galileo"
-    },
-    {
-      "name": "PlushCare",
-      "category": "telehealth",
-      "atsHint": "greenhouse",
-      "slug": "plushcare",
-      "suspectSlug": true
-    },
-    {
-      "name": "Ro",
-      "category": "telehealth",
-      "atsHint": "greenhouse",
-      "slug": "ro"
-    },
-    {
-      "name": "Sesame Care",
-      "category": "telehealth",
-      "atsHint": "ashby",
-      "slug": "sesame"
-    },
-    {
-      "name": "Heal",
-      "category": "telehealth",
-      "atsHint": "greenhouse",
-      "slug": "heal",
-      "suspectSlug": true
-    },
-    {
-      "name": "MDLive",
-      "category": "telehealth",
-      "atsHint": "workday",
-      "slug": "mdlive"
-    },
-    {
-      "name": "Amwell",
-      "category": "telehealth",
-      "atsHint": "greenhouse",
-      "slug": "amwell"
-    },
-    {
-      "name": "Doctor on Demand",
-      "category": "telehealth",
-      "atsHint": "greenhouse",
-      "slug": "doctor-on-demand",
-      "suspectSlug": true
-    },
-    {
-      "name": "K Health",
-      "category": "telehealth",
-      "atsHint": "greenhouse",
-      "slug": "khealth",
-      "dreamList": true,
-      "dreamListFor": "geetu",
-      "suspectSlug": true
-    },
-    {
-      "name": "Sword Health",
-      "category": "dtx",
-      "atsHint": "lever",
-      "slug": "swordhealth"
-    },
-    {
-      "name": "Kaia Health",
-      "category": "dtx",
-      "atsHint": "greenhouse",
-      "slug": "kaia-health",
-      "suspectSlug": true
-    },
-    {
-      "name": "Vida Health",
-      "category": "dtx",
-      "atsHint": "greenhouse",
-      "slug": "vida-health",
-      "suspectSlug": true
-    },
-    {
-      "name": "Virta Health",
-      "category": "dtx",
-      "atsHint": "greenhouse",
-      "slug": "virtahealth"
-    },
-    {
-      "name": "Brightline",
-      "category": "dtx",
-      "atsHint": "greenhouse",
-      "slug": "hellobrightline"
-    },
-    {
-      "name": "Cerebral",
-      "category": "telehealth",
-      "atsHint": "greenhouse",
-      "slug": "cerebral"
-    },
-    {
-      "name": "Talkspace",
-      "category": "telehealth",
-      "atsHint": "greenhouse",
-      "slug": "talkspace"
-    },
-    {
-      "name": "BetterHelp",
-      "category": "telehealth",
-      "atsHint": "greenhouse",
-      "slug": "betterhelp"
-    },
-    {
-      "name": "Octave",
-      "category": "telehealth",
-      "atsHint": "greenhouse",
-      "slug": "octave"
-    },
-    {
-      "name": "Alma",
-      "category": "provider-tech",
-      "atsHint": "greenhouse",
-      "slug": "alma"
-    },
-    {
-      "name": "SonderMind",
-      "category": "provider-tech",
-      "atsHint": "ashby",
-      "slug": "sondermind"
-    },
-    {
-      "name": "Grow Therapy",
-      "category": "provider-tech",
-      "atsHint": "greenhouse",
-      "slug": "growtherapy"
-    },
-    {
-      "name": "Found",
-      "category": "dtx",
-      "atsHint": "greenhouse",
-      "slug": "found"
-    },
-    {
-      "name": "Noom",
-      "category": "dtx",
-      "atsHint": "greenhouse",
-      "slug": "noom",
-      "suspectSlug": true
-    },
-    {
-      "name": "WW (Weight Watchers)",
-      "category": "dtx",
-      "atsHint": "workday",
-      "slug": "ww"
-    },
-    {
-      "name": "Cala Health",
-      "category": "dtx",
-      "atsHint": "greenhouse",
-      "slug": "cala-health",
-      "suspectSlug": true
-    },
-    {
-      "name": "Verily Life Sciences",
-      "category": "hit-ai",
-      "atsHint": "google",
-      "slug": "verily-life-sciences"
-    },
-    {
-      "name": "Tendo",
-      "category": "provider-tech",
-      "atsHint": "greenhouse",
-      "slug": "tendo",
-      "suspectSlug": true
-    },
-    {
-      "name": "Stedi",
-      "category": "healthcare-fintech",
-      "atsHint": "ashby",
-      "slug": "stedi"
-    },
-    {
-      "name": "Akasa",
-      "category": "healthcare-fintech",
-      "atsHint": "greenhouse",
-      "slug": "akasa"
-    },
-    {
-      "name": "Olive",
-      "category": "healthcare-fintech",
-      "atsHint": "greenhouse",
-      "slug": "olive",
-      "suspectSlug": true
-    },
-    {
-      "name": "Waystar",
-      "category": "healthcare-fintech",
-      "atsHint": "workday",
-      "slug": "waystar"
-    },
-    {
-      "name": "Vyne Dental",
-      "category": "healthcare-fintech",
-      "atsHint": "greenhouse",
-      "slug": "vyne-dental",
-      "suspectSlug": true
-    },
-    {
-      "name": "Collective Health",
-      "category": "payer-tech",
-      "atsHint": "greenhouse",
-      "slug": "collectivehealth"
-    },
-    {
-      "name": "Sana Benefits",
-      "category": "payer-tech",
-      "atsHint": "greenhouse",
-      "slug": "sanabenefits"
-    },
-    {
-      "name": "Decent",
-      "category": "payer-tech",
-      "atsHint": "greenhouse",
-      "slug": "decent"
-    },
-    {
-      "name": "Centivo",
-      "category": "payer-tech",
-      "atsHint": "greenhouse",
-      "slug": "centivo"
-    },
-    {
-      "name": "Imagine Pediatrics",
-      "category": "provider-tech",
-      "atsHint": "greenhouse",
-      "slug": "imagine-pediatrics",
-      "suspectSlug": true
-    },
-    {
-      "name": "Cityblock Health",
-      "category": "provider-tech",
-      "atsHint": "ashby",
-      "slug": "cityblock"
-    },
-    {
-      "name": "ChenMed",
-      "category": "provider-tech",
-      "atsHint": "workday",
-      "slug": "chenmed"
-    },
-    {
-      "name": "VillageMD",
-      "category": "provider-tech",
-      "atsHint": "workday",
-      "slug": "villagemd"
-    },
-    {
-      "name": "One Medical (Amazon)",
-      "category": "provider-tech",
-      "atsHint": "amazon",
-      "slug": "onemedical"
-    },
-    {
-      "name": "Forward",
-      "category": "provider-tech",
-      "atsHint": "greenhouse",
-      "slug": "forward"
-    },
-    {
-      "name": "Carbon Health",
-      "category": "provider-tech",
-      "atsHint": "lever",
-      "slug": "carbonhealth"
-    },
-    {
-      "name": "Iora Health (One Medical)",
-      "category": "provider-tech",
-      "atsHint": "greenhouse",
-      "slug": "iora-health",
-      "suspectSlug": true
-    },
-    {
-      "name": "Aledade",
-      "category": "vbc",
-      "atsHint": "lever",
-      "slug": "aledade"
-    },
-    {
-      "name": "Strive Health",
-      "category": "vbc",
-      "atsHint": "greenhouse",
-      "slug": "strivehealth"
-    },
-    {
-      "name": "Privia Health",
-      "category": "vbc",
-      "atsHint": "greenhouse",
-      "slug": "priviahealth",
-      "suspectSlug": true
-    },
-    {
-      "name": "Wayspring",
-      "category": "vbc",
-      "atsHint": "lever",
-      "slug": "wayspring",
-      "suspectSlug": true
-    },
-    {
-      "name": "Pearl Health",
-      "category": "vbc",
-      "atsHint": "greenhouse",
-      "slug": "pearl-health"
-    },
-    {
-      "name": "Cohere Health",
-      "category": "payer-tech",
-      "atsHint": "greenhouse",
-      "slug": "coherehealth"
-    },
-    {
-      "name": "Lyric (formerly ClaimsXten)",
-      "category": "payer-tech",
-      "atsHint": "greenhouse",
-      "slug": "lyrichealth",
-      "suspectSlug": true
-    },
-    {
-      "name": "HealthEdge",
-      "category": "payer-tech",
-      "atsHint": "greenhouse",
-      "slug": "healthedge",
-      "suspectSlug": true
-    },
-    {
-      "name": "Vatica Health",
-      "category": "payer-tech",
-      "atsHint": "lever",
-      "slug": "vaticahealth",
-      "suspectSlug": true
-    },
-    {
-      "name": "Datavant",
-      "category": "life-sciences-data",
-      "atsHint": "greenhouse",
-      "slug": "datavant"
-    },
-    {
-      "name": "Particle Health",
-      "category": "interop",
-      "atsHint": "greenhouse",
-      "slug": "particlehealth"
-    },
-    {
-      "name": "Aetion",
-      "category": "life-sciences-data",
-      "atsHint": "greenhouse",
-      "slug": "aetion"
-    },
-    {
-      "name": "HealthVerity",
-      "category": "life-sciences-data",
-      "atsHint": "greenhouse",
-      "slug": "healthverity"
-    },
-    {
-      "name": "Apixio",
-      "category": "payer-tech",
-      "atsHint": "greenhouse",
-      "slug": "apixio",
-      "suspectSlug": true
-    },
-    {
-      "name": "ClearDATA",
-      "category": "infra",
-      "atsHint": "greenhouse",
-      "slug": "cleardata",
-      "suspectSlug": true
-    },
-    {
-      "name": "Hippocratic AI",
-      "category": "clinical-ai",
-      "atsHint": "ashby",
-      "slug": "hippocratic-ai"
-    },
-    {
-      "name": "Memora Health",
-      "category": "care-navigation",
-      "atsHint": "greenhouse",
-      "slug": "memorahealth"
-    },
-    {
-      "name": "Curai Health",
-      "category": "telehealth",
-      "atsHint": "lever",
-      "slug": "curai"
-    },
-    {
-      "name": "Sprinter Health",
-      "category": "home-health",
-      "atsHint": "greenhouse",
-      "slug": "sprinter"
-    },
-    {
-      "name": "Tomorrow Health",
-      "category": "home-health",
-      "atsHint": "greenhouse",
-      "slug": "tomorrow"
-    },
-    {
-      "name": "Forge Health",
-      "category": "behavioral",
-      "atsHint": "lever",
-      "slug": "forgehealth",
-      "suspectSlug": true
-    },
-    {
-      "name": "Wellth",
-      "category": "chronic-care",
-      "atsHint": "lever",
-      "slug": "wellth"
-    },
-    {
-      "name": "Spark Advisors",
-      "category": "medicare",
-      "atsHint": "ashby",
-      "slug": "sparkadvisors"
-    },
-    {
-      "name": "Hims & Hers",
-      "category": "Mid-stage healthtech SaaS",
-      "atsHint": "ashby",
-      "slug": "hims",
-      "suspectSlug": true
-    },
-    {
-      "name": "Calibrate",
-      "category": "Value-based care",
-      "atsHint": "workable",
-      "slug": "calibrate"
-    },
-    {
-      "name": "Included Health",
-      "category": "Mid-stage healthtech SaaS",
-      "atsHint": "lever",
-      "slug": "includedhealth"
-    },
-    {
-      "name": "Commure",
-      "category": "Mid-stage healthtech SaaS",
-      "atsHint": "lever",
-      "slug": "commure"
-    },
-    {
-      "name": "Oak Street Health",
-      "category": "Value-based care",
-      "atsHint": "greenhouse",
-      "slug": "oakstreethealth",
-      "suspectSlug": true
-    },
-    {
-      "name": "Vivante Health",
-      "category": "Mid-stage healthtech SaaS",
-      "atsHint": "greenhouse",
-      "slug": "vivante"
-    },
-    {
-      "name": "Curana Health",
-      "category": "Value-based care",
-      "atsHint": "lever",
-      "slug": "curanahealth",
-      "suspectSlug": true
-    },
-    {
-      "name": "Natera",
-      "category": "Medical devices + diagnostics",
-      "atsHint": "greenhouse",
-      "slug": "natera"
-    },
-    {
-      "name": "Guardant Health",
-      "category": "Medical devices + diagnostics",
-      "atsHint": "greenhouse",
-      "slug": "guardanthealth",
-      "suspectSlug": true
-    },
-    {
-      "name": "Clarify Health",
-      "category": "Real-world data / life-sciences analytics",
-      "atsHint": "lever",
-      "slug": "clarifyhealth"
-    },
-    {
-      "name": "Redox",
-      "category": "Health-IT compliance / interoperability",
-      "atsHint": "lever",
-      "slug": "redoxengine"
-    },
-    {
-      "name": "Medable",
-      "category": "Real-world data / life-sciences analytics",
-      "atsHint": "greenhouse",
-      "slug": "medable"
-    },
-    {
-      "name": "TriNetX",
-      "category": "Real-world data / life-sciences analytics",
-      "atsHint": "lever",
-      "slug": "trinetx"
-    },
-    {
-      "name": "Bright Health",
-      "category": "Health insurers + payers",
-      "atsHint": "greenhouse",
-      "slug": "brighthealth",
-      "suspectSlug": true
-    },
-    {
-      "name": "Landmark Health",
-      "category": "Value-based care",
-      "atsHint": "greenhouse",
-      "slug": "landmarkhealth"
-    },
-    {
-      "name": "Agilon Health",
-      "category": "Value-based care",
-      "atsHint": "greenhouse",
-      "slug": "agilonhealth",
-      "suspectSlug": true
-    },
-    {
-      "name": "Signify Health",
-      "category": "Value-based care",
-      "atsHint": "greenhouse",
-      "slug": "signifyhealth",
-      "suspectSlug": true
-    },
-    {
-      "name": "LifeStance Health",
-      "category": "Telehealth",
-      "atsHint": "greenhouse",
-      "slug": "lifestance",
-      "suspectSlug": true
-    },
-    {
-      "name": "Ginger",
-      "category": "Telehealth",
-      "atsHint": "greenhouse",
-      "slug": "ginger",
-      "suspectSlug": true
-    },
-    {
-      "name": "HealthTap",
-      "category": "Telehealth",
-      "atsHint": "lever",
-      "slug": "healthtap",
-      "suspectSlug": true
-    },
-    {
-      "name": "98point6",
-      "category": "Telehealth",
-      "atsHint": "greenhouse",
-      "slug": "98point6",
-      "suspectSlug": true
-    },
-    {
-      "name": "Accolade",
-      "category": "Payer-tech",
-      "atsHint": "greenhouse",
-      "slug": "accolade",
-      "suspectSlug": true
-    },
-    {
-      "name": "Bind Benefits",
-      "category": "Payer-tech",
-      "atsHint": "greenhouse",
-      "slug": "bindon-demandhealth",
-      "suspectSlug": true
-    },
-    {
-      "name": "Bright HealthCare",
-      "category": "Payer-tech",
-      "atsHint": "greenhouse",
-      "slug": "brighthealthcare",
-      "suspectSlug": true
-    },
-    {
-      "name": "Sidecar Health",
-      "category": "Payer-tech",
-      "atsHint": "lever",
-      "slug": "sidecarhealth"
-    },
-    {
-      "name": "Gravie",
-      "category": "Payer-tech",
-      "atsHint": "greenhouse",
-      "slug": "gravie"
-    },
-    {
-      "name": "Wellthy",
-      "category": "Payer-tech",
-      "atsHint": "lever",
-      "slug": "wellthy"
-    },
-    {
-      "name": "Zelis",
-      "category": "Payer-tech",
-      "atsHint": "greenhouse",
-      "slug": "zelis",
-      "suspectSlug": true
-    },
-    {
-      "name": "Castlight Health",
-      "category": "Payer-tech",
-      "atsHint": "greenhouse",
-      "slug": "castlighthealth",
-      "suspectSlug": true
-    },
-    {
-      "name": "Glooko",
-      "category": "Payer-tech",
-      "atsHint": "lever",
-      "slug": "glooko"
-    },
-    {
-      "name": "Podimetrics",
-      "category": "Medical devices",
-      "atsHint": "lever",
-      "slug": "podimetrics"
-    },
-    {
-      "name": "10x Genomics",
-      "category": "Diagnostics",
-      "atsHint": "greenhouse",
-      "slug": "10xgenomics"
-    },
-    {
-      "name": "Pacific Biosciences",
-      "category": "Diagnostics",
-      "atsHint": "greenhouse",
-      "slug": "pacbio",
-      "suspectSlug": true
-    },
-    {
-      "name": "Adaptive Biotechnologies",
-      "category": "Diagnostics",
-      "atsHint": "greenhouse",
-      "slug": "adaptivebiotech",
-      "suspectSlug": true
-    },
-    {
-      "name": "Freenome",
-      "category": "Diagnostics",
-      "atsHint": "greenhouse",
-      "slug": "freenome"
-    },
-    {
-      "name": "Grail",
-      "category": "Diagnostics",
-      "atsHint": "greenhouse",
-      "slug": "grail",
-      "suspectSlug": true
-    },
-    {
-      "name": "Evidation Health",
-      "category": "Real-world data",
-      "atsHint": "lever",
-      "slug": "evidation"
-    },
-    {
-      "name": "DrChrono",
-      "category": "EHR-adjacent",
-      "atsHint": "lever",
-      "slug": "drchrono"
-    },
-    {
-      "name": "Canvas Medical",
-      "category": "EHR-adjacent",
-      "atsHint": "lever",
-      "slug": "canvasmedical"
-    },
-    {
-      "name": "Elation Health",
-      "category": "EHR-adjacent",
-      "atsHint": "lever",
-      "slug": "elationhealth"
-    },
-    {
-      "name": "PatientPing",
-      "category": "Interoperability",
-      "atsHint": "lever",
-      "slug": "patientping"
-    },
-    {
-      "name": "Health Gorilla",
-      "category": "Interoperability",
-      "atsHint": "lever",
-      "slug": "healthgorilla"
-    },
-    {
-      "name": "Bamboo Health",
-      "category": "Interoperability",
-      "atsHint": "greenhouse",
-      "slug": "bamboohealth",
-      "suspectSlug": true
-    },
-    {
-      "name": "1upHealth",
-      "category": "Interoperability",
-      "atsHint": "lever",
-      "slug": "1uphealth"
-    },
-    {
-      "name": "Protenus",
-      "category": "Compliance",
-      "atsHint": "lever",
-      "slug": "protenus",
-      "suspectSlug": true
-    },
-    {
-      "name": "Tandem Diabetes",
-      "category": "Medical devices",
-      "atsHint": "greenhouse",
-      "slug": "tandemdiabetes",
-      "suspectSlug": true
-    },
-    {
-      "name": "DexCare",
-      "category": "Healthtech SaaS",
-      "atsHint": "greenhouse",
-      "slug": "dexcare"
-    },
-    {
-      "name": "Zoom+Care",
-      "category": "Value-based care",
-      "atsHint": "lever",
-      "slug": "zoomcare",
-      "suspectSlug": true
-    },
-    {
-      "name": "PatientPop",
-      "category": "Healthtech SaaS",
-      "atsHint": "lever",
-      "slug": "patientpop",
-      "suspectSlug": true
-    },
-    {
-      "name": "Strata Decision Technology",
-      "category": "Healthtech SaaS",
-      "atsHint": "lever",
-      "slug": "stratadecision"
-    },
-    {
-      "name": "Medely",
-      "category": "Healthtech SaaS",
-      "atsHint": "lever",
-      "slug": "medely"
-    },
-    {
-      "name": "ShiftMed",
-      "category": "Healthtech SaaS",
-      "atsHint": "greenhouse",
-      "slug": "shiftmed"
-    },
-    {
-      "name": "Trusted Health",
-      "category": "Healthtech SaaS",
-      "atsHint": "lever",
-      "slug": "trustedhealth"
-    },
-    {
-      "name": "Incredible Health",
-      "category": "Healthtech SaaS",
-      "atsHint": "lever",
-      "slug": "incrediblehealth"
-    },
-    {
-      "name": "CareRev",
-      "category": "Healthtech SaaS",
-      "atsHint": "lever",
-      "slug": "carerev"
-    },
-    {
-      "name": "Wheel",
-      "category": "Healthtech SaaS",
-      "atsHint": "greenhouse",
-      "slug": "wheel"
-    },
-    {
-      "name": "DispatchHealth",
-      "category": "Value-based care",
-      "atsHint": "greenhouse",
-      "slug": "dispatchhealth"
-    },
-    {
-      "name": "CareDox",
-      "category": "Healthtech SaaS",
-      "atsHint": "lever",
-      "slug": "caredox"
-    },
-    {
-      "name": "Unite Us",
-      "category": "Healthtech SaaS",
-      "atsHint": "greenhouse",
-      "slug": "uniteus"
-    },
-    {
-      "name": "Violet",
-      "category": "Healthtech SaaS",
-      "atsHint": "ashby",
-      "slug": "violet"
-    },
-    {
-      "name": "Wingspan Health",
-      "category": "Payer-tech",
-      "atsHint": "lever",
-      "slug": "wingspanhealth",
-      "suspectSlug": true
-    },
-    {
-      "name": "CodaMetrix",
-      "category": "Clinical-AI",
-      "atsHint": "lever",
-      "slug": "codametrix"
-    },
-    {
-      "name": "Notable",
-      "category": "Clinical-AI",
-      "atsHint": "greenhouse",
-      "slug": "notablehealth"
-    },
-    {
-      "name": "Suki",
-      "category": "Clinical-AI",
-      "atsHint": "lever",
-      "slug": "suki"
-    },
-    {
-      "name": "DeepScribe",
-      "category": "Clinical-AI",
-      "atsHint": "lever",
-      "slug": "deepscribe"
-    },
-    {
-      "name": "Aidoc",
-      "category": "Clinical-AI",
-      "atsHint": "lever",
-      "slug": "aidoc"
-    },
-    {
-      "name": "Viz.ai",
-      "category": "Clinical-AI",
-      "atsHint": "greenhouse",
-      "slug": "vizai"
-    },
-    {
-      "name": "Paige",
-      "category": "Clinical-AI",
-      "atsHint": "lever",
-      "slug": "paige"
-    },
-    {
-      "name": "PathAI",
-      "category": "Clinical-AI",
-      "atsHint": "lever",
-      "slug": "pathai"
-    },
-    {
-      "name": "Insitro",
-      "category": "Pharma + biotech",
-      "atsHint": "greenhouse",
-      "slug": "insitro"
-    },
-    {
-      "name": "Recursion Pharmaceuticals",
-      "category": "Pharma + biotech",
-      "atsHint": "greenhouse",
-      "slug": "recursionpharma",
-      "suspectSlug": true
-    },
-    {
-      "name": "AbCellera",
-      "category": "Pharma + biotech",
-      "atsHint": "lever",
-      "slug": "abcellera"
-    },
-    {
-      "name": "Editas Medicine",
-      "category": "Pharma + biotech",
-      "atsHint": "greenhouse",
-      "slug": "editasmedicine",
-      "suspectSlug": true
-    },
-    {
-      "name": "Intellia Therapeutics",
-      "category": "Pharma + biotech",
-      "atsHint": "greenhouse",
-      "slug": "intelliatx",
-      "suspectSlug": true
-    },
-    {
-      "name": "Sage Therapeutics",
-      "category": "Pharma + biotech",
-      "atsHint": "greenhouse",
-      "slug": "sagerx",
-      "suspectSlug": true
-    },
-    {
-      "name": "Ultragenyx",
-      "category": "Pharma + biotech",
-      "atsHint": "greenhouse",
-      "slug": "ultragenyx",
-      "suspectSlug": true
-    },
-    {
-      "name": "Ginkgo Bioworks",
-      "category": "Pharma + biotech",
-      "atsHint": "greenhouse",
-      "slug": "ginkgobioworks"
-    },
-    {
-      "name": "Sana Biotechnology",
-      "category": "Pharma + biotech",
-      "atsHint": "greenhouse",
-      "slug": "sanabiotechnology"
-    },
-    {
-      "name": "ArsenalBio",
-      "category": "Pharma + biotech",
-      "atsHint": "lever",
-      "slug": "arsenalbio"
-    },
-    {
-      "name": "Kallyope",
-      "category": "Pharma + biotech",
-      "atsHint": "lever",
-      "slug": "kallyope"
-    },
-    {
-      "name": "Denali Therapeutics",
-      "category": "Pharma + biotech",
-      "atsHint": "greenhouse",
-      "slug": "denalitherapeutics",
-      "suspectSlug": true
-    },
-    {
-      "name": "Slalom",
-      "category": "from-contacts",
-      "atsHint": "greenhouse",
-      "slug": "slalomconsulting",
-      "suspectSlug": true
-    },
-    {
-      "name": "EliseAI",
-      "category": "from-contacts",
-      "atsHint": "lever",
-      "slug": "eliseai"
-    },
-    {
-      "name": "Rewst",
-      "category": "from-contacts",
-      "atsHint": "greenhouse",
-      "slug": "rewst"
-    },
-    {
-      "name": "Klara",
-      "category": "from-contacts",
-      "atsHint": "greenhouse",
-      "slug": "klara"
-    },
-    {
-      "name": "LaserAway",
-      "category": "from-contacts",
-      "atsHint": "greenhouse",
-      "slug": "laseraway"
-    },
-    {
-      "name": "NexHealth",
-      "category": "dream-list-geetu",
-      "atsHint": "ashby",
-      "slug": "nexhealth",
-      "vertical": "healthcare",
-      "dreamList": true,
-      "dreamListFor": "geetu"
-    },
-    {
-      "name": "Pager Health",
-      "category": "dream-list-geetu",
-      "atsHint": "greenhouse",
-      "slug": "pagerhealth",
-      "vertical": "healthcare",
-      "dreamList": true,
-      "dreamListFor": "geetu"
-    },
-    {
-      "name": "Huge",
-      "category": "dream-list-geetu",
-      "atsHint": "greenhouse",
-      "slug": "huge",
-      "vertical": "media",
-      "dreamList": true,
-      "dreamListFor": "geetu",
-      "suspectSlug": true
-    },
-    {
-      "name": "Huntress",
-      "category": "dream-list-geetu",
-      "atsHint": "greenhouse",
-      "slug": "huntresslabs",
-      "vertical": "tech",
-      "dreamList": true,
-      "dreamListFor": "geetu"
-    },
-    {
-      "name": "Prescryptive",
-      "category": "dream-list-geetu",
-      "atsHint": "greenhouse",
-      "slug": "prescryptivehealth",
-      "vertical": "healthcare",
-      "dreamList": true,
-      "dreamListFor": "geetu",
-      "suspectSlug": true
-    },
-    {
-      "name": "Qventus",
-      "category": "dream-list-geetu",
-      "atsHint": "lever",
-      "slug": "qventus",
-      "vertical": "healthcare",
-      "dreamList": true,
-      "dreamListFor": "geetu"
-    },
-    {
-      "name": "Instacart",
-      "category": "dream-list-geetu",
-      "atsHint": "greenhouse",
-      "slug": "instacart",
-      "vertical": "consumer",
-      "dreamList": true,
-      "dreamListFor": "geetu"
-    },
-    {
-      "name": "Superhuman",
-      "category": "dream-list-geetu",
-      "atsHint": "lever",
-      "slug": "superhuman",
-      "vertical": "tech",
-      "dreamList": true,
-      "dreamListFor": "geetu"
-    },
-    {
-      "name": "Smarter Dx",
-      "category": "dream-list-geetu",
-      "atsHint": "greenhouse",
-      "slug": "smarterdx",
-      "vertical": "healthcare",
-      "dreamList": true,
-      "dreamListFor": "geetu"
-    },
-    {
-      "name": "Elastic",
-      "category": "dream-list-geetu",
-      "atsHint": "greenhouse",
-      "slug": "elastic",
-      "vertical": "tech",
-      "dreamList": true,
-      "dreamListFor": "geetu"
-    },
-    {
-      "name": "RxBenefits",
-      "category": "dream-list-geetu",
-      "atsHint": "greenhouse",
-      "slug": "rxbenefits",
-      "vertical": "healthcare",
-      "dreamList": true,
-      "dreamListFor": "geetu"
-    },
-    {
-      "name": "Cleerly",
-      "category": "dream-list-geetu",
-      "atsHint": "ashby",
-      "slug": "cleerly",
-      "vertical": "healthcare",
-      "dreamList": true,
-      "dreamListFor": "geetu"
-    },
-    {
-      "name": "Honor",
-      "category": "dream-list-geetu",
-      "atsHint": "greenhouse",
-      "slug": "honor",
-      "vertical": "healthcare",
-      "dreamList": true,
-      "dreamListFor": "geetu"
-    },
-    {
-      "name": "Lattice",
-      "category": "dream-list-geetu",
-      "atsHint": "greenhouse",
-      "slug": "lattice",
-      "vertical": "tech",
-      "dreamList": true,
-      "dreamListFor": "geetu"
-    },
-    {
-      "name": "Dropbox",
-      "category": "dream-list-geetu",
-      "atsHint": "greenhouse",
-      "slug": "dropbox",
-      "vertical": "tech",
-      "dreamList": true,
-      "dreamListFor": "geetu"
-    },
-    {
-      "name": "Guild",
-      "category": "dream-list-geetu",
-      "atsHint": "greenhouse",
-      "slug": "guild",
-      "vertical": "tech",
-      "dreamList": true,
-      "dreamListFor": "geetu"
-    },
-    {
-      "name": "Thrive Market",
-      "category": "dream-list-geetu",
-      "atsHint": "greenhouse",
-      "slug": "thrivemarket",
-      "vertical": "consumer",
-      "dreamList": true,
-      "dreamListFor": "geetu"
-    },
-    {
-      "name": "Ascend Analytics",
-      "category": "dream-list-geetu",
-      "atsHint": "lever",
-      "slug": "ascendanalytics",
-      "vertical": "tech",
-      "dreamList": true,
-      "dreamListFor": "geetu"
-    },
-    {
-      "name": "Anthropic",
-      "category": "dream-list-geetu",
-      "atsHint": "greenhouse",
-      "slug": "anthropic",
-      "vertical": "tech",
-      "dreamList": true,
-      "dreamListFor": "geetu"
-    },
-    {
-      "name": "AlphaSense",
-      "category": "dream-list-geetu",
-      "atsHint": "greenhouse",
-      "slug": "alphasense",
-      "vertical": "finance",
-      "dreamList": true,
-      "dreamListFor": "geetu"
-    },
-    {
-      "name": "Reddit",
-      "category": "dream-list-geetu",
-      "atsHint": "greenhouse",
-      "slug": "reddit",
-      "vertical": "tech",
-      "dreamList": true,
-      "dreamListFor": "geetu"
-    },
-    {
-      "name": "Celonis",
-      "category": "dream-list-geetu",
-      "atsHint": "greenhouse",
-      "slug": "celonis",
-      "vertical": "tech",
-      "dreamList": true,
-      "dreamListFor": "geetu",
-      "suspectSlug": true
-    },
-    {
-      "name": "Notion",
-      "category": "dream-list-geetu",
-      "atsHint": "ashby",
-      "slug": "notion",
-      "vertical": "tech",
-      "dreamList": true,
-      "dreamListFor": "geetu"
-    },
-    {
-      "name": "SmithRx",
-      "category": "dream-list-geetu",
-      "atsHint": "ashby",
-      "slug": "smithrx",
-      "vertical": "healthcare",
-      "dreamList": true,
-      "dreamListFor": "geetu"
-    },
-    {
-      "name": "Velocity Clinical Research",
-      "category": "Clinical Research / CRO",
-      "atsHint": "lever",
-      "slug": "velocityclinical"
-    },
-    {
-      "name": "WCG Clinical",
-      "category": "Clinical Research / CRO",
-      "atsHint": "greenhouse",
-      "slug": "wcgclinical",
-      "suspectSlug": true
-    },
-    {
-      "name": "Byte",
-      "category": "Dental + Vision Tech",
-      "atsHint": "greenhouse",
-      "slug": "byteme"
-    },
-    {
-      "name": "Candid",
-      "category": "Dental + Vision Tech",
-      "atsHint": "greenhouse",
-      "slug": "candidco"
-    },
-    {
-      "name": "Progyny",
-      "category": "Women's Health + Fertility",
-      "atsHint": "greenhouse",
-      "slug": "progyny",
-      "suspectSlug": true
-    },
-    {
-      "name": "Kindbody",
-      "category": "Women's Health + Fertility",
-      "atsHint": "greenhouse",
-      "slug": "kindbody"
-    },
-    {
-      "name": "Stork Club",
-      "category": "Women's Health + Fertility",
-      "atsHint": "lever",
-      "slug": "storkclub"
-    },
-    {
-      "name": "Ovia Health",
-      "category": "Women's Health + Fertility",
-      "atsHint": "greenhouse",
-      "slug": "oviahealth"
-    },
-    {
-      "name": "Mahmee",
-      "category": "Women's Health + Fertility",
-      "atsHint": "lever",
-      "slug": "mahmee"
-    },
-    {
-      "name": "Cleo",
-      "category": "Women's Health + Fertility",
-      "atsHint": "lever",
-      "slug": "meetcleo"
-    },
-    {
-      "name": "Bicycle Health",
-      "category": "Behavioral Health + Addiction Recovery",
-      "atsHint": "lever",
-      "slug": "bicyclehealth"
-    },
-    {
-      "name": "Eleanor Health",
-      "category": "Behavioral Health + Addiction Recovery",
-      "atsHint": "greenhouse",
-      "slug": "eleanorhealth"
-    },
-    {
-      "name": "Boulder Care",
-      "category": "Behavioral Health + Addiction Recovery",
-      "atsHint": "greenhouse",
-      "slug": "bouldercare"
-    },
-    {
-      "name": "Ophelia",
-      "category": "Behavioral Health + Addiction Recovery",
-      "atsHint": "greenhouse",
-      "slug": "ophelia"
-    },
-    {
-      "name": "Brightside Health",
-      "category": "Behavioral Health + Addiction Recovery",
-      "atsHint": "lever",
-      "slug": "brightside"
-    },
-    {
-      "name": "PointClickCare",
-      "category": "Post-Acute + Home Health + Long-Term Care",
-      "atsHint": "greenhouse",
-      "slug": "pointclickcare",
-      "suspectSlug": true
-    },
-    {
-      "name": "MatrixCare",
-      "category": "Post-Acute + Home Health + Long-Term Care",
-      "atsHint": "greenhouse",
-      "slug": "matrixcare",
-      "suspectSlug": true
-    },
-    {
-      "name": "CivicaRx",
-      "category": "Specialty Pharmacy + 340B",
-      "atsHint": "greenhouse",
-      "slug": "civicarx"
-    },
-    {
-      "name": "Imprivata",
-      "category": "Healthcare Cybersecurity + Privacy",
-      "atsHint": "greenhouse",
-      "slug": "imprivata",
-      "suspectSlug": true
-    },
-    {
-      "name": "Censinet",
-      "category": "Healthcare Cybersecurity + Privacy",
-      "atsHint": "lever",
-      "slug": "censinet"
-    },
-    {
-      "name": "Papa",
-      "category": "Senior Care + Caregiving Platforms",
-      "atsHint": "greenhouse",
-      "slug": "papa"
-    },
-    {
-      "name": "Carewell",
-      "category": "Senior Care + Caregiving Platforms",
-      "atsHint": "lever",
-      "slug": "carewell"
-    },
-    {
-      "name": "A Place for Mom",
-      "category": "Senior Care + Caregiving Platforms",
-      "atsHint": "greenhouse",
-      "slug": "aplaceformom"
-    },
-    {
-      "name": "Nurx",
-      "category": "Med-Aesthetic / Consumer Health",
-      "atsHint": "lever",
-      "slug": "nurx",
-      "suspectSlug": true
-    },
-    {
-      "name": "Curology",
-      "category": "Med-Aesthetic / Consumer Health",
-      "atsHint": "greenhouse",
-      "slug": "curology"
-    },
-    {
-      "name": "Keeps",
-      "category": "Med-Aesthetic / Consumer Health",
-      "atsHint": "lever",
-      "slug": "keeps"
-    },
-    {
-      "name": "Wisp",
-      "category": "Med-Aesthetic / Consumer Health",
-      "atsHint": "lever",
-      "slug": "helowisp"
-    },
-    {
-      "name": "Thirty Madison",
-      "category": "Med-Aesthetic / Consumer Health",
-      "atsHint": "greenhouse",
-      "slug": "thirtymadison"
-    },
-    {
-      "name": "Vetcove",
-      "category": "Veterinary Tech",
-      "atsHint": "lever",
-      "slug": "vetcove"
-    },
-    {
-      "name": "Altasciences",
-      "category": "Clinical Research / CRO",
-      "atsHint": "greenhouse",
-      "slug": "altasciences"
-    },
-    {
-      "name": "Stellar Dental",
-      "category": "Dental Tech",
-      "atsHint": "lever",
-      "slug": "stellar"
-    },
-    {
-      "name": "Tia",
-      "category": "Women's Health / Fertility",
-      "atsHint": "lever",
-      "slug": "asktia"
-    },
-    {
-      "name": "Spring Fertility",
-      "category": "Women's Health / Fertility",
-      "atsHint": "lever",
-      "slug": "springfertility"
-    },
-    {
-      "name": "WIN Fertility",
-      "category": "Women's Health / Fertility",
-      "atsHint": "greenhouse",
-      "slug": "winfertility"
-    },
-    {
-      "name": "Twentyeight Health",
-      "category": "Women's Health / Fertility",
-      "atsHint": "lever",
-      "slug": "twentyeighthealth"
-    },
-    {
-      "name": "Boulder Care",
-      "category": "Behavioral Health / Addiction",
-      "atsHint": "lever",
-      "slug": "boulder-care"
-    },
-    {
-      "name": "Workit Health",
-      "category": "Behavioral Health / Addiction",
-      "atsHint": "lever",
-      "slug": "workithealth"
-    },
-    {
-      "name": "Quit Genius",
-      "category": "Behavioral Health / Addiction",
-      "atsHint": "lever",
-      "slug": "quitgenius"
-    },
-    {
-      "name": "Charlie Health",
-      "category": "Behavioral Health",
-      "atsHint": "greenhouse",
-      "slug": "charliehealth"
-    },
-    {
-      "name": "AlayaCare",
-      "category": "Home Health Tech",
-      "atsHint": "greenhouse",
-      "slug": "alayacare"
-    },
-    {
-      "name": "CivicaScript",
-      "category": "Specialty Pharmacy",
-      "atsHint": "greenhouse",
-      "slug": "civica"
-    },
-    {
-      "name": "Capital Rx",
-      "category": "Specialty Pharmacy / PBM",
-      "atsHint": "greenhouse",
-      "slug": "capitalrx"
-    },
-    {
-      "name": "Optime Care",
-      "category": "Specialty Pharmacy",
-      "atsHint": "greenhouse",
-      "slug": "optimecare"
-    },
-    {
-      "name": "Honor",
-      "category": "Senior Care / Caregiving",
-      "atsHint": "greenhouse",
-      "slug": "joinhonor"
-    },
-    {
-      "name": "MedeAnalytics",
-      "category": "Healthcare Analytics / RCM",
-      "atsHint": "greenhouse",
-      "slug": "medeanalytics"
-    },
-    {
-      "name": "Wisp",
-      "category": "Women's Health / Consumer",
-      "atsHint": "lever",
-      "slug": "helwisp"
-    },
-    {
-      "name": "Revo Health",
-      "category": "Veterinary Tech",
-      "atsHint": "lever",
-      "slug": "revohealth"
-    },
-    {
-      "name": "Soundtalent",
-      "category": "Clinical Research / Decentralized Trials",
-      "atsHint": "lever",
-      "slug": "soundtalent"
-    },
-    {
-      "name": "Science 37",
-      "category": "Clinical Research / Decentralized Trials",
-      "atsHint": "greenhouse",
-      "slug": "science37"
-    },
-    {
-      "name": "Velocity Clinical Research",
-      "category": "Clinical Research / CRO",
-      "atsHint": "greenhouse",
-      "slug": "velocityclinicalresearch"
-    },
-    {
-      "name": "Advarra",
-      "category": "Clinical Research / CRO",
-      "atsHint": "greenhouse",
-      "slug": "advarra"
-    },
-    {
-      "name": "Warby Parker",
-      "category": "Dental + Vision Tech",
-      "atsHint": "greenhouse",
-      "slug": "warbyparker"
-    },
-    {
-      "name": "Symplr",
-      "category": "Healthcare Cybersecurity / Privacy",
-      "atsHint": "greenhouse",
-      "slug": "symplr"
-    },
-    {
-      "name": "Health Catalyst",
-      "category": "Health IT Infrastructure",
-      "atsHint": "greenhouse",
-      "slug": "healthcatalyst"
-    },
-    {
-      "name": "Brightside Health",
-      "category": "Behavioral Health / Addiction Recovery",
-      "atsHint": "greenhouse",
-      "slug": "joybrightsidehealth"
-    },
-    {
-      "name": "Capsule",
-      "category": "Specialty Pharmacy / 340B",
-      "atsHint": "greenhouse",
-      "slug": "capsulepharmacy"
-    },
-    {
-      "name": "GeneDx",
-      "category": "Diagnostics / Lab Services",
-      "atsHint": "greenhouse",
-      "slug": "genedx"
-    },
-    {
-      "name": "Cricket Health",
-      "category": "Dialysis / Kidney Care",
-      "atsHint": "greenhouse",
-      "slug": "crickethealth"
-    },
-    {
-      "name": "Somatus",
-      "category": "Dialysis / Kidney Care",
-      "atsHint": "greenhouse",
-      "slug": "somatus"
-    },
-    {
-      "name": "Clinical Research IO",
-      "category": "Clinical research / CRO",
-      "atsHint": "lever",
-      "slug": "clinicalresearchio"
-    },
-    {
-      "name": "Dental Intelligence",
-      "category": "Dental tech",
-      "atsHint": "greenhouse",
-      "slug": "dentalintelligence"
-    },
-    {
-      "name": "Tend",
-      "category": "Dental tech",
-      "atsHint": "greenhouse",
-      "slug": "tend"
-    },
-    {
-      "name": "Pearl",
-      "category": "Dental tech",
-      "atsHint": "greenhouse",
-      "slug": "hellopearl"
-    },
-    {
-      "name": "Overjet",
-      "category": "Dental tech",
-      "atsHint": "greenhouse",
-      "slug": "overjet"
-    },
-    {
-      "name": "Dandy",
-      "category": "Dental tech",
-      "atsHint": "greenhouse",
-      "slug": "meetdandy"
-    },
-    {
-      "name": "Tend Health",
-      "category": "Dental tech",
-      "atsHint": "greenhouse",
-      "slug": "tendhealth"
-    },
-    {
-      "name": "Denti.AI",
-      "category": "Dental tech",
-      "atsHint": "lever",
-      "slug": "dentiai"
-    },
-    {
-      "name": "Zentist",
-      "category": "Dental tech",
-      "atsHint": "ashby",
-      "slug": "zentist"
-    },
-    {
-      "name": "Kleer",
-      "category": "Dental tech",
-      "atsHint": "lever",
-      "slug": "kleer"
-    },
-    {
-      "name": "Twentyeight Health",
-      "category": "Women's health",
-      "atsHint": "greenhouse",
-      "slug": "28health"
-    },
-    {
-      "name": "Evvy",
-      "category": "Women's health",
-      "atsHint": "ashby",
-      "slug": "evvy"
-    },
-    {
-      "name": "Bloomlife",
-      "category": "Women's health",
-      "atsHint": "lever",
-      "slug": "bloomlife"
-    },
-    {
-      "name": "Oula Health",
-      "category": "Women's health",
-      "atsHint": "ashby",
-      "slug": "oulahealth"
-    },
-    {
-      "name": "Odela",
-      "category": "Women's health",
-      "atsHint": "greenhouse",
-      "slug": "odela"
-    },
-    {
-      "name": "Cayaba Care",
-      "category": "Women's health",
-      "atsHint": "lever",
-      "slug": "cayabacare"
-    },
-    {
-      "name": "Mira Fertility",
-      "category": "Women's health / fertility",
-      "atsHint": "greenhouse",
-      "slug": "miracare"
-    },
-    {
-      "name": "Legacy",
-      "category": "Women's health / fertility",
-      "atsHint": "lever",
-      "slug": "givelegacy"
-    },
-    {
-      "name": "Dadi",
-      "category": "Women's health / fertility",
-      "atsHint": "lever",
-      "slug": "dadi"
-    },
-    {
-      "name": "Brightside Health",
-      "category": "Behavioral health",
-      "atsHint": "greenhouse",
-      "slug": "brightsidehealth"
-    },
-    {
-      "name": "Confidant Health",
-      "category": "Behavioral health / addiction",
-      "atsHint": "lever",
-      "slug": "confidanthealth"
-    },
-    {
-      "name": "Pelago",
-      "category": "Behavioral health / addiction",
-      "atsHint": "greenhouse",
-      "slug": "pelago"
-    },
-    {
-      "name": "Kip Health",
-      "category": "Behavioral health",
-      "atsHint": "ashby",
-      "slug": "kiphealth"
-    },
-    {
-      "name": "Rula Health",
-      "category": "Behavioral health",
-      "atsHint": "greenhouse",
-      "slug": "rula"
-    },
-    {
-      "name": "Alma",
-      "category": "Behavioral health",
-      "atsHint": "greenhouse",
-      "slug": "helloalma"
-    },
-    {
-      "name": "Two Chairs",
-      "category": "Behavioral health",
-      "atsHint": "lever",
-      "slug": "twochairs"
-    },
-    {
-      "name": "CareAcademy",
-      "category": "Home health / caregiving",
-      "atsHint": "greenhouse",
-      "slug": "careacademy"
-    },
-    {
-      "name": "CareYaya",
-      "category": "Senior care / caregiving",
-      "atsHint": "lever",
-      "slug": "careyaya"
-    },
-    {
-      "name": "Kindly Care",
-      "category": "Senior care / caregiving",
-      "atsHint": "lever",
-      "slug": "kindlycare"
-    },
-    {
-      "name": "Caregiver",
-      "category": "Senior care / caregiving",
-      "atsHint": "greenhouse",
-      "slug": "caregiver"
-    },
-    {
-      "name": "Seniorly",
-      "category": "Senior care",
-      "atsHint": "lever",
-      "slug": "seniorly"
-    },
-    {
-      "name": "Capital Rx",
-      "category": "Specialty pharmacy / PBM",
-      "atsHint": "greenhouse",
-      "slug": "cap-rx"
-    },
-    {
-      "name": "Alto Pharmacy",
-      "category": "Specialty pharmacy",
-      "atsHint": "greenhouse",
-      "slug": "altopharmacy"
-    },
-    {
-      "name": "Medly Pharmacy",
-      "category": "Specialty pharmacy",
-      "atsHint": "lever",
-      "slug": "medly"
-    },
-    {
-      "name": "Kalderos",
-      "category": "340B tech",
-      "atsHint": "lever",
-      "slug": "kalderos"
-    },
-    {
-      "name": "ScriptDrop",
-      "category": "Specialty pharmacy",
-      "atsHint": "lever",
-      "slug": "scriptdrop"
-    },
-    {
-      "name": "Lynx Health",
-      "category": "Health IT infrastructure",
-      "atsHint": "ashby",
-      "slug": "lynxhealth"
-    },
-    {
-      "name": "Ribbon Health",
-      "category": "Health IT infrastructure",
-      "atsHint": "greenhouse",
-      "slug": "ribbonhealth"
-    },
-    {
-      "name": "Smile CDR",
-      "category": "Health IT infrastructure",
-      "atsHint": "greenhouse",
-      "slug": "smilecdr"
-    },
-    {
-      "name": "Wisp",
-      "category": "Consumer health / women's health",
-      "atsHint": "lever",
-      "slug": "hellowisp"
-    },
-    {
-      "name": "Apostrophe",
-      "category": "Consumer health / dermatology",
-      "atsHint": "lever",
-      "slug": "apostrophe"
-    },
-    {
-      "name": "Manual",
-      "category": "Consumer health",
-      "atsHint": "lever",
-      "slug": "manual"
-    },
-    {
-      "name": "Curex",
-      "category": "Consumer health / allergy",
-      "atsHint": "ashby",
-      "slug": "curexhealth"
-    },
-    {
-      "name": "Allermi",
-      "category": "Consumer health / allergy",
-      "atsHint": "ashby",
-      "slug": "allermi"
-    },
-    {
-      "name": "Felix Health",
-      "category": "Consumer health",
-      "atsHint": "lever",
-      "slug": "felixhealth"
-    },
-    {
-      "name": "Galaxy Vets",
-      "category": "Veterinary tech",
-      "atsHint": "greenhouse",
-      "slug": "galaxyvets"
-    },
-    {
-      "name": "Vetsource",
-      "category": "Veterinary tech",
-      "atsHint": "greenhouse",
-      "slug": "vetsource"
-    },
-    {
-      "name": "PetDesk",
-      "category": "Veterinary tech",
-      "atsHint": "lever",
-      "slug": "petdesk"
-    },
-    {
-      "name": "Digitail",
-      "category": "Veterinary tech",
-      "atsHint": "lever",
-      "slug": "digitail"
-    },
-    {
-      "name": "Shepherd",
-      "category": "Veterinary tech",
-      "atsHint": "lever",
-      "slug": "shepherdvet"
-    },
-    {
-      "name": "Rightway Healthcare",
-      "category": "Pharmacy benefits / navigation",
-      "atsHint": "greenhouse",
-      "slug": "rightwayhealthcare"
-    },
-    {
-      "name": "Medisafe",
-      "category": "Medication adherence",
-      "atsHint": "lever",
-      "slug": "medisafe"
-    },
-    {
-      "name": "Wellth",
-      "category": "Medication adherence / engagement",
-      "atsHint": "lever",
-      "slug": "wellthapp"
-    },
-    {
-      "name": "Artera",
-      "category": "Patient engagement",
-      "atsHint": "greenhouse",
-      "slug": "artera"
-    },
-    {
-      "name": "Luma Health",
-      "category": "Patient engagement",
-      "atsHint": "greenhouse",
-      "slug": "lumahealth"
-    },
-    {
-      "name": "Healthgrades",
-      "category": "Provider search / reputation",
-      "atsHint": "greenhouse",
-      "slug": "healthgrades"
-    },
-    {
-      "name": "Clearstep",
-      "category": "Patient triage / navigation",
-      "atsHint": "lever",
-      "slug": "clearstep"
-    },
-    {
-      "name": "Buoy Health",
-      "category": "Patient triage / navigation",
-      "atsHint": "greenhouse",
-      "slug": "buoyhealth"
-    },
-    {
-      "name": "Firefly Health",
-      "category": "Primary care / virtual",
-      "atsHint": "greenhouse",
-      "slug": "firefly"
-    },
-    {
-      "name": "Accel",
-      "category": "Care navigation / RCM",
-      "atsHint": "greenhouse",
-      "slug": "accel"
-    },
-    {
-      "name": "Bind Benefits",
-      "category": "Health insurance / benefits",
-      "atsHint": "greenhouse",
-      "slug": "bindon-demand"
-    },
-    {
-      "name": "League",
-      "category": "Health benefits platform",
-      "atsHint": "greenhouse",
-      "slug": "league"
-    }
-  ],
-  "non_ats_placeholders": [
-    {
-      "name": "Epic Systems",
-      "category": "geetu-dream-list",
-      "atsHint": "other",
-      "slug": "",
-      "url": "https://careers.epic.com/jobs/search",
-      "dreamList": true,
-      "dreamListFor": "geetu",
-      "note": "Proprietary careers portal \u2014 needs custom scraper (Apify candidate)"
-    },
-    {
-      "name": "Health Catalyst",
-      "category": "hit-ai",
-      "atsHint": "other",
-      "slug": "",
-      "suspectSlug": true
-    },
-    {
-      "name": "Hello Heart",
-      "category": "dtx",
-      "atsHint": "other",
-      "slug": "",
-      "suspectSlug": true
-    },
-    {
-      "name": "Capital Rx",
-      "category": "Specialty Pharmacy + 340B",
-      "atsHint": "other",
-      "slug": "",
-      "suspectSlug": true
-    }
-  ]
+ "_note": "Curated Healthcare IT / digital health catalog. Used for: (a) scoring boost when company appears in feed AND user has healthcare industries (+3, all entries), (b) auto-scraping (only ATS=greenhouse/lever/ashby/workable). Workday/Google/Amazon entries are catalog-only (scored boost when found, not scraped). Slugs are canonical for matching.",
+ "version": "2026-05-29-v3+discovered+discovered+dream-list+from-contacts+dedup+dream-geetu+discovered+dedup-r2+verified+slug-recover+verified+verified+discovered+discovered+discovered",
+ "companies": [
+  {
+   "name": "Doximity",
+   "category": "provider-tech",
+   "atsHint": "greenhouse",
+   "slug": "doximity"
+  },
+  {
+   "name": "Veeva Systems",
+   "category": "life-sciences-data",
+   "atsHint": "greenhouse",
+   "slug": "veeva-systems",
+   "suspectSlug": true
+  },
+  {
+   "name": "Definitive Healthcare",
+   "category": "life-sciences-data",
+   "atsHint": "greenhouse",
+   "slug": "definitive-healthcare",
+   "suspectSlug": true
+  },
+  {
+   "name": "Teladoc Health",
+   "category": "telehealth",
+   "atsHint": "greenhouse",
+   "slug": "teladoc-health",
+   "suspectSlug": true
+  },
+  {
+   "name": "Hims & Hers Health",
+   "category": "telehealth",
+   "atsHint": "ashby",
+   "slug": "hims",
+   "suspectSlug": true
+  },
+  {
+   "name": "Hinge Health",
+   "category": "dtx",
+   "atsHint": "greenhouse",
+   "slug": "hingehealth"
+  },
+  {
+   "name": "Lyra Health",
+   "category": "dtx",
+   "atsHint": "greenhouse",
+   "slug": "lyrahealth"
+  },
+  {
+   "name": "Spring Health",
+   "category": "dtx",
+   "atsHint": "workable",
+   "slug": "spring",
+   "dreamList": true,
+   "dreamListFor": "geetu"
+  },
+  {
+   "name": "Headway",
+   "category": "provider-tech",
+   "atsHint": "greenhouse",
+   "slug": "headway",
+   "dreamList": true,
+   "dreamListFor": "geetu"
+  },
+  {
+   "name": "Cedar",
+   "category": "healthcare-fintech",
+   "atsHint": "greenhouse",
+   "slug": "cedar"
+  },
+  {
+   "name": "Komodo Health",
+   "category": "life-sciences-data",
+   "atsHint": "greenhouse",
+   "slug": "komodohealth",
+   "dreamList": true,
+   "dreamListFor": "geetu"
+  },
+  {
+   "name": "Truveta",
+   "category": "life-sciences-data",
+   "atsHint": "greenhouse",
+   "slug": "truveta"
+  },
+  {
+   "name": "Oscar Health",
+   "category": "payer-tech",
+   "atsHint": "greenhouse",
+   "slug": "oscar",
+   "dreamList": true,
+   "dreamListFor": "geetu"
+  },
+  {
+   "name": "Devoted Health",
+   "category": "payer-tech",
+   "atsHint": "greenhouse",
+   "slug": "devoted-health",
+   "suspectSlug": true
+  },
+  {
+   "name": "Bright Health Group",
+   "category": "payer-tech",
+   "atsHint": "greenhouse",
+   "slug": "bright-health-group",
+   "suspectSlug": true
+  },
+  {
+   "name": "Clover Health",
+   "category": "payer-tech",
+   "atsHint": "workable",
+   "slug": "clover",
+   "dreamList": true,
+   "dreamListFor": "geetu"
+  },
+  {
+   "name": "Alignment Healthcare",
+   "category": "payer-tech",
+   "atsHint": "greenhouse",
+   "slug": "alignment-healthcare",
+   "suspectSlug": true
+  },
+  {
+   "name": "Garner Health",
+   "category": "payer-tech",
+   "atsHint": "greenhouse",
+   "slug": "garnerhealth",
+   "dreamList": true,
+   "dreamListFor": "geetu"
+  },
+  {
+   "name": "Transcarent",
+   "category": "payer-tech",
+   "atsHint": "greenhouse",
+   "slug": "transcarent"
+  },
+  {
+   "name": "Maven Clinic",
+   "category": "telehealth",
+   "atsHint": "greenhouse",
+   "slug": "mavenclinic",
+   "dreamList": true,
+   "dreamListFor": "geetu"
+  },
+  {
+   "name": "Carrot Fertility",
+   "category": "telehealth",
+   "atsHint": "greenhouse",
+   "slug": "carrotfertility"
+  },
+  {
+   "name": "Tia",
+   "category": "provider-tech",
+   "atsHint": "greenhouse",
+   "slug": "tia"
+  },
+  {
+   "name": "Modern Health",
+   "category": "dtx",
+   "atsHint": "workable",
+   "slug": "modern"
+  },
+  {
+   "name": "Calm",
+   "category": "dtx",
+   "atsHint": "greenhouse",
+   "slug": "calm"
+  },
+  {
+   "name": "Headspace Health",
+   "category": "dtx",
+   "atsHint": "workable",
+   "slug": "headspace"
+  },
+  {
+   "name": "Omada Health",
+   "category": "dtx",
+   "atsHint": "greenhouse",
+   "slug": "omadahealth",
+   "dreamList": true,
+   "dreamListFor": "geetu"
+  },
+  {
+   "name": "Livongo (Teladoc)",
+   "category": "dtx",
+   "atsHint": "greenhouse",
+   "slug": "livongo",
+   "suspectSlug": true
+  },
+  {
+   "name": "Pear Therapeutics",
+   "category": "dtx",
+   "atsHint": "greenhouse",
+   "slug": "pear-therapeutics",
+   "suspectSlug": true
+  },
+  {
+   "name": "Akili Interactive",
+   "category": "dtx",
+   "atsHint": "greenhouse",
+   "slug": "akili-interactive",
+   "suspectSlug": true
+  },
+  {
+   "name": "Big Health",
+   "category": "dtx",
+   "atsHint": "greenhouse",
+   "slug": "bighealth"
+  },
+  {
+   "name": "athenahealth",
+   "category": "ehr",
+   "atsHint": "greenhouse",
+   "slug": "athenahealth",
+   "suspectSlug": true
+  },
+  {
+   "name": "NextGen Healthcare",
+   "category": "ehr",
+   "atsHint": "workday",
+   "slug": "nextgen-healthcare"
+  },
+  {
+   "name": "eClinicalWorks",
+   "category": "ehr",
+   "atsHint": "workday",
+   "slug": "eclinicalworks"
+  },
+  {
+   "name": "Allscripts",
+   "category": "ehr",
+   "atsHint": "workday",
+   "slug": "allscripts"
+  },
+  {
+   "name": "Greenway Health",
+   "category": "ehr",
+   "atsHint": "greenhouse",
+   "slug": "greenway-health",
+   "suspectSlug": true
+  },
+  {
+   "name": "Practice Fusion",
+   "category": "ehr",
+   "atsHint": "greenhouse",
+   "slug": "practice-fusion",
+   "suspectSlug": true
+  },
+  {
+   "name": "Kareo",
+   "category": "ehr",
+   "atsHint": "greenhouse",
+   "slug": "kareo",
+   "suspectSlug": true
+  },
+  {
+   "name": "Tebra",
+   "category": "ehr",
+   "atsHint": "greenhouse",
+   "slug": "tebra",
+   "dreamList": true,
+   "dreamListFor": "geetu"
+  },
+  {
+   "name": "Modernizing Medicine",
+   "category": "ehr",
+   "atsHint": "greenhouse",
+   "slug": "modernizing-medicine",
+   "suspectSlug": true
+  },
+  {
+   "name": "Nextech Systems",
+   "category": "ehr",
+   "atsHint": "greenhouse",
+   "slug": "nextech-systems",
+   "suspectSlug": true
+  },
+  {
+   "name": "SRS Health",
+   "category": "ehr",
+   "atsHint": "greenhouse",
+   "slug": "srs-health",
+   "suspectSlug": true
+  },
+  {
+   "name": "Veradigm",
+   "category": "ehr",
+   "atsHint": "greenhouse",
+   "slug": "veradigm",
+   "suspectSlug": true
+  },
+  {
+   "name": "Inovalon",
+   "category": "life-sciences-data",
+   "atsHint": "greenhouse",
+   "slug": "inovalon"
+  },
+  {
+   "name": "Vatic Health",
+   "category": "hit-ai",
+   "atsHint": "greenhouse",
+   "slug": "vatic-health",
+   "suspectSlug": true
+  },
+  {
+   "name": "Iodine Software",
+   "category": "hit-ai",
+   "atsHint": "greenhouse",
+   "slug": "iodinesoftware"
+  },
+  {
+   "name": "Augmedix",
+   "category": "hit-ai",
+   "atsHint": "greenhouse",
+   "slug": "augmedix"
+  },
+  {
+   "name": "Abridge",
+   "category": "hit-ai",
+   "atsHint": "ashby",
+   "slug": "abridge"
+  },
+  {
+   "name": "Nuance Communications",
+   "category": "hit-ai",
+   "atsHint": "workday",
+   "slug": "nuance-communications"
+  },
+  {
+   "name": "Hyro",
+   "category": "hit-ai",
+   "atsHint": "lever",
+   "slug": "hyro"
+  },
+  {
+   "name": "Notable Health",
+   "category": "hit-ai",
+   "atsHint": "greenhouse",
+   "slug": "notablehealth"
+  },
+  {
+   "name": "Olive AI",
+   "category": "hit-ai",
+   "atsHint": "greenhouse",
+   "slug": "olive-ai",
+   "suspectSlug": true
+  },
+  {
+   "name": "Innovaccer",
+   "category": "hit-ai",
+   "atsHint": "greenhouse",
+   "slug": "innovaccer"
+  },
+  {
+   "name": "Persistent Systems Healthcare",
+   "category": "hit-ai",
+   "atsHint": "workday",
+   "slug": "persistent-systems-healthcare"
+  },
+  {
+   "name": "Arcadia",
+   "category": "hit-ai",
+   "atsHint": "greenhouse",
+   "slug": "arcadia"
+  },
+  {
+   "name": "Carta Healthcare",
+   "category": "clinical-trials",
+   "atsHint": "lever",
+   "slug": "cartahealthcare"
+  },
+  {
+   "name": "Medidata Solutions",
+   "category": "clinical-trials",
+   "atsHint": "workday",
+   "slug": "medidata-solutions"
+  },
+  {
+   "name": "IQVIA",
+   "category": "clinical-trials",
+   "atsHint": "workday",
+   "slug": "iqvia"
+  },
+  {
+   "name": "ICON plc",
+   "category": "clinical-trials",
+   "atsHint": "workday",
+   "slug": "icon"
+  },
+  {
+   "name": "Parexel",
+   "category": "clinical-trials",
+   "atsHint": "workday",
+   "slug": "parexel"
+  },
+  {
+   "name": "Syneos Health",
+   "category": "clinical-trials",
+   "atsHint": "workday",
+   "slug": "syneos-health"
+  },
+  {
+   "name": "PPD",
+   "category": "clinical-trials",
+   "atsHint": "workday",
+   "slug": "ppd"
+  },
+  {
+   "name": "Saama Technologies",
+   "category": "clinical-trials",
+   "atsHint": "greenhouse",
+   "slug": "saama-technologies",
+   "suspectSlug": true
+  },
+  {
+   "name": "Castor",
+   "category": "clinical-trials",
+   "atsHint": "greenhouse",
+   "slug": "castor",
+   "suspectSlug": true
+  },
+  {
+   "name": "Florence Healthcare",
+   "category": "clinical-trials",
+   "atsHint": "greenhouse",
+   "slug": "florence-healthcare",
+   "suspectSlug": true
+  },
+  {
+   "name": "Reify Health",
+   "category": "clinical-trials",
+   "atsHint": "greenhouse",
+   "slug": "reify-health",
+   "suspectSlug": true
+  },
+  {
+   "name": "Suvoda",
+   "category": "clinical-trials",
+   "atsHint": "greenhouse",
+   "slug": "suvoda"
+  },
+  {
+   "name": "Tempus",
+   "category": "life-sciences-data",
+   "atsHint": "greenhouse",
+   "slug": "tempus",
+   "suspectSlug": true
+  },
+  {
+   "name": "Flatiron Health",
+   "category": "life-sciences-data",
+   "atsHint": "greenhouse",
+   "slug": "flatironhealth"
+  },
+  {
+   "name": "Foundation Medicine",
+   "category": "life-sciences-data",
+   "atsHint": "greenhouse",
+   "slug": "foundationmedicine",
+   "suspectSlug": true
+  },
+  {
+   "name": "Color Health",
+   "category": "life-sciences-data",
+   "atsHint": "lever",
+   "slug": "color"
+  },
+  {
+   "name": "Invitae",
+   "category": "life-sciences-data",
+   "atsHint": "greenhouse",
+   "slug": "invitae",
+   "suspectSlug": true
+  },
+  {
+   "name": "Helix",
+   "category": "life-sciences-data",
+   "atsHint": "greenhouse",
+   "slug": "helix"
+  },
+  {
+   "name": "23andMe",
+   "category": "life-sciences-data",
+   "atsHint": "greenhouse",
+   "slug": "23andme"
+  },
+  {
+   "name": "Ancestry",
+   "category": "life-sciences-data",
+   "atsHint": "greenhouse",
+   "slug": "ancestry",
+   "suspectSlug": true
+  },
+  {
+   "name": "Verana Health",
+   "category": "life-sciences-data",
+   "atsHint": "greenhouse",
+   "slug": "veranahealth"
+  },
+  {
+   "name": "OM1",
+   "category": "life-sciences-data",
+   "atsHint": "greenhouse",
+   "slug": "om1"
+  },
+  {
+   "name": "Trialspark (Formation Bio)",
+   "category": "clinical-trials",
+   "atsHint": "ashby",
+   "slug": "formationbio"
+  },
+  {
+   "name": "Prescryptive Health",
+   "category": "pharma-tech",
+   "atsHint": "workable",
+   "slug": "prescryptive"
+  },
+  {
+   "name": "GoodRx",
+   "category": "pharma-tech",
+   "atsHint": "greenhouse",
+   "slug": "goodrx"
+  },
+  {
+   "name": "Alto Pharmacy",
+   "category": "pharma-tech",
+   "atsHint": "greenhouse",
+   "slug": "alto"
+  },
+  {
+   "name": "Capsule",
+   "category": "pharma-tech",
+   "atsHint": "greenhouse",
+   "slug": "capsule"
+  },
+  {
+   "name": "PillPack (Amazon)",
+   "category": "pharma-tech",
+   "atsHint": "amazon",
+   "slug": "pillpack"
+  },
+  {
+   "name": "Truepill",
+   "category": "pharma-tech",
+   "atsHint": "greenhouse",
+   "slug": "truepill"
+  },
+  {
+   "name": "Honeybee Health",
+   "category": "pharma-tech",
+   "atsHint": "ashby",
+   "slug": "honeybeehealth"
+  },
+  {
+   "name": "DrFirst",
+   "category": "pharma-tech",
+   "atsHint": "greenhouse",
+   "slug": "drfirst",
+   "suspectSlug": true
+  },
+  {
+   "name": "Surescripts",
+   "category": "pharma-tech",
+   "atsHint": "workday",
+   "slug": "surescripts"
+  },
+  {
+   "name": "Rx Savings Solutions",
+   "category": "pharma-tech",
+   "atsHint": "greenhouse",
+   "slug": "rx-savings-solutions",
+   "suspectSlug": true
+  },
+  {
+   "name": "Phreesia",
+   "category": "provider-tech",
+   "atsHint": "greenhouse",
+   "slug": "phreesia",
+   "suspectSlug": true
+  },
+  {
+   "name": "Kyruus",
+   "category": "provider-tech",
+   "atsHint": "greenhouse",
+   "slug": "kyruus",
+   "suspectSlug": true
+  },
+  {
+   "name": "Zocdoc",
+   "category": "healthcare-marketplace",
+   "atsHint": "greenhouse",
+   "slug": "zocdoc",
+   "dreamList": true,
+   "dreamListFor": "geetu"
+  },
+  {
+   "name": "Solv Health",
+   "category": "healthcare-marketplace",
+   "atsHint": "greenhouse",
+   "slug": "solvhealth"
+  },
+  {
+   "name": "Galileo Health",
+   "category": "telehealth",
+   "atsHint": "greenhouse",
+   "slug": "galileo"
+  },
+  {
+   "name": "PlushCare",
+   "category": "telehealth",
+   "atsHint": "greenhouse",
+   "slug": "plushcare",
+   "suspectSlug": true
+  },
+  {
+   "name": "Ro",
+   "category": "telehealth",
+   "atsHint": "greenhouse",
+   "slug": "ro"
+  },
+  {
+   "name": "Sesame Care",
+   "category": "telehealth",
+   "atsHint": "ashby",
+   "slug": "sesame"
+  },
+  {
+   "name": "Heal",
+   "category": "telehealth",
+   "atsHint": "greenhouse",
+   "slug": "heal",
+   "suspectSlug": true
+  },
+  {
+   "name": "MDLive",
+   "category": "telehealth",
+   "atsHint": "workday",
+   "slug": "mdlive"
+  },
+  {
+   "name": "Amwell",
+   "category": "telehealth",
+   "atsHint": "greenhouse",
+   "slug": "amwell"
+  },
+  {
+   "name": "Doctor on Demand",
+   "category": "telehealth",
+   "atsHint": "greenhouse",
+   "slug": "doctor-on-demand",
+   "suspectSlug": true
+  },
+  {
+   "name": "K Health",
+   "category": "telehealth",
+   "atsHint": "greenhouse",
+   "slug": "khealth",
+   "dreamList": true,
+   "dreamListFor": "geetu",
+   "suspectSlug": true
+  },
+  {
+   "name": "Sword Health",
+   "category": "dtx",
+   "atsHint": "lever",
+   "slug": "swordhealth"
+  },
+  {
+   "name": "Kaia Health",
+   "category": "dtx",
+   "atsHint": "greenhouse",
+   "slug": "kaia-health",
+   "suspectSlug": true
+  },
+  {
+   "name": "Vida Health",
+   "category": "dtx",
+   "atsHint": "greenhouse",
+   "slug": "vida-health",
+   "suspectSlug": true
+  },
+  {
+   "name": "Virta Health",
+   "category": "dtx",
+   "atsHint": "greenhouse",
+   "slug": "virtahealth"
+  },
+  {
+   "name": "Brightline",
+   "category": "dtx",
+   "atsHint": "greenhouse",
+   "slug": "hellobrightline"
+  },
+  {
+   "name": "Cerebral",
+   "category": "telehealth",
+   "atsHint": "greenhouse",
+   "slug": "cerebral"
+  },
+  {
+   "name": "Talkspace",
+   "category": "telehealth",
+   "atsHint": "greenhouse",
+   "slug": "talkspace"
+  },
+  {
+   "name": "BetterHelp",
+   "category": "telehealth",
+   "atsHint": "greenhouse",
+   "slug": "betterhelp"
+  },
+  {
+   "name": "Octave",
+   "category": "telehealth",
+   "atsHint": "greenhouse",
+   "slug": "octave"
+  },
+  {
+   "name": "Alma",
+   "category": "provider-tech",
+   "atsHint": "greenhouse",
+   "slug": "alma"
+  },
+  {
+   "name": "SonderMind",
+   "category": "provider-tech",
+   "atsHint": "ashby",
+   "slug": "sondermind"
+  },
+  {
+   "name": "Grow Therapy",
+   "category": "provider-tech",
+   "atsHint": "greenhouse",
+   "slug": "growtherapy"
+  },
+  {
+   "name": "Found",
+   "category": "dtx",
+   "atsHint": "greenhouse",
+   "slug": "found"
+  },
+  {
+   "name": "Noom",
+   "category": "dtx",
+   "atsHint": "greenhouse",
+   "slug": "noom",
+   "suspectSlug": true
+  },
+  {
+   "name": "WW (Weight Watchers)",
+   "category": "dtx",
+   "atsHint": "workday",
+   "slug": "ww"
+  },
+  {
+   "name": "Cala Health",
+   "category": "dtx",
+   "atsHint": "greenhouse",
+   "slug": "cala-health",
+   "suspectSlug": true
+  },
+  {
+   "name": "Verily Life Sciences",
+   "category": "hit-ai",
+   "atsHint": "google",
+   "slug": "verily-life-sciences"
+  },
+  {
+   "name": "Tendo",
+   "category": "provider-tech",
+   "atsHint": "greenhouse",
+   "slug": "tendo",
+   "suspectSlug": true
+  },
+  {
+   "name": "Stedi",
+   "category": "healthcare-fintech",
+   "atsHint": "ashby",
+   "slug": "stedi"
+  },
+  {
+   "name": "Akasa",
+   "category": "healthcare-fintech",
+   "atsHint": "greenhouse",
+   "slug": "akasa"
+  },
+  {
+   "name": "Olive",
+   "category": "healthcare-fintech",
+   "atsHint": "greenhouse",
+   "slug": "olive",
+   "suspectSlug": true
+  },
+  {
+   "name": "Waystar",
+   "category": "healthcare-fintech",
+   "atsHint": "workday",
+   "slug": "waystar"
+  },
+  {
+   "name": "Vyne Dental",
+   "category": "healthcare-fintech",
+   "atsHint": "greenhouse",
+   "slug": "vyne-dental",
+   "suspectSlug": true
+  },
+  {
+   "name": "Collective Health",
+   "category": "payer-tech",
+   "atsHint": "greenhouse",
+   "slug": "collectivehealth"
+  },
+  {
+   "name": "Sana Benefits",
+   "category": "payer-tech",
+   "atsHint": "greenhouse",
+   "slug": "sanabenefits"
+  },
+  {
+   "name": "Decent",
+   "category": "payer-tech",
+   "atsHint": "greenhouse",
+   "slug": "decent"
+  },
+  {
+   "name": "Centivo",
+   "category": "payer-tech",
+   "atsHint": "greenhouse",
+   "slug": "centivo"
+  },
+  {
+   "name": "Imagine Pediatrics",
+   "category": "provider-tech",
+   "atsHint": "greenhouse",
+   "slug": "imagine-pediatrics",
+   "suspectSlug": true
+  },
+  {
+   "name": "Cityblock Health",
+   "category": "provider-tech",
+   "atsHint": "ashby",
+   "slug": "cityblock"
+  },
+  {
+   "name": "ChenMed",
+   "category": "provider-tech",
+   "atsHint": "workday",
+   "slug": "chenmed"
+  },
+  {
+   "name": "VillageMD",
+   "category": "provider-tech",
+   "atsHint": "workday",
+   "slug": "villagemd"
+  },
+  {
+   "name": "One Medical (Amazon)",
+   "category": "provider-tech",
+   "atsHint": "amazon",
+   "slug": "onemedical"
+  },
+  {
+   "name": "Forward",
+   "category": "provider-tech",
+   "atsHint": "greenhouse",
+   "slug": "forward"
+  },
+  {
+   "name": "Carbon Health",
+   "category": "provider-tech",
+   "atsHint": "lever",
+   "slug": "carbonhealth"
+  },
+  {
+   "name": "Iora Health (One Medical)",
+   "category": "provider-tech",
+   "atsHint": "greenhouse",
+   "slug": "iora-health",
+   "suspectSlug": true
+  },
+  {
+   "name": "Aledade",
+   "category": "vbc",
+   "atsHint": "lever",
+   "slug": "aledade"
+  },
+  {
+   "name": "Strive Health",
+   "category": "vbc",
+   "atsHint": "greenhouse",
+   "slug": "strivehealth"
+  },
+  {
+   "name": "Privia Health",
+   "category": "vbc",
+   "atsHint": "greenhouse",
+   "slug": "priviahealth",
+   "suspectSlug": true
+  },
+  {
+   "name": "Wayspring",
+   "category": "vbc",
+   "atsHint": "lever",
+   "slug": "wayspring",
+   "suspectSlug": true
+  },
+  {
+   "name": "Pearl Health",
+   "category": "vbc",
+   "atsHint": "greenhouse",
+   "slug": "pearl-health"
+  },
+  {
+   "name": "Cohere Health",
+   "category": "payer-tech",
+   "atsHint": "greenhouse",
+   "slug": "coherehealth"
+  },
+  {
+   "name": "Lyric (formerly ClaimsXten)",
+   "category": "payer-tech",
+   "atsHint": "greenhouse",
+   "slug": "lyrichealth",
+   "suspectSlug": true
+  },
+  {
+   "name": "HealthEdge",
+   "category": "payer-tech",
+   "atsHint": "greenhouse",
+   "slug": "healthedge",
+   "suspectSlug": true
+  },
+  {
+   "name": "Vatica Health",
+   "category": "payer-tech",
+   "atsHint": "lever",
+   "slug": "vaticahealth",
+   "suspectSlug": true
+  },
+  {
+   "name": "Datavant",
+   "category": "life-sciences-data",
+   "atsHint": "greenhouse",
+   "slug": "datavant"
+  },
+  {
+   "name": "Particle Health",
+   "category": "interop",
+   "atsHint": "greenhouse",
+   "slug": "particlehealth"
+  },
+  {
+   "name": "Aetion",
+   "category": "life-sciences-data",
+   "atsHint": "greenhouse",
+   "slug": "aetion"
+  },
+  {
+   "name": "HealthVerity",
+   "category": "life-sciences-data",
+   "atsHint": "greenhouse",
+   "slug": "healthverity"
+  },
+  {
+   "name": "Apixio",
+   "category": "payer-tech",
+   "atsHint": "greenhouse",
+   "slug": "apixio",
+   "suspectSlug": true
+  },
+  {
+   "name": "ClearDATA",
+   "category": "infra",
+   "atsHint": "greenhouse",
+   "slug": "cleardata",
+   "suspectSlug": true
+  },
+  {
+   "name": "Hippocratic AI",
+   "category": "clinical-ai",
+   "atsHint": "ashby",
+   "slug": "hippocratic-ai"
+  },
+  {
+   "name": "Memora Health",
+   "category": "care-navigation",
+   "atsHint": "greenhouse",
+   "slug": "memorahealth"
+  },
+  {
+   "name": "Curai Health",
+   "category": "telehealth",
+   "atsHint": "lever",
+   "slug": "curai"
+  },
+  {
+   "name": "Sprinter Health",
+   "category": "home-health",
+   "atsHint": "greenhouse",
+   "slug": "sprinter"
+  },
+  {
+   "name": "Tomorrow Health",
+   "category": "home-health",
+   "atsHint": "greenhouse",
+   "slug": "tomorrow"
+  },
+  {
+   "name": "Forge Health",
+   "category": "behavioral",
+   "atsHint": "lever",
+   "slug": "forgehealth",
+   "suspectSlug": true
+  },
+  {
+   "name": "Wellth",
+   "category": "chronic-care",
+   "atsHint": "lever",
+   "slug": "wellth"
+  },
+  {
+   "name": "Spark Advisors",
+   "category": "medicare",
+   "atsHint": "ashby",
+   "slug": "sparkadvisors"
+  },
+  {
+   "name": "Hims & Hers",
+   "category": "Mid-stage healthtech SaaS",
+   "atsHint": "ashby",
+   "slug": "hims",
+   "suspectSlug": true
+  },
+  {
+   "name": "Calibrate",
+   "category": "Value-based care",
+   "atsHint": "workable",
+   "slug": "calibrate"
+  },
+  {
+   "name": "Included Health",
+   "category": "Mid-stage healthtech SaaS",
+   "atsHint": "lever",
+   "slug": "includedhealth"
+  },
+  {
+   "name": "Commure",
+   "category": "Mid-stage healthtech SaaS",
+   "atsHint": "lever",
+   "slug": "commure"
+  },
+  {
+   "name": "Oak Street Health",
+   "category": "Value-based care",
+   "atsHint": "greenhouse",
+   "slug": "oakstreethealth",
+   "suspectSlug": true
+  },
+  {
+   "name": "Vivante Health",
+   "category": "Mid-stage healthtech SaaS",
+   "atsHint": "greenhouse",
+   "slug": "vivante"
+  },
+  {
+   "name": "Curana Health",
+   "category": "Value-based care",
+   "atsHint": "lever",
+   "slug": "curanahealth",
+   "suspectSlug": true
+  },
+  {
+   "name": "Natera",
+   "category": "Medical devices + diagnostics",
+   "atsHint": "greenhouse",
+   "slug": "natera"
+  },
+  {
+   "name": "Guardant Health",
+   "category": "Medical devices + diagnostics",
+   "atsHint": "greenhouse",
+   "slug": "guardanthealth",
+   "suspectSlug": true
+  },
+  {
+   "name": "Clarify Health",
+   "category": "Real-world data / life-sciences analytics",
+   "atsHint": "lever",
+   "slug": "clarifyhealth"
+  },
+  {
+   "name": "Redox",
+   "category": "Health-IT compliance / interoperability",
+   "atsHint": "lever",
+   "slug": "redoxengine"
+  },
+  {
+   "name": "Medable",
+   "category": "Real-world data / life-sciences analytics",
+   "atsHint": "greenhouse",
+   "slug": "medable"
+  },
+  {
+   "name": "TriNetX",
+   "category": "Real-world data / life-sciences analytics",
+   "atsHint": "lever",
+   "slug": "trinetx"
+  },
+  {
+   "name": "Bright Health",
+   "category": "Health insurers + payers",
+   "atsHint": "greenhouse",
+   "slug": "brighthealth",
+   "suspectSlug": true
+  },
+  {
+   "name": "Landmark Health",
+   "category": "Value-based care",
+   "atsHint": "greenhouse",
+   "slug": "landmarkhealth"
+  },
+  {
+   "name": "Agilon Health",
+   "category": "Value-based care",
+   "atsHint": "greenhouse",
+   "slug": "agilonhealth",
+   "suspectSlug": true
+  },
+  {
+   "name": "Signify Health",
+   "category": "Value-based care",
+   "atsHint": "greenhouse",
+   "slug": "signifyhealth",
+   "suspectSlug": true
+  },
+  {
+   "name": "LifeStance Health",
+   "category": "Telehealth",
+   "atsHint": "greenhouse",
+   "slug": "lifestance",
+   "suspectSlug": true
+  },
+  {
+   "name": "Ginger",
+   "category": "Telehealth",
+   "atsHint": "greenhouse",
+   "slug": "ginger",
+   "suspectSlug": true
+  },
+  {
+   "name": "HealthTap",
+   "category": "Telehealth",
+   "atsHint": "lever",
+   "slug": "healthtap",
+   "suspectSlug": true
+  },
+  {
+   "name": "98point6",
+   "category": "Telehealth",
+   "atsHint": "greenhouse",
+   "slug": "98point6",
+   "suspectSlug": true
+  },
+  {
+   "name": "Accolade",
+   "category": "Payer-tech",
+   "atsHint": "greenhouse",
+   "slug": "accolade",
+   "suspectSlug": true
+  },
+  {
+   "name": "Bind Benefits",
+   "category": "Payer-tech",
+   "atsHint": "greenhouse",
+   "slug": "bindon-demandhealth",
+   "suspectSlug": true
+  },
+  {
+   "name": "Bright HealthCare",
+   "category": "Payer-tech",
+   "atsHint": "greenhouse",
+   "slug": "brighthealthcare",
+   "suspectSlug": true
+  },
+  {
+   "name": "Sidecar Health",
+   "category": "Payer-tech",
+   "atsHint": "lever",
+   "slug": "sidecarhealth"
+  },
+  {
+   "name": "Gravie",
+   "category": "Payer-tech",
+   "atsHint": "greenhouse",
+   "slug": "gravie"
+  },
+  {
+   "name": "Wellthy",
+   "category": "Payer-tech",
+   "atsHint": "lever",
+   "slug": "wellthy"
+  },
+  {
+   "name": "Zelis",
+   "category": "Payer-tech",
+   "atsHint": "greenhouse",
+   "slug": "zelis",
+   "suspectSlug": true
+  },
+  {
+   "name": "Castlight Health",
+   "category": "Payer-tech",
+   "atsHint": "greenhouse",
+   "slug": "castlighthealth",
+   "suspectSlug": true
+  },
+  {
+   "name": "Glooko",
+   "category": "Payer-tech",
+   "atsHint": "lever",
+   "slug": "glooko"
+  },
+  {
+   "name": "Podimetrics",
+   "category": "Medical devices",
+   "atsHint": "lever",
+   "slug": "podimetrics"
+  },
+  {
+   "name": "10x Genomics",
+   "category": "Diagnostics",
+   "atsHint": "greenhouse",
+   "slug": "10xgenomics"
+  },
+  {
+   "name": "Pacific Biosciences",
+   "category": "Diagnostics",
+   "atsHint": "greenhouse",
+   "slug": "pacbio",
+   "suspectSlug": true
+  },
+  {
+   "name": "Adaptive Biotechnologies",
+   "category": "Diagnostics",
+   "atsHint": "greenhouse",
+   "slug": "adaptivebiotech",
+   "suspectSlug": true
+  },
+  {
+   "name": "Freenome",
+   "category": "Diagnostics",
+   "atsHint": "greenhouse",
+   "slug": "freenome"
+  },
+  {
+   "name": "Grail",
+   "category": "Diagnostics",
+   "atsHint": "greenhouse",
+   "slug": "grail",
+   "suspectSlug": true
+  },
+  {
+   "name": "Evidation Health",
+   "category": "Real-world data",
+   "atsHint": "lever",
+   "slug": "evidation"
+  },
+  {
+   "name": "DrChrono",
+   "category": "EHR-adjacent",
+   "atsHint": "lever",
+   "slug": "drchrono"
+  },
+  {
+   "name": "Canvas Medical",
+   "category": "EHR-adjacent",
+   "atsHint": "lever",
+   "slug": "canvasmedical"
+  },
+  {
+   "name": "Elation Health",
+   "category": "EHR-adjacent",
+   "atsHint": "lever",
+   "slug": "elationhealth"
+  },
+  {
+   "name": "PatientPing",
+   "category": "Interoperability",
+   "atsHint": "lever",
+   "slug": "patientping"
+  },
+  {
+   "name": "Health Gorilla",
+   "category": "Interoperability",
+   "atsHint": "lever",
+   "slug": "healthgorilla"
+  },
+  {
+   "name": "Bamboo Health",
+   "category": "Interoperability",
+   "atsHint": "greenhouse",
+   "slug": "bamboohealth",
+   "suspectSlug": true
+  },
+  {
+   "name": "1upHealth",
+   "category": "Interoperability",
+   "atsHint": "lever",
+   "slug": "1uphealth"
+  },
+  {
+   "name": "Protenus",
+   "category": "Compliance",
+   "atsHint": "lever",
+   "slug": "protenus",
+   "suspectSlug": true
+  },
+  {
+   "name": "Tandem Diabetes",
+   "category": "Medical devices",
+   "atsHint": "greenhouse",
+   "slug": "tandemdiabetes",
+   "suspectSlug": true
+  },
+  {
+   "name": "DexCare",
+   "category": "Healthtech SaaS",
+   "atsHint": "greenhouse",
+   "slug": "dexcare"
+  },
+  {
+   "name": "Zoom+Care",
+   "category": "Value-based care",
+   "atsHint": "lever",
+   "slug": "zoomcare",
+   "suspectSlug": true
+  },
+  {
+   "name": "PatientPop",
+   "category": "Healthtech SaaS",
+   "atsHint": "lever",
+   "slug": "patientpop",
+   "suspectSlug": true
+  },
+  {
+   "name": "Strata Decision Technology",
+   "category": "Healthtech SaaS",
+   "atsHint": "lever",
+   "slug": "stratadecision"
+  },
+  {
+   "name": "Medely",
+   "category": "Healthtech SaaS",
+   "atsHint": "lever",
+   "slug": "medely"
+  },
+  {
+   "name": "ShiftMed",
+   "category": "Healthtech SaaS",
+   "atsHint": "greenhouse",
+   "slug": "shiftmed"
+  },
+  {
+   "name": "Trusted Health",
+   "category": "Healthtech SaaS",
+   "atsHint": "lever",
+   "slug": "trustedhealth"
+  },
+  {
+   "name": "Incredible Health",
+   "category": "Healthtech SaaS",
+   "atsHint": "lever",
+   "slug": "incrediblehealth"
+  },
+  {
+   "name": "CareRev",
+   "category": "Healthtech SaaS",
+   "atsHint": "lever",
+   "slug": "carerev"
+  },
+  {
+   "name": "Wheel",
+   "category": "Healthtech SaaS",
+   "atsHint": "greenhouse",
+   "slug": "wheel"
+  },
+  {
+   "name": "DispatchHealth",
+   "category": "Value-based care",
+   "atsHint": "greenhouse",
+   "slug": "dispatchhealth"
+  },
+  {
+   "name": "CareDox",
+   "category": "Healthtech SaaS",
+   "atsHint": "lever",
+   "slug": "caredox"
+  },
+  {
+   "name": "Unite Us",
+   "category": "Healthtech SaaS",
+   "atsHint": "greenhouse",
+   "slug": "uniteus"
+  },
+  {
+   "name": "Violet",
+   "category": "Healthtech SaaS",
+   "atsHint": "ashby",
+   "slug": "violet"
+  },
+  {
+   "name": "Wingspan Health",
+   "category": "Payer-tech",
+   "atsHint": "lever",
+   "slug": "wingspanhealth",
+   "suspectSlug": true
+  },
+  {
+   "name": "CodaMetrix",
+   "category": "Clinical-AI",
+   "atsHint": "lever",
+   "slug": "codametrix"
+  },
+  {
+   "name": "Notable",
+   "category": "Clinical-AI",
+   "atsHint": "greenhouse",
+   "slug": "notablehealth"
+  },
+  {
+   "name": "Suki",
+   "category": "Clinical-AI",
+   "atsHint": "lever",
+   "slug": "suki"
+  },
+  {
+   "name": "DeepScribe",
+   "category": "Clinical-AI",
+   "atsHint": "lever",
+   "slug": "deepscribe"
+  },
+  {
+   "name": "Aidoc",
+   "category": "Clinical-AI",
+   "atsHint": "lever",
+   "slug": "aidoc"
+  },
+  {
+   "name": "Viz.ai",
+   "category": "Clinical-AI",
+   "atsHint": "greenhouse",
+   "slug": "vizai"
+  },
+  {
+   "name": "Paige",
+   "category": "Clinical-AI",
+   "atsHint": "lever",
+   "slug": "paige"
+  },
+  {
+   "name": "PathAI",
+   "category": "Clinical-AI",
+   "atsHint": "lever",
+   "slug": "pathai"
+  },
+  {
+   "name": "Insitro",
+   "category": "Pharma + biotech",
+   "atsHint": "greenhouse",
+   "slug": "insitro"
+  },
+  {
+   "name": "Recursion Pharmaceuticals",
+   "category": "Pharma + biotech",
+   "atsHint": "greenhouse",
+   "slug": "recursionpharma",
+   "suspectSlug": true
+  },
+  {
+   "name": "AbCellera",
+   "category": "Pharma + biotech",
+   "atsHint": "lever",
+   "slug": "abcellera"
+  },
+  {
+   "name": "Editas Medicine",
+   "category": "Pharma + biotech",
+   "atsHint": "greenhouse",
+   "slug": "editasmedicine",
+   "suspectSlug": true
+  },
+  {
+   "name": "Intellia Therapeutics",
+   "category": "Pharma + biotech",
+   "atsHint": "greenhouse",
+   "slug": "intelliatx",
+   "suspectSlug": true
+  },
+  {
+   "name": "Sage Therapeutics",
+   "category": "Pharma + biotech",
+   "atsHint": "greenhouse",
+   "slug": "sagerx",
+   "suspectSlug": true
+  },
+  {
+   "name": "Ultragenyx",
+   "category": "Pharma + biotech",
+   "atsHint": "greenhouse",
+   "slug": "ultragenyx",
+   "suspectSlug": true
+  },
+  {
+   "name": "Ginkgo Bioworks",
+   "category": "Pharma + biotech",
+   "atsHint": "greenhouse",
+   "slug": "ginkgobioworks"
+  },
+  {
+   "name": "Sana Biotechnology",
+   "category": "Pharma + biotech",
+   "atsHint": "greenhouse",
+   "slug": "sanabiotechnology"
+  },
+  {
+   "name": "ArsenalBio",
+   "category": "Pharma + biotech",
+   "atsHint": "lever",
+   "slug": "arsenalbio"
+  },
+  {
+   "name": "Kallyope",
+   "category": "Pharma + biotech",
+   "atsHint": "lever",
+   "slug": "kallyope"
+  },
+  {
+   "name": "Denali Therapeutics",
+   "category": "Pharma + biotech",
+   "atsHint": "greenhouse",
+   "slug": "denalitherapeutics",
+   "suspectSlug": true
+  },
+  {
+   "name": "Slalom",
+   "category": "from-contacts",
+   "atsHint": "greenhouse",
+   "slug": "slalomconsulting",
+   "suspectSlug": true
+  },
+  {
+   "name": "EliseAI",
+   "category": "from-contacts",
+   "atsHint": "lever",
+   "slug": "eliseai"
+  },
+  {
+   "name": "Rewst",
+   "category": "from-contacts",
+   "atsHint": "greenhouse",
+   "slug": "rewst"
+  },
+  {
+   "name": "Klara",
+   "category": "from-contacts",
+   "atsHint": "greenhouse",
+   "slug": "klara"
+  },
+  {
+   "name": "LaserAway",
+   "category": "from-contacts",
+   "atsHint": "greenhouse",
+   "slug": "laseraway"
+  },
+  {
+   "name": "NexHealth",
+   "category": "dream-list-geetu",
+   "atsHint": "ashby",
+   "slug": "nexhealth",
+   "vertical": "healthcare",
+   "dreamList": true,
+   "dreamListFor": "geetu"
+  },
+  {
+   "name": "Pager Health",
+   "category": "dream-list-geetu",
+   "atsHint": "greenhouse",
+   "slug": "pagerhealth",
+   "vertical": "healthcare",
+   "dreamList": true,
+   "dreamListFor": "geetu"
+  },
+  {
+   "name": "Huge",
+   "category": "dream-list-geetu",
+   "atsHint": "greenhouse",
+   "slug": "huge",
+   "vertical": "media",
+   "dreamList": true,
+   "dreamListFor": "geetu",
+   "suspectSlug": true
+  },
+  {
+   "name": "Huntress",
+   "category": "dream-list-geetu",
+   "atsHint": "greenhouse",
+   "slug": "huntresslabs",
+   "vertical": "tech",
+   "dreamList": true,
+   "dreamListFor": "geetu"
+  },
+  {
+   "name": "Prescryptive",
+   "category": "dream-list-geetu",
+   "atsHint": "greenhouse",
+   "slug": "prescryptivehealth",
+   "vertical": "healthcare",
+   "dreamList": true,
+   "dreamListFor": "geetu",
+   "suspectSlug": true
+  },
+  {
+   "name": "Qventus",
+   "category": "dream-list-geetu",
+   "atsHint": "lever",
+   "slug": "qventus",
+   "vertical": "healthcare",
+   "dreamList": true,
+   "dreamListFor": "geetu"
+  },
+  {
+   "name": "Instacart",
+   "category": "dream-list-geetu",
+   "atsHint": "greenhouse",
+   "slug": "instacart",
+   "vertical": "consumer",
+   "dreamList": true,
+   "dreamListFor": "geetu"
+  },
+  {
+   "name": "Superhuman",
+   "category": "dream-list-geetu",
+   "atsHint": "lever",
+   "slug": "superhuman",
+   "vertical": "tech",
+   "dreamList": true,
+   "dreamListFor": "geetu"
+  },
+  {
+   "name": "Smarter Dx",
+   "category": "dream-list-geetu",
+   "atsHint": "greenhouse",
+   "slug": "smarterdx",
+   "vertical": "healthcare",
+   "dreamList": true,
+   "dreamListFor": "geetu"
+  },
+  {
+   "name": "Elastic",
+   "category": "dream-list-geetu",
+   "atsHint": "greenhouse",
+   "slug": "elastic",
+   "vertical": "tech",
+   "dreamList": true,
+   "dreamListFor": "geetu"
+  },
+  {
+   "name": "RxBenefits",
+   "category": "dream-list-geetu",
+   "atsHint": "greenhouse",
+   "slug": "rxbenefits",
+   "vertical": "healthcare",
+   "dreamList": true,
+   "dreamListFor": "geetu"
+  },
+  {
+   "name": "Cleerly",
+   "category": "dream-list-geetu",
+   "atsHint": "ashby",
+   "slug": "cleerly",
+   "vertical": "healthcare",
+   "dreamList": true,
+   "dreamListFor": "geetu"
+  },
+  {
+   "name": "Honor",
+   "category": "dream-list-geetu",
+   "atsHint": "greenhouse",
+   "slug": "honor",
+   "vertical": "healthcare",
+   "dreamList": true,
+   "dreamListFor": "geetu"
+  },
+  {
+   "name": "Lattice",
+   "category": "dream-list-geetu",
+   "atsHint": "greenhouse",
+   "slug": "lattice",
+   "vertical": "tech",
+   "dreamList": true,
+   "dreamListFor": "geetu"
+  },
+  {
+   "name": "Dropbox",
+   "category": "dream-list-geetu",
+   "atsHint": "greenhouse",
+   "slug": "dropbox",
+   "vertical": "tech",
+   "dreamList": true,
+   "dreamListFor": "geetu"
+  },
+  {
+   "name": "Guild",
+   "category": "dream-list-geetu",
+   "atsHint": "greenhouse",
+   "slug": "guild",
+   "vertical": "tech",
+   "dreamList": true,
+   "dreamListFor": "geetu"
+  },
+  {
+   "name": "Thrive Market",
+   "category": "dream-list-geetu",
+   "atsHint": "greenhouse",
+   "slug": "thrivemarket",
+   "vertical": "consumer",
+   "dreamList": true,
+   "dreamListFor": "geetu"
+  },
+  {
+   "name": "Ascend Analytics",
+   "category": "dream-list-geetu",
+   "atsHint": "lever",
+   "slug": "ascendanalytics",
+   "vertical": "tech",
+   "dreamList": true,
+   "dreamListFor": "geetu"
+  },
+  {
+   "name": "Anthropic",
+   "category": "dream-list-geetu",
+   "atsHint": "greenhouse",
+   "slug": "anthropic",
+   "vertical": "tech",
+   "dreamList": true,
+   "dreamListFor": "geetu"
+  },
+  {
+   "name": "AlphaSense",
+   "category": "dream-list-geetu",
+   "atsHint": "greenhouse",
+   "slug": "alphasense",
+   "vertical": "finance",
+   "dreamList": true,
+   "dreamListFor": "geetu"
+  },
+  {
+   "name": "Reddit",
+   "category": "dream-list-geetu",
+   "atsHint": "greenhouse",
+   "slug": "reddit",
+   "vertical": "tech",
+   "dreamList": true,
+   "dreamListFor": "geetu"
+  },
+  {
+   "name": "Celonis",
+   "category": "dream-list-geetu",
+   "atsHint": "greenhouse",
+   "slug": "celonis",
+   "vertical": "tech",
+   "dreamList": true,
+   "dreamListFor": "geetu",
+   "suspectSlug": true
+  },
+  {
+   "name": "Notion",
+   "category": "dream-list-geetu",
+   "atsHint": "ashby",
+   "slug": "notion",
+   "vertical": "tech",
+   "dreamList": true,
+   "dreamListFor": "geetu"
+  },
+  {
+   "name": "SmithRx",
+   "category": "dream-list-geetu",
+   "atsHint": "ashby",
+   "slug": "smithrx",
+   "vertical": "healthcare",
+   "dreamList": true,
+   "dreamListFor": "geetu"
+  },
+  {
+   "name": "Velocity Clinical Research",
+   "category": "Clinical Research / CRO",
+   "atsHint": "lever",
+   "slug": "velocityclinical"
+  },
+  {
+   "name": "WCG Clinical",
+   "category": "Clinical Research / CRO",
+   "atsHint": "greenhouse",
+   "slug": "wcgclinical",
+   "suspectSlug": true
+  },
+  {
+   "name": "Byte",
+   "category": "Dental + Vision Tech",
+   "atsHint": "greenhouse",
+   "slug": "byteme"
+  },
+  {
+   "name": "Candid",
+   "category": "Dental + Vision Tech",
+   "atsHint": "greenhouse",
+   "slug": "candidco"
+  },
+  {
+   "name": "Progyny",
+   "category": "Women's Health + Fertility",
+   "atsHint": "greenhouse",
+   "slug": "progyny",
+   "suspectSlug": true
+  },
+  {
+   "name": "Kindbody",
+   "category": "Women's Health + Fertility",
+   "atsHint": "greenhouse",
+   "slug": "kindbody"
+  },
+  {
+   "name": "Stork Club",
+   "category": "Women's Health + Fertility",
+   "atsHint": "lever",
+   "slug": "storkclub"
+  },
+  {
+   "name": "Ovia Health",
+   "category": "Women's Health + Fertility",
+   "atsHint": "greenhouse",
+   "slug": "oviahealth"
+  },
+  {
+   "name": "Mahmee",
+   "category": "Women's Health + Fertility",
+   "atsHint": "lever",
+   "slug": "mahmee"
+  },
+  {
+   "name": "Cleo",
+   "category": "Women's Health + Fertility",
+   "atsHint": "lever",
+   "slug": "meetcleo"
+  },
+  {
+   "name": "Bicycle Health",
+   "category": "Behavioral Health + Addiction Recovery",
+   "atsHint": "lever",
+   "slug": "bicyclehealth"
+  },
+  {
+   "name": "Eleanor Health",
+   "category": "Behavioral Health + Addiction Recovery",
+   "atsHint": "greenhouse",
+   "slug": "eleanorhealth"
+  },
+  {
+   "name": "Boulder Care",
+   "category": "Behavioral Health + Addiction Recovery",
+   "atsHint": "greenhouse",
+   "slug": "bouldercare"
+  },
+  {
+   "name": "Ophelia",
+   "category": "Behavioral Health + Addiction Recovery",
+   "atsHint": "greenhouse",
+   "slug": "ophelia"
+  },
+  {
+   "name": "Brightside Health",
+   "category": "Behavioral Health + Addiction Recovery",
+   "atsHint": "lever",
+   "slug": "brightside"
+  },
+  {
+   "name": "PointClickCare",
+   "category": "Post-Acute + Home Health + Long-Term Care",
+   "atsHint": "greenhouse",
+   "slug": "pointclickcare",
+   "suspectSlug": true
+  },
+  {
+   "name": "MatrixCare",
+   "category": "Post-Acute + Home Health + Long-Term Care",
+   "atsHint": "greenhouse",
+   "slug": "matrixcare",
+   "suspectSlug": true
+  },
+  {
+   "name": "CivicaRx",
+   "category": "Specialty Pharmacy + 340B",
+   "atsHint": "greenhouse",
+   "slug": "civicarx"
+  },
+  {
+   "name": "Imprivata",
+   "category": "Healthcare Cybersecurity + Privacy",
+   "atsHint": "greenhouse",
+   "slug": "imprivata",
+   "suspectSlug": true
+  },
+  {
+   "name": "Censinet",
+   "category": "Healthcare Cybersecurity + Privacy",
+   "atsHint": "lever",
+   "slug": "censinet"
+  },
+  {
+   "name": "Papa",
+   "category": "Senior Care + Caregiving Platforms",
+   "atsHint": "greenhouse",
+   "slug": "papa"
+  },
+  {
+   "name": "Carewell",
+   "category": "Senior Care + Caregiving Platforms",
+   "atsHint": "lever",
+   "slug": "carewell"
+  },
+  {
+   "name": "A Place for Mom",
+   "category": "Senior Care + Caregiving Platforms",
+   "atsHint": "greenhouse",
+   "slug": "aplaceformom"
+  },
+  {
+   "name": "Nurx",
+   "category": "Med-Aesthetic / Consumer Health",
+   "atsHint": "lever",
+   "slug": "nurx",
+   "suspectSlug": true
+  },
+  {
+   "name": "Curology",
+   "category": "Med-Aesthetic / Consumer Health",
+   "atsHint": "greenhouse",
+   "slug": "curology"
+  },
+  {
+   "name": "Keeps",
+   "category": "Med-Aesthetic / Consumer Health",
+   "atsHint": "lever",
+   "slug": "keeps"
+  },
+  {
+   "name": "Wisp",
+   "category": "Med-Aesthetic / Consumer Health",
+   "atsHint": "lever",
+   "slug": "helowisp"
+  },
+  {
+   "name": "Thirty Madison",
+   "category": "Med-Aesthetic / Consumer Health",
+   "atsHint": "greenhouse",
+   "slug": "thirtymadison"
+  },
+  {
+   "name": "Vetcove",
+   "category": "Veterinary Tech",
+   "atsHint": "lever",
+   "slug": "vetcove"
+  },
+  {
+   "name": "Altasciences",
+   "category": "Clinical Research / CRO",
+   "atsHint": "greenhouse",
+   "slug": "altasciences"
+  },
+  {
+   "name": "Stellar Dental",
+   "category": "Dental Tech",
+   "atsHint": "lever",
+   "slug": "stellar"
+  },
+  {
+   "name": "Spring Fertility",
+   "category": "Women's Health / Fertility",
+   "atsHint": "lever",
+   "slug": "springfertility"
+  },
+  {
+   "name": "WIN Fertility",
+   "category": "Women's Health / Fertility",
+   "atsHint": "greenhouse",
+   "slug": "winfertility"
+  },
+  {
+   "name": "Twentyeight Health",
+   "category": "Women's Health / Fertility",
+   "atsHint": "lever",
+   "slug": "twentyeighthealth"
+  },
+  {
+   "name": "Workit Health",
+   "category": "Behavioral Health / Addiction",
+   "atsHint": "lever",
+   "slug": "workithealth"
+  },
+  {
+   "name": "Quit Genius",
+   "category": "Behavioral Health / Addiction",
+   "atsHint": "lever",
+   "slug": "quitgenius"
+  },
+  {
+   "name": "Charlie Health",
+   "category": "Behavioral Health",
+   "atsHint": "greenhouse",
+   "slug": "charliehealth"
+  },
+  {
+   "name": "AlayaCare",
+   "category": "Home Health Tech",
+   "atsHint": "greenhouse",
+   "slug": "alayacare"
+  },
+  {
+   "name": "CivicaScript",
+   "category": "Specialty Pharmacy",
+   "atsHint": "greenhouse",
+   "slug": "civica"
+  },
+  {
+   "name": "Capital Rx",
+   "category": "Specialty Pharmacy / PBM",
+   "atsHint": "greenhouse",
+   "slug": "capitalrx"
+  },
+  {
+   "name": "Optime Care",
+   "category": "Specialty Pharmacy",
+   "atsHint": "greenhouse",
+   "slug": "optimecare"
+  },
+  {
+   "name": "MedeAnalytics",
+   "category": "Healthcare Analytics / RCM",
+   "atsHint": "greenhouse",
+   "slug": "medeanalytics"
+  },
+  {
+   "name": "Revo Health",
+   "category": "Veterinary Tech",
+   "atsHint": "lever",
+   "slug": "revohealth"
+  },
+  {
+   "name": "Soundtalent",
+   "category": "Clinical Research / Decentralized Trials",
+   "atsHint": "lever",
+   "slug": "soundtalent"
+  },
+  {
+   "name": "Science 37",
+   "category": "Clinical Research / Decentralized Trials",
+   "atsHint": "greenhouse",
+   "slug": "science37"
+  },
+  {
+   "name": "Advarra",
+   "category": "Clinical Research / CRO",
+   "atsHint": "greenhouse",
+   "slug": "advarra"
+  },
+  {
+   "name": "Warby Parker",
+   "category": "Dental + Vision Tech",
+   "atsHint": "greenhouse",
+   "slug": "warbyparker"
+  },
+  {
+   "name": "Symplr",
+   "category": "Healthcare Cybersecurity / Privacy",
+   "atsHint": "greenhouse",
+   "slug": "symplr"
+  },
+  {
+   "name": "Health Catalyst",
+   "category": "Health IT Infrastructure",
+   "atsHint": "greenhouse",
+   "slug": "healthcatalyst"
+  },
+  {
+   "name": "GeneDx",
+   "category": "Diagnostics / Lab Services",
+   "atsHint": "greenhouse",
+   "slug": "genedx"
+  },
+  {
+   "name": "Cricket Health",
+   "category": "Dialysis / Kidney Care",
+   "atsHint": "greenhouse",
+   "slug": "crickethealth"
+  },
+  {
+   "name": "Somatus",
+   "category": "Dialysis / Kidney Care",
+   "atsHint": "greenhouse",
+   "slug": "somatus"
+  },
+  {
+   "name": "Clinical Research IO",
+   "category": "Clinical research / CRO",
+   "atsHint": "lever",
+   "slug": "clinicalresearchio"
+  },
+  {
+   "name": "Dental Intelligence",
+   "category": "Dental tech",
+   "atsHint": "greenhouse",
+   "slug": "dentalintelligence"
+  },
+  {
+   "name": "Tend",
+   "category": "Dental tech",
+   "atsHint": "greenhouse",
+   "slug": "tend"
+  },
+  {
+   "name": "Pearl",
+   "category": "Dental tech",
+   "atsHint": "greenhouse",
+   "slug": "hellopearl"
+  },
+  {
+   "name": "Overjet",
+   "category": "Dental tech",
+   "atsHint": "greenhouse",
+   "slug": "overjet"
+  },
+  {
+   "name": "Dandy",
+   "category": "Dental tech",
+   "atsHint": "greenhouse",
+   "slug": "meetdandy"
+  },
+  {
+   "name": "Tend Health",
+   "category": "Dental tech",
+   "atsHint": "greenhouse",
+   "slug": "tendhealth"
+  },
+  {
+   "name": "Denti.AI",
+   "category": "Dental tech",
+   "atsHint": "lever",
+   "slug": "dentiai"
+  },
+  {
+   "name": "Zentist",
+   "category": "Dental tech",
+   "atsHint": "ashby",
+   "slug": "zentist"
+  },
+  {
+   "name": "Kleer",
+   "category": "Dental tech",
+   "atsHint": "lever",
+   "slug": "kleer"
+  },
+  {
+   "name": "Evvy",
+   "category": "Women's health",
+   "atsHint": "ashby",
+   "slug": "evvy"
+  },
+  {
+   "name": "Bloomlife",
+   "category": "Women's health",
+   "atsHint": "lever",
+   "slug": "bloomlife"
+  },
+  {
+   "name": "Oula Health",
+   "category": "Women's health",
+   "atsHint": "ashby",
+   "slug": "oulahealth"
+  },
+  {
+   "name": "Odela",
+   "category": "Women's health",
+   "atsHint": "greenhouse",
+   "slug": "odela"
+  },
+  {
+   "name": "Cayaba Care",
+   "category": "Women's health",
+   "atsHint": "lever",
+   "slug": "cayabacare"
+  },
+  {
+   "name": "Mira Fertility",
+   "category": "Women's health / fertility",
+   "atsHint": "greenhouse",
+   "slug": "miracare"
+  },
+  {
+   "name": "Legacy",
+   "category": "Women's health / fertility",
+   "atsHint": "lever",
+   "slug": "givelegacy"
+  },
+  {
+   "name": "Dadi",
+   "category": "Women's health / fertility",
+   "atsHint": "lever",
+   "slug": "dadi"
+  },
+  {
+   "name": "Confidant Health",
+   "category": "Behavioral health / addiction",
+   "atsHint": "lever",
+   "slug": "confidanthealth"
+  },
+  {
+   "name": "Pelago",
+   "category": "Behavioral health / addiction",
+   "atsHint": "greenhouse",
+   "slug": "pelago"
+  },
+  {
+   "name": "Kip Health",
+   "category": "Behavioral health",
+   "atsHint": "ashby",
+   "slug": "kiphealth"
+  },
+  {
+   "name": "Rula Health",
+   "category": "Behavioral health",
+   "atsHint": "greenhouse",
+   "slug": "rula"
+  },
+  {
+   "name": "Two Chairs",
+   "category": "Behavioral health",
+   "atsHint": "lever",
+   "slug": "twochairs"
+  },
+  {
+   "name": "CareAcademy",
+   "category": "Home health / caregiving",
+   "atsHint": "greenhouse",
+   "slug": "careacademy"
+  },
+  {
+   "name": "CareYaya",
+   "category": "Senior care / caregiving",
+   "atsHint": "lever",
+   "slug": "careyaya"
+  },
+  {
+   "name": "Kindly Care",
+   "category": "Senior care / caregiving",
+   "atsHint": "lever",
+   "slug": "kindlycare"
+  },
+  {
+   "name": "Caregiver",
+   "category": "Senior care / caregiving",
+   "atsHint": "greenhouse",
+   "slug": "caregiver"
+  },
+  {
+   "name": "Seniorly",
+   "category": "Senior care",
+   "atsHint": "lever",
+   "slug": "seniorly"
+  },
+  {
+   "name": "Medly Pharmacy",
+   "category": "Specialty pharmacy",
+   "atsHint": "lever",
+   "slug": "medly"
+  },
+  {
+   "name": "Kalderos",
+   "category": "340B tech",
+   "atsHint": "lever",
+   "slug": "kalderos"
+  },
+  {
+   "name": "ScriptDrop",
+   "category": "Specialty pharmacy",
+   "atsHint": "lever",
+   "slug": "scriptdrop"
+  },
+  {
+   "name": "Lynx Health",
+   "category": "Health IT infrastructure",
+   "atsHint": "ashby",
+   "slug": "lynxhealth"
+  },
+  {
+   "name": "Ribbon Health",
+   "category": "Health IT infrastructure",
+   "atsHint": "greenhouse",
+   "slug": "ribbonhealth"
+  },
+  {
+   "name": "Smile CDR",
+   "category": "Health IT infrastructure",
+   "atsHint": "greenhouse",
+   "slug": "smilecdr"
+  },
+  {
+   "name": "Apostrophe",
+   "category": "Consumer health / dermatology",
+   "atsHint": "lever",
+   "slug": "apostrophe"
+  },
+  {
+   "name": "Manual",
+   "category": "Consumer health",
+   "atsHint": "lever",
+   "slug": "manual"
+  },
+  {
+   "name": "Curex",
+   "category": "Consumer health / allergy",
+   "atsHint": "ashby",
+   "slug": "curexhealth"
+  },
+  {
+   "name": "Allermi",
+   "category": "Consumer health / allergy",
+   "atsHint": "ashby",
+   "slug": "allermi"
+  },
+  {
+   "name": "Felix Health",
+   "category": "Consumer health",
+   "atsHint": "lever",
+   "slug": "felixhealth"
+  },
+  {
+   "name": "Galaxy Vets",
+   "category": "Veterinary tech",
+   "atsHint": "greenhouse",
+   "slug": "galaxyvets"
+  },
+  {
+   "name": "Vetsource",
+   "category": "Veterinary tech",
+   "atsHint": "greenhouse",
+   "slug": "vetsource"
+  },
+  {
+   "name": "PetDesk",
+   "category": "Veterinary tech",
+   "atsHint": "lever",
+   "slug": "petdesk"
+  },
+  {
+   "name": "Digitail",
+   "category": "Veterinary tech",
+   "atsHint": "lever",
+   "slug": "digitail"
+  },
+  {
+   "name": "Shepherd",
+   "category": "Veterinary tech",
+   "atsHint": "lever",
+   "slug": "shepherdvet"
+  },
+  {
+   "name": "Rightway Healthcare",
+   "category": "Pharmacy benefits / navigation",
+   "atsHint": "greenhouse",
+   "slug": "rightwayhealthcare"
+  },
+  {
+   "name": "Medisafe",
+   "category": "Medication adherence",
+   "atsHint": "lever",
+   "slug": "medisafe"
+  },
+  {
+   "name": "Artera",
+   "category": "Patient engagement",
+   "atsHint": "greenhouse",
+   "slug": "artera"
+  },
+  {
+   "name": "Luma Health",
+   "category": "Patient engagement",
+   "atsHint": "greenhouse",
+   "slug": "lumahealth"
+  },
+  {
+   "name": "Healthgrades",
+   "category": "Provider search / reputation",
+   "atsHint": "greenhouse",
+   "slug": "healthgrades"
+  },
+  {
+   "name": "Clearstep",
+   "category": "Patient triage / navigation",
+   "atsHint": "lever",
+   "slug": "clearstep"
+  },
+  {
+   "name": "Buoy Health",
+   "category": "Patient triage / navigation",
+   "atsHint": "greenhouse",
+   "slug": "buoyhealth"
+  },
+  {
+   "name": "Firefly Health",
+   "category": "Primary care / virtual",
+   "atsHint": "greenhouse",
+   "slug": "firefly"
+  },
+  {
+   "name": "Accel",
+   "category": "Care navigation / RCM",
+   "atsHint": "greenhouse",
+   "slug": "accel"
+  },
+  {
+   "name": "League",
+   "category": "Health benefits platform",
+   "atsHint": "greenhouse",
+   "slug": "league"
+  },
+  {
+   "name": "Healthie",
+   "category": "provider-tech",
+   "atsHint": "greenhouse",
+   "slug": "healthie",
+   "suspectSlug": true
+  },
+  {
+   "name": "Turquoise Health",
+   "category": "payer-tech",
+   "atsHint": "ashby",
+   "slug": "turquoise-health",
+   "suspectSlug": true
+  },
+  {
+   "name": "Equip Health",
+   "category": "behavioral-health",
+   "atsHint": "greenhouse",
+   "slug": "equiphealth",
+   "suspectSlug": true
+  },
+  {
+   "name": "Hazel Health",
+   "category": "pediatric-telehealth",
+   "atsHint": "greenhouse",
+   "slug": "hazel",
+   "suspectSlug": true
+  },
+  {
+   "name": "Crossover Health",
+   "category": "primary-care",
+   "atsHint": "greenhouse",
+   "slug": "crossoverhealth",
+   "suspectSlug": true
+  },
+  {
+   "name": "Parsley Health",
+   "category": "primary-care",
+   "atsHint": "greenhouse",
+   "slug": "parsleyhealth",
+   "suspectSlug": true
+  },
+  {
+   "name": "Midi Health",
+   "category": "womens-health",
+   "atsHint": "greenhouse",
+   "slug": "midihealth",
+   "suspectSlug": true
+  },
+  {
+   "name": "Pomelo Care",
+   "category": "womens-health",
+   "atsHint": "ashby",
+   "slug": "pomelo-care",
+   "suspectSlug": true
+  },
+  {
+   "name": "NOCD",
+   "category": "behavioral-health",
+   "atsHint": "lever",
+   "slug": "nocd",
+   "suspectSlug": true
+  },
+  {
+   "name": "Talkiatry",
+   "category": "behavioral-health",
+   "atsHint": "greenhouse",
+   "slug": "talkiatry",
+   "suspectSlug": true
+  },
+  {
+   "name": "SimplePractice",
+   "category": "provider-tech",
+   "atsHint": "greenhouse",
+   "slug": "simplepractice",
+   "suspectSlug": true
+  },
+  {
+   "name": "Medallion",
+   "category": "provider-infra",
+   "atsHint": "ashby",
+   "slug": "medallion",
+   "suspectSlug": true
+  },
+  {
+   "name": "Verifiable",
+   "category": "provider-infra",
+   "atsHint": "lever",
+   "slug": "verifiable",
+   "suspectSlug": true
+  },
+  {
+   "name": "CertifyOS",
+   "category": "provider-infra",
+   "atsHint": "ashby",
+   "slug": "certifyos",
+   "suspectSlug": true
+  },
+  {
+   "name": "Metriport",
+   "category": "data-infra",
+   "atsHint": "ashby",
+   "slug": "metriport",
+   "suspectSlug": true
+  },
+  {
+   "name": "Flexpa",
+   "category": "data-infra",
+   "atsHint": "ashby",
+   "slug": "flexpa",
+   "suspectSlug": true
+  },
+  {
+   "name": "Tennr",
+   "category": "clinical-ai",
+   "atsHint": "ashby",
+   "slug": "tennr",
+   "suspectSlug": true
+  },
+  {
+   "name": "Anterior",
+   "category": "clinical-ai",
+   "atsHint": "ashby",
+   "slug": "anterior",
+   "suspectSlug": true
+  },
+  {
+   "name": "Ambience Healthcare",
+   "category": "clinical-ai",
+   "atsHint": "ashby",
+   "slug": "ambiencehealthcare",
+   "suspectSlug": true
+  },
+  {
+   "name": "Nabla",
+   "category": "clinical-ai",
+   "atsHint": "lever",
+   "slug": "nabla",
+   "suspectSlug": true
+  },
+  {
+   "name": "Navina",
+   "category": "clinical-ai",
+   "atsHint": "greenhouse",
+   "slug": "navina",
+   "suspectSlug": true
+  },
+  {
+   "name": "Regard",
+   "category": "clinical-ai",
+   "atsHint": "lever",
+   "slug": "regard",
+   "suspectSlug": true
+  },
+  {
+   "name": "Rad AI",
+   "category": "imaging-ai",
+   "atsHint": "greenhouse",
+   "slug": "radai",
+   "suspectSlug": true
+  },
+  {
+   "name": "HeartFlow",
+   "category": "imaging-ai",
+   "atsHint": "greenhouse",
+   "slug": "heartflow",
+   "suspectSlug": true
+  },
+  {
+   "name": "VideaHealth",
+   "category": "dental-ai",
+   "atsHint": "greenhouse",
+   "slug": "videahealth",
+   "suspectSlug": true
+  },
+  {
+   "name": "LeanTaaS",
+   "category": "hospital-ops",
+   "atsHint": "greenhouse",
+   "slug": "leantaas",
+   "suspectSlug": true
+  },
+  {
+   "name": "Laudio",
+   "category": "hospital-ops",
+   "atsHint": "greenhouse",
+   "slug": "laudio",
+   "suspectSlug": true
+  },
+  {
+   "name": "Rightway",
+   "category": "care-navigation",
+   "atsHint": "greenhouse",
+   "slug": "rightway",
+   "suspectSlug": true
+  },
+  {
+   "name": "HealthJoy",
+   "category": "care-navigation",
+   "atsHint": "greenhouse",
+   "slug": "healthjoy",
+   "suspectSlug": true
+  },
+  {
+   "name": "Carrum Health",
+   "category": "benefits-tech",
+   "atsHint": "greenhouse",
+   "slug": "carrumhealth",
+   "suspectSlug": true
+  },
+  {
+   "name": "Lantern Care",
+   "category": "benefits-tech",
+   "atsHint": "greenhouse",
+   "slug": "lanterncare",
+   "suspectSlug": true
+  },
+  {
+   "name": "Candid Health",
+   "category": "rcm-tech",
+   "atsHint": "greenhouse",
+   "slug": "candidhealth",
+   "suspectSlug": true
+  },
+  {
+   "name": "Infinitus Systems",
+   "category": "clinical-ai",
+   "atsHint": "greenhouse",
+   "slug": "infinitus",
+   "suspectSlug": true
+  },
+  {
+   "name": "Machinify",
+   "category": "payer-tech",
+   "atsHint": "greenhouse",
+   "slug": "machinify",
+   "suspectSlug": true
+  },
+  {
+   "name": "Benchling",
+   "category": "life-sciences-saas",
+   "atsHint": "greenhouse",
+   "slug": "benchling",
+   "suspectSlug": true
+  },
+  {
+   "name": "H1",
+   "category": "life-sciences-data",
+   "atsHint": "greenhouse",
+   "slug": "h1",
+   "suspectSlug": true
+  },
+  {
+   "name": "Vytalize Health",
+   "category": "value-based-care",
+   "atsHint": "greenhouse",
+   "slug": "vytalizehealth",
+   "suspectSlug": true
+  },
+  {
+   "name": "Evolent Health",
+   "category": "payer-services",
+   "atsHint": "workday",
+   "slug": "evolenthealth",
+   "suspectSlug": true
+  },
+  {
+   "name": "Interwell Health",
+   "category": "value-based-care",
+   "atsHint": "greenhouse",
+   "slug": "interwellhealth",
+   "suspectSlug": true
+  },
+  {
+   "name": "Monogram Health",
+   "category": "value-based-care",
+   "atsHint": "greenhouse",
+   "slug": "monogramhealth",
+   "suspectSlug": true
+  },
+  {
+   "name": "WelbeHealth",
+   "category": "senior-care",
+   "atsHint": "greenhouse",
+   "slug": "welbehealth",
+   "suspectSlug": true
+  },
+  {
+   "name": "Vesta Healthcare",
+   "category": "senior-care",
+   "atsHint": "greenhouse",
+   "slug": "vestahealthcare",
+   "suspectSlug": true
+  },
+  {
+   "name": "Homeward Health",
+   "category": "rural-care",
+   "atsHint": "greenhouse",
+   "slug": "homeward",
+   "suspectSlug": true
+  },
+  {
+   "name": "Main Street Health",
+   "category": "rural-care",
+   "atsHint": "greenhouse",
+   "slug": "mainstreethealth",
+   "suspectSlug": true
+  },
+  {
+   "name": "Hopscotch Primary Care",
+   "category": "primary-care",
+   "atsHint": "greenhouse",
+   "slug": "hopscotchprimarycare",
+   "suspectSlug": true
+  },
+  {
+   "name": "Marathon Health",
+   "category": "employer-health",
+   "atsHint": "greenhouse",
+   "slug": "marathonhealth",
+   "suspectSlug": true
+  },
+  {
+   "name": "Cadence",
+   "category": "remote-monitoring",
+   "atsHint": "greenhouse",
+   "slug": "cadence",
+   "suspectSlug": true
+  },
+  {
+   "name": "Optimize Health",
+   "category": "remote-monitoring",
+   "atsHint": "greenhouse",
+   "slug": "optimizehealth",
+   "suspectSlug": true
+  },
+  {
+   "name": "PayZen",
+   "category": "healthcare-fintech",
+   "atsHint": "ashby",
+   "slug": "payzen",
+   "suspectSlug": true
+  },
+  {
+   "name": "Solace Health",
+   "category": "care-advocacy",
+   "atsHint": "ashby",
+   "slug": "solace",
+   "suspectSlug": true
+  },
+  {
+   "name": "Summer Health",
+   "category": "pediatric-telehealth",
+   "atsHint": "ashby",
+   "slug": "summerhealth",
+   "suspectSlug": true
+  },
+  {
+   "name": "Mochi Health",
+   "category": "telehealth",
+   "atsHint": "ashby",
+   "slug": "mochihealth",
+   "suspectSlug": true
+  },
+  {
+   "name": "Angle Health",
+   "category": "insurtech",
+   "atsHint": "ashby",
+   "slug": "anglehealth",
+   "suspectSlug": true
+  },
+  {
+   "name": "Nym Health",
+   "category": "rcm-tech",
+   "atsHint": "greenhouse",
+   "slug": "nym",
+   "suspectSlug": true
+  },
+  {
+   "name": "Fathom",
+   "category": "rcm-tech",
+   "atsHint": "ashby",
+   "slug": "fathom",
+   "suspectSlug": true
+  },
+  {
+   "name": "Moxe Health",
+   "category": "interoperability",
+   "atsHint": "greenhouse",
+   "slug": "moxehealth",
+   "suspectSlug": true
+  },
+  {
+   "name": "Verato",
+   "category": "data-infra",
+   "atsHint": "greenhouse",
+   "slug": "verato",
+   "suspectSlug": true
+  },
+  {
+   "name": "NimbleRx",
+   "category": "pharmacy-tech",
+   "atsHint": "lever",
+   "slug": "nimblerx",
+   "suspectSlug": true
+  },
+  {
+   "name": "National Resilience",
+   "category": "biomanufacturing",
+   "atsHint": "greenhouse",
+   "slug": "resilience",
+   "suspectSlug": true
+  },
+  {
+   "name": "Power",
+   "category": "clinical-trials",
+   "atsHint": "ashby",
+   "slug": "withpower",
+   "suspectSlug": true
+  },
+  {
+   "name": "Springbuk",
+   "category": "benefits-analytics",
+   "atsHint": "greenhouse",
+   "slug": "springbuk",
+   "suspectSlug": true
+  }
+ ],
+ "non_ats_placeholders": [
+  {
+   "name": "Epic Systems",
+   "category": "geetu-dream-list",
+   "atsHint": "other",
+   "slug": "",
+   "url": "https://careers.epic.com/jobs/search",
+   "dreamList": true,
+   "dreamListFor": "geetu",
+   "note": "Proprietary careers portal \u2014 needs custom scraper (Apify candidate)"
+  },
+  {
+   "name": "Health Catalyst",
+   "category": "hit-ai",
+   "atsHint": "other",
+   "slug": "",
+   "suspectSlug": true
+  },
+  {
+   "name": "Hello Heart",
+   "category": "dtx",
+   "atsHint": "other",
+   "slug": "",
+   "suspectSlug": true
+  },
+  {
+   "name": "Capital Rx",
+   "category": "Specialty Pharmacy + 340B",
+   "atsHint": "other",
+   "slug": "",
+   "suspectSlug": true
+  }
+ ]
 }
