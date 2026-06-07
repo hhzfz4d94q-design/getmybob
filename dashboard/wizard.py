@@ -763,6 +763,8 @@ WIZARD_V3_BLOCK = r"""
       },
       async save(st) {
         st.finished = true;
+        // Server-side completion flag — survives localStorage wipes (see autoLaunch)
+        try { patchProfile({ wizardCompletedAt: new Date().toISOString() }).catch(() => {}); } catch (e) {}
         // Best-effort: trigger a refresh so the new dashboard regenerates
         try {
           const ek = getEditKey();
@@ -902,6 +904,10 @@ WIZARD_V3_BLOCK = r"""
   async function finish() {
     state.finished = true;
     saveState(state);
+    // Server-side completion flag (2026-06-07): localStorage alone gets wiped
+    // by new devices / cleared caches / Safari storage eviction, which re-opened
+    // the wizard "again and again". The profile is the source of truth now.
+    try { patchProfile({ wizardCompletedAt: new Date().toISOString() }).catch(() => {}); } catch (e) {}
     document.getElementById("wiz3-overlay").classList.remove("show");
     // Failsafe: if the user reached the end without explicitly saving companies
     // in pick-companies step (it's optional), auto-regen once so their target
@@ -968,49 +974,35 @@ WIZARD_V3_BLOCK = r"""
     // If old v2 auto-launch already ran and opened a modal, hide it.
     const oldModal = document.getElementById("gmj-wizard");
     if (oldModal) oldModal.classList.remove("show");
-    // Decide whether to open: not finished, OR pending step from reload.
+    // Decide whether to open (2026-06-07 rules):
+    //   1. The profile's wizardCompletedAt is the LIFETIME source of truth.
+    //      If set, never auto-open — heal localStorage and stop. localStorage
+    //      is just a cache; it gets wiped by new devices / Safari eviction.
+    //   2. The old "over-cap migration" force-route is DELETED: the 2026-05-29
+    //      no-caps policy made >5 titles / >5 industries / >15 keywords the
+    //      CORRECT state, so that check force-opened the wizard forever for
+    //      exactly the users who finished it properly.
+    //   3. pendingStep (reload-resume dance) is only honored mid-wizard.
     let pending = "";
     try { pending = localStorage.getItem("gmj_wizard_state_v3_pendingStep") || ""; } catch (e) {}
 
-    // MIGRATION (2026-05-27): existing users whose AI-extracted profile
-    // exceeds the bullseye caps get force-routed to the new picker steps.
-    // Caps mirror what pick-titles / pick-industries / pick-skills enforce.
-    // Skipped if user just opened wizard (pending set) or hasn't finished yet.
-    // MIGRATION (refined 2026-05-27): only trigger when the user's profile
-    // exceeds the caps that 'your-bullseye' ACTUALLY enforces:
-    //   targetTitles ≤ 5, industries ≤ 5, keywords ≤ 15
-    // (technologies + frameworks are NOT capped — they hold the legacy long-
-    // tail and we keep them as-is). Routes to 'your-bullseye' not the dead
-    // 'pick-titles' step. Also stamps a one-time 'migrated' flag so we don't
-    // re-trigger every reload after the user just walked through it.
-    let needsMigration = false;
-    if (state.finished && !pending) {
+    if (!state.finished) {
       try {
         const p = await getProfile();
-        const titles  = ((p && p.targetTitles) || []).length;
-        const inds    = ((p && p.industries)   || []).length;
-        const kwOnly  = ((p && p.keywords)     || []).length;
-        const alreadyMigrated = !!(state.data && state.data.bullseyeMigratedAt);
-        if (!alreadyMigrated && (titles > 5 || inds > 5 || kwOnly > 15)) {
-          needsMigration = true;
-          // NOTE: do NOT reset state.finished here. Doing so caused an infinite
-          // re-open loop for users whose AI-extracted profile was over-cap and
-          // who couldn't (or didn't) trim in one sitting. The bullseyeMigratedAt
-          // stamp alone is enough to ensure this only nags once per browser;
-          // state.finished is the LIFETIME completion flag and should stay sticky.
-          state.currentStep = "your-bullseye";
-          state.completed = state.completed.filter(k => k !== "your-bullseye");
-          state.data = state.data || {};
-          state.data.bullseyeMigratedAt = new Date().toISOString();
+        if (p && p.wizardCompletedAt) {
+          state.finished = true;
           saveState(state);
-          try { console.log("[wizard migration] over-cap profile detected — opening your-bullseye"); } catch(e) {}
         }
-      } catch (e) { /* network blip — skip migration this load */ }
+      } catch (e) { /* network blip — fall through to local state */ }
     }
 
-    if (pending || !state.finished || needsMigration) {
-      setTimeout(open, 500);
+    if (state.finished) {
+      // Stale pending from an abandoned reload-step must not resurrect the wizard.
+      if (pending) { try { localStorage.removeItem("gmj_wizard_state_v3_pendingStep"); } catch (e) {} }
+      return;
     }
+
+    setTimeout(open, 500);
   }
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", autoLaunch);

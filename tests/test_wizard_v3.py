@@ -18,7 +18,8 @@ Exits non-zero on any failure (matches the existing tests/ style).
 import os, re, sys, json
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-FETCH = os.path.join(ROOT, "fetch_jobs.py")
+# Phase 3 split (2026-05-28) moved the block to dashboard/wizard.py.
+FETCH = os.path.join(ROOT, "dashboard", "wizard.py")
 
 PASS = 0
 FAIL = 0
@@ -40,9 +41,9 @@ def check(label, cond, detail=""):
 with open(FETCH, "r") as f:
     src = f.read()
 
-m = re.search(r'WIZARD_V3_BLOCK\s*=\s*r"""(.*?)"""', src, re.DOTALL)
+m = re.search(r'WIZARD_V3_BLOCK\s*=\s*r?"""(.*?)"""', src, re.DOTALL)
 if not m:
-    print("✗ FATAL: Could not locate WIZARD_V3_BLOCK = r\"\"\"...\"\"\" in fetch_jobs.py")
+    print("✗ FATAL: Could not locate WIZARD_V3_BLOCK = \"\"\"...\"\"\" in dashboard/wizard.py")
     sys.exit(2)
 V3 = m.group(1)
 print(f"Loaded WIZARD_V3_BLOCK: {len(V3):,} bytes\n")
@@ -141,12 +142,12 @@ print("\nStep inventory (9 expected after consolidation):")
 step_keys = re.findall(r'\{\s*key:\s*"([a-z\-]+)",\s*\n\s+title:', V3)
 expected_steps = [
     "welcome", "upload-resume", "your-bullseye", "where-you-work",
-    "scoring-tune", "daily-workflow", "addons", "pick-blocks", "done",
+    "scoring-tune", "addons", "pick-blocks", "done",
 ]
-check(f"exactly 9 steps declared (found {len(step_keys)})",
-      len(step_keys) == 9,
+check(f"exactly 8 steps declared (found {len(step_keys)})",
+      len(step_keys) == 8,
       f"step list drift: got {step_keys}")
-check("step order matches the consolidated 9-step contract",
+check("step order matches the consolidated 8-step contract",
       step_keys == expected_steps,
       f"order/membership diff: expected {expected_steps}, got {step_keys}")
 
@@ -202,6 +203,40 @@ print("\nv2 gating:")
 check("window.WizV3 marker is set when v3 loads",
       "window.WizV3" in V3,
       "v2 setup() checks this marker to bail out — losing it means BOTH wizards render")
+
+
+# ----------------------------------------------------------------------
+# (e) 2026-06-07 re-trigger regressions: completion must be server-backed
+#     and the obsolete over-cap migration must STAY deleted
+# ----------------------------------------------------------------------
+print("\nRe-trigger protections (2026-06-07):")
+check("finish() writes wizardCompletedAt to the profile (server-side truth)",
+      "wizardCompletedAt" in V3 and V3.count("patchProfile({ wizardCompletedAt") >= 2,
+      "completion lives only in localStorage -> wizard re-opens on every new device / storage wipe")
+
+check("autoLaunch consults profile.wizardCompletedAt and heals localStorage",
+      "p.wizardCompletedAt" in V3,
+      "server flag exists but autoLaunch ignores it")
+
+check("over-cap 'migration' force-route is gone (contradicts no-caps policy)",
+      "needsMigration" not in V3 and "bullseyeMigratedAt" not in V3,
+      "the >5/>5/>15 check force-opens the wizard forever for users with big (correct) profiles")
+
+check("finished state short-circuits autoLaunch (no auto-open, stale pending cleared)",
+      "if (state.finished)" in V3 and 'removeItem("gmj_wizard_state_v3_pendingStep")' in V3,
+      "stale pendingStep can resurrect the wizard after completion")
+
+# Worker contract: patch whitelist + regen preservation must carry the flag
+WORKER = os.path.join(ROOT, "worker_target.js")
+with open(WORKER) as f:
+    wsrc = f.read()
+print("\nWorker contract for wizardCompletedAt:")
+check("SCALAR_FIELDS whitelist accepts wizardCompletedAt",
+      "'wizardCompletedAt']" in wsrc or "'wizardCompletedAt'," in wsrc,
+      "patchProfile silently drops the flag -> completion never persists")
+check("regenerateSkillsProfile preserves wizardCompletedAt across regen",
+      wsrc.count("wizardCompletedAt") >= 3,
+      "every resume change / regen wipes the flag -> wizard re-opens")
 
 
 # ----------------------------------------------------------------------

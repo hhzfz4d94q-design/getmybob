@@ -95,6 +95,7 @@ jobs:
           python3 tests/test_catalog_integrity.py
           python3 tests/test_scrapers_fixture.py
           python3 tests/test_match_goldens.py
+          python3 tests/test_wizard_v3.py
           if command -v node >/dev/null 2>&1; then
             node tests/test_sprint_reminder.mjs
             node tests/test_align_pool.mjs

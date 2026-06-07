@@ -394,6 +394,9 @@ async function regenerateSkillsProfile(env, slug) {
         skillsPool:    Array.isArray(existing.skillsPool)    ? existing.skillsPool    : null,
         negativeKeywords: Array.isArray(existing.negativeKeywords) ? existing.negativeKeywords : null,
         negativeTitles:   Array.isArray(existing.negativeTitles)   ? existing.negativeTitles   : null,
+        // 2026-06-07: wizard completion is a lifetime flag — must survive regen,
+        // else every resume change re-opens the wizard for the user.
+        wizardCompletedAt: (typeof existing.wizardCompletedAt === 'string' && existing.wizardCompletedAt) ? existing.wizardCompletedAt : null,
       };
     }
   } catch (e) { /* fall through with defaults */ }
@@ -675,6 +678,7 @@ ${resumeJson}`;
       if (preservedBullseye.skillsPool)     profile.skillsPool     = _u(profile.skillsPool, preservedBullseye.skillsPool);
       if (preservedBullseye.negativeKeywords && preservedBullseye.negativeKeywords.length) profile.negativeKeywords = preservedBullseye.negativeKeywords;
       if (preservedBullseye.negativeTitles && preservedBullseye.negativeTitles.length)     profile.negativeTitles   = preservedBullseye.negativeTitles;
+      if (preservedBullseye.wizardCompletedAt) profile.wizardCompletedAt = preservedBullseye.wizardCompletedAt;
     }
     await env.RESUMES.put(uk(slug, 'skills_profile'), JSON.stringify(profile));
     return profile;
@@ -708,7 +712,7 @@ async function handleSkillsProfile(request, env, cors, slug) {
       const raw = await env.RESUMES.get(uk(slug, 'skills_profile'));
       const existing = raw ? JSON.parse(raw) : {};
       const updated = Object.assign({}, existing);
-      const SCALAR_FIELDS = new Set(['salaryFloor', 'remotePreferred', 'seniorityLevel', 'careerStage', 'primaryRole', 'summary', 'companySizeMix', 'companySizePreferences', 'dailyTarget', 'recencyWindow', 'defaultSort', 'hideNoSalary', 'negativeTitles', 'matchWeights', 'signalStability', 'phone', 'email', 'location', 'linkedinUrl', 'githubUrl', 'websiteUrl', 'workAuthorization', 'requiresSponsorship', 'currentCompany', 'currentTitle', 'school', 'degree', 'graduationYear', 'firstName', 'lastName', 'excludeCompanies', 'sprintStart', 'sprintDays', 'sprintDailyQuota', 'sprintDaysOfWeek', 'sprintNudgeTime', 'sprintRecapTime', 'sprintTimezone', 'sprintSnoozedDays', 'networkCompanies', 'resumeHealth', 'resumeHealthHistory', 'lastMonthlyReportAt', 'dismissalPatterns', 'tighteningSilencedAt', 'tighteningLastSuggestionCount', 'sharedContactsFrom']);
+      const SCALAR_FIELDS = new Set(['salaryFloor', 'remotePreferred', 'seniorityLevel', 'careerStage', 'primaryRole', 'summary', 'companySizeMix', 'companySizePreferences', 'dailyTarget', 'recencyWindow', 'defaultSort', 'hideNoSalary', 'negativeTitles', 'matchWeights', 'signalStability', 'phone', 'email', 'location', 'linkedinUrl', 'githubUrl', 'websiteUrl', 'workAuthorization', 'requiresSponsorship', 'currentCompany', 'currentTitle', 'school', 'degree', 'graduationYear', 'firstName', 'lastName', 'excludeCompanies', 'sprintStart', 'sprintDays', 'sprintDailyQuota', 'sprintDaysOfWeek', 'sprintNudgeTime', 'sprintRecapTime', 'sprintTimezone', 'sprintSnoozedDays', 'networkCompanies', 'resumeHealth', 'resumeHealthHistory', 'lastMonthlyReportAt', 'dismissalPatterns', 'tighteningSilencedAt', 'tighteningLastSuggestionCount', 'sharedContactsFrom', 'wizardCompletedAt']);
       for (const [field, items] of Object.entries(body.patchFields)) {
         if (SCALAR_FIELDS.has(field)) {
           updated[field] = items;
