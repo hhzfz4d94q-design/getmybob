@@ -8,93 +8,95 @@
 [industries] mapped 660 companies; default=['healthcare', 'healthcare-it', 'digital-health', 'health-saas', 'pharma', 'pharmaceuticals', 'biotech', 'life-sciences', 'diagnostics', 'telehealth', 'mental-health', 'clinical-ai']
 
 [greenhouse] 421 companies
-  [1/421] oscar: ERROR — name '_normalize_title' is not defined
-  [2/421] acuitymd: ERROR — name '_normalize_title' is not defined
+[vc-portfolio] loaded 115 discovered companies
+[healthtech] loaded 297 curated companies
+  [1/421] oscar: 241 jobs
+  [2/421] acuitymd: 13 jobs
   [3/421] sondermind: 0 jobs (slug may be invalid)
   [4/421] linushealth: 0 jobs (slug may be invalid)
   [5/421] clipboardhealth: 0 jobs (slug may be invalid)
   [6/421] picnichealth: 0 jobs (slug may be invalid)
   [7/421] carerev: 0 jobs (slug may be invalid)
-  [8/421] abarca: ERROR — name '_normalize_title' is not defined
-  [9/421] modernhealth: ERROR — name '_normalize_title' is not defined
-  [10/421] roivantsciences: ERROR — name '_normalize_title' is not defined
-  [11/421] waymark: ERROR — name '_normalize_title' is not defined
-  [12/421] freenome: ERROR — name '_normalize_title' is not defined
-  [13/421] bridgebio: ERROR — name '_normalize_title' is not defined
-  [14/421] formationbio: ERROR — name '_normalize_title' is not defined
-  [15/421] honehealth: ERROR — name '_normalize_title' is not defined
-  [16/421] cerebral: ERROR — name '_normalize_title' is not defined
-  [17/421] foresightmentalhealth: ERROR — name '_normalize_title' is not defined
-  [18/421] hs: ERROR — name '_normalize_title' is not defined
-  [19/421] springhealth66: ERROR — name '_normalize_title' is not defined
-  [20/421] prolaio: ERROR — name '_normalize_title' is not defined
-  [21/421] prescriberpoint: ERROR — name '_normalize_title' is not defined
-  [22/421] lumimeds: ERROR — name '_normalize_title' is not defined
-  [23/421] smarterdxprivate: ERROR — name '_normalize_title' is not defined
-  [24/421] smarterdx: ERROR — name '_normalize_title' is not defined
-  [25/421] midihealth: ERROR — name '_normalize_title' is not defined
-  [26/421] shieldshealthsolutions: ERROR — name '_normalize_title' is not defined
-  [27/421] coherehealth: ERROR — name '_normalize_title' is not defined
+  [8/421] abarca: 3 jobs
+  [9/421] modernhealth: 13 jobs
+  [10/421] roivantsciences: 11 jobs
+  [11/421] waymark: 8 jobs
+  [12/421] freenome: 23 jobs
+  [13/421] bridgebio: 109 jobs
+  [14/421] formationbio: 20 jobs
+  [15/421] honehealth: 13 jobs
+  [16/421] cerebral: 3 jobs
+  [17/421] foresightmentalhealth: 4 jobs
+  [18/421] hs: 36 jobs
+  [19/421] springhealth66: 82 jobs
+  [20/421] prolaio: 6 jobs
+  [21/421] prescriberpoint: 2 jobs
+  [22/421] lumimeds: 20 jobs
+  [23/421] smarterdxprivate: 3 jobs
+  [24/421] smarterdx: 19 jobs
+  [25/421] midihealth: 25 jobs
+  [26/421] shieldshealthsolutions: 100 jobs
+  [27/421] coherehealth: 58 jobs
   [28/421] allarahealth: 0 jobs (slug may be invalid)
-  [29/421] courierhealth: ERROR — name '_normalize_title' is not defined
-  [30/421] garnerhealth: ERROR — name '_normalize_title' is not defined
-  [31/421] evio: ERROR — name '_normalize_title' is not defined
-  [32/421] cofertility: ERROR — name '_normalize_title' is not defined
-  [33/421] carrotfertility: ERROR — name '_normalize_title' is not defined
+  [29/421] courierhealth: 17 jobs
+  [30/421] garnerhealth: 50 jobs
+  [31/421] evio: 6 jobs
+  [32/421] cofertility: 1 jobs
+  [33/421] carrotfertility: 13 jobs
   [34/421] branchcare: 0 jobs (slug may be invalid)
-  [35/421] pomelocare: ERROR — name '_normalize_title' is not defined
-  [36/421] openfertility: ERROR — name '_normalize_title' is not defined
-  [37/421] mavenclinic: ERROR — name '_normalize_title' is not defined
-  [38/421] sparkadvisors: ERROR — name '_normalize_title' is not defined
+  [35/421] pomelocare: 50 jobs
+  [36/421] openfertility: 5 jobs
+  [37/421] mavenclinic: 29 jobs
+  [38/421] sparkadvisors: 6 jobs
   [39/421] wellth: 0 jobs (slug may be invalid)
-  [40/421] employerdirecthealthcare: ERROR — name '_normalize_title' is not defined
-  [41/421] habitathealth: ERROR — name '_normalize_title' is not defined
+  [40/421] employerdirecthealthcare: 33 jobs
+  [41/421] habitathealth: 23 jobs
   [42/421] authorhealth: 0 jobs (slug may be invalid)
-  [43/421] omadahealth: ERROR — name '_normalize_title' is not defined
+  [43/421] omadahealth: 26 jobs
   [44/421] phamily: 0 jobs (slug may be invalid)
-  [45/421] interwellhealth: ERROR — name '_normalize_title' is not defined
+  [45/421] interwellhealth: 11 jobs
   [46/421] smartertechnologies: 0 jobs (slug may be invalid)
-  [47/421] redcellpartners: ERROR — name '_normalize_title' is not defined
-  [48/421] inovalon: ERROR — name '_normalize_title' is not defined
-  [49/421] layerhealth: ERROR — name '_normalize_title' is not defined
-  [50/421] jukeboxhealth: ERROR — name '_normalize_title' is not defined
+  [47/421] redcellpartners: 37 jobs
+  [48/421] inovalon: 74 jobs
+  [49/421] layerhealth: 20 jobs
+  [50/421] jukeboxhealth: 30 jobs
   [51/421] qualifiedhealth: 0 jobs (slug may be invalid)
-  [52/421] tuleahealth: ERROR — name '_normalize_title' is not defined
-  [53/421] precisionmedicinegroup: ERROR — name '_normalize_title' is not defined
-  [54/421] peptilogics: ERROR — name '_normalize_title' is not defined
-  [55/421] recursionpharmaceuticals: ERROR — name '_normalize_title' is not defined
-  [56/421] headlandsresearch: ERROR — name '_normalize_title' is not defined
+  [52/421] tuleahealth: 2 jobs
+  [53/421] precisionmedicinegroup: 167 jobs
+  [54/421] peptilogics: 1 jobs
+  [55/421] recursionpharmaceuticals: 37 jobs
+  [56/421] headlandsresearch: 69 jobs
   [57/421] yarrowbiotechnology: 0 jobs (slug may be invalid)
-  [58/421] synerg: ERROR — name '_normalize_title' is not defined
-  [59/421] immunomeinc: ERROR — name '_normalize_title' is not defined
+  [58/421] synerg: 25 jobs
+  [59/421] immunomeinc: 21 jobs
   [60/421] cedar: 0 jobs (slug may be invalid)
   [61/421] hingehealth: 0 jobs (slug may be invalid)
   [62/421] carbonhealth: 0 jobs (slug may be invalid)
   [63/421] color: 0 jobs (slug may be invalid)
-  [64/421] komodohealth: ERROR — name '_normalize_title' is not defined
+  [64/421] komodohealth: 36 jobs
   [65/421] includedhealth: 0 jobs (slug may be invalid)
-  [66/421] headway: ERROR — name '_normalize_title' is not defined
+  [66/421] headway: 68 jobs
   [67/421] lyrahealth: 0 jobs (slug may be invalid)
   [68/421] ro: 0 jobs (slug may be invalid)
   [69/421] curology: 0 jobs (slug may be invalid)
   [70/421] khealth: 0 jobs (slug may be invalid)
-  [71/421] thirtymadison: ERROR — name '_normalize_title' is not defined
+  [71/421] thirtymadison: 2 jobs
   [72/421] nourish: 0 jobs (slug may be invalid)
   [73/421] abridge: 0 jobs (slug may be invalid)
-  [74/421] transcarent: ERROR — name '_normalize_title' is not defined
+  [74/421] transcarent: 13 jobs
   [75/421] tempus: 0 jobs (slug may be invalid)
   [76/421] flatiron: 0 jobs (slug may be invalid)
   [77/421] ribbonhealth: 0 jobs (slug may be invalid)
   [78/421] evidation: 0 jobs (slug may be invalid)
-  [79/421] alma: ERROR — name '_normalize_title' is not defined
+  [79/421] alma: 7 jobs
   [80/421] talkiatry: 0 jobs (slug may be invalid)
   [81/421] brightline: 0 jobs (slug may be invalid)
-  [82/421] amwell: ERROR — name '_normalize_title' is not defined
-  [83/421] doximity: ERROR — name '_normalize_title' is not defined
+  [82/421] amwell: 21 jobs
+  [83/421] doximity: 17 jobs
   [84/421] veeva: 0 jobs (slug may be invalid)
   [85/421] guardanthealth: 0 jobs (slug may be invalid)
   [86/421] recursion: 0 jobs (slug may be invalid)
-  [87/421] veracyte: ERROR — name '_normalize_title' is not defined
+  [87/421] veracyte: 40 jobs
   [88/421] benchling: 0 jobs (slug may be invalid)
   [89/421] moderna: 0 jobs (slug may be invalid)
   [90/421] 23andme: 0 jobs (slug may be invalid)
@@ -103,23 +105,23 @@
   [93/421] wellsky: 0 jobs (slug may be invalid)
   [94/421] papacompanies: 0 jobs (slug may be invalid)
   [95/421] vivahealth: 0 jobs (slug may be invalid)
-  [96/421] biofourmis: ERROR — name '_normalize_title' is not defined
+  [96/421] biofourmis: 1 jobs
   [97/421] ada: 0 jobs (slug may be invalid)
   [98/421] buoy: 0 jobs (slug may be invalid)
   [99/421] kindbody: 0 jobs (slug may be invalid)
-  [100/421] tia: ERROR — name '_normalize_title' is not defined
+  [100/421] tia: 29 jobs
   [101/421] hims: 0 jobs (slug may be invalid)
   [102/421] noom: 0 jobs (slug may be invalid)
-  [103/421] calm: ERROR — name '_normalize_title' is not defined
+  [103/421] calm: 1 jobs
   [104/421] vidaheath: 0 jobs (slug may be invalid)
   [105/421] sword: 0 jobs (slug may be invalid)
   [106/421] kaiahealth: 0 jobs (slug may be invalid)
   [107/421] ginger: 0 jobs (slug may be invalid)
   [108/421] rula: 0 jobs (slug may be invalid)
-  [109/421] octave: ERROR — name '_normalize_title' is not defined
-  [110/421] rightway: ERROR — name '_normalize_title' is not defined
+  [109/421] octave: 25 jobs
+  [110/421] rightway: 6 jobs
   [111/421] centivo: 0 jobs (slug may be invalid)
-  [112/421] collectivehealth: ERROR — name '_normalize_title' is not defined
+  [112/421] collectivehealth: 8 jobs
   [113/421] accolade: 0 jobs (slug may be invalid)
   [114/421] evolenthealth: 0 jobs (slug may be invalid)
   [115/421] iodine: 0 jobs (slug may be invalid)
@@ -128,63 +130,63 @@
   [118/421] datavant: 0 jobs (slug may be invalid)
   [119/421] trialspark: 0 jobs (slug may be invalid)
   [120/421] paige: 0 jobs (slug may be invalid)
-  [121/421] pathai: ERROR — name '_normalize_title' is not defined
-  [122/421] truveta: ERROR — name '_normalize_title' is not defined
+  [121/421] pathai: 9 jobs
+  [122/421] truveta: 42 jobs
   [123/421] athelas: 0 jobs (slug may be invalid)
   [124/421] olive: 0 jobs (slug may be invalid)
   [125/421] altopharmacy: 0 jobs (slug may be invalid)
   [126/421] capsule: 0 jobs (slug may be invalid)
   [127/421] vivante: 0 jobs (slug may be invalid)
-  [128/421] ?: ERROR — name '_normalize_title' is not defined
+  [128/421] ?: 484 jobs
   [129/421] ?: 0 jobs (slug may be invalid)
-  [130/421] ?: ERROR — name '_normalize_title' is not defined
-  [131/421] ?: ERROR — name '_normalize_title' is not defined
-  [132/421] ?: ERROR — name '_normalize_title' is not defined
-  [133/421] ?: ERROR — name '_normalize_title' is not defined
-  [134/421] ?: ERROR — name '_normalize_title' is not defined
-  [135/421] ?: ERROR — name '_normalize_title' is not defined
+  [130/421] ?: 227 jobs
+  [131/421] ?: 63 jobs
+  [132/421] ?: 60 jobs
+  [133/421] ?: 156 jobs
+  [134/421] ?: 161 jobs
+  [135/421] ?: 56 jobs
   [136/421] ?: 0 jobs (slug may be invalid)
-  [137/421] ?: ERROR — name '_normalize_title' is not defined
+  [137/421] ?: 39 jobs
   [138/421] ?: 0 jobs (slug may be invalid)
   [139/421] ?: 0 jobs (slug may be invalid)
-  [140/421] ?: ERROR — name '_normalize_title' is not defined
-  [141/421] ?: ERROR — name '_normalize_title' is not defined
+  [140/421] ?: 131 jobs
+  [141/421] ?: 27 jobs
   [142/421] ?: 0 jobs (slug may be invalid)
   [143/421] ?: 0 jobs (slug may be invalid)
-  [144/421] ?: ERROR — name '_normalize_title' is not defined
-  [145/421] ?: ERROR — name '_normalize_title' is not defined
+  [144/421] ?: 32 jobs
+  [145/421] ?: 169 jobs
   [146/421] ?: 0 jobs (slug may be invalid)
   [147/421] ?: 0 jobs (slug may be invalid)
   [148/421] ?: 0 jobs (slug may be invalid)
   [149/421] ?: 0 jobs (slug may be invalid)
   [150/421] ?: 0 jobs (slug may be invalid)
-  [151/421] ?: ERROR — name '_normalize_title' is not defined
-  [152/421] ?: ERROR — name '_normalize_title' is not defined
+  [151/421] ?: 344 jobs
+  [152/421] ?: 92 jobs
   [153/421] ?: 0 jobs (slug may be invalid)
   [154/421] ?: 0 jobs (slug may be invalid)
-  [155/421] ?: ERROR — name '_normalize_title' is not defined
+  [155/421] ?: 30 jobs
   [156/421] ?: 0 jobs (slug may be invalid)
-  [157/421] ?: ERROR — name '_normalize_title' is not defined
-  [158/421] ?: ERROR — name '_normalize_title' is not defined
+  [157/421] ?: 77 jobs
+  [158/421] ?: 15 jobs
   [159/421] ?: 0 jobs (slug may be invalid)
-  [160/421] ?: ERROR — name '_normalize_title' is not defined
+  [160/421] ?: 9 jobs
   [161/421] ?: 0 jobs (slug may be invalid)
   [162/421] ?: 0 jobs (slug may be invalid)
-  [163/421] ?: ERROR — name '_normalize_title' is not defined
-  [164/421] ?: ERROR — name '_normalize_title' is not defined
+  [163/421] ?: 14 jobs
+  [164/421] ?: 7 jobs
   [165/421] ?: 0 jobs (slug may be invalid)
   [166/421] ?: 0 jobs (slug may be invalid)
-  [167/421] ?: ERROR — name '_normalize_title' is not defined
+  [167/421] ?: 19 jobs
   [168/421] ?: 0 jobs (slug may be invalid)
   [169/421] ?: 0 jobs (slug may be invalid)
   [170/421] ?: 0 jobs (slug may be invalid)
   [171/421] ?: 0 jobs (slug may be invalid)
   [172/421] ?: 0 jobs (slug may be invalid)
   [173/421] ?: 0 jobs (slug may be invalid)
-  [174/421] ?: ERROR — name '_normalize_title' is not defined
+  [174/421] ?: 2 jobs
   [175/421] ?: 0 jobs (slug may be invalid)
   [176/421] ?: 0 jobs (slug may be invalid)
-  [177/421] ?: ERROR — name '_normalize_title' is not defined
+  [177/421] ?: 9 jobs
   [178/421] ?: 0 jobs (slug may be invalid)
   [179/421] ?: 0 jobs (slug may be invalid)
   [180/421] ?: 0 jobs (slug may be invalid)
@@ -193,22 +195,22 @@
   [183/421] ?: 0 jobs (slug may be invalid)
   [184/421] ?: 0 jobs (slug may be invalid)
   [185/421] ?: 0 jobs (slug may be invalid)
-  [186/421] ?: ERROR — name '_normalize_title' is not defined
+  [186/421] ?: 21 jobs
   [187/421] ?: 0 jobs (slug may be invalid)
   [188/421] ?: 0 jobs (slug may be invalid)
-  [189/421] ?: ERROR — name '_normalize_title' is not defined
+  [189/421] ?: 759 jobs
   [190/421] ?: 0 jobs (slug may be invalid)
   [191/421] ?: 0 jobs (slug may be invalid)
-  [192/421] ?: ERROR — name '_normalize_title' is not defined
+  [192/421] ?: 8 jobs
   [193/421] ?: 0 jobs (slug may be invalid)
-  [194/421] ?: ERROR — name '_normalize_title' is not defined
-  [195/421] ?: ERROR — name '_normalize_title' is not defined
+  [194/421] ?: 76 jobs
+  [195/421] ?: 11 jobs
   [196/421] ?: 0 jobs (slug may be invalid)
   [197/421] ?: 0 jobs (slug may be invalid)
   [198/421] ?: 0 jobs (slug may be invalid)
   [199/421] ?: 0 jobs (slug may be invalid)
   [200/421] ?: 0 jobs (slug may be invalid)
-  [201/421] ?: ERROR — name '_normalize_title' is not defined
+  [201/421] ?: 372 jobs
   [202/421] ?: 0 jobs (slug may be invalid)
   [203/421] ?: 0 jobs (slug may be invalid)
   [204/421] ?: 0 jobs (slug may be invalid)
@@ -243,7 +245,7 @@
   [233/421] wealthfront: 0 jobs (slug may be invalid)
   [234/421] blend-labs: 0 jobs (slug may be invalid)
   [235/421] alliance-bernstein-pontera: 0 jobs (slug may be invalid)
-  [236/421] pontera: ERROR — name '_normalize_title' is not defined
+  [236/421] pontera: 1 jobs
   [237/421] apex-fintech-solutions: 0 jobs (slug may be invalid)
   [238/421] angellist: 0 jobs (slug may be invalid)
   [239/421] symphony-ayasdiai: 0 jobs (slug may be invalid)
@@ -281,12 +283,12 @@
   [271/421] 10pearls: 0 jobs (slug may be invalid)
   [272/421] kin-carta: 0 jobs (slug may be invalid)
   [273/421] nerdery: 0 jobs (slug may be invalid)
-  [274/421] upgrade: ERROR — name '_normalize_title' is not defined
+  [274/421] upgrade: 17 jobs
   [275/421] petal-card: 0 jobs (slug may be invalid)
   [276/421] deserve: 0 jobs (slug may be invalid)
   [277/421] greenlight-financial-technology: 0 jobs (slug may be invalid)
   [278/421] step: 0 jobs (slug may be invalid)
-  [279/421] current: ERROR — name '_normalize_title' is not defined
+  [279/421] current: 4 jobs
   [280/421] one-finance: 0 jobs (slug may be invalid)
   [281/421] zeta-financial: 0 jobs (slug may be invalid)
   [282/421] lili: 0 jobs (slug may be invalid)
@@ -303,7 +305,7 @@
   [293/421] greenway-health: 0 jobs (slug may be invalid)
   [294/421] practice-fusion: 0 jobs (slug may be invalid)
   [295/421] kareo: 0 jobs (slug may be invalid)
-  [296/421] tebra: ERROR — name '_normalize_title' is not defined
+  [296/421] tebra: 25 jobs
   [297/421] modernizing-medicine: 0 jobs (slug may be invalid)
   [298/421] nextech-systems: 0 jobs (slug may be invalid)
   [299/421] srs-health: 0 jobs (slug may be invalid)
@@ -316,13 +318,13 @@
   [306/421] castor: 0 jobs (slug may be invalid)
   [307/421] florence-healthcare: 0 jobs (slug may be invalid)
   [308/421] reify-health: 0 jobs (slug may be invalid)
-  [309/421] suvoda: ERROR — name '_normalize_title' is not defined
-  [310/421] flatironhealth: ERROR — name '_normalize_title' is not defined
+  [309/421] suvoda: 19 jobs
+  [310/421] flatironhealth: 20 jobs
   [311/421] foundationmedicine: 0 jobs (slug may be invalid)
   [312/421] invitae: 0 jobs (slug may be invalid)
   [313/421] helix: 0 jobs (slug may be invalid)
   [314/421] ancestry: 0 jobs (slug may be invalid)
-  [315/421] veranahealth: ERROR — name '_normalize_title' is not defined
+  [315/421] veranahealth: 4 jobs
   [316/421] om1: 0 jobs (slug may be invalid)
   [317/421] goodrx: 0 jobs (slug may be invalid)
   [318/421] alto: 0 jobs (slug may be invalid)
@@ -331,9 +333,9 @@
   [321/421] rx-savings-solutions: 0 jobs (slug may be invalid)
   [322/421] phreesia: 0 jobs (slug may be invalid)
   [323/421] kyruus: 0 jobs (slug may be invalid)
-  [324/421] zocdoc: ERROR — name '_normalize_title' is not defined
+  [324/421] zocdoc: 45 jobs
   [325/421] solvhealth: 0 jobs (slug may be invalid)
-  [326/421] galileo: ERROR — name '_normalize_title' is not defined
+  [326/421] galileo: 6 jobs
   [327/421] plushcare: 0 jobs (slug may be invalid)
   [328/421] heal: 0 jobs (slug may be invalid)
   [329/421] doctor-on-demand: 0 jobs (slug may be invalid)
@@ -341,29 +343,29 @@
   [331/421] vida-health: 0 jobs (slug may be invalid)
   [332/421] virtahealth: 0 jobs (slug may be invalid)
   [333/421] hellobrightline: 0 jobs (slug may be invalid)
-  [334/421] talkspace: ERROR — name '_normalize_title' is not defined
-  [335/421] betterhelp: ERROR — name '_normalize_title' is not defined
+  [334/421] talkspace: 9 jobs
+  [335/421] betterhelp: 262 jobs
   [336/421] growtherapy: 0 jobs (slug may be invalid)
-  [337/421] found: ERROR — name '_normalize_title' is not defined
+  [337/421] found: 7 jobs
   [338/421] cala-health: 0 jobs (slug may be invalid)
   [339/421] akasa: 0 jobs (slug may be invalid)
   [340/421] vyne-dental: 0 jobs (slug may be invalid)
   [341/421] sanabenefits: 0 jobs (slug may be invalid)
   [342/421] decent: 0 jobs (slug may be invalid)
   [343/421] imagine-pediatrics: 0 jobs (slug may be invalid)
-  [344/421] forward: ERROR — name '_normalize_title' is not defined
-  [345/421] strivehealth: ERROR — name '_normalize_title' is not defined
+  [344/421] forward: 7 jobs
+  [345/421] strivehealth: 49 jobs
   [346/421] pearl-health: 0 jobs (slug may be invalid)
   [347/421] lyrichealth: 0 jobs (slug may be invalid)
   [348/421] healthedge: 0 jobs (slug may be invalid)
   [349/421] particlehealth: 0 jobs (slug may be invalid)
-  [350/421] healthverity: ERROR — name '_normalize_title' is not defined
+  [350/421] healthverity: 14 jobs
   [351/421] cleardata: 0 jobs (slug may be invalid)
   [352/421] memorahealth: 0 jobs (slug may be invalid)
   [353/421] sprinter: 0 jobs (slug may be invalid)
-  [354/421] tomorrow: ERROR — name '_normalize_title' is not defined
+  [354/421] tomorrow: 12 jobs
   [355/421] oakstreethealth: 0 jobs (slug may be invalid)
-  [356/421] natera: ERROR — name '_normalize_title' is not defined
+  [356/421] natera: 193 jobs
   [357/421] brighthealth: 0 jobs (slug may be invalid)
   [358/421] landmarkhealth: 0 jobs (slug may be invalid)
   [359/421] agilonhealth: 0 jobs (slug may be invalid)
@@ -375,7 +377,7 @@
   [365/421] gravie: 0 jobs (slug may be invalid)
   [366/421] zelis: 0 jobs (slug may be invalid)
   [367/421] castlighthealth: 0 jobs (slug may be invalid)
-  [368/421] 10xgenomics: ERROR — name '_normalize_title' is not defined
+  [368/421] 10xgenomics: 31 jobs
   [369/421] pacbio: 0 jobs (slug may be invalid)
   [370/421] adaptivebiotech: 0 jobs (slug may be invalid)
   [371/421] grail: 0 jobs (slug may be invalid)
@@ -385,7 +387,7 @@
   [375/421] shiftmed: 0 jobs (slug may be invalid)
   [376/421] wheel: 0 jobs (slug may be invalid)
   [377/421] dispatchhealth: 0 jobs (slug may be invalid)
-  [378/421] uniteus: ERROR — name '_normalize_title' is not defined
+  [378/421] uniteus: 5 jobs
   [379/421] vizai: 0 jobs (slug may be invalid)
   [380/421] insitro: 0 jobs (slug may be invalid)
   [381/421] recursionpharma: 0 jobs (slug may be invalid)
@@ -393,60 +395,60 @@
   [383/421] intelliatx: 0 jobs (slug may be invalid)
   [384/421] sagerx: 0 jobs (slug may be invalid)
   [385/421] ultragenyx: 0 jobs (slug may be invalid)
-  [386/421] ginkgobioworks: ERROR — name '_normalize_title' is not defined
+  [386/421] ginkgobioworks: 12 jobs
   [387/421] sanabiotechnology: 0 jobs (slug may be invalid)
   [388/421] denalitherapeutics: 0 jobs (slug may be invalid)
   [389/421] slalomconsulting: 0 jobs (slug may be invalid)
   [390/421] rewst: 0 jobs (slug may be invalid)
   [391/421] klara: 0 jobs (slug may be invalid)
   [392/421] laseraway: 0 jobs (slug may be invalid)
-  [393/421] pagerhealth: ERROR — name '_normalize_title' is not defined
+  [393/421] pagerhealth: 5 jobs
   [394/421] huge: 0 jobs (slug may be invalid)
   [395/421] huntresslabs: 0 jobs (slug may be invalid)
   [396/421] prescryptivehealth: 0 jobs (slug may be invalid)
-  [397/421] instacart: ERROR — name '_normalize_title' is not defined
-  [398/421] elastic: ERROR — name '_normalize_title' is not defined
+  [397/421] instacart: 149 jobs
+  [398/421] elastic: 160 jobs
   [399/421] rxbenefits: 0 jobs (slug may be invalid)
-  [400/421] honor: ERROR — name '_normalize_title' is not defined
-  [401/421] lattice: ERROR — name '_normalize_title' is not defined
-  [402/421] dropbox: ERROR — name '_normalize_title' is not defined
-  [403/421] guild: ERROR — name '_normalize_title' is not defined
-  [404/421] thrivemarket: ERROR — name '_normalize_title' is not defined
-  [405/421] alphasense: ERROR — name '_normalize_title' is not defined
-  [406/421] reddit: ERROR — name '_normalize_title' is not defined
-  [407/421] celonis: ERROR — name '_normalize_title' is not defined
+  [400/421] honor: 19 jobs
+  [401/421] lattice: 10 jobs
+  [402/421] dropbox: 63 jobs
+  [403/421] guild: 13 jobs
+  [404/421] thrivemarket: 18 jobs
+  [405/421] alphasense: 221 jobs
+  [406/421] reddit: 150 jobs
+  [407/421] celonis: 193 jobs
   [408/421] wcgclinical: 0 jobs (slug may be invalid)
   [409/421] byteme: 0 jobs (slug may be invalid)
   [410/421] candidco: 0 jobs (slug may be invalid)
   [411/421] progyny: 0 jobs (slug may be invalid)
   [412/421] oviahealth: 0 jobs (slug may be invalid)
   [413/421] eleanorhealth: 0 jobs (slug may be invalid)
-  [414/421] bouldercare: ERROR — name '_normalize_title' is not defined
-  [415/421] ophelia: ERROR — name '_normalize_title' is not defined
+  [414/421] bouldercare: 28 jobs
+  [415/421] ophelia: 19 jobs
   [416/421] pointclickcare: 0 jobs (slug may be invalid)
   [417/421] matrixcare: 0 jobs (slug may be invalid)
   [418/421] civicarx: 0 jobs (slug may be invalid)
   [419/421] imprivata: 0 jobs (slug may be invalid)
-  [420/421] papa: ERROR — name '_normalize_title' is not defined
+  [420/421] papa: 4 jobs
   [421/421] aplaceformom: 0 jobs (slug may be invalid)
 
 [lever] 140 companies
   [1/140] SprinterHealth: 0 jobs (slug may be invalid)
-  [2/140] CollectlyInc: ERROR — name '_normalize_title' is not defined
-  [3/140] canvasmedical: ERROR — name '_normalize_title' is not defined
-  [4/140] zushealth: ERROR — name '_normalize_title' is not defined
-  [5/140] januaryinc: ERROR — name '_normalize_title' is not defined
-  [6/140] RyzLabs: ERROR — name '_normalize_title' is not defined
-  [7/140] heartbeathealth: ERROR — name '_normalize_title' is not defined
-  [8/140] circadiahealth: ERROR — name '_normalize_title' is not defined
-  [9/140] artera-2: ERROR — name '_normalize_title' is not defined
-  [10/140] whoop: ERROR — name '_normalize_title' is not defined
-  [11/140] caremessage: ERROR — name '_normalize_title' is not defined
-  [12/140] h1: ERROR — name '_normalize_title' is not defined
+  [2/140] CollectlyInc: 12 jobs
+  [3/140] canvasmedical: 6 jobs
+  [4/140] zushealth: 6 jobs
+  [5/140] januaryinc: 2 jobs
+  [6/140] RyzLabs: 50 jobs
+  [7/140] heartbeathealth: 26 jobs
+  [8/140] circadiahealth: 26 jobs
+  [9/140] artera-2: 10 jobs
+  [10/140] whoop: 164 jobs
+  [11/140] caremessage: 5 jobs
+  [12/140] h1: 19 jobs
   [13/140] mcra: 0 jobs (slug may be invalid)
-  [14/140] aledade: ERROR — name '_normalize_title' is not defined
-  [15/140] includedhealth: ERROR — name '_normalize_title' is not defined
-  [16/140] lyrahealth: ERROR — name '_normalize_title' is not defined
+  [14/140] aledade: 65 jobs
+  [15/140] includedhealth: 43 jobs
+  [16/140] lyrahealth: 442 jobs
   [17/140] glooko: 0 jobs (slug may be invalid)
   [18/140] truepill: 0 jobs (slug may be invalid)
   [19/140] talkiatry: 0 jobs (slug may be invalid)
@@ -459,7 +461,7 @@
   [26/140] calm: 0 jobs (slug may be invalid)
   [27/140] verily: 0 jobs (slug may be invalid)
   [28/140] neuralink: 0 jobs (slug may be invalid)
-  [29/140] ?: ERROR — name '_normalize_title' is not defined
+  [29/140] ?: 1 jobs
   [30/140] ?: 0 jobs (slug may be invalid)
   [31/140] ?: 0 jobs (slug may be invalid)
   [32/140] ?: 0 jobs (slug may be invalid)
@@ -468,7 +470,7 @@
   [35/140] ?: 0 jobs (slug may be invalid)
   [36/140] ?: 0 jobs (slug may be invalid)
   [37/140] ?: 0 jobs (slug may be invalid)
-  [38/140] ?: ERROR — name '_normalize_title' is not defined
+  [38/140] ?: 13 jobs
   [39/140] ?: 0 jobs (slug may be invalid)
   [40/140] ?: 0 jobs (slug may be invalid)
   [41/140] ?: 0 jobs (slug may be invalid)
@@ -489,7 +491,7 @@
   [56/140] ?: 0 jobs (slug may be invalid)
   [57/140] ?: 0 jobs (slug may be invalid)
   [58/140] ?: 0 jobs (slug may be invalid)
-  [59/140] ?: ERROR — name '_normalize_title' is not defined
+  [59/140] ?: 8 jobs
   [60/140] ?: 0 jobs (slug may be invalid)
   [61/140] ?: 0 jobs (slug may be invalid)
   [62/140] ?: 0 jobs (slug may be invalid)
@@ -514,17 +516,17 @@
   [81/140] hyro: 0 jobs (slug may be invalid)
   [82/140] cartahealthcare: 0 jobs (slug may be invalid)
   [83/140] color: 0 jobs (slug may be invalid)
-  [84/140] swordhealth: ERROR — name '_normalize_title' is not defined
+  [84/140] swordhealth: 49 jobs
   [85/140] carbonhealth: 0 jobs (slug may be invalid)
   [86/140] wayspring: 0 jobs (slug may be invalid)
   [87/140] vaticahealth: 0 jobs (slug may be invalid)
-  [88/140] curai: ERROR — name '_normalize_title' is not defined
+  [88/140] curai: 3 jobs
   [89/140] forgehealth: 0 jobs (slug may be invalid)
   [90/140] wellth: 0 jobs (slug may be invalid)
   [91/140] commure: 0 jobs (slug may be invalid)
   [92/140] curanahealth: 0 jobs (slug may be invalid)
-  [93/140] clarifyhealth: ERROR — name '_normalize_title' is not defined
-  [94/140] redoxengine: ERROR — name '_normalize_title' is not defined
+  [93/140] clarifyhealth: 2 jobs
+  [94/140] redoxengine: 11 jobs
   [95/140] trinetx: 0 jobs (slug may be invalid)
   [96/140] healthtap: 0 jobs (slug may be invalid)
   [97/140] sidecarhealth: 0 jobs (slug may be invalid)
@@ -553,7 +555,7 @@
   [120/140] paige: 0 jobs (slug may be invalid)
   [121/140] pathai: 0 jobs (slug may be invalid)
   [122/140] abcellera: 0 jobs (slug may be invalid)
-  [123/140] arsenalbio: ERROR — name '_normalize_title' is not defined
+  [123/140] arsenalbio: 2 jobs
   [124/140] kallyope: 0 jobs (slug may be invalid)
   [125/140] eliseai: 0 jobs (slug may be invalid)
   [126/140] qventus: 0 jobs (slug may be invalid)
@@ -561,7 +563,7 @@
   [128/140] ascendanalytics: 0 jobs (slug may be invalid)
   [129/140] velocityclinical: 0 jobs (slug may be invalid)
   [130/140] storkclub: 0 jobs (slug may be invalid)
-  [131/140] mahmee: ERROR — name '_normalize_title' is not defined
+  [131/140] mahmee: 7 jobs
   [132/140] meetcleo: 0 jobs (slug may be invalid)
   [133/140] bicyclehealth: 0 jobs (slug may be invalid)
   [134/140] brightside: 0 jobs (slug may be invalid)
@@ -573,21 +575,21 @@
   [140/140] vetcove: 0 jobs (slug may be invalid)
 
 [ashby] 76 companies
-  [1/76] Graphitehq: ERROR — name '_normalize_title' is not defined
-  [2/76] maximustribe: ERROR — name '_normalize_title' is not defined
-  [3/76] codes-health: ERROR — name '_normalize_title' is not defined
-  [4/76] heidihealth.com.au: ERROR — name '_normalize_title' is not defined
-  [5/76] Interrahealth: ERROR — name '_normalize_title' is not defined
-  [6/76] fitt: ERROR — name '_normalize_title' is not defined
-  [7/76] lark: ERROR — name '_normalize_title' is not defined
-  [8/76] virtahealth: ERROR — name '_normalize_title' is not defined
-  [9/76] Healthtech-1: ERROR — name '_normalize_title' is not defined
-  [10/76] tandem-health: ERROR — name '_normalize_title' is not defined
-  [11/76] Aios: ERROR — name '_normalize_title' is not defined
-  [12/76] you-health: ERROR — name '_normalize_title' is not defined
-  [13/76] versemedical: ERROR — name '_normalize_title' is not defined
-  [14/76] abridge: ERROR — name '_normalize_title' is not defined
-  [15/76] decagon: ERROR — name '_normalize_title' is not defined
+  [1/76] Graphitehq: 10 jobs
+  [2/76] maximustribe: 1 jobs
+  [3/76] codes-health: 8 jobs
+  [4/76] heidihealth.com.au: 99 jobs
+  [5/76] Interrahealth: 14 jobs
+  [6/76] fitt: 16 jobs
+  [7/76] lark: 2 jobs
+  [8/76] virtahealth: 11 jobs
+  [9/76] Healthtech-1: 9 jobs
+  [10/76] tandem-health: 54 jobs
+  [11/76] Aios: 8 jobs
+  [12/76] you-health: 5 jobs
+  [13/76] versemedical: 28 jobs
+  [14/76] abridge: 60 jobs
+  [15/76] decagon: 111 jobs
   [16/76] rad-ai: 0 jobs (slug may be invalid)
   [17/76] ramphealth: 0 jobs (slug may be invalid)
   [18/76] ?: 0 jobs (slug may be invalid)
@@ -617,8 +619,8 @@
   [42/76] ?: 0 jobs (slug may be invalid)
   [43/76] ?: 0 jobs (slug may be invalid)
   [44/76] ?: 0 jobs (slug may be invalid)
-  [45/76] ?: ERROR — name '_normalize_title' is not defined
-  [46/76] ?: ERROR — name '_normalize_title' is not defined
+  [45/76] ?: 14 jobs
+  [46/76] ?: 28 jobs
   [47/76] ?: 0 jobs (slug may be invalid)
   [48/76] ?: 0 jobs (slug may be invalid)
   [49/76] ?: 0 jobs (slug may be invalid)
@@ -628,26 +630,26 @@
   [53/76] ?: 0 jobs (slug may be invalid)
   [54/76] alpaca: 0 jobs (slug may be invalid)
   [55/76] settle: 0 jobs (slug may be invalid)
-  [56/76] unit: ERROR — name '_normalize_title' is not defined
-  [57/76] column: ERROR — name '_normalize_title' is not defined
-  [58/76] parafin: ERROR — name '_normalize_title' is not defined
+  [56/76] unit: 9 jobs
+  [57/76] column: 15 jobs
+  [58/76] parafin: 25 jobs
   [59/76] particle-health: 0 jobs (slug may be invalid)
   [60/76] collectly: 0 jobs (slug may be invalid)
   [61/76] formation-bio: 0 jobs (slug may be invalid)
-  [62/76] found: ERROR — name '_normalize_title' is not defined
+  [62/76] found: 3 jobs
   [63/76] hims: 0 jobs (slug may be invalid)
   [64/76] formationbio: 0 jobs (slug may be invalid)
   [65/76] honeybeehealth: 0 jobs (slug may be invalid)
-  [66/76] sesame: ERROR — name '_normalize_title' is not defined
-  [67/76] sondermind: ERROR — name '_normalize_title' is not defined
-  [68/76] stedi: ERROR — name '_normalize_title' is not defined
+  [66/76] sesame: 30 jobs
+  [67/76] sondermind: 135 jobs
+  [68/76] stedi: 14 jobs
   [69/76] cityblock: 0 jobs (slug may be invalid)
   [70/76] hippocratic-ai: 0 jobs (slug may be invalid)
   [71/76] sparkadvisors: 0 jobs (slug may be invalid)
   [72/76] violet: 0 jobs (slug may be invalid)
   [73/76] nexhealth: 0 jobs (slug may be invalid)
   [74/76] cleerly: 0 jobs (slug may be invalid)
-  [75/76] notion: ERROR — name '_normalize_title' is not defined
+  [75/76] notion: 146 jobs
   [76/76] smithrx: 0 jobs (slug may be invalid)
 
 [workable] 43 companies
@@ -696,42 +698,42 @@
   [43/43] calibrate: 0 jobs (slug may be invalid)
 
 [workday] 156 companies
-  [1/156] Pfizer: ERROR — name 'time' is not defined
-  [2/156] Merck (MSD): ERROR — name 'time' is not defined
-  [3/156] CVS Health: ERROR — name 'time' is not defined
-  [4/156] Capital One: ERROR — name 'time' is not defined
-  [5/156] Wells Fargo: ERROR — name 'time' is not defined
-  [6/156] Bank of America: ERROR — name 'time' is not defined
-  [7/156] Morgan Stanley: ERROR — name 'time' is not defined
+  [1/156] Pfizer: 40 jobs
+  [2/156] Merck (MSD): 200 jobs
+  [3/156] CVS Health: 200 jobs
+  [4/156] Capital One: 200 jobs
+  [5/156] Wells Fargo: 40 jobs
+  [6/156] Bank of America: 200 jobs
+  [7/156] Morgan Stanley: 40 jobs
   [8/156] American Express: 0 jobs (slug may be invalid)
   [9/156] BlackRock: 0 jobs (slug may be invalid)
   [10/156] Charles Schwab: 0 jobs (slug may be invalid)
-  [11/156] TD Bank: ERROR — name 'time' is not defined
-  [12/156] BMO Financial Group: ERROR — name 'time' is not defined
+  [11/156] TD Bank: 40 jobs
+  [12/156] BMO Financial Group: 40 jobs
   [13/156] Truist: 0 jobs (slug may be invalid)
   [14/156] PNC: 0 jobs (slug may be invalid)
-  [15/156] US Bank: ERROR — name 'time' is not defined
-  [16/156] MUFG Americas: ERROR — name 'time' is not defined
-  [17/156] Mizuho Americas: ERROR — name 'time' is not defined
-  [18/156] Flagstar Bank: ERROR — name 'time' is not defined
-  [19/156] S&P Global: ERROR — name 'time' is not defined
-  [20/156] Protiviti: ERROR — name 'time' is not defined
-  [21/156] FIS Global: ERROR — name 'time' is not defined
-  [22/156] Fiserv: ERROR — name 'time' is not defined
-  [23/156] Regions Financial: ERROR — name 'time' is not defined
+  [15/156] US Bank: 40 jobs
+  [16/156] MUFG Americas: 40 jobs
+  [17/156] Mizuho Americas: 40 jobs
+  [18/156] Flagstar Bank: 40 jobs
+  [19/156] S&P Global: 40 jobs
+  [20/156] Protiviti: 40 jobs
+  [21/156] FIS Global: 200 jobs
+  [22/156] Fiserv: 200 jobs
+  [23/156] Regions Financial: 40 jobs
   [24/156] UnitedHealth Group: 0 jobs (slug may be invalid)
   [25/156] Elevance Health: 0 jobs (slug may be invalid)
-  [26/156] Humana: ERROR — name 'time' is not defined
+  [26/156] Humana: 40 jobs
   [27/156] Cigna: 0 jobs (slug may be invalid)
   [28/156] Centene: 0 jobs (slug may be invalid)
   [29/156] Molina Healthcare: 0 jobs (slug may be invalid)
   [30/156] Johnson & Johnson: 0 jobs (slug may be invalid)
   [31/156] AbbVie: 0 jobs (slug may be invalid)
-  [32/156] Eli Lilly: ERROR — name 'time' is not defined
+  [32/156] Eli Lilly: 40 jobs
   [33/156] Bristol Myers Squibb: 0 jobs (slug may be invalid)
-  [34/156] Gilead Sciences: ERROR — name 'time' is not defined
+  [34/156] Gilead Sciences: 40 jobs
   [35/156] Amgen: 0 jobs (slug may be invalid)
-  [36/156] Sanofi: ERROR — name 'time' is not defined
+  [36/156] Sanofi: 40 jobs
   [37/156] Regeneron: 0 jobs (slug may be invalid)
   [38/156] Takeda: 0 jobs (slug may be invalid)
   [39/156] Kaiser Permanente: 0 jobs (slug may be invalid)
@@ -743,7 +745,7 @@
   [45/156] Oracle Health (Cerner): 0 jobs (slug may be invalid)
   [46/156] Medtronic: 0 jobs (slug may be invalid)
   [47/156] Boston Scientific: 0 jobs (slug may be invalid)
-  [48/156] Abbott: ERROR — name 'time' is not defined
+  [48/156] Abbott: 40 jobs
   [49/156] Centene Corporation: 0 jobs (slug may be invalid)
   [50/156] Molina Healthcare: 0 jobs (slug may be invalid)
   [51/156] Teladoc Health: 0 jobs (slug may be invalid)
@@ -821,7 +823,7 @@
   [123/156] Optum360: 0 jobs (slug may be invalid)
   [124/156] Covetrus: 0 jobs (slug may be invalid)
   [125/156] Petco Health & Wellness: 0 jobs (slug may be invalid)
-  [126/156] Zoetis: ERROR — name 'time' is not defined
+  [126/156] Zoetis: 119 jobs
   [127/156] Wolters Kluwer Health: 0 jobs (slug may be invalid)
   [128/156] Inovalon: 0 jobs (slug may be invalid)
   [129/156] Evolent Health: 0 jobs (slug may be invalid)
@@ -937,7 +939,7 @@
   [3/37] ?: 0 jobs (slug may be invalid)
   [4/37] ?: 0 jobs (slug may be invalid)
   [5/37] ?: 0 jobs (slug may be invalid)
-  [6/37] ?: ERROR — name '_normalize_title' is not defined
+  [6/37] ?: 36 jobs
   [7/37] ?: 0 jobs (slug may be invalid)
   [8/37] ?: 0 jobs (slug may be invalid)
   [9/37] ?: 0 jobs (slug may be invalid)
@@ -1166,13 +1168,13 @@
   [37/37] ?: 0 jobs (slug may be invalid)
 
 [remoteok] 1 companies
-  [1/1] Remote OK feed: ERROR — name '_normalize_title' is not defined
+  [1/1] Remote OK feed: 80 jobs
 
 [yc] 1 companies
-  [1/1] YC Work at a Startup: ERROR — name '_normalize_title' is not defined
+  [1/1] YC Work at a Startup: 30 jobs
 
 [hn_hiring] 1 companies
-  [1/1] HN Who is Hiring: ERROR — name '_normalize_title' is not defined
+  [1/1] HN Who is Hiring: 236 jobs
 
 [healthecareers] 1 companies
   [1/1] Health eCareers: 0 jobs (slug may be invalid)
@@ -1180,34 +1182,34 @@
 [himss] 1 companies
   [1/1] HIMSS Career Center: 0 jobs (slug may be invalid)
 
-Totals: {'greenhouse': 0, 'lever': 0, 'ashby': 0, 'workday': 0}
-Failures: 1137 (companies returned no data — likely bad slugs)
+Totals: {'greenhouse': 7154, 'lever': 972, 'ashby': 855, 'workday': 1999, 'smartrecruiters': 36, 'remoteok': 80, 'yc': 30, 'hn_hiring': 236}
+Failures: 936 (companies returned no data — likely bad slugs)
 [users] loaded 4 from Worker
 
 [multi-user] generating dashboards for 4 users
 [diag:geetu] loaded profile, targetCompanies len=23, first={'name': 'Veeva Systems', 'atsHint': 'workday', 'atsUrl': 'https://veeva.wd1.myworkdayjobs.com/veeva_careers', 'why': 'Cloud SaaS leader in life sciences with constant demand for senior product and transformation leaders who bridge pharma and technology'}
 [skills-profile:geetu] Senior digital transformation and product leader at the intersection of healthcare and technology · 65 keywords
-[velocity] 138 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 3915/3915
+[velocity] 168 actively-scaling companies (3+ senior roles in 30d)
+[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 4944/4944
 [why-hidden:geetu] classified 2000 hidden jobs (of 19850 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/geetu.html
 [diag:amit-arora] loaded profile, targetCompanies len=23, first={'name': 'Webster Bank', 'atsHint': 'workday', 'atsUrl': 'https://websterbank.wd1.myworkdayjobs.com/WebsterCareers', 'why': "Super-regional commercial bank with active digital transformation and GRC buildout — strong fit for Amit's commercial lending and IT governance depth"}
 [skills-profile:amit-arora] Senior technology and GRC executive targeting transformation, risk, and digital banking leadership roles in financial services · 13 keywords
-[velocity] 138 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 4423/4423
+[velocity] 168 actively-scaling companies (3+ senior roles in 30d)
+[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 4833/4833
 [why-hidden:amit-arora] classified 2000 hidden jobs (of 19850 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/amit-arora.html
 [diag:ishika-arora] loaded profile, targetCompanies len=0, first=None
 [skills-profile:ishika-arora] ? · 0 keywords
-[velocity] 138 actively-scaling companies (3+ senior roles in 30d)
+[velocity] 168 actively-scaling companies (3+ senior roles in 30d)
 [why-hidden:ishika-arora] classified 2000 hidden jobs (of 19850 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/ishika-arora.html
 [diag:radhika-kalra] loaded profile, targetCompanies len=0, first=None
 [skills-profile:radhika-kalra] ? · 0 keywords
-[velocity] 138 actively-scaling companies (3+ senior roles in 30d)
+[velocity] 168 actively-scaling companies (3+ senior roles in 30d)
 [why-hidden:radhika-kalra] classified 2000 hidden jobs (of 19850 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/radhika-kalra.html
