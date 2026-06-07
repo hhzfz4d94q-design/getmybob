@@ -2573,6 +2573,136 @@
         "healthcare",
         "health-saas"
       ]
+    },
+    {
+      "name": "Parexel",
+      "tenant": "parexel",
+      "subdomain": "wd3",
+      "site": "Parexel_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "ICON plc",
+      "tenant": "iconplc",
+      "subdomain": "wd5",
+      "site": "ICON_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Syneos Health",
+      "tenant": "syneoshealth",
+      "subdomain": "wd5",
+      "site": "Syneos_Health_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Medpace",
+      "tenant": "medpace",
+      "subdomain": "wd5",
+      "site": "Medpace_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "VSP Vision Care",
+      "tenant": "vsp",
+      "subdomain": "wd5",
+      "site": "VSP_Vision_Care",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Heartland Dental",
+      "tenant": "heartland",
+      "subdomain": "wd5",
+      "site": "Heartland_Dental",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Amedisys",
+      "tenant": "amedisys",
+      "subdomain": "wd5",
+      "site": "Amedisys_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Encompass Health",
+      "tenant": "encompasshealth",
+      "subdomain": "wd5",
+      "site": "Encompass_Health_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "BrightSpring Health Services",
+      "tenant": "brightspring",
+      "subdomain": "wd5",
+      "site": "BrightSpring_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Imprivata",
+      "tenant": "imprivata",
+      "subdomain": "wd5",
+      "site": "Imprivata_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Brookdale Senior Living",
+      "tenant": "brookdale",
+      "subdomain": "wd5",
+      "site": "Brookdale_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "R1 RCM",
+      "tenant": "r1rcm",
+      "subdomain": "wd5",
+      "site": "R1_RCM_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Covetrus",
+      "tenant": "covetrus",
+      "subdomain": "wd5",
+      "site": "Covetrus_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
     }
   ],
   "remoteok": [

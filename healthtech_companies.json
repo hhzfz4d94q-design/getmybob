@@ -1,6 +1,6 @@
 {
   "_note": "Curated Healthcare IT / digital health catalog. Used for: (a) scoring boost when company appears in feed AND user has healthcare industries (+3, all entries), (b) auto-scraping (only ATS=greenhouse/lever/ashby/workable). Workday/Google/Amazon entries are catalog-only (scored boost when found, not scraped). Slugs are canonical for matching.",
-  "version": "2026-05-29-v3+discovered+discovered+dream-list+from-contacts+dedup+dream-geetu+discovered+dedup-r2+verified+slug-recover+verified+verified",
+  "version": "2026-05-29-v3+discovered+discovered+dream-list+from-contacts+dedup+dream-geetu+discovered+dedup-r2+verified+slug-recover+verified+verified+discovered",
   "companies": [
     {
       "name": "Doximity",
@@ -1971,6 +1971,126 @@
       "category": "Veterinary Tech",
       "atsHint": "lever",
       "slug": "vetcove"
+    },
+    {
+      "name": "Altasciences",
+      "category": "Clinical Research / CRO",
+      "atsHint": "greenhouse",
+      "slug": "altasciences"
+    },
+    {
+      "name": "Stellar Dental",
+      "category": "Dental Tech",
+      "atsHint": "lever",
+      "slug": "stellar"
+    },
+    {
+      "name": "Tia",
+      "category": "Women's Health / Fertility",
+      "atsHint": "lever",
+      "slug": "asktia"
+    },
+    {
+      "name": "Spring Fertility",
+      "category": "Women's Health / Fertility",
+      "atsHint": "lever",
+      "slug": "springfertility"
+    },
+    {
+      "name": "WIN Fertility",
+      "category": "Women's Health / Fertility",
+      "atsHint": "greenhouse",
+      "slug": "winfertility"
+    },
+    {
+      "name": "Twentyeight Health",
+      "category": "Women's Health / Fertility",
+      "atsHint": "lever",
+      "slug": "twentyeighthealth"
+    },
+    {
+      "name": "Boulder Care",
+      "category": "Behavioral Health / Addiction",
+      "atsHint": "lever",
+      "slug": "boulder-care"
+    },
+    {
+      "name": "Workit Health",
+      "category": "Behavioral Health / Addiction",
+      "atsHint": "lever",
+      "slug": "workithealth"
+    },
+    {
+      "name": "Quit Genius",
+      "category": "Behavioral Health / Addiction",
+      "atsHint": "lever",
+      "slug": "quitgenius"
+    },
+    {
+      "name": "Charlie Health",
+      "category": "Behavioral Health",
+      "atsHint": "greenhouse",
+      "slug": "charliehealth"
+    },
+    {
+      "name": "AlayaCare",
+      "category": "Home Health Tech",
+      "atsHint": "greenhouse",
+      "slug": "alayacare"
+    },
+    {
+      "name": "CivicaScript",
+      "category": "Specialty Pharmacy",
+      "atsHint": "greenhouse",
+      "slug": "civica"
+    },
+    {
+      "name": "Capital Rx",
+      "category": "Specialty Pharmacy / PBM",
+      "atsHint": "greenhouse",
+      "slug": "capitalrx"
+    },
+    {
+      "name": "Optime Care",
+      "category": "Specialty Pharmacy",
+      "atsHint": "greenhouse",
+      "slug": "optimecare"
+    },
+    {
+      "name": "Honor",
+      "category": "Senior Care / Caregiving",
+      "atsHint": "greenhouse",
+      "slug": "joinhonor"
+    },
+    {
+      "name": "MedeAnalytics",
+      "category": "Healthcare Analytics / RCM",
+      "atsHint": "greenhouse",
+      "slug": "medeanalytics"
+    },
+    {
+      "name": "Wisp",
+      "category": "Women's Health / Consumer",
+      "atsHint": "lever",
+      "slug": "helwisp"
+    },
+    {
+      "name": "Revo Health",
+      "category": "Veterinary Tech",
+      "atsHint": "lever",
+      "slug": "revohealth"
+    },
+    {
+      "name": "Soundtalent",
+      "category": "Clinical Research / Decentralized Trials",
+      "atsHint": "lever",
+      "slug": "soundtalent"
+    },
+    {
+      "name": "Science 37",
+      "category": "Clinical Research / Decentralized Trials",
+      "atsHint": "greenhouse",
+      "slug": "science37"
     }
   ],
   "non_ats_placeholders": [
