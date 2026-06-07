@@ -9,6 +9,13 @@ COMPANY_INDUSTRIES populate correctly.
 """
 import os
 import sys
+from datetime import datetime, timedelta, timezone
+
+# Relative date: freshness decay (exp(-days/21)) means a hardcoded posted_at
+# silently ages the goldens below the HIGH threshold ~10 days after it's
+# written. This time-bombed the smoke gate on 2026-05-31 and blocked all
+# dashboard deploys for a week.
+POSTED_AT = (datetime.now(timezone.utc) - timedelta(days=2)).strftime("%Y-%m-%d")
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -49,7 +56,7 @@ def main():
     for title, company, loc, desc, expectation in cases:
         job = {
             "title": title, "company": company, "location": loc, "description": desc,
-            "company_name": company, "url": "", "source": "test", "posted_at": "2026-05-25",
+            "company_name": company, "url": "", "source": "test", "posted_at": POSTED_AT,
         }
         try:
             fj._set_skills_profile(GEETU_PROFILE); score = fj.score_job(job)
