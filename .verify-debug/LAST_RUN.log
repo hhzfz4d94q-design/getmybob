@@ -253,7 +253,6 @@ Probing 435 healthtech entries against ATS APIs...
   ✗ DEAD [lever     ] manual                    ← Manual
   ✗ DEAD [ashby     ] curexhealth               ← Curex
   ✗ DEAD [ashby     ] allermi                   ← Allermi
-  ✗ DEAD [lever     ] felixhealth               ← Felix Health
   ✗ DEAD [greenhouse] galaxyvets                ← Galaxy Vets
   ✗ DEAD [greenhouse] vetsource                 ← Vetsource
   ✗ DEAD [lever     ] petdesk                   ← PetDesk
@@ -282,7 +281,7 @@ Probing 435 healthtech entries against ATS APIs...
   ✗ DEAD [greenhouse] heartflow                 ← HeartFlow
   ✗ DEAD [greenhouse] videahealth               ← VideaHealth
   ✗ DEAD [greenhouse] leantaas                  ← LeanTaaS
-  ...progress: 400/435 valid=104 dead=276 skipped=20
+  ...progress: 400/435 valid=104 dead=275 skipped=21
   ✗ DEAD [greenhouse] laudio                    ← Laudio
   ✗ DEAD [greenhouse] carrumhealth              ← Carrum Health
   ✗ DEAD [greenhouse] lanterncare               ← Lantern Care
@@ -304,23 +303,77 @@ Probing 435 healthtech entries against ATS APIs...
   ✗ DEAD [ashby     ] withpower                 ← Power
   ✗ DEAD [greenhouse] springbuk                 ← Springbuk
 
-Probe done — valid:118 dead:296 skipped:21
+Probe done — valid:118 dead:295 skipped:22
 
-Asking Claude for correct slugs for 296 dead entries...
-Traceback (most recent call last):
-  File "/home/runner/work/getmybob/getmybob/scripts/verify_slugs.py", line 143, in <module>
-    sys.exit(main())
-             ^^^^^^
-  File "/home/runner/work/getmybob/getmybob/scripts/verify_slugs.py", line 112, in main
-    fixes = json.loads(cleaned)
-            ^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/json/__init__.py", line 346, in loads
-    return _default_decoder.decode(s)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/json/decoder.py", line 337, in decode
-    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/json/decoder.py", line 353, in raw_decode
-    obj, end = self.scan_once(s, idx)
-               ^^^^^^^^^^^^^^^^^^^^^^
-json.decoder.JSONDecodeError: Unterminated string starting at: line 294 column 12 (char 20335)
+Asking Claude for correct slugs for 295 dead entries...
+  batch 1/8: 40 fixes
+  batch 2/8: 40 fixes
+  batch 3/8: 40 fixes
+  batch 4/8: 40 fixes
+  batch 5/8: 40 fixes
+  batch 6/8: 40 fixes
+  batch 7/8: 40 fixes
+  batch 8/8: 15 fixes
+Claude returned 295 fix entries total
+  ↻ Hims & Hers Health: ashby/hims → ashby/himsandhers
+  ↻ Hippocratic AI: ashby/hippocratic-ai → ashby/hippocraticai
+  ↻ Memora Health: greenhouse/memorahealth → ashby/memorahealth
+  ↻ Sprinter Health: greenhouse/sprinter → ashby/sprinterhealth
+  ↻ Wellth: lever/wellth → greenhouse/wellth
+  ↻ Spark Advisors: ashby/sparkadvisors → ashby/spark-advisors
+  ↻ Commure: lever/commure → ashby/commure
+  ↻ Vivante Health: greenhouse/vivante → greenhouse/vivantehealth
+  ↻ TriNetX: lever/trinetx → greenhouse/trinetx
+  ↻ Sidecar Health: lever/sidecarhealth → greenhouse/sidecarhealth
+  ↻ Gravie: greenhouse/gravie → greenhouse/hellgravie
+  ↻ Wellthy: lever/wellthy → ashby/wellthy
+  ↻ Glooko: lever/glooko → greenhouse/glooko
+  ↻ Podimetrics: lever/podimetrics → greenhouse/podimetrics
+  ↻ Evidation Health: lever/evidation → ashby/evidation
+  ↻ DrChrono: lever/drchrono → greenhouse/drchrono
+  ↻ Elation Health: lever/elationhealth → greenhouse/elationhealth
+  ↻ Health Gorilla: lever/healthgorilla → lever/health-gorilla
+  ↻ Huge: greenhouse/huge → greenhouse/hugeinc
+  ↻ Huntress: greenhouse/huntresslabs → greenhouse/huntress
+  ↻ Byte: greenhouse/byteme → greenhouse/byte
+  ↻ Twentyeight Health: lever/twentyeighthealth → ashby/twentyeighthealth
+  ↻ Workit Health: lever/workithealth → ashby/workithealth
+  ↻ Quit Genius: lever/quitgenius → ashby/quitgenius
+  ↻ Cricket Health: greenhouse/crickethealth → ashby/crickethealth
+  ↻ Somatus: greenhouse/somatus → greenhouse/somatusinc
+  ↻ Clinical Research IO: lever/clinicalresearchio → ashby/clinicalresearchio
+  ↻ Dental Intelligence: greenhouse/dentalintelligence → greenhouse/dentalintel
+  ↻ Tend: greenhouse/tend → greenhouse/hellobytend
+  ↻ Pearl: greenhouse/hellopearl → ashby/pearl
+  ↻ Overjet: greenhouse/overjet → greenhouse/overjetai
+  ↻ Dandy: greenhouse/meetdandy → greenhouse/dandy
+  ↻ Denti.AI: lever/dentiai → ashby/dentiai
+  ↻ Kleer: lever/kleer → ashby/kleer
+  ↻ Cayaba Care: lever/cayabacare → lever/cayaba
+  ↻ Legacy: lever/givelegacy → ashby/legacy
+  ↻ Dadi: lever/dadi → ashby/dadi
+  ↻ Confidant Health: lever/confidanthealth → ashby/confidanthealth
+  ↻ Rula Health: greenhouse/rula → greenhouse/rulahealth
+  ↻ Two Chairs: lever/twochairs → greenhouse/twochairs
+  ↻ CareAcademy: greenhouse/careacademy → greenhouse/care-academy
+  ↻ Seniorly: lever/seniorly → ashby/seniorly
+  ↻ Ribbon Health: greenhouse/ribbonhealth → greenhouse/ribbon-health
+  ↻ Vetsource: greenhouse/vetsource → greenhouse/vetsourcehr
+  ↻ Artera: greenhouse/artera → greenhouse/arteraai
+  ↻ Clearstep: lever/clearstep → ashby/clearstep
+  ↻ Buoy Health: greenhouse/buoyhealth → greenhouse/buoy
+  ↻ Firefly Health: greenhouse/firefly → greenhouse/fireflyhealth
+  ↻ Healthie: greenhouse/healthie → greenhouse/gethealthie
+  ↻ Equip Health: greenhouse/equiphealth → greenhouse/equip
+  ↻ Crossover Health: greenhouse/crossoverhealth → greenhouse/crossover
+  ↻ Pomelo Care: ashby/pomelo-care → ashby/pomelocare
+  ↻ NOCD: lever/nocd → greenhouse/nocdhealth
+  ↻ Talkiatry: greenhouse/talkiatry → greenhouse/talkiatryinc
+  ↻ SimplePractice: greenhouse/simplepractice → greenhouse/simplepracticecom
+  ↻ Nabla: lever/nabla → ashby/nabla
+  ↻ Regard: lever/regard → ashby/regard
+  ↻ HeartFlow: greenhouse/heartflow → greenhouse/heartflowinc
+  ↻ Carrum Health: greenhouse/carrumhealth → greenhouse/carrum
+  ↻ Candid Health: greenhouse/candidhealth → greenhouse/candid
+
+DONE — fixed 60 slugs, 93 marked suspectSlug (Claude unsure)
