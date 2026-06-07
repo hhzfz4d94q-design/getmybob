@@ -3,6 +3,7 @@
 Extracted from fetch_jobs.py 2026-05-28 (Phase 4).
 """
 import json
+import os
 import re
 import sqlite3
 import urllib.parse
@@ -10,6 +11,8 @@ import urllib.request
 from datetime import datetime, timezone, timedelta
 
 from scrapers._http import fetch_json
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 def fetch_icims(entry):

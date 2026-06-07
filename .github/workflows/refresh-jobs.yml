@@ -72,6 +72,21 @@ jobs:
           echo "::error::Scrape did not complete — see .refresh-debug/LAST_RUN.log on main."
           exit 1
 
+      - name: Ingestion staleness gate (fail loudly if scrape wrote ~nothing)
+        run: |
+          python3 - <<'PYEOF'
+          import sqlite3, sys
+          from datetime import datetime, timedelta, timezone
+          conn = sqlite3.connect("jobs.db")
+          mx = conn.execute("SELECT MAX(last_seen) FROM jobs").fetchone()[0] or "none"
+          cutoff = (datetime.now(timezone.utc) - timedelta(hours=24)).isoformat()
+          fresh = conn.execute("SELECT COUNT(*) FROM jobs WHERE last_seen >= ?", (cutoff,)).fetchone()[0]
+          print(f"max(last_seen)={mx}  rows touched in last 24h={fresh}")
+          if fresh < 100:
+              print("::error::Ingestion stale - the scrape barely wrote any rows. A silent scraper regression (like the _strip_html or _normalize_title NameErrors) is the likely cause. Refusing to deploy stale dashboards. See .refresh-debug/LAST_RUN.log on main.")
+              sys.exit(1)
+          PYEOF
+
       - name: Pre-deploy smoke gate (blocks bad output from shipping)
         run: |
           set -e

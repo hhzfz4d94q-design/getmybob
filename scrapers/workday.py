@@ -5,6 +5,7 @@ Extracted from fetch_jobs.py 2026-05-28 (Phase 4).
 import json
 import re
 import sqlite3
+import time
 import urllib.parse
 import urllib.request
 from datetime import datetime, timezone, timedelta

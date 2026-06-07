@@ -19,6 +19,7 @@ from storage.profile import load_users, load_skills_profile
 from storage.db import _slugify_company_name
 
 # Module globals — fetch_jobs.py re-imports these for backward compat
+DEFAULT_INDUSTRIES = ["healthcare", "digital-health"]  # fallback when a user-target company has no industries
 VC_PORTFOLIO_COMPANIES = []  # list of dicts {name, industry, fundingStage, atsHint}
 HEALTHTECH_COMPANIES = []    # list of dicts {name, category, atsHint, slug}
 HEALTHTECH_SET = set()       # CANONICAL company names for fast scoring lookup

@@ -100,6 +100,9 @@ _load_healthtech_catalog = _catalogs.load_healthtech_catalog
 _merge_healthtech_catalog = _catalogs.merge_healthtech_catalog
 _merge_vc_portfolio_companies = _catalogs.merge_vc_portfolio_companies
 
+from matcher.scoring import POSITIVE_TITLE_THEMES
+_POSITIVE_THEME_RE = None  # built lazily by _build_positive_re()
+
 # Phase 5: storage + role_family extracted
 from storage.db import (
     get_conn, upsert_job, fingerprint,

@@ -3,6 +3,7 @@
 Extracted from fetch_jobs.py 2026-05-28 (Phase 4).
 """
 import json
+import os
 import re
 import sqlite3
 import urllib.parse
@@ -12,6 +13,8 @@ from urllib.error import HTTPError, URLError
 from datetime import datetime, timezone, timedelta
 
 from scrapers._http import fetch_json
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 def fetch_wttj(entry):
@@ -211,7 +214,7 @@ def fetch_wttj(entry):
             job_url = j["url"]
         else:
             job_slug = j.get("slug") or j.get("reference") or ""
-            job_url = f"https://www.welcometothejungle.com/en/companies/{slug}/jobs/{job_slug}" if job_slug else url
+            job_url = f"https://www.welcometothejungle.com/en/companies/{slug}/jobs/{job_slug}" if job_slug else f"https://www.welcometothejungle.com/en/companies/{slug}/jobs"
         # Location
         loc_parts = []
         offices = j.get("offices") or j.get("locations") or []

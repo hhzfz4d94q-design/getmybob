@@ -7,11 +7,17 @@ import os
 import re
 import sqlite3
 from hashlib import sha256
-from datetime import datetime
+from datetime import datetime, timezone
+
+from matcher.scoring import is_remote, is_senior, score_job
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DB_PATH = os.path.join(ROOT, "jobs.db")
 COMPANIES_PATH = os.path.join(ROOT, "companies.json")
+
+# Safe module-level defaults; _build_company_industries() reassigns these from companies.json.
+COMPANY_INDUSTRIES = {}
+DEFAULT_INDUSTRIES = ["healthcare", "digital-health"]
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS jobs (
@@ -77,6 +83,9 @@ def get_conn():
 
 
 def upsert_job(conn, job):
+    # Lazy import: detect_employment_type lives in fetch_jobs (needs its marker tables);
+    # top-level import would be circular since fetch_jobs imports storage.db.
+    from fetch_jobs import detect_employment_type
     fp = fingerprint(job)
     now = datetime.now(timezone.utc).isoformat()
     remote = 1 if is_remote(job) else 0
@@ -105,6 +114,21 @@ def upsert_job(conn, job):
              job["title"], job["location"], job["url"], job["posted_at"], job["description"],
              now, now, remote, senior, score, salary, employment_type, industries_str),
         )
+
+
+# Keep STOP_WORDS and _normalize_title byte-identical to fetch_jobs.py —
+# fingerprints must stay stable or every existing job re-inserts as a duplicate.
+# (Was missed in the 2026-05-28 Phase 5 extraction: fingerprint() referenced
+# _normalize_title which stayed behind in fetch_jobs.py → NameError on every
+# upsert → zero jobs ingested since 2026-05-28.)
+STOP_WORDS = {"of", "the", "and", "for", "a", "an", "to", "with", "in", "on", "at", "by", "or"}
+
+
+def _normalize_title(title):
+    """Lowercase, strip stop words, then concatenate alphanumerics so minor wording
+    differences ('Director of Product' vs 'Director, Product') collapse to the same hash."""
+    words = re.split(r"[^a-z0-9]+", (title or "").lower())
+    return "".join(w for w in words if w and w not in STOP_WORDS)
 
 
 def fingerprint(job):
