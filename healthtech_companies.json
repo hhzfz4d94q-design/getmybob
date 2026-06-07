@@ -1,6 +1,6 @@
 {
   "_note": "Curated Healthcare IT / digital health catalog. Used for: (a) scoring boost when company appears in feed AND user has healthcare industries (+3, all entries), (b) auto-scraping (only ATS=greenhouse/lever/ashby/workable). Workday/Google/Amazon entries are catalog-only (scored boost when found, not scraped). Slugs are canonical for matching.",
-  "version": "2026-05-29-v3+discovered+discovered+dream-list+from-contacts+dedup+dream-geetu+discovered+dedup-r2+verified+slug-recover+verified+verified+discovered+discovered",
+  "version": "2026-05-29-v3+discovered+discovered+dream-list+from-contacts+dedup+dream-geetu+discovered+dedup-r2+verified+slug-recover+verified+verified+discovered+discovered+discovered",
   "companies": [
     {
       "name": "Doximity",
@@ -2151,6 +2151,378 @@
       "category": "Dialysis / Kidney Care",
       "atsHint": "greenhouse",
       "slug": "somatus"
+    },
+    {
+      "name": "Clinical Research IO",
+      "category": "Clinical research / CRO",
+      "atsHint": "lever",
+      "slug": "clinicalresearchio"
+    },
+    {
+      "name": "Dental Intelligence",
+      "category": "Dental tech",
+      "atsHint": "greenhouse",
+      "slug": "dentalintelligence"
+    },
+    {
+      "name": "Tend",
+      "category": "Dental tech",
+      "atsHint": "greenhouse",
+      "slug": "tend"
+    },
+    {
+      "name": "Pearl",
+      "category": "Dental tech",
+      "atsHint": "greenhouse",
+      "slug": "hellopearl"
+    },
+    {
+      "name": "Overjet",
+      "category": "Dental tech",
+      "atsHint": "greenhouse",
+      "slug": "overjet"
+    },
+    {
+      "name": "Dandy",
+      "category": "Dental tech",
+      "atsHint": "greenhouse",
+      "slug": "meetdandy"
+    },
+    {
+      "name": "Tend Health",
+      "category": "Dental tech",
+      "atsHint": "greenhouse",
+      "slug": "tendhealth"
+    },
+    {
+      "name": "Denti.AI",
+      "category": "Dental tech",
+      "atsHint": "lever",
+      "slug": "dentiai"
+    },
+    {
+      "name": "Zentist",
+      "category": "Dental tech",
+      "atsHint": "ashby",
+      "slug": "zentist"
+    },
+    {
+      "name": "Kleer",
+      "category": "Dental tech",
+      "atsHint": "lever",
+      "slug": "kleer"
+    },
+    {
+      "name": "Twentyeight Health",
+      "category": "Women's health",
+      "atsHint": "greenhouse",
+      "slug": "28health"
+    },
+    {
+      "name": "Evvy",
+      "category": "Women's health",
+      "atsHint": "ashby",
+      "slug": "evvy"
+    },
+    {
+      "name": "Bloomlife",
+      "category": "Women's health",
+      "atsHint": "lever",
+      "slug": "bloomlife"
+    },
+    {
+      "name": "Oula Health",
+      "category": "Women's health",
+      "atsHint": "ashby",
+      "slug": "oulahealth"
+    },
+    {
+      "name": "Odela",
+      "category": "Women's health",
+      "atsHint": "greenhouse",
+      "slug": "odela"
+    },
+    {
+      "name": "Cayaba Care",
+      "category": "Women's health",
+      "atsHint": "lever",
+      "slug": "cayabacare"
+    },
+    {
+      "name": "Mira Fertility",
+      "category": "Women's health / fertility",
+      "atsHint": "greenhouse",
+      "slug": "miracare"
+    },
+    {
+      "name": "Legacy",
+      "category": "Women's health / fertility",
+      "atsHint": "lever",
+      "slug": "givelegacy"
+    },
+    {
+      "name": "Dadi",
+      "category": "Women's health / fertility",
+      "atsHint": "lever",
+      "slug": "dadi"
+    },
+    {
+      "name": "Brightside Health",
+      "category": "Behavioral health",
+      "atsHint": "greenhouse",
+      "slug": "brightsidehealth"
+    },
+    {
+      "name": "Confidant Health",
+      "category": "Behavioral health / addiction",
+      "atsHint": "lever",
+      "slug": "confidanthealth"
+    },
+    {
+      "name": "Pelago",
+      "category": "Behavioral health / addiction",
+      "atsHint": "greenhouse",
+      "slug": "pelago"
+    },
+    {
+      "name": "Kip Health",
+      "category": "Behavioral health",
+      "atsHint": "ashby",
+      "slug": "kiphealth"
+    },
+    {
+      "name": "Rula Health",
+      "category": "Behavioral health",
+      "atsHint": "greenhouse",
+      "slug": "rula"
+    },
+    {
+      "name": "Alma",
+      "category": "Behavioral health",
+      "atsHint": "greenhouse",
+      "slug": "helloalma"
+    },
+    {
+      "name": "Two Chairs",
+      "category": "Behavioral health",
+      "atsHint": "lever",
+      "slug": "twochairs"
+    },
+    {
+      "name": "CareAcademy",
+      "category": "Home health / caregiving",
+      "atsHint": "greenhouse",
+      "slug": "careacademy"
+    },
+    {
+      "name": "CareYaya",
+      "category": "Senior care / caregiving",
+      "atsHint": "lever",
+      "slug": "careyaya"
+    },
+    {
+      "name": "Kindly Care",
+      "category": "Senior care / caregiving",
+      "atsHint": "lever",
+      "slug": "kindlycare"
+    },
+    {
+      "name": "Caregiver",
+      "category": "Senior care / caregiving",
+      "atsHint": "greenhouse",
+      "slug": "caregiver"
+    },
+    {
+      "name": "Seniorly",
+      "category": "Senior care",
+      "atsHint": "lever",
+      "slug": "seniorly"
+    },
+    {
+      "name": "Capital Rx",
+      "category": "Specialty pharmacy / PBM",
+      "atsHint": "greenhouse",
+      "slug": "cap-rx"
+    },
+    {
+      "name": "Alto Pharmacy",
+      "category": "Specialty pharmacy",
+      "atsHint": "greenhouse",
+      "slug": "altopharmacy"
+    },
+    {
+      "name": "Medly Pharmacy",
+      "category": "Specialty pharmacy",
+      "atsHint": "lever",
+      "slug": "medly"
+    },
+    {
+      "name": "Kalderos",
+      "category": "340B tech",
+      "atsHint": "lever",
+      "slug": "kalderos"
+    },
+    {
+      "name": "ScriptDrop",
+      "category": "Specialty pharmacy",
+      "atsHint": "lever",
+      "slug": "scriptdrop"
+    },
+    {
+      "name": "Lynx Health",
+      "category": "Health IT infrastructure",
+      "atsHint": "ashby",
+      "slug": "lynxhealth"
+    },
+    {
+      "name": "Ribbon Health",
+      "category": "Health IT infrastructure",
+      "atsHint": "greenhouse",
+      "slug": "ribbonhealth"
+    },
+    {
+      "name": "Smile CDR",
+      "category": "Health IT infrastructure",
+      "atsHint": "greenhouse",
+      "slug": "smilecdr"
+    },
+    {
+      "name": "Wisp",
+      "category": "Consumer health / women's health",
+      "atsHint": "lever",
+      "slug": "hellowisp"
+    },
+    {
+      "name": "Apostrophe",
+      "category": "Consumer health / dermatology",
+      "atsHint": "lever",
+      "slug": "apostrophe"
+    },
+    {
+      "name": "Manual",
+      "category": "Consumer health",
+      "atsHint": "lever",
+      "slug": "manual"
+    },
+    {
+      "name": "Curex",
+      "category": "Consumer health / allergy",
+      "atsHint": "ashby",
+      "slug": "curexhealth"
+    },
+    {
+      "name": "Allermi",
+      "category": "Consumer health / allergy",
+      "atsHint": "ashby",
+      "slug": "allermi"
+    },
+    {
+      "name": "Felix Health",
+      "category": "Consumer health",
+      "atsHint": "lever",
+      "slug": "felixhealth"
+    },
+    {
+      "name": "Galaxy Vets",
+      "category": "Veterinary tech",
+      "atsHint": "greenhouse",
+      "slug": "galaxyvets"
+    },
+    {
+      "name": "Vetsource",
+      "category": "Veterinary tech",
+      "atsHint": "greenhouse",
+      "slug": "vetsource"
+    },
+    {
+      "name": "PetDesk",
+      "category": "Veterinary tech",
+      "atsHint": "lever",
+      "slug": "petdesk"
+    },
+    {
+      "name": "Digitail",
+      "category": "Veterinary tech",
+      "atsHint": "lever",
+      "slug": "digitail"
+    },
+    {
+      "name": "Shepherd",
+      "category": "Veterinary tech",
+      "atsHint": "lever",
+      "slug": "shepherdvet"
+    },
+    {
+      "name": "Rightway Healthcare",
+      "category": "Pharmacy benefits / navigation",
+      "atsHint": "greenhouse",
+      "slug": "rightwayhealthcare"
+    },
+    {
+      "name": "Medisafe",
+      "category": "Medication adherence",
+      "atsHint": "lever",
+      "slug": "medisafe"
+    },
+    {
+      "name": "Wellth",
+      "category": "Medication adherence / engagement",
+      "atsHint": "lever",
+      "slug": "wellthapp"
+    },
+    {
+      "name": "Artera",
+      "category": "Patient engagement",
+      "atsHint": "greenhouse",
+      "slug": "artera"
+    },
+    {
+      "name": "Luma Health",
+      "category": "Patient engagement",
+      "atsHint": "greenhouse",
+      "slug": "lumahealth"
+    },
+    {
+      "name": "Healthgrades",
+      "category": "Provider search / reputation",
+      "atsHint": "greenhouse",
+      "slug": "healthgrades"
+    },
+    {
+      "name": "Clearstep",
+      "category": "Patient triage / navigation",
+      "atsHint": "lever",
+      "slug": "clearstep"
+    },
+    {
+      "name": "Buoy Health",
+      "category": "Patient triage / navigation",
+      "atsHint": "greenhouse",
+      "slug": "buoyhealth"
+    },
+    {
+      "name": "Firefly Health",
+      "category": "Primary care / virtual",
+      "atsHint": "greenhouse",
+      "slug": "firefly"
+    },
+    {
+      "name": "Accel",
+      "category": "Care navigation / RCM",
+      "atsHint": "greenhouse",
+      "slug": "accel"
+    },
+    {
+      "name": "Bind Benefits",
+      "category": "Health insurance / benefits",
+      "atsHint": "greenhouse",
+      "slug": "bindon-demand"
+    },
+    {
+      "name": "League",
+      "category": "Health benefits platform",
+      "atsHint": "greenhouse",
+      "slug": "league"
     }
   ],
   "non_ats_placeholders": [

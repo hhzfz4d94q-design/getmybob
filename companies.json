@@ -2923,6 +2923,56 @@
         "healthcare",
         "health-saas"
       ]
+    },
+    {
+      "name": "VSP Vision Care",
+      "tenant": "vsp",
+      "subdomain": "wd5",
+      "site": "VSP_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Align Technology",
+      "tenant": "aligntech",
+      "subdomain": "wd5",
+      "site": "Align_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "PointClickCare",
+      "tenant": "pointclickcare",
+      "subdomain": "wd5",
+      "site": "PointClickCare_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "R1 RCM",
+      "tenant": "r1rcm",
+      "subdomain": "wd5",
+      "site": "R1_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
+    },
+    {
+      "name": "Accolade",
+      "tenant": "accolade",
+      "subdomain": "wd5",
+      "site": "Accolade_Careers",
+      "industries": [
+        "healthcare",
+        "health-saas"
+      ]
     }
   ],
   "remoteok": [
