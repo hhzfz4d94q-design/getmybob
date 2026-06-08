@@ -1002,8 +1002,31 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
         if h <= 336: return 0    # 1-2 weeks — neutral
         return -5                # 2+ weeks — gently push down
 
-    # Re-sort: effective_score = score + fresh_bonus DESC; tiebreak on most-recent last_seen DESC.
-    rows = sorted(rows, key=lambda r: (int(r[11] or 0) + _fresh_bonus(r[6]), r[7] or ""), reverse=True)
+    # Re-sort (2026-06-07): rank by PER-USER score, not the generic db score.
+    # The db score is computed at scrape time without this user's profile, and
+    # the old +25 fresh bonus let a mediocre job posted yesterday outrank a
+    # bullseye match from 12 days ago at the top-150 cap boundary (Transcarent
+    # 95 / Maven 83 were silently cut while 71-score fresh noise shipped).
+    # score_job already folds in freshness decay, so no separate bonus needed
+    # beyond a small tiebreak nudge.
+    if SKILLS_PROFILE:
+        _user_score_cache = {}
+        def _user_score(r):
+            fp = r[0]
+            if fp not in _user_score_cache:
+                try:
+                    _user_score_cache[fp] = score_job({
+                        "title": r[2] or "", "company": r[1] or "", "company_name": r[1] or "",
+                        "location": r[3] or "", "url": r[4] or "", "source": "db",
+                        "posted_at": r[5] or r[6] or "", "description": r[12] or "",
+                        "salary_range": r[13] or "", "industries": r[15] or "",
+                    })
+                except Exception:
+                    _user_score_cache[fp] = int(r[11] or 0)
+            return _user_score_cache[fp]
+        rows = sorted(rows, key=lambda r: (_user_score(r), _fresh_bonus(r[6]), r[7] or ""), reverse=True)
+    else:
+        rows = sorted(rows, key=lambda r: (int(r[11] or 0) + _fresh_bonus(r[6]), r[7] or ""), reverse=True)
     # No profile → no jobs. User must upload resume first to see anything.
     if not SKILLS_PROFILE:
         rows = []
@@ -1192,7 +1215,12 @@ def generate_dashboard(conn, user_slug="geetu", user_name="Geetanjali Arora", ou
     def _not_ghost(r):
         posted_at, first_seen = r[5], r[6]
         ld = _days_old(posted_at) if posted_at else (_days_old(first_seen) if first_seen else 0)
-        return ld is None or ld <= GHOST_DAYS
+        # Senior roles (2026-06-07): Director/VP/Principal searches routinely run
+        # 45-90 days — a 14-day ghost cutoff was amputating the BEST senior
+        # matches (e.g. a 23-day-old Inovalon VP Product re-confirmed live on
+        # the board the same hour it was hidden). Senior postings get 45 days.
+        limit = 45 if r[10] else GHOST_DAYS
+        return ld is None or ld <= limit
     rows = [r for r in rows if _not_ghost(r)]
 
     # Relevance-first cap (2026-05-29 evening): bumped from 20 → 150.
