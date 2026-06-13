@@ -542,7 +542,7 @@
   [35/148] ?: 0 jobs (slug may be invalid)
   [36/148] ?: 0 jobs (slug may be invalid)
   [37/148] ?: 0 jobs (slug may be invalid)
-  [38/148] ?: 0 jobs (slug may be invalid)
+  [38/148] ?: 14 jobs
   [39/148] ?: 0 jobs (slug may be invalid)
   [40/148] ?: 0 jobs (slug may be invalid)
   [41/148] ?: 0 jobs (slug may be invalid)
@@ -816,42 +816,42 @@
   [40/40] calibrate: 0 jobs (slug may be invalid)
 
 [workday] 223 companies
-  [1/223] Pfizer: 0 jobs (slug may be invalid)
-  [2/223] Merck (MSD): 0 jobs (slug may be invalid)
-  [3/223] CVS Health: 0 jobs (slug may be invalid)
+  [1/223] Pfizer: 40 jobs
+  [2/223] Merck (MSD): 200 jobs
+  [3/223] CVS Health: 200 jobs
   [4/223] Capital One: 200 jobs
-  [5/223] Wells Fargo: 0 jobs (slug may be invalid)
-  [6/223] Bank of America: 0 jobs (slug may be invalid)
-  [7/223] Morgan Stanley: 0 jobs (slug may be invalid)
+  [5/223] Wells Fargo: 40 jobs
+  [6/223] Bank of America: 200 jobs
+  [7/223] Morgan Stanley: 40 jobs
   [8/223] American Express: 0 jobs (slug may be invalid)
   [9/223] BlackRock: 0 jobs (slug may be invalid)
   [10/223] Charles Schwab: 0 jobs (slug may be invalid)
-  [11/223] TD Bank: 0 jobs (slug may be invalid)
-  [12/223] BMO Financial Group: 0 jobs (slug may be invalid)
+  [11/223] TD Bank: 40 jobs
+  [12/223] BMO Financial Group: 40 jobs
   [13/223] Truist: 0 jobs (slug may be invalid)
   [14/223] PNC: 0 jobs (slug may be invalid)
-  [15/223] US Bank: 0 jobs (slug may be invalid)
-  [16/223] MUFG Americas: 0 jobs (slug may be invalid)
-  [17/223] Mizuho Americas: 0 jobs (slug may be invalid)
-  [18/223] Flagstar Bank: 0 jobs (slug may be invalid)
-  [19/223] S&P Global: 0 jobs (slug may be invalid)
-  [20/223] Protiviti: 0 jobs (slug may be invalid)
-  [21/223] FIS Global: 0 jobs (slug may be invalid)
-  [22/223] Fiserv: 0 jobs (slug may be invalid)
-  [23/223] Regions Financial: 0 jobs (slug may be invalid)
+  [15/223] US Bank: 40 jobs
+  [16/223] MUFG Americas: 40 jobs
+  [17/223] Mizuho Americas: 40 jobs
+  [18/223] Flagstar Bank: 40 jobs
+  [19/223] S&P Global: 40 jobs
+  [20/223] Protiviti: 40 jobs
+  [21/223] FIS Global: 200 jobs
+  [22/223] Fiserv: 200 jobs
+  [23/223] Regions Financial: 40 jobs
   [24/223] UnitedHealth Group: 0 jobs (slug may be invalid)
   [25/223] Elevance Health: 0 jobs (slug may be invalid)
-  [26/223] Humana: 0 jobs (slug may be invalid)
+  [26/223] Humana: 40 jobs
   [27/223] Cigna: 0 jobs (slug may be invalid)
   [28/223] Centene: 0 jobs (slug may be invalid)
   [29/223] Molina Healthcare: 0 jobs (slug may be invalid)
   [30/223] Johnson & Johnson: 0 jobs (slug may be invalid)
   [31/223] AbbVie: 0 jobs (slug may be invalid)
-  [32/223] Eli Lilly: 0 jobs (slug may be invalid)
+  [32/223] Eli Lilly: 40 jobs
   [33/223] Bristol Myers Squibb: 0 jobs (slug may be invalid)
-  [34/223] Gilead Sciences: 0 jobs (slug may be invalid)
+  [34/223] Gilead Sciences: 40 jobs
   [35/223] Amgen: 0 jobs (slug may be invalid)
-  [36/223] Sanofi: 0 jobs (slug may be invalid)
+  [36/223] Sanofi: 40 jobs
   [37/223] Regeneron: 0 jobs (slug may be invalid)
   [38/223] Takeda: 0 jobs (slug may be invalid)
   [39/223] Kaiser Permanente: 0 jobs (slug may be invalid)
@@ -863,7 +863,7 @@
   [45/223] Oracle Health (Cerner): 0 jobs (slug may be invalid)
   [46/223] Medtronic: 0 jobs (slug may be invalid)
   [47/223] Boston Scientific: 0 jobs (slug may be invalid)
-  [48/223] Abbott: 0 jobs (slug may be invalid)
+  [48/223] Abbott: 40 jobs
   [49/223] Centene Corporation: 0 jobs (slug may be invalid)
   [50/223] Molina Healthcare: 0 jobs (slug may be invalid)
   [51/223] Teladoc Health: 0 jobs (slug may be invalid)
@@ -941,7 +941,7 @@
   [123/223] Optum360: 0 jobs (slug may be invalid)
   [124/223] Covetrus: 0 jobs (slug may be invalid)
   [125/223] Petco Health & Wellness: 0 jobs (slug may be invalid)
-  [126/223] Zoetis: 0 jobs (slug may be invalid)
+  [126/223] Zoetis: 111 jobs
   [127/223] Parexel: 0 jobs (slug may be invalid)
   [128/223] ICON plc: 0 jobs (slug may be invalid)
   [129/223] Syneos Health: 0 jobs (slug may be invalid)
@@ -982,18 +982,18 @@
   [164/223] PointClickCare: 0 jobs (slug may be invalid)
   [165/223] R1 RCM: 0 jobs (slug may be invalid)
   [166/223] Accolade: 0 jobs (slug may be invalid)
-  [167/223] athenahealth: 0 jobs (slug may be invalid)
-  [168/223] Becton Dickinson: 0 jobs (slug may be invalid)
-  [169/223] Stryker: 0 jobs (slug may be invalid)
+  [167/223] athenahealth: 40 jobs
+  [168/223] Becton Dickinson: 40 jobs
+  [169/223] Stryker: 40 jobs
   [170/223] Baxter International: 0 jobs (slug may be invalid)
   [171/223] Organon: 0 jobs (slug may be invalid)
   [172/223] Cotiviti: 0 jobs (slug may be invalid)
   [173/223] Availity: 0 jobs (slug may be invalid)
   [174/223] GE HealthCare: 0 jobs (slug may be invalid)
-  [175/223] ResMed: 0 jobs (slug may be invalid)
+  [175/223] ResMed: 40 jobs
   [176/223] Hologic: 0 jobs (slug may be invalid)
   [177/223] Edwards Lifesciences: 0 jobs (slug may be invalid)
-  [178/223] Healthfirst: 0 jobs (slug may be invalid)
+  [178/223] Healthfirst: 96 jobs
   [179/223] EmblemHealth: 0 jobs (slug may be invalid)
   [180/223] Hackensack Meridian Health: 0 jobs (slug may be invalid)
   [181/223] Memorial Sloan Kettering: 0 jobs (slug may be invalid)
@@ -1343,22 +1343,22 @@
 [himss] 1 companies
   [1/1] HIMSS Career Center: 0 jobs (slug may be invalid)
 
-Totals: {'greenhouse': 8172, 'lever': 1057, 'ashby': 1224, 'workday': 200, 'smartrecruiters': 32, 'remoteok': 84, 'yc': 28, 'hn_hiring': 257}
-Failures: 1078 (companies returned no data — likely bad slugs)
+Totals: {'greenhouse': 8172, 'lever': 1071, 'ashby': 1224, 'workday': 2247, 'smartrecruiters': 32, 'remoteok': 84, 'yc': 28, 'hn_hiring': 257}
+Failures: 1049 (companies returned no data — likely bad slugs)
 [users] loaded 4 from Worker
 
 [multi-user] generating dashboards for 4 users
 [diag:geetu] loaded profile, targetCompanies len=23, first={'name': 'Veeva Systems', 'atsHint': 'workday', 'atsUrl': 'https://veeva.wd1.myworkdayjobs.com/veeva_careers', 'why': 'Cloud SaaS leader in life sciences with constant demand for senior product and transformation leaders who bridge pharma and technology'}
 [skills-profile:geetu] Senior digital transformation and product leader at the intersection of healthcare and technology · 65 keywords
 [velocity] 195 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 6439/6439
+[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 6376/6376
 [why-hidden:geetu] classified 2000 hidden jobs (of 19850 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/geetu.html
 [diag:amit-arora] loaded profile, targetCompanies len=25, first={'name': 'Webster Bank', 'atsHint': 'workday', 'atsUrl': 'https://websterbank.wd1.myworkdayjobs.com/WebsterBankCareers', 'why': "Super-regional commercial bank with active GRC and digital transformation hiring at the SVP/MD level, directly aligned to Amit's IDB Bank and Bank Leumi profile."}
 [skills-profile:amit-arora] Senior technology and GRC executive specializing in digital transformation, risk management, and M&A integration within banking and capital markets · 13 keywords
 [velocity] 195 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 5365/5365
+[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 5382/5382
 [why-hidden:amit-arora] classified 2000 hidden jobs (of 19850 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/amit-arora.html
