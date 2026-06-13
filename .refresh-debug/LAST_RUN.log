@@ -754,7 +754,7 @@
   [109/126] pomelocare: 0 jobs (slug may be invalid)
   [110/126] medallion: 0 jobs (slug may be invalid)
   [111/126] certifyos: 12 jobs
-  [112/126] metriport: 16 jobs
+  [112/126] metriport: 17 jobs
   [113/126] flexpa: 0 jobs (slug may be invalid)
   [114/126] tennr: 14 jobs
   [115/126] anterior: 5 jobs
@@ -1326,13 +1326,13 @@
   [34/34] ?: 0 jobs (slug may be invalid)
 
 [remoteok] 1 companies
-  [1/1] Remote OK feed: 83 jobs
+  [1/1] Remote OK feed: 84 jobs
 
 [yc] 1 companies
   [1/1] YC Work at a Startup: 28 jobs
 
 [hn_hiring] 1 companies
-  [1/1] HN Who is Hiring: 257 jobs
+  [1/1] HN Who is Hiring: 258 jobs
 
 [healthecareers] 1 companies
   [1/1] Health eCareers: 0 jobs (slug may be invalid)
@@ -1340,7 +1340,7 @@
 [himss] 1 companies
   [1/1] HIMSS Career Center: 0 jobs (slug may be invalid)
 
-Totals: {'greenhouse': 8202, 'lever': 1071, 'ashby': 1414, 'workday': 2207, 'smartrecruiters': 32, 'remoteok': 83, 'yc': 28, 'hn_hiring': 257}
+Totals: {'greenhouse': 8202, 'lever': 1071, 'ashby': 1415, 'workday': 2207, 'smartrecruiters': 32, 'remoteok': 84, 'yc': 28, 'hn_hiring': 258}
 Failures: 1038 (companies returned no data — likely bad slugs)
 [users] loaded 4 from Worker
 
