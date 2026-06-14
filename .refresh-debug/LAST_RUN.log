@@ -210,7 +210,7 @@
   [198/493] ?: 0 jobs (slug may be invalid)
   [199/493] ?: 0 jobs (slug may be invalid)
   [200/493] ?: 0 jobs (slug may be invalid)
-  [201/493] ?: 382 jobs
+  [201/493] ?: 381 jobs
   [202/493] ?: 0 jobs (slug may be invalid)
   [203/493] ?: 0 jobs (slug may be invalid)
   [204/493] ?: 0 jobs (slug may be invalid)
@@ -418,7 +418,7 @@
   [406/493] thrivemarket: 17 jobs
   [407/493] ascendanalytics: 4 jobs
   [408/493] alphasense: 217 jobs
-  [409/493] reddit: 144 jobs
+  [409/493] reddit: 145 jobs
   [410/493] celonis: 192 jobs
   [411/493] wcgclinical: 0 jobs (slug may be invalid)
   [412/493] byte: 0 jobs (slug may be invalid)
@@ -1348,7 +1348,7 @@ Failures: 1038 (companies returned no data — likely bad slugs)
 [diag:geetu] loaded profile, targetCompanies len=23, first={'name': 'Veeva Systems', 'atsHint': 'workday', 'atsUrl': 'https://veeva.wd1.myworkdayjobs.com/veeva_careers', 'why': 'Cloud SaaS leader in life sciences with constant demand for senior product and transformation leaders who bridge pharma and technology'}
 [skills-profile:geetu] Senior digital transformation and product leader at the intersection of healthcare and technology · 65 keywords
 [velocity] 199 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 6372/6372
+[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 6374/6374
 [why-hidden:geetu] classified 2000 hidden jobs (of 19850 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/geetu.html
