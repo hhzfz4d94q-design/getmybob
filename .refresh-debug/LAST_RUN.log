@@ -154,7 +154,7 @@
   [142/493] ?: 0 jobs (slug may be invalid)
   [143/493] ?: 0 jobs (slug may be invalid)
   [144/493] ?: 32 jobs
-  [145/493] ?: 193 jobs
+  [145/493] ?: 192 jobs
   [146/493] ?: 0 jobs (slug may be invalid)
   [147/493] ?: 0 jobs (slug may be invalid)
   [148/493] ?: 0 jobs (slug may be invalid)
@@ -409,7 +409,7 @@
   [397/493] prescryptivehealth: 0 jobs (slug may be invalid)
   [398/493] qventus: 16 jobs
   [399/493] instacart: 166 jobs
-  [400/493] elastic: 193 jobs
+  [400/493] elastic: 194 jobs
   [401/493] rxbenefits: 0 jobs (slug may be invalid)
   [402/493] honor: 21 jobs
   [403/493] lattice: 11 jobs
@@ -1348,7 +1348,7 @@ Failures: 1038 (companies returned no data — likely bad slugs)
 [diag:geetu] loaded profile, targetCompanies len=23, first={'name': 'Veeva Systems', 'atsHint': 'workday', 'atsUrl': 'https://veeva.wd1.myworkdayjobs.com/veeva_careers', 'why': 'Cloud SaaS leader in life sciences with constant demand for senior product and transformation leaders who bridge pharma and technology'}
 [skills-profile:geetu] Senior digital transformation and product leader at the intersection of healthcare and technology · 65 keywords
 [velocity] 199 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 6371/6371
+[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 6372/6372
 [why-hidden:geetu] classified 2000 hidden jobs (of 19850 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/geetu.html
