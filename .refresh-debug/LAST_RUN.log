@@ -44,7 +44,7 @@
   [32/493] cofertility: 1 jobs
   [33/493] carrotfertility: 13 jobs
   [34/493] branchcare: 0 jobs (slug may be invalid)
-  [35/493] pomelocare: 50 jobs
+  [35/493] pomelocare: 49 jobs
   [36/493] openfertility: 4 jobs
   [37/493] mavenclinic: 26 jobs
   [38/493] sparkadvisors: 6 jobs
@@ -143,7 +143,7 @@
   [131/493] ?: 69 jobs
   [132/493] ?: 57 jobs
   [133/493] ?: 165 jobs
-  [134/493] ?: 163 jobs
+  [134/493] ?: 161 jobs
   [135/493] ?: 54 jobs
   [136/493] ?: 84 jobs
   [137/493] ?: 34 jobs
@@ -415,7 +415,7 @@
   [403/493] lattice: 11 jobs
   [404/493] dropbox: 60 jobs
   [405/493] guild: 10 jobs
-  [406/493] thrivemarket: 17 jobs
+  [406/493] thrivemarket: 15 jobs
   [407/493] ascendanalytics: 4 jobs
   [408/493] alphasense: 217 jobs
   [409/493] reddit: 145 jobs
@@ -1332,7 +1332,7 @@
   [1/1] YC Work at a Startup: 27 jobs
 
 [hn_hiring] 1 companies
-  [1/1] HN Who is Hiring: 258 jobs
+  [1/1] HN Who is Hiring: 259 jobs
 
 [healthecareers] 1 companies
   [1/1] Health eCareers: 0 jobs (slug may be invalid)
@@ -1340,7 +1340,7 @@
 [himss] 1 companies
   [1/1] HIMSS Career Center: 0 jobs (slug may be invalid)
 
-Totals: {'greenhouse': 8202, 'lever': 1071, 'ashby': 1415, 'workday': 2206, 'smartrecruiters': 32, 'remoteok': 87, 'yc': 27, 'hn_hiring': 258}
+Totals: {'greenhouse': 8197, 'lever': 1071, 'ashby': 1415, 'workday': 2206, 'smartrecruiters': 32, 'remoteok': 87, 'yc': 27, 'hn_hiring': 259}
 Failures: 1038 (companies returned no data — likely bad slugs)
 [users] loaded 4 from Worker
 
@@ -1348,14 +1348,14 @@ Failures: 1038 (companies returned no data — likely bad slugs)
 [diag:geetu] loaded profile, targetCompanies len=23, first={'name': 'Veeva Systems', 'atsHint': 'workday', 'atsUrl': 'https://veeva.wd1.myworkdayjobs.com/veeva_careers', 'why': 'Cloud SaaS leader in life sciences with constant demand for senior product and transformation leaders who bridge pharma and technology'}
 [skills-profile:geetu] Senior digital transformation and product leader at the intersection of healthcare and technology · 65 keywords
 [velocity] 199 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 6376/6376
+[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 6381/6381
 [why-hidden:geetu] classified 2000 hidden jobs (of 19850 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/geetu.html
 [diag:amit-arora] loaded profile, targetCompanies len=25, first={'name': 'Webster Bank', 'atsHint': 'workday', 'atsUrl': 'https://websterbank.wd1.myworkdayjobs.com/WebsterBankCareers', 'why': "Super-regional commercial bank with active GRC and digital transformation hiring at the SVP/MD level, directly aligned to Amit's IDB Bank and Bank Leumi profile."}
 [skills-profile:amit-arora] Senior technology and GRC executive specializing in digital transformation, risk management, and M&A integration within banking and capital markets · 13 keywords
 [velocity] 199 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 5324/5324
+[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 5325/5325
 [why-hidden:amit-arora] classified 2000 hidden jobs (of 19850 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/amit-arora.html
