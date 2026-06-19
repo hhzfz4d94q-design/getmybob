@@ -143,7 +143,7 @@
   [131/493] ?: 66 jobs
   [132/493] ?: 53 jobs
   [133/493] ?: 142 jobs
-  [134/493] ?: 155 jobs
+  [134/493] ?: 154 jobs
   [135/493] ?: 51 jobs
   [136/493] ?: 103 jobs
   [137/493] ?: 33 jobs
@@ -154,7 +154,7 @@
   [142/493] ?: 0 jobs (slug may be invalid)
   [143/493] ?: 0 jobs (slug may be invalid)
   [144/493] ?: 30 jobs
-  [145/493] ?: 199 jobs
+  [145/493] ?: 198 jobs
   [146/493] ?: 0 jobs (slug may be invalid)
   [147/493] ?: 0 jobs (slug may be invalid)
   [148/493] ?: 0 jobs (slug may be invalid)
@@ -172,7 +172,7 @@
   [160/493] ?: 8 jobs
   [161/493] ?: 0 jobs (slug may be invalid)
   [162/493] ?: 0 jobs (slug may be invalid)
-  [163/493] ?: 14 jobs
+  [163/493] ?: 13 jobs
   [164/493] ?: 6 jobs
   [165/493] ?: 0 jobs (slug may be invalid)
   [166/493] ?: 0 jobs (slug may be invalid)
@@ -198,7 +198,7 @@
   [186/493] ?: 20 jobs
   [187/493] ?: 0 jobs (slug may be invalid)
   [188/493] ?: 0 jobs (slug may be invalid)
-  [189/493] ?: 738 jobs
+  [189/493] ?: 737 jobs
   [190/493] ?: 0 jobs (slug may be invalid)
   [191/493] ?: 0 jobs (slug may be invalid)
   [192/493] ?: 8 jobs
@@ -210,7 +210,7 @@
   [198/493] ?: 0 jobs (slug may be invalid)
   [199/493] ?: 0 jobs (slug may be invalid)
   [200/493] ?: 0 jobs (slug may be invalid)
-  [201/493] ?: 374 jobs
+  [201/493] ?: 373 jobs
   [202/493] ?: 0 jobs (slug may be invalid)
   [203/493] ?: 0 jobs (slug may be invalid)
   [204/493] ?: 0 jobs (slug may be invalid)
@@ -479,7 +479,7 @@
   [467/493] nocd: 0 jobs (slug may be invalid)
   [468/493] simplepractice: 0 jobs (slug may be invalid)
   [469/493] radai: 0 jobs (slug may be invalid)
-  [470/493] heartflowinc: 49 jobs
+  [470/493] heartflowinc: 50 jobs
   [471/493] videahealth: 0 jobs (slug may be invalid)
   [472/493] leantaas: 0 jobs (slug may be invalid)
   [473/493] laudio: 0 jobs (slug may be invalid)
@@ -762,7 +762,7 @@
   [117/126] nabla: 14 jobs
   [118/126] regard: 7 jobs
   [119/126] payzen: 0 jobs (slug may be invalid)
-  [120/126] solace: 26 jobs
+  [120/126] solace: 28 jobs
   [121/126] summerhealth: 2 jobs
   [122/126] mochihealth: 0 jobs (slug may be invalid)
   [123/126] anglehealth: 1 jobs
@@ -1340,7 +1340,7 @@
 [himss] 1 companies
   [1/1] HIMSS Career Center: 0 jobs (slug may be invalid)
 
-Totals: {'greenhouse': 8243, 'lever': 1058, 'ashby': 1413, 'workday': 2219, 'smartrecruiters': 33, 'remoteok': 100, 'yc': 29, 'hn_hiring': 260}
+Totals: {'greenhouse': 8239, 'lever': 1058, 'ashby': 1415, 'workday': 2219, 'smartrecruiters': 33, 'remoteok': 100, 'yc': 29, 'hn_hiring': 260}
 Failures: 1037 (companies returned no data — likely bad slugs)
 [users] loaded 4 from Worker
 
@@ -1348,14 +1348,14 @@ Failures: 1037 (companies returned no data — likely bad slugs)
 [diag:geetu] loaded profile, targetCompanies len=23, first={'name': 'Veeva Systems', 'atsHint': 'workday', 'atsUrl': 'https://veeva.wd1.myworkdayjobs.com/veeva_careers', 'why': 'Cloud SaaS leader in life sciences with constant demand for senior product and transformation leaders who bridge pharma and technology'}
 [skills-profile:geetu] Senior digital transformation and product leader at the intersection of healthcare and technology · 65 keywords
 [velocity] 201 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 7332/7332
+[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 7347/7347
 [why-hidden:geetu] classified 2000 hidden jobs (of 19850 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/geetu.html
 [diag:amit-arora] loaded profile, targetCompanies len=25, first={'name': 'Webster Bank', 'atsHint': 'workday', 'atsUrl': 'https://websterbank.wd1.myworkdayjobs.com/WebsterBankCareers', 'why': "Super-regional commercial bank with active GRC and digital transformation hiring at the SVP/MD level, directly aligned to Amit's IDB Bank and Bank Leumi profile."}
 [skills-profile:amit-arora] Senior technology and GRC executive specializing in digital transformation, risk management, and M&A integration within banking and capital markets · 13 keywords
 [velocity] 201 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 5732/5732
+[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 5737/5737
 [why-hidden:amit-arora] classified 2000 hidden jobs (of 19850 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/amit-arora.html
