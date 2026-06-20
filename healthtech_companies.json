@@ -1,6 +1,6 @@
 {
   "_note": "Curated Healthcare IT / digital health catalog. Used for: (a) scoring boost when company appears in feed AND user has healthcare industries (+3, all entries), (b) auto-scraping (only ATS=greenhouse/lever/ashby/workable). Workday/Google/Amazon entries are catalog-only (scored boost when found, not scraped). Slugs are canonical for matching.",
-  "version": "2026-05-29-v3+discovered+discovered+dream-list+from-contacts+dedup+dream-geetu+discovered+dedup-r2+verified+slug-recover+verified+verified+discovered+discovered+discovered+verified+verified",
+  "version": "2026-05-29-v3+discovered+discovered+dream-list+from-contacts+dedup+dream-geetu+discovered+dedup-r2+verified+slug-recover+verified+verified+discovered+discovered+discovered+verified+verified+verified",
   "companies": [
     {
       "name": "Doximity",
@@ -33,19 +33,19 @@
       "name": "Hims & Hers Health",
       "category": "telehealth",
       "atsHint": "ashby",
-      "slug": "hims"
+      "slug": "himsandhers"
     },
     {
       "name": "Hinge Health",
       "category": "dtx",
       "atsHint": "greenhouse",
-      "slug": "hingehealth"
+      "slug": "hinge-health"
     },
     {
       "name": "Lyra Health",
       "category": "dtx",
       "atsHint": "greenhouse",
-      "slug": "lyrahealth"
+      "slug": "lyra-health"
     },
     {
       "name": "Spring Health",
@@ -67,7 +67,7 @@
       "name": "Cedar",
       "category": "healthcare-fintech",
       "atsHint": "greenhouse",
-      "slug": "cedar"
+      "slug": "cedar-portal"
     },
     {
       "name": "Komodo Health",
@@ -95,7 +95,7 @@
       "name": "Devoted Health",
       "category": "payer-tech",
       "atsHint": "greenhouse",
-      "slug": "devotedhealth"
+      "slug": "devoted-health"
     },
     {
       "name": "Bright Health Group",
@@ -204,7 +204,8 @@
       "name": "Big Health",
       "category": "dtx",
       "atsHint": "greenhouse",
-      "slug": "bighealth"
+      "slug": "bighealth",
+      "suspectSlug": true
     },
     {
       "name": "athenahealth",
@@ -305,12 +306,12 @@
       "name": "Iodine Software",
       "category": "hit-ai",
       "atsHint": "greenhouse",
-      "slug": "iodinesoftware"
+      "slug": "iodine-software"
     },
     {
       "name": "Augmedix",
       "category": "hit-ai",
-      "atsHint": "lever",
+      "atsHint": "greenhouse",
       "slug": "augmedix"
     },
     {
@@ -329,7 +330,7 @@
       "name": "Hyro",
       "category": "hit-ai",
       "atsHint": "lever",
-      "slug": "hyro"
+      "slug": "hyro.ai"
     },
     {
       "name": "Notable Health",
@@ -348,7 +349,7 @@
       "name": "Innovaccer",
       "category": "hit-ai",
       "atsHint": "greenhouse",
-      "slug": "innovaccer"
+      "slug": "innovaccerinc"
     },
     {
       "name": "Persistent Systems Healthcare",
@@ -360,13 +361,15 @@
       "name": "Arcadia",
       "category": "hit-ai",
       "atsHint": "greenhouse",
-      "slug": "arcadia"
+      "slug": "arcadia",
+      "suspectSlug": true
     },
     {
       "name": "Carta Healthcare",
       "category": "clinical-trials",
       "atsHint": "lever",
-      "slug": "cartahealthcare"
+      "slug": "cartahealthcare",
+      "suspectSlug": true
     },
     {
       "name": "Medidata Solutions",
@@ -408,7 +411,8 @@
       "name": "Saama Technologies",
       "category": "clinical-trials",
       "atsHint": "greenhouse",
-      "slug": "saama"
+      "slug": "saama",
+      "suspectSlug": true
     },
     {
       "name": "Castor",
@@ -426,7 +430,8 @@
       "name": "Reify Health",
       "category": "clinical-trials",
       "atsHint": "greenhouse",
-      "slug": "reifyhealth"
+      "slug": "reifyhealth",
+      "suspectSlug": true
     },
     {
       "name": "Suvoda",
@@ -438,8 +443,7 @@
       "name": "Tempus",
       "category": "life-sciences-data",
       "atsHint": "greenhouse",
-      "slug": "tempus",
-      "suspectSlug": true
+      "slug": "tempus-labs-2"
     },
     {
       "name": "Flatiron Health",
@@ -471,7 +475,7 @@
       "name": "Helix",
       "category": "life-sciences-data",
       "atsHint": "greenhouse",
-      "slug": "helix"
+      "slug": "helix-2"
     },
     {
       "name": "23andMe",
@@ -986,7 +990,7 @@
       "name": "Memora Health",
       "category": "care-navigation",
       "atsHint": "ashby",
-      "slug": "memora-health"
+      "slug": "memora"
     },
     {
       "name": "Curai Health",
@@ -1030,7 +1034,8 @@
       "name": "Hims & Hers",
       "category": "Mid-stage healthtech SaaS",
       "atsHint": "greenhouse",
-      "slug": "hims"
+      "slug": "hims",
+      "suspectSlug": true
     },
     {
       "name": "Calibrate",
@@ -1269,7 +1274,7 @@
       "name": "Evidation Health",
       "category": "Real-world data",
       "atsHint": "ashby",
-      "slug": "evidation-health"
+      "slug": "evidation"
     },
     {
       "name": "DrChrono",
@@ -1440,7 +1445,7 @@
       "name": "Notable",
       "category": "Clinical-AI",
       "atsHint": "greenhouse",
-      "slug": "notablehealth"
+      "slug": "notable"
     },
     {
       "name": "Suki",
@@ -1630,11 +1635,10 @@
       "name": "Prescryptive",
       "category": "dream-list-geetu",
       "atsHint": "greenhouse",
-      "slug": "prescryptivehealth",
+      "slug": "prescryptive",
       "vertical": "healthcare",
       "dreamList": true,
-      "dreamListFor": "geetu",
-      "suspectSlug": true
+      "dreamListFor": "geetu"
     },
     {
       "name": "Qventus",
@@ -1856,7 +1860,8 @@
       "name": "Ovia Health",
       "category": "Women's Health + Fertility",
       "atsHint": "greenhouse",
-      "slug": "oviahealth"
+      "slug": "oviahealth",
+      "suspectSlug": true
     },
     {
       "name": "Mahmee",
@@ -1985,7 +1990,7 @@
     {
       "name": "Vetcove",
       "category": "Veterinary Tech",
-      "atsHint": "lever",
+      "atsHint": "ashby",
       "slug": "vetcove"
     },
     {
@@ -2166,8 +2171,7 @@
       "name": "Overjet",
       "category": "Dental tech",
       "atsHint": "greenhouse",
-      "slug": "overjetai",
-      "suspectSlug": true
+      "slug": "overjet"
     },
     {
       "name": "Dandy",
@@ -2220,8 +2224,7 @@
       "name": "Oula Health",
       "category": "Women's health",
       "atsHint": "ashby",
-      "slug": "oulahealth",
-      "suspectSlug": true
+      "slug": "oula"
     },
     {
       "name": "Odela",
@@ -2248,8 +2251,7 @@
       "name": "Legacy",
       "category": "Women's health / fertility",
       "atsHint": "ashby",
-      "slug": "legacy",
-      "suspectSlug": true
+      "slug": "givelegacy"
     },
     {
       "name": "Dadi",
@@ -2282,7 +2284,7 @@
       "name": "Rula Health",
       "category": "Behavioral health",
       "atsHint": "greenhouse",
-      "slug": "rula"
+      "slug": "rulahealth"
     },
     {
       "name": "Two Chairs",
@@ -2294,8 +2296,7 @@
       "name": "CareAcademy",
       "category": "Home health / caregiving",
       "atsHint": "greenhouse",
-      "slug": "care-academy",
-      "suspectSlug": true
+      "slug": "careacademy"
     },
     {
       "name": "CareYaya",
@@ -2356,7 +2357,7 @@
       "name": "Ribbon Health",
       "category": "Health IT infrastructure",
       "atsHint": "greenhouse",
-      "slug": "ribbonhealth"
+      "slug": "ribbon"
     },
     {
       "name": "Smile CDR",
@@ -2411,7 +2412,7 @@
       "name": "Vetsource",
       "category": "Veterinary tech",
       "atsHint": "greenhouse",
-      "slug": "vetsource"
+      "slug": "vetsourceinc"
     },
     {
       "name": "PetDesk",
@@ -2451,7 +2452,7 @@
       "name": "Artera",
       "category": "Patient engagement",
       "atsHint": "greenhouse",
-      "slug": "artera"
+      "slug": "arteraai"
     },
     {
       "name": "Luma Health",
@@ -2470,7 +2471,8 @@
       "name": "Clearstep",
       "category": "Patient triage / navigation",
       "atsHint": "ashby",
-      "slug": "clearstep"
+      "slug": "clearstep",
+      "suspectSlug": true
     },
     {
       "name": "Buoy Health",
@@ -2881,7 +2883,7 @@
       "name": "Verato",
       "category": "data-infra",
       "atsHint": "greenhouse",
-      "slug": "verato1"
+      "slug": "verato"
     },
     {
       "name": "NimbleRx",
@@ -2907,7 +2909,7 @@
       "name": "Springbuk",
       "category": "benefits-analytics",
       "atsHint": "greenhouse",
-      "slug": "springbuk1"
+      "slug": "springbuk"
     }
   ],
   "non_ats_placeholders": [
