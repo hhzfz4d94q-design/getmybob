@@ -160,7 +160,7 @@
   [148/493] ?: 0 jobs (slug may be invalid)
   [149/493] ?: 0 jobs (slug may be invalid)
   [150/493] ?: 0 jobs (slug may be invalid)
-  [151/493] ?: 363 jobs
+  [151/493] ?: 362 jobs
   [152/493] ?: 87 jobs
   [153/493] ?: 0 jobs (slug may be invalid)
   [154/493] ?: 0 jobs (slug may be invalid)
@@ -686,7 +686,7 @@
   [41/126] ?: 0 jobs (slug may be invalid)
   [42/126] ?: 0 jobs (slug may be invalid)
   [43/126] ?: 0 jobs (slug may be invalid)
-  [44/126] ?: 29 jobs
+  [44/126] ?: 30 jobs
   [45/126] ?: 0 jobs (slug may be invalid)
   [46/126] ?: 0 jobs (slug may be invalid)
   [47/126] ?: 0 jobs (slug may be invalid)
@@ -717,7 +717,7 @@
   [72/126] memora-health: 0 jobs (slug may be invalid)
   [73/126] sprinter-health: 88 jobs
   [74/126] sparkadvisors: 0 jobs (slug may be invalid)
-  [75/126] commure: 72 jobs
+  [75/126] commure: 73 jobs
   [76/126] getwellthy: 0 jobs (slug may be invalid)
   [77/126] evidation-health: 0 jobs (slug may be invalid)
   [78/126] incrediblehealth: 0 jobs (slug may be invalid)
@@ -759,7 +759,7 @@
   [114/126] tennr: 17 jobs
   [115/126] anterior: 4 jobs
   [116/126] ambiencehealthcare: 22 jobs
-  [117/126] nabla: 14 jobs
+  [117/126] nabla: 13 jobs
   [118/126] regard: 7 jobs
   [119/126] payzen: 0 jobs (slug may be invalid)
   [120/126] solace: 28 jobs
@@ -981,7 +981,7 @@
   [166/223] Accolade: 0 jobs (slug may be invalid)
   [167/223] athenahealth: 40 jobs
   [168/223] Becton Dickinson: 40 jobs
-  [169/223] Stryker: 20 jobs
+  [169/223] Stryker: 40 jobs
   [170/223] Baxter International: 0 jobs (slug may be invalid)
   [171/223] Organon: 0 jobs (slug may be invalid)
   [172/223] Cotiviti: 0 jobs (slug may be invalid)
@@ -1340,7 +1340,7 @@
 [himss] 1 companies
   [1/1] HIMSS Career Center: 0 jobs (slug may be invalid)
 
-Totals: {'greenhouse': 8241, 'lever': 1058, 'ashby': 1415, 'workday': 2199, 'smartrecruiters': 33, 'remoteok': 100, 'yc': 29, 'hn_hiring': 260}
+Totals: {'greenhouse': 8240, 'lever': 1058, 'ashby': 1416, 'workday': 2219, 'smartrecruiters': 33, 'remoteok': 100, 'yc': 29, 'hn_hiring': 260}
 Failures: 1037 (companies returned no data — likely bad slugs)
 [users] loaded 4 from Worker
 
@@ -1348,14 +1348,14 @@ Failures: 1037 (companies returned no data — likely bad slugs)
 [diag:geetu] loaded profile, targetCompanies len=23, first={'name': 'Veeva Systems', 'atsHint': 'workday', 'atsUrl': 'https://veeva.wd1.myworkdayjobs.com/veeva_careers', 'why': 'Cloud SaaS leader in life sciences with constant demand for senior product and transformation leaders who bridge pharma and technology'}
 [skills-profile:geetu] Senior digital transformation and product leader at the intersection of healthcare and technology · 65 keywords
 [velocity] 201 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 7355/7355
+[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 7215/7215
 [why-hidden:geetu] classified 2000 hidden jobs (of 19850 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/geetu.html
 [diag:amit-arora] loaded profile, targetCompanies len=25, first={'name': 'Webster Bank', 'atsHint': 'workday', 'atsUrl': 'https://websterbank.wd1.myworkdayjobs.com/WebsterBankCareers', 'why': "Super-regional commercial bank with active GRC and digital transformation hiring at the SVP/MD level, directly aligned to Amit's IDB Bank and Bank Leumi profile."}
 [skills-profile:amit-arora] Senior technology and GRC executive specializing in digital transformation, risk management, and M&A integration within banking and capital markets · 13 keywords
 [velocity] 201 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 5734/5734
+[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 5537/5537
 [why-hidden:amit-arora] classified 2000 hidden jobs (of 19850 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/amit-arora.html
