@@ -418,7 +418,7 @@
   [406/493] thrivemarket: 14 jobs
   [407/493] ascendanalytics: 4 jobs
   [408/493] alphasense: 217 jobs
-  [409/493] reddit: 157 jobs
+  [409/493] reddit: 158 jobs
   [410/493] celonis: 200 jobs
   [411/493] wcgclinical: 0 jobs (slug may be invalid)
   [412/493] byte: 0 jobs (slug may be invalid)
@@ -815,7 +815,7 @@
 [workday] 223 companies
   [1/223] Pfizer: 40 jobs
   [2/223] Merck (MSD): 200 jobs
-  [3/223] CVS Health: 200 jobs
+  [3/223] CVS Health: 80 jobs
   [4/223] Capital One: 200 jobs
   [5/223] Wells Fargo: 40 jobs
   [6/223] Bank of America: 200 jobs
@@ -1340,7 +1340,7 @@
 [himss] 1 companies
   [1/1] HIMSS Career Center: 0 jobs (slug may be invalid)
 
-Totals: {'greenhouse': 8240, 'lever': 1058, 'ashby': 1416, 'workday': 2219, 'smartrecruiters': 33, 'remoteok': 100, 'yc': 29, 'hn_hiring': 260}
+Totals: {'greenhouse': 8241, 'lever': 1058, 'ashby': 1416, 'workday': 2099, 'smartrecruiters': 33, 'remoteok': 100, 'yc': 29, 'hn_hiring': 260}
 Failures: 1037 (companies returned no data — likely bad slugs)
 [users] loaded 4 from Worker
 
@@ -1348,14 +1348,14 @@ Failures: 1037 (companies returned no data — likely bad slugs)
 [diag:geetu] loaded profile, targetCompanies len=23, first={'name': 'Veeva Systems', 'atsHint': 'workday', 'atsUrl': 'https://veeva.wd1.myworkdayjobs.com/veeva_careers', 'why': 'Cloud SaaS leader in life sciences with constant demand for senior product and transformation leaders who bridge pharma and technology'}
 [skills-profile:geetu] Senior digital transformation and product leader at the intersection of healthcare and technology · 65 keywords
 [velocity] 201 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 7215/7215
+[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 7221/7221
 [why-hidden:geetu] classified 2000 hidden jobs (of 19850 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/geetu.html
 [diag:amit-arora] loaded profile, targetCompanies len=25, first={'name': 'Webster Bank', 'atsHint': 'workday', 'atsUrl': 'https://websterbank.wd1.myworkdayjobs.com/WebsterBankCareers', 'why': "Super-regional commercial bank with active GRC and digital transformation hiring at the SVP/MD level, directly aligned to Amit's IDB Bank and Bank Leumi profile."}
 [skills-profile:amit-arora] Senior technology and GRC executive specializing in digital transformation, risk management, and M&A integration within banking and capital markets · 13 keywords
 [velocity] 201 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 5537/5537
+[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 5538/5538
 [why-hidden:amit-arora] classified 2000 hidden jobs (of 19850 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/amit-arora.html
