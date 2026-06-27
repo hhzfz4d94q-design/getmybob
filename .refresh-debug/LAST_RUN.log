@@ -22,7 +22,7 @@
   [10/497] roivantsciences: 10 jobs
   [11/497] waymark: 10 jobs
   [12/497] freenome: 18 jobs
-  [13/497] bridgebio: 103 jobs
+  [13/497] bridgebio: 102 jobs
   [14/497] formationbio: 24 jobs
   [15/497] honehealth: 13 jobs
   [16/497] cerebral: 3 jobs
@@ -1344,7 +1344,7 @@
 [himss] 1 companies
   [1/1] HIMSS Career Center: 0 jobs (slug may be invalid)
 
-Totals: {'greenhouse': 8296, 'lever': 1061, 'ashby': 1441, 'workday': 2175, 'smartrecruiters': 32, 'remoteok': 100, 'yc': 29, 'hn_hiring': 259}
+Totals: {'greenhouse': 8295, 'lever': 1061, 'ashby': 1441, 'workday': 2175, 'smartrecruiters': 32, 'remoteok': 100, 'yc': 29, 'hn_hiring': 259}
 Failures: 1040 (companies returned no data — likely bad slugs)
 [users] loaded 4 from Worker
 
