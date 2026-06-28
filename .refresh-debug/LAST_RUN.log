@@ -610,7 +610,7 @@
   [99/134] wingspanhealth: 0 jobs (slug may be invalid)
   [100/134] codametrix: 0 jobs (slug may be invalid)
   [101/134] abcellera: 0 jobs (slug may be invalid)
-  [102/134] arsenalbio: 0 jobs (slug may be invalid)
+  [102/134] arsenalbio: 1 jobs
   [103/134] kallyope: 0 jobs (slug may be invalid)
   [104/134] superhuman: 0 jobs (slug may be invalid)
   [105/134] velocityclinical: 0 jobs (slug may be invalid)
@@ -1344,8 +1344,8 @@
 [himss] 1 companies
   [1/1] HIMSS Career Center: 0 jobs (slug may be invalid)
 
-Totals: {'greenhouse': 8294, 'lever': 1060, 'ashby': 1441, 'workday': 2175, 'smartrecruiters': 32, 'remoteok': 100, 'yc': 29, 'hn_hiring': 259}
-Failures: 1041 (companies returned no data — likely bad slugs)
+Totals: {'greenhouse': 8294, 'lever': 1061, 'ashby': 1441, 'workday': 2175, 'smartrecruiters': 32, 'remoteok': 100, 'yc': 29, 'hn_hiring': 259}
+Failures: 1040 (companies returned no data — likely bad slugs)
 [users] loaded 4 from Worker
 
 [multi-user] generating dashboards for 4 users
@@ -1359,7 +1359,7 @@ Dashboard written: /home/runner/work/getmybob/getmybob/geetu.html
 [diag:amit-arora] loaded profile, targetCompanies len=25, first={'name': 'Webster Bank', 'atsHint': 'workday', 'atsUrl': 'https://websterbank.wd1.myworkdayjobs.com/WebsterBankCareers', 'why': "Super-regional commercial bank with active GRC and digital transformation hiring at the SVP/MD level, directly aligned to Amit's IDB Bank and Bank Leumi profile."}
 [skills-profile:amit-arora] Senior technology and GRC executive specializing in digital transformation, risk management, and M&A integration within banking and capital markets · 13 keywords
 [velocity] 180 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 3976/3976
+[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 3977/3977
 [why-hidden:amit-arora] classified 2000 hidden jobs (of 19850 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/amit-arora.html
