@@ -279,7 +279,7 @@
   [267/497] 10pearls: 0 jobs (slug may be invalid)
   [268/497] kin-carta: 0 jobs (slug may be invalid)
   [269/497] nerdery: 0 jobs (slug may be invalid)
-  [270/497] upgrade: 20 jobs
+  [270/497] upgrade: 18 jobs
   [271/497] petal-card: 0 jobs (slug may be invalid)
   [272/497] deserve: 0 jobs (slug may be invalid)
   [273/497] greenlight-financial-technology: 0 jobs (slug may be invalid)
@@ -316,7 +316,7 @@
   [304/497] florencehealthcare: 9 jobs
   [305/497] reifyhealth: 0 jobs (slug may be invalid)
   [306/497] suvoda: 23 jobs
-  [307/497] flatironhealth: 24 jobs
+  [307/497] flatironhealth: 25 jobs
   [308/497] foundationmedicine: 0 jobs (slug may be invalid)
   [309/497] invitae: 0 jobs (slug may be invalid)
   [310/497] helix: 0 jobs (slug may be invalid)
@@ -1344,34 +1344,34 @@
 [himss] 1 companies
   [1/1] HIMSS Career Center: 0 jobs (slug may be invalid)
 
-Totals: {'greenhouse': 8295, 'lever': 1061, 'ashby': 1441, 'workday': 2175, 'smartrecruiters': 32, 'remoteok': 100, 'yc': 29, 'hn_hiring': 259}
+Totals: {'greenhouse': 8294, 'lever': 1061, 'ashby': 1441, 'workday': 2175, 'smartrecruiters': 32, 'remoteok': 100, 'yc': 29, 'hn_hiring': 259}
 Failures: 1040 (companies returned no data — likely bad slugs)
 [users] loaded 4 from Worker
 
 [multi-user] generating dashboards for 4 users
 [diag:geetu] loaded profile, targetCompanies len=23, first={'name': 'Veeva Systems', 'atsHint': 'workday', 'atsUrl': 'https://veeva.wd1.myworkdayjobs.com/veeva_careers', 'why': 'Cloud SaaS leader in life sciences with constant demand for senior product and transformation leaders who bridge pharma and technology'}
 [skills-profile:geetu] Senior digital transformation and product leader at the intersection of healthcare and technology · 65 keywords
-[velocity] 192 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 7039/7039
+[velocity] 180 actively-scaling companies (3+ senior roles in 30d)
+[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 6518/6518
 [why-hidden:geetu] classified 2000 hidden jobs (of 19850 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/geetu.html
 [diag:amit-arora] loaded profile, targetCompanies len=25, first={'name': 'Webster Bank', 'atsHint': 'workday', 'atsUrl': 'https://websterbank.wd1.myworkdayjobs.com/WebsterBankCareers', 'why': "Super-regional commercial bank with active GRC and digital transformation hiring at the SVP/MD level, directly aligned to Amit's IDB Bank and Bank Leumi profile."}
 [skills-profile:amit-arora] Senior technology and GRC executive specializing in digital transformation, risk management, and M&A integration within banking and capital markets · 13 keywords
-[velocity] 192 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 4536/4536
+[velocity] 180 actively-scaling companies (3+ senior roles in 30d)
+[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 3975/3975
 [why-hidden:amit-arora] classified 2000 hidden jobs (of 19850 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/amit-arora.html
 [diag:ishika-arora] loaded profile, targetCompanies len=0, first=None
 [skills-profile:ishika-arora] ? · 0 keywords
-[velocity] 192 actively-scaling companies (3+ senior roles in 30d)
+[velocity] 180 actively-scaling companies (3+ senior roles in 30d)
 [why-hidden:ishika-arora] classified 2000 hidden jobs (of 19850 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/ishika-arora.html
 [diag:radhika-kalra] loaded profile, targetCompanies len=0, first=None
 [skills-profile:radhika-kalra] ? · 0 keywords
-[velocity] 192 actively-scaling companies (3+ senior roles in 30d)
+[velocity] 180 actively-scaling companies (3+ senior roles in 30d)
 [why-hidden:radhika-kalra] classified 2000 hidden jobs (of 19850 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/radhika-kalra.html
