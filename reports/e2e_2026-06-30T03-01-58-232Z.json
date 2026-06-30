@@ -1,0 +1,982 @@
+{
+  "ts": "2026-06-30T03:01:58.232Z",
+  "site": "https://getmemyjob.officebeatllc.com",
+  "users": [
+    "amit-arora",
+    "geetu"
+  ],
+  "results": [
+    {
+      "user": "amit-arora",
+      "name": "page loads",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "amit-arora",
+      "name": "zero console errors",
+      "ok": false,
+      "detail": "3 errors: console.error: Failed to load resource: the server responded with a status of 401 ()"
+    },
+    {
+      "user": "amit-arora",
+      "name": "function openResumeModal() defined",
+      "ok": true,
+      "detail": "got function"
+    },
+    {
+      "user": "amit-arora",
+      "name": "function openContactsModal() defined",
+      "ok": true,
+      "detail": "got function"
+    },
+    {
+      "user": "amit-arora",
+      "name": "function toggleHeaderMore() defined",
+      "ok": true,
+      "detail": "got function"
+    },
+    {
+      "user": "amit-arora",
+      "name": "function prepApplication() defined",
+      "ok": true,
+      "detail": "got function"
+    },
+    {
+      "user": "amit-arora",
+      "name": "function refreshData() defined",
+      "ok": true,
+      "detail": "got function"
+    },
+    {
+      "user": "amit-arora",
+      "name": "function showWarmIntroModal() defined",
+      "ok": true,
+      "detail": "got function"
+    },
+    {
+      "user": "amit-arora",
+      "name": "function showWhyHiddenModal() defined",
+      "ok": true,
+      "detail": "got function"
+    },
+    {
+      "user": "amit-arora",
+      "name": "function regenerateCompaniesFromHeader() defined",
+      "ok": true,
+      "detail": "got function"
+    },
+    {
+      "user": "amit-arora",
+      "name": "function regenerateFromHeader() defined",
+      "ok": true,
+      "detail": "got function"
+    },
+    {
+      "user": "amit-arora",
+      "name": "function replayTour() defined",
+      "ok": true,
+      "detail": "got function"
+    },
+    {
+      "user": "amit-arora",
+      "name": "#refresh-btn visible by default",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "amit-arora",
+      "name": "#account-btn visible by default",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "amit-arora",
+      "name": "More button visible by default",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "amit-arora",
+      "name": "Account dropdown opens with >= 1 items",
+      "ok": true,
+      "detail": "items=3"
+    },
+    {
+      "user": "amit-arora",
+      "name": "More dropdown shows all 6 items",
+      "ok": false,
+      "detail": "5/6 visible: #regen-btn,#regen-companies-btn,#why-hidden-btn,#resume-btn,#contacts-btn"
+    },
+    {
+      "user": "amit-arora",
+      "name": "WizV3 object exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "amit-arora",
+      "name": "WizV3.reset() callable",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "amit-arora",
+      "name": "WizV3.goto() callable",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "amit-arora",
+      "name": "wizard close button visible after reset",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "amit-arora",
+      "name": "bullseye section #bs-titles-host visible",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "amit-arora",
+      "name": "bullseye section #bs-industries-host visible",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "amit-arora",
+      "name": "bullseye section #bs-skills-host visible",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "amit-arora",
+      "name": "bullseye section #bs-companies-host visible",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "amit-arora",
+      "name": "wizard body has overflow-y scroll",
+      "ok": true,
+      "detail": "overflow-y=auto"
+    },
+    {
+      "user": "amit-arora",
+      "name": "wizard body content fits or scrolls",
+      "ok": true,
+      "detail": "scroll/client=2728/622"
+    },
+    {
+      "user": "amit-arora",
+      "name": "wizard goto('welcome')",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "amit-arora",
+      "name": "wizard goto('upload-resume')",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "amit-arora",
+      "name": "wizard goto('your-bullseye')",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "amit-arora",
+      "name": "wizard goto('where-you-work')",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "amit-arora",
+      "name": "wizard goto('scoring-tune')",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "amit-arora",
+      "name": "wizard goto('daily-workflow')",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "amit-arora",
+      "name": "wizard goto('pick-blocks')",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "amit-arora",
+      "name": "wizard goto('addons')",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "amit-arora",
+      "name": "wizard goto('done')",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "amit-arora",
+      "name": "wizard × button closes wizard",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "amit-arora",
+      "name": "More dropdown opens on click",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "amit-arora",
+      "name": "showWhyHiddenModal() did not throw",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "amit-arora",
+      "name": "why-hidden modal opens visibly",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "amit-arora",
+      "name": "card count >= 1",
+      "ok": true,
+      "detail": "got 150"
+    },
+    {
+      "user": "amit-arora",
+      "name": "card count <= 20 (TOP_N)",
+      "ok": false,
+      "detail": "got 150"
+    },
+    {
+      "user": "amit-arora",
+      "name": "first card has score",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "amit-arora",
+      "name": "first card has title",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "amit-arora",
+      "name": "first card has company",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "amit-arora",
+      "name": "first card has Apply button",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "amit-arora",
+      "name": "first card has Mark Applied button",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "amit-arora",
+      "name": "click #why-hidden-btn opens why-hidden modal",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "amit-arora",
+      "name": "why-hidden modal × button closes it",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "amit-arora",
+      "name": "all 150 cards have valid 0-100 score",
+      "ok": true,
+      "detail": "150/150"
+    },
+    {
+      "user": "amit-arora",
+      "name": "all cards have apply URL",
+      "ok": true,
+      "detail": "150/150"
+    },
+    {
+      "user": "amit-arora",
+      "name": "all cards have company",
+      "ok": true,
+      "detail": "150/150"
+    },
+    {
+      "user": "amit-arora",
+      "name": "all cards have data-why",
+      "ok": true,
+      "detail": "150/150"
+    },
+    {
+      "user": "amit-arora",
+      "name": "top 5 cards have score >= 50",
+      "ok": false,
+      "detail": "scores=73,55,82,25,79"
+    },
+    {
+      "user": "amit-arora",
+      "name": "card \"Why?\" button opens tooltip",
+      "ok": true,
+      "detail": "text=\"Matched because: title ~ (Head of Product, Persona\""
+    },
+    {
+      "user": "amit-arora",
+      "name": "wizard step 'welcome' renders",
+      "ok": true,
+      "detail": "title=\"Welcome to getmemyjob\" bodyLen=555"
+    },
+    {
+      "user": "amit-arora",
+      "name": "wizard step 'upload-resume' renders",
+      "ok": true,
+      "detail": "title=\"Upload your resume\" bodyLen=332"
+    },
+    {
+      "user": "amit-arora",
+      "name": "wizard step 'your-bullseye' renders",
+      "ok": true,
+      "detail": "title=\"Your bullseye — what you want the matcher to look for\" bodyLen=90759"
+    },
+    {
+      "user": "amit-arora",
+      "name": "wizard step 'where-you-work' renders",
+      "ok": true,
+      "detail": "title=\"Where you want to work\" bodyLen=2311"
+    },
+    {
+      "user": "amit-arora",
+      "name": "wizard step 'scoring-tune' renders",
+      "ok": true,
+      "detail": "title=\"How we score job matches\" bodyLen=2393"
+    },
+    {
+      "user": "amit-arora",
+      "name": "wizard step 'daily-workflow' renders",
+      "ok": true,
+      "detail": "title=\"Feed window\" bodyLen=442"
+    },
+    {
+      "user": "amit-arora",
+      "name": "wizard step 'pick-blocks' renders",
+      "ok": true,
+      "detail": "title=\"Things to never show me (optional)\" bodyLen=3668"
+    },
+    {
+      "user": "amit-arora",
+      "name": "wizard step 'addons' renders",
+      "ok": true,
+      "detail": "title=\"Optional add-ons\" bodyLen=1339"
+    },
+    {
+      "user": "amit-arora",
+      "name": "wizard step 'done' renders",
+      "ok": true,
+      "detail": "title=\"All set\" bodyLen=501"
+    },
+    {
+      "user": "amit-arora",
+      "name": "wizard #wiz3-back visible on bullseye step",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "amit-arora",
+      "name": "wizard #wiz3-continue visible on bullseye step",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "amit-arora",
+      "name": "wizard #wiz3-skip hidden on required bullseye step",
+      "ok": true,
+      "detail": "display=none"
+    },
+    {
+      "user": "amit-arora",
+      "name": "wizard AI button shows friendly card when no auth (not raw 401)",
+      "ok": true,
+      "detail": "yellow=true link=true noRaw=true"
+    },
+    {
+      "user": "amit-arora",
+      "name": "wizard Continue shows friendly error (not raw \"HTTP 401\")",
+      "ok": true,
+      "detail": "Session expired. Open account page to re-enter your invite key. Your picks stay until you do. || Session expired. <a href=\"/account.html\" target=\"_blank\" style=\"color:#5C5CD6;font-weight:600;\">Open account page</a> to re"
+    },
+    {
+      "user": "amit-arora",
+      "name": "skill picker has working state",
+      "ok": true,
+      "detail": "count=71/max=100 inputDisabled=false"
+    },
+    {
+      "user": "amit-arora",
+      "name": "sprint UI present (either CTA or strip)",
+      "ok": true,
+      "detail": "{\"ctaVisible\":true,\"stripVisible\":false,\"hasOneOrOther\":true,\"ctaHasStartButton\":true,\"stripHasDayCounter\":false,\"stripHasProgressFill\":false,\"stripLinksToSprintHtml\":false}"
+    },
+    {
+      "user": "amit-arora",
+      "name": "sprint CTA has Start button wired to startSprintNow",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "amit-arora",
+      "name": "sortBy dropdown has \"sprint\" option",
+      "ok": true,
+      "detail": "options: sprint,score,salary,recent,ghost"
+    },
+    {
+      "user": "amit-arora",
+      "name": "startSprintNow() defined globally",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "amit-arora",
+      "name": "wizard × button closes wizard",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "geetu",
+      "name": "page loads",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "geetu",
+      "name": "zero console errors",
+      "ok": false,
+      "detail": "3 errors: console.error: Failed to load resource: the server responded with a status of 401 ()"
+    },
+    {
+      "user": "geetu",
+      "name": "function openResumeModal() defined",
+      "ok": true,
+      "detail": "got function"
+    },
+    {
+      "user": "geetu",
+      "name": "function openContactsModal() defined",
+      "ok": true,
+      "detail": "got function"
+    },
+    {
+      "user": "geetu",
+      "name": "function toggleHeaderMore() defined",
+      "ok": true,
+      "detail": "got function"
+    },
+    {
+      "user": "geetu",
+      "name": "function prepApplication() defined",
+      "ok": true,
+      "detail": "got function"
+    },
+    {
+      "user": "geetu",
+      "name": "function refreshData() defined",
+      "ok": true,
+      "detail": "got function"
+    },
+    {
+      "user": "geetu",
+      "name": "function showWarmIntroModal() defined",
+      "ok": true,
+      "detail": "got function"
+    },
+    {
+      "user": "geetu",
+      "name": "function showWhyHiddenModal() defined",
+      "ok": true,
+      "detail": "got function"
+    },
+    {
+      "user": "geetu",
+      "name": "function regenerateCompaniesFromHeader() defined",
+      "ok": true,
+      "detail": "got function"
+    },
+    {
+      "user": "geetu",
+      "name": "function regenerateFromHeader() defined",
+      "ok": true,
+      "detail": "got function"
+    },
+    {
+      "user": "geetu",
+      "name": "function replayTour() defined",
+      "ok": true,
+      "detail": "got function"
+    },
+    {
+      "user": "geetu",
+      "name": "#refresh-btn visible by default",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "geetu",
+      "name": "#account-btn visible by default",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "geetu",
+      "name": "More button visible by default",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "geetu",
+      "name": "Account dropdown opens with >= 1 items",
+      "ok": true,
+      "detail": "items=3"
+    },
+    {
+      "user": "geetu",
+      "name": "More dropdown shows all 6 items",
+      "ok": false,
+      "detail": "5/6 visible: #regen-btn,#regen-companies-btn,#why-hidden-btn,#resume-btn,#contacts-btn"
+    },
+    {
+      "user": "geetu",
+      "name": "WizV3 object exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "geetu",
+      "name": "WizV3.reset() callable",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "geetu",
+      "name": "WizV3.goto() callable",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "geetu",
+      "name": "wizard close button visible after reset",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "geetu",
+      "name": "bullseye section #bs-titles-host visible",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "geetu",
+      "name": "bullseye section #bs-industries-host visible",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "geetu",
+      "name": "bullseye section #bs-skills-host visible",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "geetu",
+      "name": "bullseye section #bs-companies-host visible",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "geetu",
+      "name": "wizard body has overflow-y scroll",
+      "ok": true,
+      "detail": "overflow-y=auto"
+    },
+    {
+      "user": "geetu",
+      "name": "wizard body content fits or scrolls",
+      "ok": true,
+      "detail": "scroll/client=2252/622"
+    },
+    {
+      "user": "geetu",
+      "name": "wizard goto('welcome')",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "geetu",
+      "name": "wizard goto('upload-resume')",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "geetu",
+      "name": "wizard goto('your-bullseye')",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "geetu",
+      "name": "wizard goto('where-you-work')",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "geetu",
+      "name": "wizard goto('scoring-tune')",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "geetu",
+      "name": "wizard goto('daily-workflow')",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "geetu",
+      "name": "wizard goto('pick-blocks')",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "geetu",
+      "name": "wizard goto('addons')",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "geetu",
+      "name": "wizard goto('done')",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "geetu",
+      "name": "wizard × button closes wizard",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "geetu",
+      "name": "More dropdown opens on click",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "geetu",
+      "name": "showWhyHiddenModal() did not throw",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "geetu",
+      "name": "why-hidden modal opens visibly",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "geetu",
+      "name": "card count >= 1",
+      "ok": true,
+      "detail": "got 150"
+    },
+    {
+      "user": "geetu",
+      "name": "card count <= 20 (TOP_N)",
+      "ok": false,
+      "detail": "got 150"
+    },
+    {
+      "user": "geetu",
+      "name": "first card has score",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "geetu",
+      "name": "first card has title",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "geetu",
+      "name": "first card has company",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "geetu",
+      "name": "first card has Apply button",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "geetu",
+      "name": "first card has Mark Applied button",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "geetu",
+      "name": "click #why-hidden-btn opens why-hidden modal",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "geetu",
+      "name": "why-hidden modal × button closes it",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "geetu",
+      "name": "all 150 cards have valid 0-100 score",
+      "ok": true,
+      "detail": "150/150"
+    },
+    {
+      "user": "geetu",
+      "name": "all cards have apply URL",
+      "ok": true,
+      "detail": "150/150"
+    },
+    {
+      "user": "geetu",
+      "name": "all cards have company",
+      "ok": true,
+      "detail": "150/150"
+    },
+    {
+      "user": "geetu",
+      "name": "all cards have data-why",
+      "ok": true,
+      "detail": "150/150"
+    },
+    {
+      "user": "geetu",
+      "name": "top 5 cards have score >= 50",
+      "ok": true,
+      "detail": "scores=95,92,92,90,89"
+    },
+    {
+      "user": "geetu",
+      "name": "card \"Why?\" button opens tooltip",
+      "ok": true,
+      "detail": "text=\"Matched because: title ~ (Lead Product Manager) · \""
+    },
+    {
+      "user": "geetu",
+      "name": "wizard step 'welcome' renders",
+      "ok": true,
+      "detail": "title=\"Welcome to getmemyjob\" bodyLen=555"
+    },
+    {
+      "user": "geetu",
+      "name": "wizard step 'upload-resume' renders",
+      "ok": true,
+      "detail": "title=\"Upload your resume\" bodyLen=332"
+    },
+    {
+      "user": "geetu",
+      "name": "wizard step 'your-bullseye' renders",
+      "ok": true,
+      "detail": "title=\"Your bullseye — what you want the matcher to look for\" bodyLen=74366"
+    },
+    {
+      "user": "geetu",
+      "name": "wizard step 'where-you-work' renders",
+      "ok": true,
+      "detail": "title=\"Where you want to work\" bodyLen=2280"
+    },
+    {
+      "user": "geetu",
+      "name": "wizard step 'scoring-tune' renders",
+      "ok": true,
+      "detail": "title=\"How we score job matches\" bodyLen=2393"
+    },
+    {
+      "user": "geetu",
+      "name": "wizard step 'daily-workflow' renders",
+      "ok": true,
+      "detail": "title=\"Feed window\" bodyLen=442"
+    },
+    {
+      "user": "geetu",
+      "name": "wizard step 'pick-blocks' renders",
+      "ok": true,
+      "detail": "title=\"Things to never show me (optional)\" bodyLen=16957"
+    },
+    {
+      "user": "geetu",
+      "name": "wizard step 'addons' renders",
+      "ok": true,
+      "detail": "title=\"Optional add-ons\" bodyLen=1339"
+    },
+    {
+      "user": "geetu",
+      "name": "wizard step 'done' renders",
+      "ok": true,
+      "detail": "title=\"All set\" bodyLen=501"
+    },
+    {
+      "user": "geetu",
+      "name": "wizard #wiz3-back visible on bullseye step",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "geetu",
+      "name": "wizard #wiz3-continue visible on bullseye step",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "geetu",
+      "name": "wizard #wiz3-skip hidden on required bullseye step",
+      "ok": true,
+      "detail": "display=none"
+    },
+    {
+      "user": "geetu",
+      "name": "wizard AI button shows friendly card when no auth (not raw 401)",
+      "ok": true,
+      "detail": "yellow=true link=true noRaw=true"
+    },
+    {
+      "user": "geetu",
+      "name": "wizard Continue shows friendly error (not raw \"HTTP 401\")",
+      "ok": true,
+      "detail": "Session expired. Open account page to re-enter your invite key. Your picks stay until you do. || Session expired. <a href=\"/account.html\" target=\"_blank\" style=\"color:#5C5CD6;font-weight:600;\">Open account page</a> to re"
+    },
+    {
+      "user": "geetu",
+      "name": "skill picker has working state",
+      "ok": true,
+      "detail": "count=65/max=100 inputDisabled=false"
+    },
+    {
+      "user": "geetu",
+      "name": "sprint UI present (either CTA or strip)",
+      "ok": true,
+      "detail": "{\"ctaVisible\":true,\"stripVisible\":false,\"hasOneOrOther\":true,\"ctaHasStartButton\":true,\"stripHasDayCounter\":false,\"stripHasProgressFill\":false,\"stripLinksToSprintHtml\":false}"
+    },
+    {
+      "user": "geetu",
+      "name": "sprint CTA has Start button wired to startSprintNow",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "geetu",
+      "name": "sortBy dropdown has \"sprint\" option",
+      "ok": true,
+      "detail": "options: sprint,score,salary,recent,ghost"
+    },
+    {
+      "user": "geetu",
+      "name": "startSprintNow() defined globally",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "geetu",
+      "name": "wizard × button closes wizard",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "user": "geetu-iphone",
+      "name": "page loads under 8s (perf budget)",
+      "ok": true,
+      "detail": "315ms"
+    },
+    {
+      "user": "geetu-iphone",
+      "name": "no visible horizontal scroll",
+      "ok": true,
+      "detail": "body=375 client=375 overflowX=hidden/visible"
+    },
+    {
+      "user": "geetu-iphone",
+      "name": "wizard × button visible and in viewport",
+      "ok": true,
+      "detail": "w=44 h=44 top=342 left=321 visible=true inViewport=true"
+    },
+    {
+      "user": "geetu-iphone",
+      "name": "wizard × touch target ≥ 44x44",
+      "ok": true,
+      "detail": "44x44"
+    },
+    {
+      "user": "geetu-iphone",
+      "name": "wizard Continue button reachable (in viewport OR scroll-to)",
+      "ok": false,
+      "detail": "w=118 h=36 top=726 inViewport=false scrollableAncestor=false"
+    },
+    {
+      "user": "geetu-iphone",
+      "name": "card title font-size ≥ 12px (legible)",
+      "ok": true,
+      "detail": "14px"
+    },
+    {
+      "user": "geetu-ipad",
+      "name": "page loads under 8s (perf budget)",
+      "ok": true,
+      "detail": "274ms"
+    },
+    {
+      "user": "geetu-ipad",
+      "name": "no visible horizontal scroll",
+      "ok": true,
+      "detail": "body=1585 client=768 overflowX=hidden/visible"
+    },
+    {
+      "user": "geetu-ipad",
+      "name": "wizard × button visible and in viewport",
+      "ok": true,
+      "detail": "w=44 h=44 top=244 left=690 visible=true inViewport=true"
+    },
+    {
+      "user": "geetu-ipad",
+      "name": "wizard × touch target ≥ 44x44",
+      "ok": true,
+      "detail": "44x44"
+    },
+    {
+      "user": "geetu-ipad",
+      "name": "wizard Continue button reachable (in viewport OR scroll-to)",
+      "ok": true,
+      "detail": "w=118 h=36 top=738 inViewport=true scrollableAncestor=false"
+    },
+    {
+      "user": "geetu-ipad",
+      "name": "card title font-size ≥ 12px (legible)",
+      "ok": true,
+      "detail": "14px"
+    }
+  ]
+}
