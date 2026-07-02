@@ -221,9 +221,14 @@ let toastTimer=null;
 function toast(t){const el=$('toast');el.textContent=t;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2600);}
 function reach(i){
   const d=D.doors[i]; const msg=msgFor(d);
-  navigator.clipboard.writeText(msg).then(()=>toast('✓ Message copied — opening LinkedIn, just paste')).catch(()=>toast('Opening LinkedIn (copy failed — select & copy manually)'));
+  navigator.clipboard.writeText(msg).then(()=>toast('✓ Copied & logged — opening LinkedIn, just paste')).catch(()=>toast('Opening LinkedIn (copy failed — select & copy manually)'));
   const q=encodeURIComponent((d[1]||'')+' '+(d[2]||''));
   window.open('https://www.linkedin.com/search/results/people/?keywords='+q,'_blank');
+  const today=new Date().toISOString().slice(0,10);
+  const already=D.tracker.find(t=>t[1]===d[1]&&t[2]===d[2]&&!t[8]);
+  if(!already){ D.tracker.unshift([today, d[1], d[2], d[0], (d[8]||''), 'LinkedIn', '', '', 'Message copied '+today+' — awaiting send/reply']); }
+  d[9]='Reached '+today;
+  persist(); renderDoors(); renderTracker();
 }
 function renderAll(){renderDoors();renderTracker();renderContent();}
 </script>
