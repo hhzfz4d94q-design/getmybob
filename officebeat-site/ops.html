@@ -101,7 +101,7 @@ const SEED = {doors:[],tracker:[],content:[],updatedAt:null};
 let D=null, saveTimer=null;
 const $=id=>document.getElementById(id);
 const wkey=()=>localStorage.getItem('ob_ops_key')||'';
-const EP='/ops';
+const EP='/api/ops';
 
 function unlock(){
   const k=$('gateKey').value.trim();
