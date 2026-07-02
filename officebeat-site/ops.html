@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>OfficeBeat Ops</title>
+<style>
+:root{--indigo:#5C5CD6;--ink:#1A1A2E;--navy:#1F2C6F;--bg:#F7F7FB;--line:#E3E3EE;--amber:#FFF3CD;--green:#D9F2E3;--red:#C0392B}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:14px}
+header{background:var(--ink);color:#fff;padding:14px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+header h1{font-size:16px;font-weight:600}
+header .sync{margin-left:auto;font-size:12px;opacity:.85}
+.tabs{display:flex;gap:4px;padding:12px 24px 0;border-bottom:1px solid var(--line);background:#fff}
+.tab{padding:9px 18px;border:1px solid var(--line);border-bottom:none;border-radius:8px 8px 0 0;cursor:pointer;background:var(--bg);font-weight:500;font-size:13px}
+.tab.active{background:var(--indigo);color:#fff;border-color:var(--indigo)}
+main{padding:20px 24px;max-width:1280px}
+.hidden{display:none}
+table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+th{background:var(--indigo);color:#fff;text-align:left;padding:8px 10px;font-size:12px;position:sticky;top:0}
+td{padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:top;font-size:12.5px}
+tr.hot td{background:var(--amber)}
+tr.rec td{background:var(--green)}
+td[contenteditable]{outline:none;min-width:60px}
+td[contenteditable]:focus{background:#EEF;box-shadow:inset 0 0 0 2px var(--indigo)}
+.controls{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
+input,select,button,textarea{font-family:inherit;font-size:13px;padding:7px 10px;border:1px solid var(--line);border-radius:7px;background:#fff}
+button{background:var(--indigo);color:#fff;border:none;cursor:pointer;font-weight:500}
+button.ghost{background:#fff;color:var(--indigo);border:1px solid var(--indigo)}
+.pill{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
+.pill.Buyer{background:#E8E8FA;color:var(--navy)}.pill.Bridge{background:#EFEFEF;color:#555}
+.pill.Recruiter{background:var(--green);color:#1F6B45}.pill.Bench{background:#FDECD9;color:#9A5B1F}
+.pill.Partner{background:#E3F2FD;color:#175A8C}
+.card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:14px}
+.card h3{font-size:14px;margin-bottom:6px}
+.card .meta{font-size:11.5px;color:#777;margin-bottom:8px}
+.card textarea{width:100%;min-height:110px;margin-top:6px}
+.status-draft{color:#9A5B1F}.status-scheduled{color:var(--navy)}.status-posted{color:#1F6B45}
+#gate{position:fixed;inset:0;background:var(--ink);display:flex;align-items:center;justify-content:center;z-index:50}
+#gate .box{background:#fff;border-radius:12px;padding:32px;width:340px;text-align:center}
+#gate input{width:100%;margin:12px 0}
+.note{font-size:12px;color:#777;margin:10px 0}
+.warn{background:var(--amber);border:1px solid #E5D9A8;border-radius:8px;padding:8px 12px;font-size:12px;margin-bottom:12px}
+</style>
+</head>
+<body>
+<div id="gate"><div class="box">
+<h2 style="color:var(--navy)">OfficeBeat Ops</h2>
+<p class="note">Enter admin key</p>
+<input type="password" id="gateKey" placeholder="Admin key">
+<button onclick="unlock()">Enter</button>
+</div></div>
+
+<header>
+<h1>OfficeBeat Ops — Growth Engine</h1>
+<span class="sync" id="syncStatus">local only</span>
+<button class="ghost" style="font-size:11px" onclick="openSettings()">Settings</button>
+</header>
+
+<div class="tabs">
+<div class="tab active" data-t="doors" onclick="showTab('doors')">Door Lists</div>
+<div class="tab" data-t="tracker" onclick="showTab('tracker')">Ask Tracker</div>
+<div class="tab" data-t="content" onclick="showTab('content')">Content Queue</div>
+</div>
+
+<main>
+<div id="warnBanner" class="warn hidden">Cloud sync is off — data saves in this browser only. Open Settings to connect the Worker.</div>
+
+<section id="t-doors">
+<div class="controls">
+<select id="fList" onchange="renderDoors()"><option value="">Both lists</option><option value="Amit">Amit — Finance ERM</option><option value="Geetu">Geetu — Healthcare</option></select>
+<select id="fType" onchange="renderDoors()"><option value="">All types</option><option>Buyer</option><option>Bridge</option><option>Recruiter</option><option>Bench</option><option>Partner</option></select>
+<input id="fSearch" placeholder="Search name/company…" oninput="renderDoors()">
+<button class="ghost" onclick="addDoor()">+ Add door</button>
+<span class="note">Warmth: 1 = takes your call · 2 = remembers you · 3 = cold. Click any cell to edit.</span>
+</div>
+<table id="doorsTable"><thead><tr>
+<th>List</th><th>Name</th><th>Company</th><th>Title</th><th>Sc</th><th>Type</th><th>Hiring signal</th><th>Warmth</th><th>Suggested ask</th><th>Status</th>
+</tr></thead><tbody></tbody></table>
+</section>
+
+<section id="t-tracker" class="hidden">
+<div class="controls"><button class="ghost" onclick="addAsk()">+ Log an ask</button>
+<span class="note">The weekly rhythm: ~10 asks, owner-sent. Log sends and replies here.</span></div>
+<table id="trackerTable"><thead><tr>
+<th>Date</th><th>Who</th><th>Company</th><th>List</th><th>Ask</th><th>Channel</th><th>Sent</th><th>Replied</th><th>Outcome / next step</th><th></th>
+</tr></thead><tbody></tbody></table>
+</section>
+
+<section id="t-content" class="hidden">
+<div class="controls"><button class="ghost" onclick="addPost()">+ New post</button>
+<span class="note">Draft → review → paste into LinkedIn's native scheduler → mark Scheduled. Never auto-posted.</span></div>
+<div id="contentList"></div>
+</section>
+</main>
+
+<script>
+const SEED = {doors:[],tracker:[],content:[],updatedAt:null};
+
+let D=null, saveTimer=null;
+const $=id=>document.getElementById(id);
+const wkey=()=>localStorage.getItem('ob_ops_key')||'';
+const EP='/ops';
+
+function unlock(){
+  const k=$('gateKey').value.trim();
+  if(!k){alert('Enter the admin key');return}
+  localStorage.setItem('ob_ops_key',k);
+  $('gate').style.display='none'; init();
+}
+if(wkey()){document.addEventListener('DOMContentLoaded',()=>{$('gate').style.display='none';init();})}
+
+async function init(){
+  const local=localStorage.getItem('ob_ops_data');
+  D=local?JSON.parse(local):JSON.parse(JSON.stringify(SEED));
+  try{
+    const r=await fetch(EP,{headers:{'X-Ops-Key':wkey()}});
+    if(r.status===401){$('syncStatus').textContent='⚠ key rejected';$('gate').style.display='flex';localStorage.removeItem('ob_ops_key');return;}
+    if(r.ok){const cloud=await r.json();
+      if(cloud&&(!D.updatedAt||cloud.updatedAt>D.updatedAt))D=cloud;
+      $('syncStatus').textContent='☁ synced';}
+  }catch(e){$('syncStatus').textContent='☁ offline (local copy)';}
+  renderAll();
+}
+function persist(){
+  D.updatedAt=new Date().toISOString();
+  localStorage.setItem('ob_ops_data',JSON.stringify(D));
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(async()=>{
+    try{
+      const r=await fetch(EP,{method:'PUT',headers:{'X-Ops-Key':wkey(),'Content-Type':'application/json'},body:JSON.stringify(D)});
+      $('syncStatus').textContent=r.ok?'☁ synced '+new Date().toLocaleTimeString():'⚠ sync failed';
+    }catch(e){$('syncStatus').textContent='☁ offline (saved locally)';}
+  },800);
+}
+function showTab(t){
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.t===t));
+  ['doors','tracker','content'].forEach(s=>$('t-'+s).classList.toggle('hidden',s!==t));
+}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+
+function renderDoors(){
+  const fl=$('fList').value,ft=$('fType').value,fs=$('fSearch').value.toLowerCase();
+  const tb=$('doorsTable').tBodies[0];tb.innerHTML='';
+  D.doors.forEach((d,i)=>{
+    if(fl&&d[0]!==fl)return; if(ft&&d[5]!==ft)return;
+    if(fs&&!(d[1]+' '+d[2]).toLowerCase().includes(fs))return;
+    const tr=document.createElement('tr');
+    if(d[6])tr.className='hot'; else if(d[5]==='Recruiter')tr.className='rec';
+    tr.innerHTML=`<td>${esc(d[0])}</td><td contenteditable data-i="${i}" data-f="1">${esc(d[1])}</td><td contenteditable data-i="${i}" data-f="2">${esc(d[2])}</td><td contenteditable data-i="${i}" data-f="3">${esc(d[3])}</td><td>${esc(d[4])}</td><td><span class="pill ${esc(d[5])}">${esc(d[5])}</span></td><td contenteditable data-i="${i}" data-f="6">${esc(d[6])}</td><td contenteditable data-i="${i}" data-f="7">${esc(d[7])}</td><td contenteditable data-i="${i}" data-f="8">${esc(d[8])}</td><td contenteditable data-i="${i}" data-f="9">${esc(d[9])}</td>`;
+    tb.appendChild(tr);
+  });
+  tb.querySelectorAll('[contenteditable]').forEach(c=>c.addEventListener('blur',e=>{
+    D.doors[+c.dataset.i][+c.dataset.f]=c.textContent.trim();persist();
+  }));
+}
+function addDoor(){D.doors.unshift([$('fList').value||'Amit','','','','','Buyer','','','','']);persist();renderDoors();}
+
+function renderTracker(){
+  const tb=$('trackerTable').tBodies[0];tb.innerHTML='';
+  D.tracker.forEach((t,i)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=t.map((v,f)=>`<td contenteditable data-i="${i}" data-f="${f}">${esc(v)}</td>`).join('')+`<td><button class="ghost" style="padding:2px 8px" onclick="delAsk(${i})">✕</button></td>`;
+    tb.appendChild(tr);
+  });
+  tb.querySelectorAll('[contenteditable]').forEach(c=>c.addEventListener('blur',()=>{
+    D.tracker[+c.dataset.i][+c.dataset.f]=c.textContent.trim();persist();
+  }));
+}
+function addAsk(){D.tracker.unshift([new Date().toISOString().slice(0,10),'','','','','LinkedIn DM','','','']);persist();renderTracker();}
+function delAsk(i){if(confirm('Delete this row?')){D.tracker.splice(i,1);persist();renderTracker();}}
+
+function renderContent(){
+  const el=$('contentList');el.innerHTML='';
+  D.content.forEach((p,i)=>{
+    const c=document.createElement('div');c.className='card';
+    c.innerHTML=`<h3 contenteditable data-i="${i}" data-f="t">${esc(p.t)}</h3>
+    <div class="meta"><span contenteditable data-i="${i}" data-f="d">${esc(p.d)}</span> · ${esc(p.p)} ·
+    <select onchange="D.content[${i}].s=this.value;persist();renderContent()">
+      <option value="draft" ${p.s==='draft'?'selected':''}>Draft</option>
+      <option value="scheduled" ${p.s==='scheduled'?'selected':''}>Scheduled in LinkedIn</option>
+      <option value="posted" ${p.s==='posted'?'selected':''}>Posted</option></select>
+    <span class="status-${esc(p.s)}">● ${esc(p.s)}</span>
+    <button class="ghost" style="padding:3px 9px;margin-left:8px" onclick="navigator.clipboard.writeText(D.content[${i}].b).then(()=>this.textContent='Copied!')">Copy post</button></div>
+    <textarea data-i="${i}" data-f="b">${esc(p.b)}</textarea>`;
+    el.appendChild(c);
+  });
+  el.querySelectorAll('[contenteditable]').forEach(c=>c.addEventListener('blur',()=>{D.content[+c.dataset.i][c.dataset.f]=c.textContent.trim();persist();}));
+  el.querySelectorAll('textarea').forEach(t=>t.addEventListener('blur',()=>{D.content[+t.dataset.i].b=t.value;persist();}));
+}
+function addPost(){D.content.unshift({d:'',p:'Finance',s:'draft',t:'New post',b:''});persist();renderContent();}
+
+function openSettings(){
+  const k=prompt('Admin key (used to unlock and sync):',wkey());
+  if(k!==null){localStorage.setItem('ob_ops_key',k.trim());}
+  location.reload();
+}
+function renderAll(){renderDoors();renderTracker();renderContent();}
+</script>
+</body>
+</html>
