@@ -32,6 +32,10 @@ button.ghost{background:#fff;color:var(--indigo);border:1px solid var(--indigo)}
 .pill.Buyer{background:#E8E8FA;color:var(--navy)}.pill.Bridge{background:#EFEFEF;color:#555}
 .pill.Recruiter{background:var(--green);color:#1F6B45}.pill.Bench{background:#FDECD9;color:#9A5B1F}
 .pill.Partner{background:#E3F2FD;color:#175A8C}
+button.act{background:#5C5CD6;color:#fff;border:none;border-radius:6px;padding:5px 9px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap}
+button.act:hover{background:#4A4AC0}
+#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#1A1A2E;color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;opacity:0;transition:opacity .25s;pointer-events:none;z-index:60}
+#toast.show{opacity:1}
 .card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:14px}
 .card h3{font-size:14px;margin-bottom:6px}
 .card .meta{font-size:11.5px;color:#777;margin-bottom:8px}
@@ -76,8 +80,9 @@ button.ghost{background:#fff;color:var(--indigo);border:1px solid var(--indigo)}
 <span class="note">Warmth: 1 = takes your call · 2 = remembers you · 3 = cold. Click any cell to edit.</span>
 </div>
 <table id="doorsTable"><thead><tr>
-<th>List</th><th>Name</th><th>Company</th><th>Title</th><th>Sc</th><th>Type</th><th>Hiring signal</th><th>Warmth</th><th>Suggested ask</th><th>Status</th>
+<th>List</th><th>Name</th><th>Company</th><th>Title</th><th>Sc</th><th>Type</th><th>Hiring signal</th><th>Warmth</th><th>Suggested ask</th><th>Status</th><th>Action</th>
 </tr></thead><tbody></tbody></table>
+<div id="toast"></div>
 </section>
 
 <section id="t-tracker" class="hidden">
@@ -148,7 +153,7 @@ function renderDoors(){
     if(fs&&!(d[1]+' '+d[2]).toLowerCase().includes(fs))return;
     const tr=document.createElement('tr');
     if(d[6])tr.className='hot'; else if(d[5]==='Recruiter')tr.className='rec';
-    tr.innerHTML=`<td>${esc(d[0])}</td><td contenteditable data-i="${i}" data-f="1">${esc(d[1])}</td><td contenteditable data-i="${i}" data-f="2">${esc(d[2])}</td><td contenteditable data-i="${i}" data-f="3">${esc(d[3])}</td><td>${esc(d[4])}</td><td><span class="pill ${esc(d[5])}">${esc(d[5])}</span></td><td contenteditable data-i="${i}" data-f="6">${esc(d[6])}</td><td contenteditable data-i="${i}" data-f="7">${esc(d[7])}</td><td contenteditable data-i="${i}" data-f="8">${esc(d[8])}</td><td contenteditable data-i="${i}" data-f="9">${esc(d[9])}</td>`;
+    tr.innerHTML=`<td>${esc(d[0])}</td><td contenteditable data-i="${i}" data-f="1">${esc(d[1])}</td><td contenteditable data-i="${i}" data-f="2">${esc(d[2])}</td><td contenteditable data-i="${i}" data-f="3">${esc(d[3])}</td><td>${esc(d[4])}</td><td><span class="pill ${esc(d[5])}">${esc(d[5])}</span></td><td contenteditable data-i="${i}" data-f="6">${esc(d[6])}</td><td contenteditable data-i="${i}" data-f="7">${esc(d[7])}</td><td contenteditable data-i="${i}" data-f="8">${esc(d[8])}</td><td contenteditable data-i="${i}" data-f="9">${esc(d[9])}</td><td><button class="act" onclick="reach(${i})">\u270D Msg + open</button></td>`;
     tb.appendChild(tr);
   });
   tb.querySelectorAll('[contenteditable]').forEach(c=>c.addEventListener('blur',e=>{
@@ -195,6 +200,30 @@ function openSettings(){
   const k=prompt('Admin key (used to unlock and sync):',wkey());
   if(k!==null){localStorage.setItem('ob_ops_key',k.trim());}
   location.reload();
+}
+
+function msgFor(d){
+  const first=(d[1]||'').split(' ')[0]; const company=d[2]||''; const type=d[5]; const sig=d[6]||''; const stored=d[10];
+  if(stored) return stored;
+  const isG = d[0]==='Geetu';
+  if(isG){
+    if(type==='Recruiter') return `Hi ${first}, hope you're well! I'm exploring senior digital/product leadership roles in health tech (background: Pfizer, BioReference, SRS Health). I'd love to send my resume and hear what you're working on — open to a quick chat?`;
+    if(type==='Bridge') return `Hi ${first}, it's been a while! Alongside advising health-tech orgs with OfficeBeat, I'm looking at senior digital/product leadership roles. ${sig?('I noticed '+company+' has '+sig.toLowerCase()+' — '):''}would you keep me in mind, or point me to the right person? Happy to send my resume.`;
+    return `Hi ${first}, reconnecting — alongside my work I advise healthcare and health-tech orgs on digital & EHR strategy through OfficeBeat. Given your role at ${company}, I'd love to compare notes.${sig?(' I saw '+company+' has '+sig.toLowerCase()+'.'):''} Free for a short call in the next couple of weeks?`;
+  }
+  if(type==='Recruiter') return `Hi ${first}, reconnecting — I've launched OfficeBeat, an enterprise risk & compliance advisory practice, and we place senior risk/GRC consultants on a bench model. I'd value a two-way referral relationship with you. Worth a quick chat?`;
+  if(type==='Bench') return `Hi ${first}, hope you're well. I'm building OfficeBeat's advisory bench (enterprise risk / GRC) and thought of you for select engagements under our SOW. Would you be open to exploring it?`;
+  if(type==='Partner') return `Hi ${first}, I've started OfficeBeat, a boutique enterprise-risk advisory practice. I think there's a natural partnership — we can take mid-market risk work below your firm's threshold, and refer up. Open to comparing notes?`;
+  if(type==='Bridge') return `Hi ${first}, it's been a while! I've launched OfficeBeat, an enterprise risk advisory practice.${sig?(' I noticed '+company+' has '+sig.toLowerCase()+'.'):''} Could you point me to the right person there, or share a quick intro?`;
+  return `Hi ${first}, it's been too long. I've launched OfficeBeat, an enterprise risk advisory practice — after years leading GRC and risk transformation (CLS, IDB, Leumi). Given your role at ${company}, I'd love to reconnect.${sig?(' I saw '+company+' has '+sig.toLowerCase()+' — happy to share how a fixed-fee regulatory-readiness assessment could help.'):''} Open to a short call?`;
+}
+let toastTimer=null;
+function toast(t){const el=$('toast');el.textContent=t;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2600);}
+function reach(i){
+  const d=D.doors[i]; const msg=msgFor(d);
+  navigator.clipboard.writeText(msg).then(()=>toast('✓ Message copied — opening LinkedIn, just paste')).catch(()=>toast('Opening LinkedIn (copy failed — select & copy manually)'));
+  const q=encodeURIComponent((d[1]||'')+' '+(d[2]||''));
+  window.open('https://www.linkedin.com/search/results/people/?keywords='+q,'_blank');
 }
 function renderAll(){renderDoors();renderTracker();renderContent();}
 </script>
