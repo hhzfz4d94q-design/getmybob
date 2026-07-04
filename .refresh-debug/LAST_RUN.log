@@ -62,7 +62,7 @@
   [50/497] jukeboxhealth: 48 jobs
   [51/497] qualifiedhealth: 0 jobs (slug may be invalid)
   [52/497] tuleahealth: 2 jobs
-  [53/497] precisionmedicinegroup: 175 jobs
+  [53/497] precisionmedicinegroup: 176 jobs
   [54/497] peptilogics: 0 jobs (slug may be invalid)
   [55/497] recursionpharmaceuticals: 24 jobs
   [56/497] headlandsresearch: 65 jobs
@@ -91,7 +91,7 @@
   [79/497] alma: 0 jobs (slug may be invalid)
   [80/497] talkiatry: 0 jobs (slug may be invalid)
   [81/497] brightline: 0 jobs (slug may be invalid)
-  [82/497] amwell: 14 jobs
+  [82/497] amwell: 13 jobs
   [83/497] doximity: 12 jobs
   [84/497] veeva: 0 jobs (slug may be invalid)
   [85/497] guardanthealth: 0 jobs (slug may be invalid)
@@ -1352,7 +1352,7 @@ Failures: 1046 (companies returned no data — likely bad slugs)
 [diag:geetu] loaded profile, targetCompanies len=23, first={'name': 'Veeva Systems', 'atsHint': 'workday', 'atsUrl': 'https://veeva.wd1.myworkdayjobs.com/veeva_careers', 'why': 'Cloud SaaS leader in life sciences with constant demand for senior product and transformation leaders who bridge pharma and technology'}
 [skills-profile:geetu] Senior digital transformation and product leader at the intersection of healthcare and technology · 65 keywords
 [velocity] 186 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 7294/7294
+[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 7300/7300
 [why-hidden:geetu] classified 2000 hidden jobs (of 19850 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/geetu.html
