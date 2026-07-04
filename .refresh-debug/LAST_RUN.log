@@ -799,7 +799,7 @@
   [23/40] ?: 0 jobs (slug may be invalid)
   [24/40] ?: 0 jobs (slug may be invalid)
   [25/40] ?: 0 jobs (slug may be invalid)
-  [26/40] ?: 3 jobs
+  [26/40] ?: 0 jobs (slug may be invalid)
   [27/40] ?: 0 jobs (slug may be invalid)
   [28/40] ?: 0 jobs (slug may be invalid)
   [29/40] ?: 0 jobs (slug may be invalid)
@@ -1335,7 +1335,7 @@
   [1/1] YC Work at a Startup: 28 jobs
 
 [hn_hiring] 1 companies
-  [1/1] HN Who is Hiring: 166 jobs
+  [1/1] HN Who is Hiring: 167 jobs
 
 [healthecareers] 1 companies
   [1/1] Health eCareers: 0 jobs (slug may be invalid)
@@ -1343,15 +1343,15 @@
 [himss] 1 companies
   [1/1] HIMSS Career Center: 0 jobs (slug may be invalid)
 
-Totals: {'greenhouse': 8297, 'lever': 1044, 'ashby': 1424, 'workday': 2188, 'workable': 3, 'smartrecruiters': 33, 'remoteok': 100, 'yc': 28, 'hn_hiring': 166}
-Failures: 1043 (companies returned no data — likely bad slugs)
+Totals: {'greenhouse': 8297, 'lever': 1044, 'ashby': 1424, 'workday': 2188, 'smartrecruiters': 33, 'remoteok': 100, 'yc': 28, 'hn_hiring': 167}
+Failures: 1044 (companies returned no data — likely bad slugs)
 [users] loaded 4 from Worker
 
 [multi-user] generating dashboards for 4 users
 [diag:geetu] loaded profile, targetCompanies len=23, first={'name': 'Veeva Systems', 'atsHint': 'workday', 'atsUrl': 'https://veeva.wd1.myworkdayjobs.com/veeva_careers', 'why': 'Cloud SaaS leader in life sciences with constant demand for senior product and transformation leaders who bridge pharma and technology'}
 [skills-profile:geetu] Senior digital transformation and product leader at the intersection of healthcare and technology · 65 keywords
 [velocity] 187 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 7313/7313
+[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 7312/7312
 [why-hidden:geetu] classified 2000 hidden jobs (of 19850 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/geetu.html
