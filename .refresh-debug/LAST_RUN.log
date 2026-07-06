@@ -146,7 +146,7 @@
   [134/496] ?: 177 jobs
   [135/496] ?: 49 jobs
   [136/496] ?: 129 jobs
-  [137/496] ?: 33 jobs
+  [137/496] ?: 34 jobs
   [138/496] ?: 0 jobs (slug may be invalid)
   [139/496] ?: 0 jobs (slug may be invalid)
   [140/496] ?: 94 jobs
@@ -415,13 +415,13 @@
   [403/496] rxbenefits: 0 jobs (slug may be invalid)
   [404/496] honor: 17 jobs
   [405/496] lattice: 11 jobs
-  [406/496] dropbox: 51 jobs
+  [406/496] dropbox: 50 jobs
   [407/496] guild: 11 jobs
   [408/496] thrivemarket: 17 jobs
   [409/496] ascendanalytics: 0 jobs (slug may be invalid)
   [410/496] alphasense: 214 jobs
   [411/496] reddit: 190 jobs
-  [412/496] celonis: 209 jobs
+  [412/496] celonis: 208 jobs
   [413/496] wcgclinical: 0 jobs (slug may be invalid)
   [414/496] byte: 0 jobs (slug may be invalid)
   [415/496] candidco: 0 jobs (slug may be invalid)
@@ -647,7 +647,7 @@
   [1/128] Graphitehq: 8 jobs
   [2/128] maximustribe: 3 jobs
   [3/128] codes-health: 8 jobs
-  [4/128] heidihealth.com.au: 89 jobs
+  [4/128] heidihealth.com.au: 86 jobs
   [5/128] Interrahealth: 19 jobs
   [6/128] fitt: 21 jobs
   [7/128] lark: 0 jobs (slug may be invalid)
@@ -1343,7 +1343,7 @@
 [himss] 1 companies
   [1/1] HIMSS Career Center: 0 jobs (slug may be invalid)
 
-Totals: {'greenhouse': 8285, 'lever': 1044, 'ashby': 1424, 'workday': 2187, 'smartrecruiters': 33, 'remoteok': 100, 'yc': 28, 'hn_hiring': 173}
+Totals: {'greenhouse': 8284, 'lever': 1044, 'ashby': 1421, 'workday': 2187, 'smartrecruiters': 33, 'remoteok': 100, 'yc': 28, 'hn_hiring': 173}
 Failures: 1044 (companies returned no data — likely bad slugs)
 [users] loaded 4 from Worker
 
@@ -1351,7 +1351,7 @@ Failures: 1044 (companies returned no data — likely bad slugs)
 [diag:geetu] loaded profile, targetCompanies len=23, first={'name': 'Veeva Systems', 'atsHint': 'workday', 'atsUrl': 'https://veeva.wd1.myworkdayjobs.com/veeva_careers', 'why': 'Cloud SaaS leader in life sciences with constant demand for senior product and transformation leaders who bridge pharma and technology'}
 [skills-profile:geetu] Senior digital transformation and product leader at the intersection of healthcare and technology · 65 keywords
 [velocity] 187 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 7318/7318
+[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 7315/7315
 [why-hidden:geetu] classified 2000 hidden jobs (of 19850 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/geetu.html
