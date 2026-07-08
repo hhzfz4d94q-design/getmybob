@@ -10,7 +10,7 @@
 [greenhouse] 477 companies
 [vc-portfolio] loaded 63 discovered companies
 [healthtech] loaded 435 curated companies
-  [1/477] oscar: 244 jobs
+  [1/477] oscar: 242 jobs
   [2/477] acuitymd: 10 jobs
   [3/477] sondermind: 0 jobs (slug may be invalid)
   [4/477] linushealth: 0 jobs (slug may be invalid)
@@ -21,21 +21,21 @@
   [9/477] modernhealth: 17 jobs
   [10/477] roivantsciences: 9 jobs
   [11/477] waymark: 11 jobs
-  [12/477] freenome: 18 jobs
-  [13/477] bridgebio: 94 jobs
+  [12/477] freenome: 19 jobs
+  [13/477] bridgebio: 93 jobs
   [14/477] formationbio: 24 jobs
   [15/477] honehealth: 12 jobs
   [16/477] cerebral: 3 jobs
   [17/477] foresightmentalhealth: 4 jobs
   [18/477] hs: 29 jobs
-  [19/477] springhealth66: 73 jobs
+  [19/477] springhealth66: 74 jobs
   [20/477] prolaio: 9 jobs
   [21/477] prescriberpoint: 2 jobs
   [22/477] lumimeds: 36 jobs
   [23/477] smarterdxprivate: 4 jobs
   [24/477] smarterdx: 16 jobs
   [25/477] midihealth: 28 jobs
-  [26/477] shieldshealthsolutions: 105 jobs
+  [26/477] shieldshealthsolutions: 95 jobs
   [27/477] coherehealth: 65 jobs
   [28/477] allarahealth: 0 jobs (slug may be invalid)
   [29/477] courierhealth: 24 jobs
@@ -59,7 +59,7 @@
   [47/477] redcellpartners: 26 jobs
   [48/477] inovalon: 57 jobs
   [49/477] layerhealth: 18 jobs
-  [50/477] jukeboxhealth: 0 jobs (slug may be invalid)
+  [50/477] jukeboxhealth: 47 jobs
   [51/477] qualifiedhealth: 0 jobs (slug may be invalid)
   [52/477] tuleahealth: 2 jobs
   [53/477] precisionmedicinegroup: 182 jobs
@@ -68,7 +68,7 @@
   [56/477] headlandsresearch: 63 jobs
   [57/477] yarrowbiotechnology: 0 jobs (slug may be invalid)
   [58/477] synerg: 35 jobs
-  [59/477] immunomeinc: 26 jobs
+  [59/477] immunomeinc: 25 jobs
   [60/477] cedar: 0 jobs (slug may be invalid)
   [61/477] hingehealth: 0 jobs (slug may be invalid)
   [62/477] carbonhealth: 0 jobs (slug may be invalid)
@@ -119,7 +119,7 @@
   [107/477] ginger: 0 jobs (slug may be invalid)
   [108/477] rula: 0 jobs (slug may be invalid)
   [109/477] octave: 26 jobs
-  [110/477] rightway: 7 jobs
+  [110/477] rightway: 8 jobs
   [111/477] centivo: 0 jobs (slug may be invalid)
   [112/477] collectivehealth: 10 jobs
   [113/477] accolade: 0 jobs (slug may be invalid)
@@ -140,12 +140,12 @@
   [128/477] ?: 494 jobs
   [129/477] ?: 0 jobs (slug may be invalid)
   [130/477] ?: 262 jobs
-  [131/477] ?: 66 jobs
+  [131/477] ?: 67 jobs
   [132/477] ?: 57 jobs
-  [133/477] ?: 119 jobs
-  [134/477] ?: 177 jobs
+  [133/477] ?: 116 jobs
+  [134/477] ?: 176 jobs
   [135/477] ?: 47 jobs
-  [136/477] ?: 131 jobs
+  [136/477] ?: 132 jobs
   [137/477] ?: 34 jobs
   [138/477] ?: 0 jobs (slug may be invalid)
   [139/477] ?: 0 jobs (slug may be invalid)
@@ -154,13 +154,13 @@
   [142/477] ?: 0 jobs (slug may be invalid)
   [143/477] ?: 0 jobs (slug may be invalid)
   [144/477] ?: 28 jobs
-  [145/477] ?: 239 jobs
+  [145/477] ?: 237 jobs
   [146/477] ?: 0 jobs (slug may be invalid)
   [147/477] ?: 0 jobs (slug may be invalid)
   [148/477] ?: 0 jobs (slug may be invalid)
   [149/477] ?: 0 jobs (slug may be invalid)
   [150/477] ?: 0 jobs (slug may be invalid)
-  [151/477] ?: 353 jobs
+  [151/477] ?: 352 jobs
   [152/477] ?: 90 jobs
   [153/477] ?: 0 jobs (slug may be invalid)
   [154/477] ?: 0 jobs (slug may be invalid)
@@ -210,7 +210,7 @@
   [198/477] ?: 0 jobs (slug may be invalid)
   [199/477] ?: 0 jobs (slug may be invalid)
   [200/477] ?: 0 jobs (slug may be invalid)
-  [201/477] ?: 401 jobs
+  [201/477] ?: 400 jobs
   [202/477] ?: 0 jobs (slug may be invalid)
   [203/477] ?: 0 jobs (slug may be invalid)
   [204/477] ?: 0 jobs (slug may be invalid)
@@ -294,7 +294,7 @@
   [282/477] florencehealthcare: 8 jobs
   [283/477] reifyhealth: 0 jobs (slug may be invalid)
   [284/477] suvoda: 15 jobs
-  [285/477] flatironhealth: 24 jobs
+  [285/477] flatironhealth: 25 jobs
   [286/477] foundationmedicine: 0 jobs (slug may be invalid)
   [287/477] invitae: 0 jobs (slug may be invalid)
   [288/477] helix: 0 jobs (slug may be invalid)
@@ -340,7 +340,7 @@
   [328/477] tomorrow: 18 jobs
   [329/477] oakstreethealth: 0 jobs (slug may be invalid)
   [330/477] vivantehealth: 0 jobs (slug may be invalid)
-  [331/477] natera: 0 jobs (slug may be invalid)
+  [331/477] natera: 191 jobs
   [332/477] trinetx: 0 jobs (slug may be invalid)
   [333/477] brighthealth: 0 jobs (slug may be invalid)
   [334/477] landmarkhealth: 0 jobs (slug may be invalid)
@@ -391,7 +391,7 @@
   [379/477] hugeinc: 24 jobs
   [380/477] prescryptive: 0 jobs (slug may be invalid)
   [381/477] qventus: 22 jobs
-  [382/477] instacart: 156 jobs
+  [382/477] instacart: 157 jobs
   [383/477] elastic: 190 jobs
   [384/477] rxbenefits: 0 jobs (slug may be invalid)
   [385/477] honor: 17 jobs
@@ -401,7 +401,7 @@
   [389/477] thrivemarket: 17 jobs
   [390/477] ascendanalytics: 0 jobs (slug may be invalid)
   [391/477] alphasense: 214 jobs
-  [392/477] reddit: 183 jobs
+  [392/477] reddit: 184 jobs
   [393/477] celonis: 213 jobs
   [394/477] wcgclinical: 0 jobs (slug may be invalid)
   [395/477] byte: 0 jobs (slug may be invalid)
@@ -672,7 +672,7 @@
   [57/126] homeward-health: 0 jobs (slug may be invalid)
   [58/126] hims: 0 jobs (slug may be invalid)
   [59/126] headway: 68 jobs
-  [60/126] notable: 14 jobs
+  [60/126] notable: 16 jobs
   [61/126] formationbio: 0 jobs (slug may be invalid)
   [62/126] honeybeehealth: 0 jobs (slug may be invalid)
   [63/126] sesame: 26 jobs
@@ -684,9 +684,9 @@
   [69/126] pearlhealth: 8 jobs
   [70/126] hippocratic-ai: 0 jobs (slug may be invalid)
   [71/126] memora: 0 jobs (slug may be invalid)
-  [72/126] sprinter-health: 89 jobs
+  [72/126] sprinter-health: 91 jobs
   [73/126] spark-advisors: 0 jobs (slug may be invalid)
-  [74/126] commure: 67 jobs
+  [74/126] commure: 68 jobs
   [75/126] wellthy: 0 jobs (slug may be invalid)
   [76/126] evidation: 0 jobs (slug may be invalid)
   [77/126] incrediblehealth: 0 jobs (slug may be invalid)
@@ -726,9 +726,9 @@
   [111/126] certifyos: 9 jobs
   [112/126] metriport: 12 jobs
   [113/126] flexpahealth: 0 jobs (slug may be invalid)
-  [114/126] tennr: 22 jobs
+  [114/126] tennr: 21 jobs
   [115/126] anterior: 2 jobs
-  [116/126] ambiencehealthcare: 23 jobs
+  [116/126] ambiencehealthcare: 22 jobs
   [117/126] nabla: 13 jobs
   [118/126] regard: 7 jobs
   [119/126] payzen.com: 0 jobs (slug may be invalid)
@@ -1283,7 +1283,7 @@
   [1/1] YC Work at a Startup: 28 jobs
 
 [hn_hiring] 1 companies
-  [1/1] HN Who is Hiring: 192 jobs
+  [1/1] HN Who is Hiring: 193 jobs
 
 [healthecareers] 1 companies
   [1/1] Health eCareers: 0 jobs (slug may be invalid)
@@ -1291,22 +1291,22 @@
 [himss] 1 companies
   [1/1] HIMSS Career Center: 0 jobs (slug may be invalid)
 
-Totals: {'greenhouse': 8018, 'lever': 1033, 'ashby': 1383, 'workday': 2176, 'smartrecruiters': 33, 'remoteok': 100, 'yc': 28, 'hn_hiring': 192}
-Failures: 994 (companies returned no data — likely bad slugs)
+Totals: {'greenhouse': 8242, 'lever': 1033, 'ashby': 1386, 'workday': 2176, 'smartrecruiters': 33, 'remoteok': 100, 'yc': 28, 'hn_hiring': 193}
+Failures: 992 (companies returned no data — likely bad slugs)
 [users] loaded 4 from Worker
 
 [multi-user] generating dashboards for 4 users
 [diag:geetu] loaded profile, targetCompanies len=23, first={'name': 'Veeva Systems', 'atsHint': 'workday', 'atsUrl': 'https://veeva.wd1.myworkdayjobs.com/veeva_careers', 'why': 'Cloud SaaS leader in life sciences with constant demand for senior product and transformation leaders who bridge pharma and technology'}
 [skills-profile:geetu] Senior digital transformation and product leader at the intersection of healthcare and technology · 65 keywords
 [velocity] 192 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 7459/7459
+[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 7360/7360
 [why-hidden:geetu] classified 2000 hidden jobs (of 19850 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/geetu.html
 [diag:amit-arora] loaded profile, targetCompanies len=25, first={'name': 'Webster Bank', 'atsHint': 'workday', 'atsUrl': 'https://websterbank.wd1.myworkdayjobs.com/WebsterBankCareers', 'why': "Super-regional commercial bank with active GRC and digital transformation hiring at the SVP/MD level, directly aligned to Amit's IDB Bank and Bank Leumi profile."}
 [skills-profile:amit-arora] Senior technology and GRC executive specializing in digital transformation, risk management, and M&A integration within banking and capital markets · 13 keywords
 [velocity] 192 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 4723/4723
+[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 4664/4664
 [why-hidden:amit-arora] classified 2000 hidden jobs (of 19850 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/amit-arora.html
