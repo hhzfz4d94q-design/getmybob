@@ -210,7 +210,7 @@
   [198/475] ?: 0 jobs (slug may be invalid)
   [199/475] ?: 0 jobs (slug may be invalid)
   [200/475] ?: 0 jobs (slug may be invalid)
-  [201/475] ?: 412 jobs
+  [201/475] ?: 411 jobs
   [202/475] ?: 0 jobs (slug may be invalid)
   [203/475] ?: 0 jobs (slug may be invalid)
   [204/475] ?: 0 jobs (slug may be invalid)
@@ -395,7 +395,7 @@
   [383/475] rxbenefits: 0 jobs (slug may be invalid)
   [384/475] honor: 21 jobs
   [385/475] lattice: 11 jobs
-  [386/475] dropbox: 40 jobs
+  [386/475] dropbox: 39 jobs
   [387/475] guild: 11 jobs
   [388/475] thrivemarket: 16 jobs
   [389/475] ascendanalytics: 0 jobs (slug may be invalid)
@@ -1291,7 +1291,7 @@
 [himss] 1 companies
   [1/1] HIMSS Career Center: 0 jobs (slug may be invalid)
 
-Totals: {'greenhouse': 8376, 'lever': 1035, 'ashby': 1358, 'workday': 2187, 'smartrecruiters': 40, 'remoteok': 100, 'yc': 28, 'hn_hiring': 204}
+Totals: {'greenhouse': 8374, 'lever': 1035, 'ashby': 1358, 'workday': 2187, 'smartrecruiters': 40, 'remoteok': 100, 'yc': 28, 'hn_hiring': 204}
 Failures: 993 (companies returned no data — likely bad slugs)
 [users] loaded 4 from Worker
 
@@ -1299,7 +1299,7 @@ Failures: 993 (companies returned no data — likely bad slugs)
 [diag:geetu] loaded profile, targetCompanies len=23, first={'name': 'Veeva Systems', 'atsHint': 'workday', 'atsUrl': 'https://veeva.wd1.myworkdayjobs.com/veeva_careers', 'why': 'Cloud SaaS leader in life sciences with constant demand for senior product and transformation leaders who bridge pharma and technology'}
 [skills-profile:geetu] Senior digital transformation and product leader at the intersection of healthcare and technology · 65 keywords
 [velocity] 188 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 6730/6730
+[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 6732/6732
 [why-hidden:geetu] classified 2000 hidden jobs (of 19850 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/geetu.html
