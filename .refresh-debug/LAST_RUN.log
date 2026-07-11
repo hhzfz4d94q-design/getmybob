@@ -58,7 +58,7 @@
   [46/475] smartertechnologies: 0 jobs (slug may be invalid)
   [47/475] redcellpartners: 25 jobs
   [48/475] inovalon: 60 jobs
-  [49/475] layerhealth: 18 jobs
+  [49/475] layerhealth: 17 jobs
   [50/475] jukeboxhealth: 47 jobs
   [51/475] qualifiedhealth: 0 jobs (slug may be invalid)
   [52/475] tuleahealth: 2 jobs
@@ -1291,7 +1291,7 @@
 [himss] 1 companies
   [1/1] HIMSS Career Center: 0 jobs (slug may be invalid)
 
-Totals: {'greenhouse': 8374, 'lever': 1035, 'ashby': 1358, 'workday': 2187, 'smartrecruiters': 40, 'remoteok': 100, 'yc': 28, 'hn_hiring': 204}
+Totals: {'greenhouse': 8373, 'lever': 1035, 'ashby': 1358, 'workday': 2187, 'smartrecruiters': 40, 'remoteok': 100, 'yc': 28, 'hn_hiring': 204}
 Failures: 993 (companies returned no data — likely bad slugs)
 [users] loaded 4 from Worker
 
@@ -1299,7 +1299,7 @@ Failures: 993 (companies returned no data — likely bad slugs)
 [diag:geetu] loaded profile, targetCompanies len=23, first={'name': 'Veeva Systems', 'atsHint': 'workday', 'atsUrl': 'https://veeva.wd1.myworkdayjobs.com/veeva_careers', 'why': 'Cloud SaaS leader in life sciences with constant demand for senior product and transformation leaders who bridge pharma and technology'}
 [skills-profile:geetu] Senior digital transformation and product leader at the intersection of healthcare and technology · 65 keywords
 [velocity] 188 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 6733/6733
+[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 6735/6735
 [why-hidden:geetu] classified 2000 hidden jobs (of 19850 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/geetu.html
