@@ -1,24 +1,24 @@
 {
   "_meta": {
-    "scrapedAt": "2026-07-14T06:05:38.635302+00:00",
+    "scrapedAt": "2026-07-15T06:09:51.601771+00:00",
     "count": 28,
     "source": "workatastartup.com via Playwright"
   },
   "jobs": [
     {
-      "id": "https://www.workatastartup.com/jobs/72053",
-      "title": "Staff Software Engineer, SMS Team (Fullstack)",
+      "id": "https://www.workatastartup.com/jobs/92753",
+      "title": "Senior Software Engineer, Email Team",
       "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/72053",
+      "url": "https://www.workatastartup.com/jobs/92753",
       "location": "",
       "posted_at": "",
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/72052",
-      "title": "Senior Software Engineer, Journeys Team (Fullstack)",
+      "id": "https://www.workatastartup.com/jobs/72053",
+      "title": "Staff Software Engineer, SMS Team (Fullstack)",
       "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/72052",
+      "url": "https://www.workatastartup.com/jobs/72053",
       "location": "",
       "posted_at": "",
       "description": ""
@@ -33,6 +33,15 @@
       "description": ""
     },
     {
+      "id": "https://www.workatastartup.com/jobs/94543",
+      "title": "Lead, Engineer",
+      "company": "YC Startup",
+      "url": "https://www.workatastartup.com/jobs/94543",
+      "location": "",
+      "posted_at": "",
+      "description": ""
+    },
+    {
       "id": "https://www.workatastartup.com/jobs/96713",
       "title": "Chief Technology Officer",
       "company": "YC Startup",
@@ -42,10 +51,10 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/94543",
-      "title": "Lead, Engineer",
+      "id": "https://www.workatastartup.com/jobs/99221",
+      "title": "Data engineer Senior",
       "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/94543",
+      "url": "https://www.workatastartup.com/jobs/99221",
       "location": "",
       "posted_at": "",
       "description": ""
@@ -60,10 +69,10 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/99221",
-      "title": "Data engineer Senior",
+      "id": "https://www.workatastartup.com/jobs/95471",
+      "title": "Member of technical staff \u2013 Paris",
       "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/99221",
+      "url": "https://www.workatastartup.com/jobs/95471",
       "location": "",
       "posted_at": "",
       "description": ""
@@ -96,19 +105,28 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/96987",
-      "title": "Hiring Research Scientists and Research Engineers at PerfectBit",
+      "id": "https://www.workatastartup.com/jobs/99249",
+      "title": "Quant Researcher",
       "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/96987",
+      "url": "https://www.workatastartup.com/jobs/99249",
       "location": "",
       "posted_at": "",
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/95576",
-      "title": "Founding Engineer @ Vela | Solving Scheduling | India",
+      "id": "https://www.workatastartup.com/jobs/99250",
+      "title": "Senior Infrastructure Engineer",
       "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/95576",
+      "url": "https://www.workatastartup.com/jobs/99250",
+      "location": "",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/96987",
+      "title": "Hiring Research Scientists and Research Engineers at PerfectBit",
+      "company": "YC Startup",
+      "url": "https://www.workatastartup.com/jobs/96987",
       "location": "",
       "posted_at": "",
       "description": ""
@@ -123,19 +141,19 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/91489",
-      "title": "Founding Engineer",
+      "id": "https://www.workatastartup.com/jobs/95576",
+      "title": "Founding Engineer @ Vela | Solving Scheduling | India",
       "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/91489",
+      "url": "https://www.workatastartup.com/jobs/95576",
       "location": "",
       "posted_at": "",
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/97379",
-      "title": "Backend Engineer",
+      "id": "https://www.workatastartup.com/jobs/91489",
+      "title": "Founding Engineer",
       "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/97379",
+      "url": "https://www.workatastartup.com/jobs/91489",
       "location": "",
       "posted_at": "",
       "description": ""
@@ -150,19 +168,28 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/94262",
-      "title": "Electrical Engineering Intern",
+      "id": "https://www.workatastartup.com/jobs/97379",
+      "title": "Backend Engineer",
       "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/94262",
+      "url": "https://www.workatastartup.com/jobs/97379",
       "location": "",
       "posted_at": "",
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/98786",
-      "title": "Mechanical Hardware Engineer",
+      "id": "https://www.workatastartup.com/jobs/98787",
+      "title": "Electrical Hardware Engineer",
       "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/98786",
+      "url": "https://www.workatastartup.com/jobs/98787",
+      "location": "",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/94035",
+      "title": "Founding Hardware Engineer",
+      "company": "YC Startup",
+      "url": "https://www.workatastartup.com/jobs/94035",
       "location": "",
       "posted_at": "",
       "description": ""
@@ -186,19 +213,28 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/97595",
-      "title": "Software Engineering Intern",
+      "id": "https://www.workatastartup.com/jobs/98458",
+      "title": "Founding Engineer",
       "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/97595",
+      "url": "https://www.workatastartup.com/jobs/98458",
       "location": "",
       "posted_at": "",
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/92563",
-      "title": "Founding Solutions Engineer",
+      "id": "https://www.workatastartup.com/jobs/92562",
+      "title": "Founding Software Engineer",
       "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/92563",
+      "url": "https://www.workatastartup.com/jobs/92562",
+      "location": "",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/97595",
+      "title": "Software Engineering Intern",
+      "company": "YC Startup",
+      "url": "https://www.workatastartup.com/jobs/97595",
       "location": "",
       "posted_at": "",
       "description": ""
@@ -217,42 +253,6 @@
       "title": "Founding Engineer",
       "company": "YC Startup",
       "url": "https://www.workatastartup.com/jobs/93359",
-      "location": "",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/96712",
-      "title": "Design Engineer",
-      "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/96712",
-      "location": "",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/95906",
-      "title": "ML Engineer",
-      "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/95906",
-      "location": "",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/96308",
-      "title": "Founding Engineer",
-      "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/96308",
-      "location": "",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/92481",
-      "title": "Founding Engineer (Full Stack)",
-      "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/92481",
       "location": "",
       "posted_at": "",
       "description": ""
