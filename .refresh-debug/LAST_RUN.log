@@ -700,7 +700,7 @@
   [83/129] deepscribe: 0 jobs (slug may be invalid)
   [84/129] nexhealth: 0 jobs (slug may be invalid)
   [85/129] cleerly: 0 jobs (slug may be invalid)
-  [86/129] notion: 141 jobs
+  [86/129] notion: 140 jobs
   [87/129] smithrx: 0 jobs (slug may be invalid)
   [88/129] storkclub: 0 jobs (slug may be invalid)
   [89/129] bicyclehealth: 0 jobs (slug may be invalid)
@@ -1296,7 +1296,7 @@
 [himss] 1 companies
   [1/1] HIMSS Career Center: 0 jobs (slug may be invalid)
 
-Totals: {'greenhouse': 8298, 'lever': 1079, 'ashby': 1357, 'workday': 2183, 'smartrecruiters': 41, 'remoteok': 100, 'yc': 27, 'hn_hiring': 217}
+Totals: {'greenhouse': 8298, 'lever': 1079, 'ashby': 1356, 'workday': 2183, 'smartrecruiters': 41, 'remoteok': 100, 'yc': 27, 'hn_hiring': 217}
 Failures: 1002 (companies returned no data — likely bad slugs)
 [users] loaded 4 from Worker
 
@@ -1304,14 +1304,14 @@ Failures: 1002 (companies returned no data — likely bad slugs)
 [diag:geetu] loaded profile, targetCompanies len=23, first={'name': 'Veeva Systems', 'atsHint': 'workday', 'atsUrl': 'https://veeva.wd1.myworkdayjobs.com/veeva_careers', 'why': 'Cloud SaaS leader in life sciences with constant demand for senior product and transformation leaders who bridge pharma and technology'}
 [skills-profile:geetu] Senior digital transformation and product leader at the intersection of healthcare and technology · 65 keywords
 [velocity] 182 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 5831/5831
+[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 5832/5832
 [why-hidden:geetu] classified 2000 hidden jobs (of 19850 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/geetu.html
 [diag:amit-arora] loaded profile, targetCompanies len=25, first={'name': 'Webster Bank', 'atsHint': 'workday', 'atsUrl': 'https://websterbank.wd1.myworkdayjobs.com/WebsterBankCareers', 'why': "Super-regional commercial bank with active GRC and digital transformation hiring at the SVP/MD level, directly aligned to Amit's IDB Bank and Bank Leumi profile."}
 [skills-profile:amit-arora] Senior technology and GRC executive specializing in digital transformation, risk management, and M&A integration within banking and capital markets · 13 keywords
 [velocity] 182 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 3577/3577
+[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 3576/3576
 [why-hidden:amit-arora] classified 2000 hidden jobs (of 19850 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/amit-arora.html
