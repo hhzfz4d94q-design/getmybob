@@ -789,12 +789,12 @@
 
 [workday] 204 companies
   [1/204] Pfizer: 40 jobs
-  [2/204] Merck (MSD): 0 jobs (slug may be invalid)
-  [3/204] CVS Health: 0 jobs (slug may be invalid)
-  [4/204] Capital One: 0 jobs (slug may be invalid)
+  [2/204] Merck (MSD): 200 jobs
+  [3/204] CVS Health: 200 jobs
+  [4/204] Capital One: 200 jobs
   [5/204] Wells Fargo: 40 jobs
   [6/204] Bank of America: 200 jobs
-  [7/204] Morgan Stanley: 0 jobs (slug may be invalid)
+  [7/204] Morgan Stanley: 40 jobs
   [8/204] American Express: 0 jobs (slug may be invalid)
   [9/204] BlackRock: 0 jobs (slug may be invalid)
   [10/204] Charles Schwab: 0 jobs (slug may be invalid)
@@ -805,15 +805,15 @@
   [15/204] US Bank: 40 jobs
   [16/204] MUFG Americas: 40 jobs
   [17/204] Mizuho Americas: 40 jobs
-  [18/204] Flagstar Bank: 0 jobs (slug may be invalid)
-  [19/204] S&P Global: 0 jobs (slug may be invalid)
+  [18/204] Flagstar Bank: 40 jobs
+  [19/204] S&P Global: 40 jobs
   [20/204] Protiviti: 40 jobs
-  [21/204] FIS Global: 0 jobs (slug may be invalid)
-  [22/204] Fiserv: 0 jobs (slug may be invalid)
-  [23/204] Regions Financial: 0 jobs (slug may be invalid)
+  [21/204] FIS Global: 200 jobs
+  [22/204] Fiserv: 200 jobs
+  [23/204] Regions Financial: 40 jobs
   [24/204] UnitedHealth Group: 0 jobs (slug may be invalid)
   [25/204] Elevance Health: 0 jobs (slug may be invalid)
-  [26/204] Humana: 0 jobs (slug may be invalid)
+  [26/204] Humana: 40 jobs
   [27/204] Cigna: 0 jobs (slug may be invalid)
   [28/204] Centene: 0 jobs (slug may be invalid)
   [29/204] Molina Healthcare: 0 jobs (slug may be invalid)
@@ -835,7 +835,7 @@
   [45/204] Oracle Health (Cerner): 0 jobs (slug may be invalid)
   [46/204] Medtronic: 0 jobs (slug may be invalid)
   [47/204] Boston Scientific: 0 jobs (slug may be invalid)
-  [48/204] Abbott: 0 jobs (slug may be invalid)
+  [48/204] Abbott: 40 jobs
   [49/204] Centene Corporation: 0 jobs (slug may be invalid)
   [50/204] Molina Healthcare: 0 jobs (slug may be invalid)
   [51/204] Teladoc Health: 0 jobs (slug may be invalid)
@@ -913,7 +913,7 @@
   [123/204] Optum360: 0 jobs (slug may be invalid)
   [124/204] Covetrus: 0 jobs (slug may be invalid)
   [125/204] Petco Health & Wellness: 0 jobs (slug may be invalid)
-  [126/204] Zoetis: 0 jobs (slug may be invalid)
+  [126/204] Zoetis: 101 jobs
   [127/204] Parexel: 0 jobs (slug may be invalid)
   [128/204] ICON plc: 0 jobs (slug may be invalid)
   [129/204] Syneos Health: 0 jobs (slug may be invalid)
@@ -1296,22 +1296,22 @@
 [himss] 1 companies
   [1/1] HIMSS Career Center: 0 jobs (slug may be invalid)
 
-Totals: {'greenhouse': 8301, 'lever': 1079, 'ashby': 1357, 'workday': 842, 'smartrecruiters': 41, 'remoteok': 100, 'yc': 27, 'hn_hiring': 217}
-Failures: 1014 (companies returned no data — likely bad slugs)
+Totals: {'greenhouse': 8301, 'lever': 1079, 'ashby': 1357, 'workday': 2183, 'smartrecruiters': 41, 'remoteok': 100, 'yc': 27, 'hn_hiring': 217}
+Failures: 1002 (companies returned no data — likely bad slugs)
 [users] loaded 4 from Worker
 
 [multi-user] generating dashboards for 4 users
 [diag:geetu] loaded profile, targetCompanies len=23, first={'name': 'Veeva Systems', 'atsHint': 'workday', 'atsUrl': 'https://veeva.wd1.myworkdayjobs.com/veeva_careers', 'why': 'Cloud SaaS leader in life sciences with constant demand for senior product and transformation leaders who bridge pharma and technology'}
 [skills-profile:geetu] Senior digital transformation and product leader at the intersection of healthcare and technology · 65 keywords
 [velocity] 182 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 5696/5696
+[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 5832/5832
 [why-hidden:geetu] classified 2000 hidden jobs (of 19850 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/geetu.html
 [diag:amit-arora] loaded profile, targetCompanies len=25, first={'name': 'Webster Bank', 'atsHint': 'workday', 'atsUrl': 'https://websterbank.wd1.myworkdayjobs.com/WebsterBankCareers', 'why': "Super-regional commercial bank with active GRC and digital transformation hiring at the SVP/MD level, directly aligned to Amit's IDB Bank and Bank Leumi profile."}
 [skills-profile:amit-arora] Senior technology and GRC executive specializing in digital transformation, risk management, and M&A integration within banking and capital markets · 13 keywords
 [velocity] 182 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 3361/3361
+[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 3578/3578
 [why-hidden:amit-arora] classified 2000 hidden jobs (of 19850 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/amit-arora.html
