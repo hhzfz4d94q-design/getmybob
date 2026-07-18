@@ -30,7 +30,7 @@
   [18/478] hs: 28 jobs
   [19/478] springhealth66: 77 jobs
   [20/478] prolaio: 9 jobs
-  [21/478] prescriberpoint: 1 jobs
+  [21/478] prescriberpoint: 2 jobs
   [22/478] lumimeds: 31 jobs
   [23/478] smarterdxprivate: 1 jobs
   [24/478] smarterdx: 10 jobs
@@ -68,7 +68,7 @@
   [56/478] headlandsresearch: 70 jobs
   [57/478] yarrowbiotechnology: 0 jobs (slug may be invalid)
   [58/478] synerg: 32 jobs
-  [59/478] immunomeinc: 26 jobs
+  [59/478] immunomeinc: 27 jobs
   [60/478] cedar: 0 jobs (slug may be invalid)
   [61/478] hingehealth: 0 jobs (slug may be invalid)
   [62/478] carbonhealth: 0 jobs (slug may be invalid)
@@ -137,7 +137,7 @@
   [125/478] altopharmacy: 0 jobs (slug may be invalid)
   [126/478] capsule: 0 jobs (slug may be invalid)
   [127/478] vivante: 0 jobs (slug may be invalid)
-  [128/478] ?: 525 jobs
+  [128/478] ?: 524 jobs
   [129/478] ?: 0 jobs (slug may be invalid)
   [130/478] ?: 250 jobs
   [131/478] ?: 67 jobs
@@ -198,7 +198,7 @@
   [186/478] ?: 17 jobs
   [187/478] ?: 0 jobs (slug may be invalid)
   [188/478] ?: 0 jobs (slug may be invalid)
-  [189/478] ?: 688 jobs
+  [189/478] ?: 685 jobs
   [190/478] ?: 0 jobs (slug may be invalid)
   [191/478] ?: 0 jobs (slug may be invalid)
   [192/478] ?: 8 jobs
@@ -210,7 +210,7 @@
   [198/478] ?: 0 jobs (slug may be invalid)
   [199/478] ?: 0 jobs (slug may be invalid)
   [200/478] ?: 0 jobs (slug may be invalid)
-  [201/478] ?: 410 jobs
+  [201/478] ?: 411 jobs
   [202/478] ?: 0 jobs (slug may be invalid)
   [203/478] ?: 0 jobs (slug may be invalid)
   [204/478] ?: 0 jobs (slug may be invalid)
@@ -626,7 +626,7 @@
   [11/129] Aios: 7 jobs
   [12/129] you-health: 5 jobs
   [13/129] versemedical: 25 jobs
-  [14/129] abridge: 45 jobs
+  [14/129] abridge: 44 jobs
   [15/129] decagon: 114 jobs
   [16/129] rad-ai: 0 jobs (slug may be invalid)
   [17/129] ramphealth: 0 jobs (slug may be invalid)
@@ -789,7 +789,7 @@
   [1/204] Pfizer: 40 jobs
   [2/204] Merck (MSD): 200 jobs
   [3/204] CVS Health: 200 jobs
-  [4/204] Capital One: 200 jobs
+  [4/204] Capital One: 0 jobs (slug may be invalid)
   [5/204] Wells Fargo: 40 jobs
   [6/204] Bank of America: 200 jobs
   [7/204] Morgan Stanley: 40 jobs
@@ -1294,22 +1294,22 @@
 [himss] 1 companies
   [1/1] HIMSS Career Center: 0 jobs (slug may be invalid)
 
-Totals: {'greenhouse': 8301, 'lever': 1079, 'ashby': 1358, 'workday': 2184, 'smartrecruiters': 41, 'remoteok': 100, 'yc': 27, 'hn_hiring': 217}
-Failures: 1000 (companies returned no data — likely bad slugs)
+Totals: {'greenhouse': 8300, 'lever': 1079, 'ashby': 1357, 'workday': 1984, 'smartrecruiters': 41, 'remoteok': 100, 'yc': 27, 'hn_hiring': 217}
+Failures: 1001 (companies returned no data — likely bad slugs)
 [users] loaded 4 from Worker
 
 [multi-user] generating dashboards for 4 users
 [diag:geetu] loaded profile, targetCompanies len=23, first={'name': 'Veeva Systems', 'atsHint': 'workday', 'atsUrl': 'https://veeva.wd1.myworkdayjobs.com/veeva_careers', 'why': 'Cloud SaaS leader in life sciences with constant demand for senior product and transformation leaders who bridge pharma and technology'}
 [skills-profile:geetu] Senior digital transformation and product leader at the intersection of healthcare and technology · 65 keywords
 [velocity] 182 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 5831/5831
+[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 5835/5835
 [why-hidden:geetu] classified 2000 hidden jobs (of 19850 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/geetu.html
 [diag:amit-arora] loaded profile, targetCompanies len=25, first={'name': 'Webster Bank', 'atsHint': 'workday', 'atsUrl': 'https://websterbank.wd1.myworkdayjobs.com/WebsterBankCareers', 'why': "Super-regional commercial bank with active GRC and digital transformation hiring at the SVP/MD level, directly aligned to Amit's IDB Bank and Bank Leumi profile."}
 [skills-profile:amit-arora] Senior technology and GRC executive specializing in digital transformation, risk management, and M&A integration within banking and capital markets · 13 keywords
 [velocity] 182 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 3579/3579
+[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 3483/3483
 [why-hidden:amit-arora] classified 2000 hidden jobs (of 19850 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/amit-arora.html
