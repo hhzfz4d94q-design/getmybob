@@ -18,11 +18,11 @@
   [6/478] picnichealth: 0 jobs (slug may be invalid)
   [7/478] carerev: 0 jobs (slug may be invalid)
   [8/478] abarca: 2 jobs
-  [9/478] modernhealth: 12 jobs
+  [9/478] modernhealth: 14 jobs
   [10/478] roivantsciences: 8 jobs
   [11/478] waymark: 20 jobs
   [12/478] freenome: 22 jobs
-  [13/478] bridgebio: 108 jobs
+  [13/478] bridgebio: 110 jobs
   [14/478] formationbio: 25 jobs
   [15/478] honehealth: 13 jobs
   [16/478] cerebral: 6 jobs
@@ -62,7 +62,7 @@
   [50/478] jukeboxhealth: 49 jobs
   [51/478] qualifiedhealth: 0 jobs (slug may be invalid)
   [52/478] tuleahealth: 2 jobs
-  [53/478] precisionmedicinegroup: 192 jobs
+  [53/478] precisionmedicinegroup: 191 jobs
   [54/478] peptilogics: 0 jobs (slug may be invalid)
   [55/478] recursionpharmaceuticals: 26 jobs
   [56/478] headlandsresearch: 70 jobs
@@ -139,12 +139,12 @@
   [127/478] vivante: 0 jobs (slug may be invalid)
   [128/478] ?: 525 jobs
   [129/478] ?: 0 jobs (slug may be invalid)
-  [130/478] ?: 253 jobs
+  [130/478] ?: 250 jobs
   [131/478] ?: 67 jobs
   [132/478] ?: 54 jobs
   [133/478] ?: 111 jobs
   [134/478] ?: 171 jobs
-  [135/478] ?: 61 jobs
+  [135/478] ?: 62 jobs
   [136/478] ?: 151 jobs
   [137/478] ?: 40 jobs
   [138/478] ?: 0 jobs (slug may be invalid)
@@ -160,7 +160,7 @@
   [148/478] ?: 0 jobs (slug may be invalid)
   [149/478] ?: 0 jobs (slug may be invalid)
   [150/478] ?: 0 jobs (slug may be invalid)
-  [151/478] ?: 348 jobs
+  [151/478] ?: 347 jobs
   [152/478] ?: 82 jobs
   [153/478] ?: 0 jobs (slug may be invalid)
   [154/478] ?: 0 jobs (slug may be invalid)
@@ -340,7 +340,7 @@
   [328/478] himshers: 0 jobs (slug may be invalid)
   [329/478] oakstreethealth: 0 jobs (slug may be invalid)
   [330/478] vivantehealth: 0 jobs (slug may be invalid)
-  [331/478] natera: 201 jobs
+  [331/478] natera: 200 jobs
   [332/478] trinetx: 0 jobs (slug may be invalid)
   [333/478] brighthealth: 0 jobs (slug may be invalid)
   [334/478] landmarkhealth: 0 jobs (slug may be invalid)
@@ -394,13 +394,13 @@
   [382/478] elastic: 177 jobs
   [383/478] rxbenefits: 0 jobs (slug may be invalid)
   [384/478] honor: 20 jobs
-  [385/478] lattice: 9 jobs
+  [385/478] lattice: 10 jobs
   [386/478] dropbox: 36 jobs
   [387/478] guild: 12 jobs
   [388/478] thrivemarket: 16 jobs
   [389/478] ascendanalytics: 0 jobs (slug may be invalid)
   [390/478] alphasense: 216 jobs
-  [391/478] reddit: 199 jobs
+  [391/478] reddit: 198 jobs
   [392/478] celonis: 232 jobs
   [393/478] wcgclinical: 0 jobs (slug may be invalid)
   [394/478] byte: 0 jobs (slug may be invalid)
@@ -610,7 +610,7 @@
   [118/121] shepherdvet: 0 jobs (slug may be invalid)
   [119/121] medisafe: 0 jobs (slug may be invalid)
   [120/121] verifiable: 4 jobs
-  [121/121] nimblerx: 15 jobs
+  [121/121] nimblerx: 13 jobs
 
 [ashby] 129 companies
   [1/129] Graphitehq: 9 jobs
@@ -656,13 +656,13 @@
   [41/129] ?: 0 jobs (slug may be invalid)
   [42/129] ?: 0 jobs (slug may be invalid)
   [43/129] ?: 0 jobs (slug may be invalid)
-  [44/129] ?: 36 jobs
+  [44/129] ?: 35 jobs
   [45/129] ?: 0 jobs (slug may be invalid)
   [46/129] ?: 0 jobs (slug may be invalid)
   [47/129] ?: 0 jobs (slug may be invalid)
   [48/129] ?: 94 jobs
   [49/129] ?: 20 jobs
-  [50/129] ?: 25 jobs
+  [50/129] ?: 26 jobs
   [51/129] unit: 8 jobs
   [52/129] lithic: 0 jobs (slug may be invalid)
   [53/129] atomic-financial: 3 jobs
@@ -675,7 +675,7 @@
   [60/129] notable: 15 jobs
   [61/129] formationbio: 0 jobs (slug may be invalid)
   [62/129] honeybeehealth: 0 jobs (slug may be invalid)
-  [63/129] sesame: 29 jobs
+  [63/129] sesame: 28 jobs
   [64/129] alma: 0 jobs (slug may be invalid)
   [65/129] sondermind: 137 jobs
   [66/129] stedi: 12 jobs
@@ -1294,7 +1294,7 @@
 [himss] 1 companies
   [1/1] HIMSS Career Center: 0 jobs (slug may be invalid)
 
-Totals: {'greenhouse': 8302, 'lever': 1081, 'ashby': 1359, 'workday': 2184, 'smartrecruiters': 41, 'remoteok': 100, 'yc': 27, 'hn_hiring': 217}
+Totals: {'greenhouse': 8301, 'lever': 1079, 'ashby': 1358, 'workday': 2184, 'smartrecruiters': 41, 'remoteok': 100, 'yc': 27, 'hn_hiring': 217}
 Failures: 1000 (companies returned no data — likely bad slugs)
 [users] loaded 4 from Worker
 
@@ -1302,14 +1302,14 @@ Failures: 1000 (companies returned no data — likely bad slugs)
 [diag:geetu] loaded profile, targetCompanies len=23, first={'name': 'Veeva Systems', 'atsHint': 'workday', 'atsUrl': 'https://veeva.wd1.myworkdayjobs.com/veeva_careers', 'why': 'Cloud SaaS leader in life sciences with constant demand for senior product and transformation leaders who bridge pharma and technology'}
 [skills-profile:geetu] Senior digital transformation and product leader at the intersection of healthcare and technology · 65 keywords
 [velocity] 182 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 6096/6096
+[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 5831/5831
 [why-hidden:geetu] classified 2000 hidden jobs (of 19850 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/geetu.html
 [diag:amit-arora] loaded profile, targetCompanies len=25, first={'name': 'Webster Bank', 'atsHint': 'workday', 'atsUrl': 'https://websterbank.wd1.myworkdayjobs.com/WebsterBankCareers', 'why': "Super-regional commercial bank with active GRC and digital transformation hiring at the SVP/MD level, directly aligned to Amit's IDB Bank and Bank Leumi profile."}
 [skills-profile:amit-arora] Senior technology and GRC executive specializing in digital transformation, risk management, and M&A integration within banking and capital markets · 13 keywords
 [velocity] 182 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 3893/3893
+[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 3579/3579
 [why-hidden:amit-arora] classified 2000 hidden jobs (of 19850 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/amit-arora.html
