@@ -503,7 +503,7 @@
   [9/121] artera-2: 8 jobs
   [10/121] whoop: 160 jobs
   [11/121] caremessage: 3 jobs
-  [12/121] h1: 23 jobs
+  [12/121] h1: 24 jobs
   [13/121] mcra: 0 jobs (slug may be invalid)
   [14/121] aledade: 47 jobs
   [15/121] includedhealth: 112 jobs
@@ -1296,7 +1296,7 @@
 [himss] 1 companies
   [1/1] HIMSS Career Center: 0 jobs (slug may be invalid)
 
-Totals: {'greenhouse': 8300, 'lever': 1079, 'ashby': 1355, 'workday': 2183, 'smartrecruiters': 41, 'remoteok': 100, 'yc': 28, 'hn_hiring': 217}
+Totals: {'greenhouse': 8300, 'lever': 1080, 'ashby': 1355, 'workday': 2183, 'smartrecruiters': 41, 'remoteok': 100, 'yc': 28, 'hn_hiring': 217}
 Failures: 1002 (companies returned no data — likely bad slugs)
 [users] loaded 4 from Worker
 
