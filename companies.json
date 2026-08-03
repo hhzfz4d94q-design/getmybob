@@ -3127,6 +3127,96 @@
       "subdomain": "wd1",
       "site": "EnsembleHealthPartners",
       "unverified": true
+    },
+    {
+      "name": "iHeartMedia",
+      "tenant": "iheartmedia",
+      "subdomain": "iheartmedia",
+      "site": "iHeartMedia_External_Career_Site",
+      "industries": [
+        "from-contacts"
+      ]
+    },
+    {
+      "name": "JPMorganChase",
+      "tenant": "jpmchase",
+      "subdomain": "jpmc",
+      "site": "External",
+      "industries": [
+        "from-contacts"
+      ]
+    },
+    {
+      "name": "Yahoo",
+      "tenant": "yahoo",
+      "subdomain": "yahoo",
+      "site": "Yahoo_Careers",
+      "industries": [
+        "from-contacts"
+      ]
+    },
+    {
+      "name": "Citi",
+      "tenant": "citi",
+      "subdomain": "citi",
+      "site": "External",
+      "industries": [
+        "from-contacts"
+      ]
+    },
+    {
+      "name": "SANOFI AVENTIS US LLC",
+      "tenant": "sanofi",
+      "subdomain": "sanofi",
+      "site": "Sanofi_Careers",
+      "industries": [
+        "from-contacts"
+      ]
+    },
+    {
+      "name": "ZS",
+      "tenant": "zs",
+      "subdomain": "zs",
+      "site": "ZS_External_Careers",
+      "industries": [
+        "from-contacts"
+      ]
+    },
+    {
+      "name": "IBM",
+      "tenant": "ibm",
+      "subdomain": "ibm",
+      "site": "IBM_Careers",
+      "industries": [
+        "from-contacts"
+      ]
+    },
+    {
+      "name": "Reckitt",
+      "tenant": "reckitt",
+      "subdomain": "reckitt",
+      "site": "Reckitt_Global",
+      "industries": [
+        "from-contacts"
+      ]
+    },
+    {
+      "name": "Merck",
+      "tenant": "merck",
+      "subdomain": "merck",
+      "site": "Merck_Careers",
+      "industries": [
+        "from-contacts"
+      ]
+    },
+    {
+      "name": "Johnson & Johnson Innovative Medicine",
+      "tenant": "jnj",
+      "subdomain": "jnj",
+      "site": "JNJ_External_Career_Site",
+      "industries": [
+        "from-contacts"
+      ]
     }
   ],
   "remoteok": [
