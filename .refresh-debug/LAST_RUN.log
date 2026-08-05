@@ -31,10 +31,10 @@
   [19/478] springhealth66: 69 jobs
   [20/478] prolaio: 7 jobs
   [21/478] prescriberpoint: 1 jobs
-  [22/478] lumimeds: 36 jobs
+  [22/478] lumimeds: 35 jobs
   [23/478] smarterdxprivate: 1 jobs
   [24/478] smarterdx: 10 jobs
-  [25/478] midihealth: 24 jobs
+  [25/478] midihealth: 27 jobs
   [26/478] shieldshealthsolutions: 96 jobs
   [27/478] coherehealth: 68 jobs
   [28/478] allarahealth: 0 jobs (slug may be invalid)
@@ -137,10 +137,10 @@
   [125/478] altopharmacy: 0 jobs (slug may be invalid)
   [126/478] capsule: 0 jobs (slug may be invalid)
   [127/478] vivante: 0 jobs (slug may be invalid)
-  [128/478] ?: 548 jobs
+  [128/478] ?: 550 jobs
   [129/478] ?: 0 jobs (slug may be invalid)
   [130/478] ?: 302 jobs
-  [131/478] ?: 64 jobs
+  [131/478] ?: 63 jobs
   [132/478] ?: 55 jobs
   [133/478] ?: 128 jobs
   [134/478] ?: 182 jobs
@@ -203,14 +203,14 @@
   [191/478] ?: 0 jobs (slug may be invalid)
   [192/478] ?: 8 jobs
   [193/478] ?: 0 jobs (slug may be invalid)
-  [194/478] ?: 81 jobs
+  [194/478] ?: 80 jobs
   [195/478] ?: 9 jobs
   [196/478] ?: 0 jobs (slug may be invalid)
   [197/478] ?: 0 jobs (slug may be invalid)
   [198/478] ?: 0 jobs (slug may be invalid)
   [199/478] ?: 0 jobs (slug may be invalid)
   [200/478] ?: 0 jobs (slug may be invalid)
-  [201/478] ?: 393 jobs
+  [201/478] ?: 397 jobs
   [202/478] ?: 0 jobs (slug may be invalid)
   [203/478] ?: 0 jobs (slug may be invalid)
   [204/478] ?: 0 jobs (slug may be invalid)
@@ -338,7 +338,7 @@
   [326/478] tomorrow: 16 jobs
   [327/478] oakstreethealth: 0 jobs (slug may be invalid)
   [328/478] vivantehealth: 0 jobs (slug may be invalid)
-  [329/478] natera: 218 jobs
+  [329/478] natera: 219 jobs
   [330/478] trinetx: 0 jobs (slug may be invalid)
   [331/478] brighthealth: 0 jobs (slug may be invalid)
   [332/478] landmarkhealth: 0 jobs (slug may be invalid)
@@ -439,7 +439,7 @@
   [427/478] confidant: 0 jobs (slug may be invalid)
   [428/478] pelago: 16 jobs
   [429/478] rulahealth: 0 jobs (slug may be invalid)
-  [430/478] twochairs: 114 jobs
+  [430/478] twochairs: 109 jobs
   [431/478] careacademy: 0 jobs (slug may be invalid)
   [432/478] caregiver: 3 jobs
   [433/478] ribbon: 0 jobs (slug may be invalid)
@@ -626,7 +626,7 @@
   [12/130] you-health: 5 jobs
   [13/130] versemedical: 23 jobs
   [14/130] abridge: 42 jobs
-  [15/130] decagon: 121 jobs
+  [15/130] decagon: 122 jobs
   [16/130] rad-ai: 0 jobs (slug may be invalid)
   [17/130] ramphealth: 0 jobs (slug may be invalid)
   [18/130] ?: 0 jobs (slug may be invalid)
@@ -678,7 +678,7 @@
   [64/130] alma: 0 jobs (slug may be invalid)
   [65/130] sondermind: 139 jobs
   [66/130] stedi: 11 jobs
-  [67/130] akasa: 10 jobs
+  [67/130] akasa: 9 jobs
   [68/130] sanabenefits: 0 jobs (slug may be invalid)
   [69/130] cityblock: 0 jobs (slug may be invalid)
   [70/130] pearlhealth: 4 jobs
@@ -697,7 +697,7 @@
   [83/130] deepscribe: 0 jobs (slug may be invalid)
   [84/130] nexhealth: 0 jobs (slug may be invalid)
   [85/130] cleerly: 0 jobs (slug may be invalid)
-  [86/130] notion: 111 jobs
+  [86/130] notion: 110 jobs
   [87/130] smithrx: 0 jobs (slug may be invalid)
   [88/130] storkclub: 0 jobs (slug may be invalid)
   [89/130] cleo: 0 jobs (slug may be invalid)
@@ -911,7 +911,7 @@
   [123/214] Optum360: 0 jobs (slug may be invalid)
   [124/214] Covetrus: 0 jobs (slug may be invalid)
   [125/214] Petco Health & Wellness: 0 jobs (slug may be invalid)
-  [126/214] Zoetis: 133 jobs
+  [126/214] Zoetis: 132 jobs
   [127/214] Parexel: 0 jobs (slug may be invalid)
   [128/214] ICON plc: 0 jobs (slug may be invalid)
   [129/214] Syneos Health: 0 jobs (slug may be invalid)
@@ -1079,7 +1079,7 @@
   [3/34] ?: 0 jobs (slug may be invalid)
   [4/34] ?: 0 jobs (slug may be invalid)
   [5/34] ?: 0 jobs (slug may be invalid)
-  [6/34] ?: 37 jobs
+  [6/34] ?: 35 jobs
   [7/34] ?: 0 jobs (slug may be invalid)
   [8/34] ?: 0 jobs (slug may be invalid)
   [9/34] ?: 0 jobs (slug may be invalid)
@@ -1296,7 +1296,7 @@
   [1/1] YC Work at a Startup: 28 jobs
 
 [hn_hiring] 1 companies
-  [1/1] HN Who is Hiring: 135 jobs
+  [1/1] HN Who is Hiring: 136 jobs
 
 [healthecareers] 1 companies
   [1/1] Health eCareers: 0 jobs (slug may be invalid)
@@ -1304,34 +1304,34 @@
 [himss] 1 companies
   [1/1] HIMSS Career Center: 0 jobs (slug may be invalid)
 
-Totals: {'greenhouse': 8546, 'lever': 938, 'ashby': 1341, 'workday': 2226, 'smartrecruiters': 37, 'remoteok': 100, 'yc': 28, 'hn_hiring': 135}
+Totals: {'greenhouse': 8548, 'lever': 938, 'ashby': 1340, 'workday': 2225, 'smartrecruiters': 35, 'remoteok': 100, 'yc': 28, 'hn_hiring': 136}
 Failures: 1008 (companies returned no data — likely bad slugs)
 [users] loaded 4 from Worker
 
 [multi-user] generating dashboards for 4 users
 [diag:geetu] loaded profile, targetCompanies len=23, first={'name': 'Veeva Systems', 'atsHint': 'workday', 'atsUrl': 'https://veeva.wd1.myworkdayjobs.com/veeva_careers', 'why': 'Cloud SaaS leader in life sciences with constant demand for senior product and transformation leaders who bridge pharma and technology'}
 [skills-profile:geetu] Senior digital transformation and product leader at the intersection of healthcare and technology · 65 keywords
-[velocity] 149 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 3202/3202
-[why-hidden:geetu] classified 2000 hidden jobs (of 12833 total dropped)
+[velocity] 150 actively-scaling companies (3+ senior roles in 30d)
+[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 3206/3206
+[why-hidden:geetu] classified 2000 hidden jobs (of 12836 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/geetu.html
 [diag:amit-arora] loaded profile, targetCompanies len=25, first={'name': 'Webster Bank', 'atsHint': 'workday', 'atsUrl': 'https://websterbank.wd1.myworkdayjobs.com/WebsterBankCareers', 'why': "Super-regional commercial bank with active GRC and digital transformation hiring at the SVP/MD level, directly aligned to Amit's IDB Bank and Bank Leumi profile."}
 [skills-profile:amit-arora] Senior technology and GRC executive specializing in digital transformation, risk management, and M&A integration within banking and capital markets · 13 keywords
-[velocity] 149 actively-scaling companies (3+ senior roles in 30d)
+[velocity] 150 actively-scaling companies (3+ senior roles in 30d)
 [location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 1683/1683
-[why-hidden:amit-arora] classified 2000 hidden jobs (of 12833 total dropped)
+[why-hidden:amit-arora] classified 2000 hidden jobs (of 12836 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/amit-arora.html
 [diag:ishika-arora] loaded profile, targetCompanies len=0, first=None
 [skills-profile:ishika-arora] ? · 0 keywords
-[velocity] 149 actively-scaling companies (3+ senior roles in 30d)
-[why-hidden:ishika-arora] classified 2000 hidden jobs (of 12833 total dropped)
+[velocity] 150 actively-scaling companies (3+ senior roles in 30d)
+[why-hidden:ishika-arora] classified 2000 hidden jobs (of 12836 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/ishika-arora.html
 [diag:radhika-kalra] loaded profile, targetCompanies len=0, first=None
 [skills-profile:radhika-kalra] ? · 0 keywords
-[velocity] 149 actively-scaling companies (3+ senior roles in 30d)
-[why-hidden:radhika-kalra] classified 2000 hidden jobs (of 12833 total dropped)
+[velocity] 150 actively-scaling companies (3+ senior roles in 30d)
+[why-hidden:radhika-kalra] classified 2000 hidden jobs (of 12836 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/radhika-kalra.html
