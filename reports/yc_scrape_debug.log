@@ -433,3 +433,8 @@
 [2026-08-12T05:26:09.519153+00:00] DOM scrape: found 57 candidate anchors
 [2026-08-12T05:26:09.845384+00:00] scraped 27 jobs total
 [2026-08-12T05:26:09.845933+00:00] wrote data/yc_jobs.json
+[2026-08-13T05:29:02.595409+00:00] navigating to workatastartup.com/jobs
+[2026-08-13T05:29:07.779633+00:00] falling back to DOM scrape
+[2026-08-13T05:29:13.826772+00:00] DOM scrape: found 57 candidate anchors
+[2026-08-13T05:29:14.135392+00:00] scraped 27 jobs total
+[2026-08-13T05:29:14.135952+00:00] wrote data/yc_jobs.json
