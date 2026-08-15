@@ -1,6 +1,6 @@
 {
   "_note": "Curated Healthcare IT / digital health catalog. Used for: (a) scoring boost when company appears in feed AND user has healthcare industries (+3, all entries), (b) auto-scraping (only ATS=greenhouse/lever/ashby/workable). Workday/Google/Amazon entries are catalog-only (scored boost when found, not scraped). Slugs are canonical for matching.",
-  "version": "2026-05-29-v3+discovered+discovered+dream-list+from-contacts+dedup+dream-geetu+discovered+dedup-r2+verified+slug-recover+verified+verified+discovered+discovered+discovered+verified+verified+verified+verified+from-contacts+verified+verified+from-contacts+verified+verified+from-contacts+verified+from-contacts+verified+from-contacts",
+  "version": "2026-05-29-v3+discovered+discovered+dream-list+from-contacts+dedup+dream-geetu+discovered+dedup-r2+verified+slug-recover+verified+verified+discovered+discovered+discovered+verified+verified+verified+verified+from-contacts+verified+verified+from-contacts+verified+verified+from-contacts+verified+from-contacts+verified+from-contacts+verified",
   "companies": [
     {
       "name": "Doximity",
@@ -1034,7 +1034,8 @@
       "name": "Hims & Hers",
       "category": "Mid-stage healthtech SaaS",
       "atsHint": "greenhouse",
-      "slug": "hims"
+      "slug": "hims",
+      "suspectSlug": true
     },
     {
       "name": "Calibrate",
@@ -1241,7 +1242,8 @@
       "name": "10x Genomics",
       "category": "Diagnostics",
       "atsHint": "greenhouse",
-      "slug": "10xgenomics"
+      "slug": "10xgenomics",
+      "suspectSlug": true
     },
     {
       "name": "Pacific Biosciences",
@@ -1829,8 +1831,7 @@
       "name": "Byte",
       "category": "Dental + Vision Tech",
       "atsHint": "greenhouse",
-      "slug": "byte",
-      "suspectSlug": true
+      "slug": "byteme"
     },
     {
       "name": "Candid",
@@ -1849,13 +1850,13 @@
       "name": "Kindbody",
       "category": "Women's Health + Fertility",
       "atsHint": "greenhouse",
-      "slug": "kindbody"
+      "slug": "kindbodyfertility"
     },
     {
       "name": "Stork Club",
       "category": "Women's Health + Fertility",
       "atsHint": "ashby",
-      "slug": "storkclub"
+      "slug": "thestorkclub"
     },
     {
       "name": "Ovia Health",
@@ -1874,19 +1875,21 @@
       "name": "Cleo",
       "category": "Women's Health + Fertility",
       "atsHint": "ashby",
-      "slug": "cleo"
+      "slug": "hicleo"
     },
     {
       "name": "Bicycle Health",
       "category": "Behavioral Health + Addiction Recovery",
       "atsHint": "ashby",
-      "slug": "bicyclehealth"
+      "slug": "bicyclehealth",
+      "suspectSlug": true
     },
     {
       "name": "Eleanor Health",
       "category": "Behavioral Health + Addiction Recovery",
       "atsHint": "greenhouse",
-      "slug": "eleanorhealth"
+      "slug": "eleanorhealth",
+      "suspectSlug": true
     },
     {
       "name": "Boulder Care",
@@ -1939,7 +1942,8 @@
       "name": "Censinet",
       "category": "Healthcare Cybersecurity + Privacy",
       "atsHint": "lever",
-      "slug": "censinet"
+      "slug": "censinet",
+      "suspectSlug": true
     },
     {
       "name": "Papa",
@@ -1951,7 +1955,7 @@
       "name": "Carewell",
       "category": "Senior Care + Caregiving Platforms",
       "atsHint": "greenhouse",
-      "slug": "carewell"
+      "slug": "carewellhealth"
     },
     {
       "name": "A Place for Mom",
@@ -1971,7 +1975,8 @@
       "name": "Curology",
       "category": "Med-Aesthetic / Consumer Health",
       "atsHint": "greenhouse",
-      "slug": "curology"
+      "slug": "curology",
+      "suspectSlug": true
     },
     {
       "name": "Keeps",
@@ -1984,13 +1989,15 @@
       "name": "Wisp",
       "category": "Med-Aesthetic / Consumer Health",
       "atsHint": "lever",
-      "slug": "helowisp"
+      "slug": "helowisp",
+      "suspectSlug": true
     },
     {
       "name": "Thirty Madison",
       "category": "Med-Aesthetic / Consumer Health",
       "atsHint": "greenhouse",
-      "slug": "thirtymadison"
+      "slug": "thirtymadison",
+      "suspectSlug": true
     },
     {
       "name": "Vetcove",
@@ -2002,43 +2009,50 @@
       "name": "Altasciences",
       "category": "Clinical Research / CRO",
       "atsHint": "greenhouse",
-      "slug": "altasciences"
+      "slug": "altasciences",
+      "suspectSlug": true
     },
     {
       "name": "Stellar Dental",
       "category": "Dental Tech",
       "atsHint": "lever",
-      "slug": "stellar"
+      "slug": "stellar",
+      "suspectSlug": true
     },
     {
       "name": "Spring Fertility",
       "category": "Women's Health / Fertility",
       "atsHint": "lever",
-      "slug": "springfertility"
+      "slug": "springfertility",
+      "suspectSlug": true
     },
     {
       "name": "WIN Fertility",
       "category": "Women's Health / Fertility",
       "atsHint": "greenhouse",
-      "slug": "winfertility"
+      "slug": "winfertility",
+      "suspectSlug": true
     },
     {
       "name": "Twentyeight Health",
       "category": "Women's Health / Fertility",
       "atsHint": "ashby",
-      "slug": "twentyeighthealth"
+      "slug": "twentyeighthealth",
+      "suspectSlug": true
     },
     {
       "name": "Workit Health",
       "category": "Behavioral Health / Addiction",
       "atsHint": "ashby",
-      "slug": "workithealth"
+      "slug": "workithealth",
+      "suspectSlug": true
     },
     {
       "name": "Quit Genius",
       "category": "Behavioral Health / Addiction",
       "atsHint": "ashby",
-      "slug": "quitgenius"
+      "slug": "quitgenius",
+      "suspectSlug": true
     },
     {
       "name": "Charlie Health",
@@ -2063,7 +2077,8 @@
       "name": "Capital Rx",
       "category": "Specialty Pharmacy / PBM",
       "atsHint": "greenhouse",
-      "slug": "capitalrx"
+      "slug": "capitalrx",
+      "suspectSlug": true
     },
     {
       "name": "Optime Care",
@@ -2156,7 +2171,7 @@
       "name": "Dental Intelligence",
       "category": "Dental tech",
       "atsHint": "greenhouse",
-      "slug": "dentalintel"
+      "slug": "dentalintelligence"
     },
     {
       "name": "Tend",
@@ -2286,7 +2301,7 @@
       "name": "Rula Health",
       "category": "Behavioral health",
       "atsHint": "greenhouse",
-      "slug": "rula"
+      "slug": "rulahealth"
     },
     {
       "name": "Two Chairs",
@@ -2939,7 +2954,8 @@
       "name": "DoorDash",
       "category": "from-contacts",
       "atsHint": "greenhouse",
-      "slug": "doordash"
+      "slug": "doordash",
+      "suspectSlug": true
     },
     {
       "name": "Exiger",
