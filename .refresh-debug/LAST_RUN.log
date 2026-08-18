@@ -29,7 +29,7 @@
   [17/483] foresightmentalhealth: 4 jobs
   [18/483] hs: 10 jobs
   [19/483] springhealth66: 66 jobs
-  [20/483] prolaio: 6 jobs
+  [20/483] prolaio: 7 jobs
   [21/483] prescriberpoint: 1 jobs
   [22/483] lumimeds: 47 jobs
   [23/483] smarterdxprivate: 1 jobs
@@ -68,7 +68,7 @@
   [56/483] headlandsresearch: 79 jobs
   [57/483] yarrowbiotechnology: 0 jobs (slug may be invalid)
   [58/483] synerg: 41 jobs
-  [59/483] immunomeinc: 26 jobs
+  [59/483] immunomeinc: 25 jobs
   [60/483] cedar: 0 jobs (slug may be invalid)
   [61/483] hingehealth: 0 jobs (slug may be invalid)
   [62/483] carbonhealth: 0 jobs (slug may be invalid)
@@ -109,7 +109,7 @@
   [97/483] ada: 0 jobs (slug may be invalid)
   [98/483] buoy: 0 jobs (slug may be invalid)
   [99/483] kindbody: 0 jobs (slug may be invalid)
-  [100/483] tia: 28 jobs
+  [100/483] tia: 30 jobs
   [101/483] hims: 0 jobs (slug may be invalid)
   [102/483] noom: 0 jobs (slug may be invalid)
   [103/483] calm: 0 jobs (slug may be invalid)
@@ -137,11 +137,11 @@
   [125/483] altopharmacy: 0 jobs (slug may be invalid)
   [126/483] capsule: 0 jobs (slug may be invalid)
   [127/483] vivante: 0 jobs (slug may be invalid)
-  [128/483] ?: 576 jobs
+  [128/483] ?: 577 jobs
   [129/483] ?: 0 jobs (slug may be invalid)
   [130/483] ?: 303 jobs
   [131/483] ?: 57 jobs
-  [132/483] ?: 59 jobs
+  [132/483] ?: 58 jobs
   [133/483] ?: 123 jobs
   [134/483] ?: 192 jobs
   [135/483] ?: 60 jobs
@@ -210,7 +210,7 @@
   [198/483] ?: 0 jobs (slug may be invalid)
   [199/483] ?: 0 jobs (slug may be invalid)
   [200/483] ?: 0 jobs (slug may be invalid)
-  [201/483] ?: 461 jobs
+  [201/483] ?: 460 jobs
   [202/483] ?: 0 jobs (slug may be invalid)
   [203/483] ?: 0 jobs (slug may be invalid)
   [204/483] ?: 0 jobs (slug may be invalid)
@@ -390,7 +390,7 @@
   [378/483] hugeinc: 15 jobs
   [379/483] prescryptive: 0 jobs (slug may be invalid)
   [380/483] qventus: 22 jobs
-  [381/483] instacart: 113 jobs
+  [381/483] instacart: 112 jobs
   [382/483] elastic: 251 jobs
   [383/483] rxbenefits: 0 jobs (slug may be invalid)
   [384/483] honor: 14 jobs
@@ -695,7 +695,7 @@
   [69/135] sesame: 25 jobs
   [70/135] alma: 0 jobs (slug may be invalid)
   [71/135] sondermind: 137 jobs
-  [72/135] stedi: 12 jobs
+  [72/135] stedi: 13 jobs
   [73/135] akasa: 12 jobs
   [74/135] sanabenefits: 0 jobs (slug may be invalid)
   [75/135] cityblock: 0 jobs (slug may be invalid)
@@ -786,7 +786,7 @@
   [23/40] ?: 0 jobs (slug may be invalid)
   [24/40] ?: 0 jobs (slug may be invalid)
   [25/40] ?: 0 jobs (slug may be invalid)
-  [26/40] ?: 5 jobs
+  [26/40] ?: 0 jobs (slug may be invalid)
   [27/40] ?: 0 jobs (slug may be invalid)
   [28/40] ?: 0 jobs (slug may be invalid)
   [29/40] ?: 0 jobs (slug may be invalid)
@@ -928,7 +928,7 @@
   [123/220] Optum360: 0 jobs (slug may be invalid)
   [124/220] Covetrus: 0 jobs (slug may be invalid)
   [125/220] Petco Health & Wellness: 0 jobs (slug may be invalid)
-  [126/220] Zoetis: 126 jobs
+  [126/220] Zoetis: 120 jobs
   [127/220] Parexel: 0 jobs (slug may be invalid)
   [128/220] ICON plc: 0 jobs (slug may be invalid)
   [129/220] Syneos Health: 0 jobs (slug may be invalid)
@@ -1327,8 +1327,8 @@
 [himss] 1 companies
   [1/1] HIMSS Career Center: 0 jobs (slug may be invalid)
 
-Totals: {'greenhouse': 8654, 'lever': 964, 'ashby': 1400, 'workday': 2225, 'workable': 5, 'smartrecruiters': 43, 'remoteok': 100, 'yc': 29, 'hn_hiring': 199}
-Failures: 1034 (companies returned no data — likely bad slugs)
+Totals: {'greenhouse': 8654, 'lever': 964, 'ashby': 1401, 'workday': 2219, 'smartrecruiters': 43, 'remoteok': 100, 'yc': 29, 'hn_hiring': 199}
+Failures: 1035 (companies returned no data — likely bad slugs)
 [users] loaded 4 from Worker
 
 [multi-user] generating dashboards for 4 users
@@ -1342,7 +1342,7 @@ Dashboard written: /home/runner/work/getmybob/getmybob/geetu.html
 [diag:amit-arora] loaded profile, targetCompanies len=25, first={'name': 'Webster Bank', 'atsHint': 'workday', 'atsUrl': 'https://websterbank.wd1.myworkdayjobs.com/WebsterBankCareers', 'why': "Super-regional commercial bank with active GRC and digital transformation hiring at the SVP/MD level, directly aligned to Amit's IDB Bank and Bank Leumi profile."}
 [skills-profile:amit-arora] Senior technology and GRC executive specializing in digital transformation, risk management, and M&A integration within banking and capital markets · 13 keywords
 [velocity] 152 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 1691/1691
+[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 1692/1692
 [why-hidden:amit-arora] classified 2000 hidden jobs (of 13081 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/amit-arora.html
