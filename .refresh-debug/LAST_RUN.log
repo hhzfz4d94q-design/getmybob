@@ -10,7 +10,7 @@
 [greenhouse] 483 companies
 [vc-portfolio] loaded 96 discovered companies
 [healthtech] loaded 441 curated companies
-  [1/483] oscar: 252 jobs
+  [1/483] oscar: 253 jobs
   [2/483] acuitymd: 10 jobs
   [3/483] sondermind: 0 jobs (slug may be invalid)
   [4/483] linushealth: 0 jobs (slug may be invalid)
@@ -50,7 +50,7 @@
   [38/483] sparkadvisors: 10 jobs
   [39/483] wellth: 0 jobs (slug may be invalid)
   [40/483] employerdirecthealthcare: 14 jobs
-  [41/483] habitathealth: 32 jobs
+  [41/483] habitathealth: 34 jobs
   [42/483] authorhealth: 0 jobs (slug may be invalid)
   [43/483] omadahealth: 27 jobs
   [44/483] phamily: 4 jobs
@@ -137,7 +137,7 @@
   [125/483] altopharmacy: 0 jobs (slug may be invalid)
   [126/483] capsule: 0 jobs (slug may be invalid)
   [127/483] vivante: 0 jobs (slug may be invalid)
-  [128/483] ?: 573 jobs
+  [128/483] ?: 576 jobs
   [129/483] ?: 0 jobs (slug may be invalid)
   [130/483] ?: 294 jobs
   [131/483] ?: 59 jobs
@@ -154,7 +154,7 @@
   [142/483] ?: 0 jobs (slug may be invalid)
   [143/483] ?: 0 jobs (slug may be invalid)
   [144/483] ?: 29 jobs
-  [145/483] ?: 307 jobs
+  [145/483] ?: 308 jobs
   [146/483] ?: 0 jobs (slug may be invalid)
   [147/483] ?: 0 jobs (slug may be invalid)
   [148/483] ?: 0 jobs (slug may be invalid)
@@ -210,7 +210,7 @@
   [198/483] ?: 0 jobs (slug may be invalid)
   [199/483] ?: 0 jobs (slug may be invalid)
   [200/483] ?: 0 jobs (slug may be invalid)
-  [201/483] ?: 511 jobs
+  [201/483] ?: 512 jobs
   [202/483] ?: 0 jobs (slug may be invalid)
   [203/483] ?: 0 jobs (slug may be invalid)
   [204/483] ?: 0 jobs (slug may be invalid)
@@ -389,8 +389,8 @@
   [377/483] pagerhealth: 5 jobs
   [378/483] hugeinc: 20 jobs
   [379/483] prescryptive: 0 jobs (slug may be invalid)
-  [380/483] qventus: 20 jobs
-  [381/483] instacart: 119 jobs
+  [380/483] qventus: 18 jobs
+  [381/483] instacart: 118 jobs
   [382/483] elastic: 249 jobs
   [383/483] rxbenefits: 0 jobs (slug may be invalid)
   [384/483] honor: 10 jobs
@@ -400,7 +400,7 @@
   [388/483] thrivemarket: 20 jobs
   [389/483] ascendanalytics: 0 jobs (slug may be invalid)
   [390/483] alphasense: 233 jobs
-  [391/483] reddit: 152 jobs
+  [391/483] reddit: 151 jobs
   [392/483] celonis: 273 jobs
   [393/483] wcgclinical: 0 jobs (slug may be invalid)
   [394/483] byteme: 0 jobs (slug may be invalid)
@@ -431,7 +431,7 @@
   [419/483] warbyparker: 0 jobs (slug may be invalid)
   [420/483] symplr: 0 jobs (slug may be invalid)
   [421/483] healthcatalyst: 0 jobs (slug may be invalid)
-  [422/483] genedx: 33 jobs
+  [422/483] genedx: 32 jobs
   [423/483] somatusinc: 0 jobs (slug may be invalid)
   [424/483] dentalintelligence: 0 jobs (slug may be invalid)
   [425/483] hellotend: 29 jobs
@@ -631,7 +631,7 @@
   [5/135] Interrahealth: 16 jobs
   [6/135] fitt: 12 jobs
   [7/135] lark: 2 jobs
-  [8/135] virtahealth: 18 jobs
+  [8/135] virtahealth: 19 jobs
   [9/135] Healthtech-1: 8 jobs
   [10/135] tandem-health: 48 jobs
   [11/135] Aios: 17 jobs
@@ -703,9 +703,9 @@
   [77/135] particlehealth: 0 jobs (slug may be invalid)
   [78/135] hippocraticai: 0 jobs (slug may be invalid)
   [79/135] memora: 0 jobs (slug may be invalid)
-  [80/135] sprinter-health: 101 jobs
+  [80/135] sprinter-health: 102 jobs
   [81/135] sparkadvisors: 0 jobs (slug may be invalid)
-  [82/135] commure: 73 jobs
+  [82/135] commure: 72 jobs
   [83/135] wellthy: 0 jobs (slug may be invalid)
   [84/135] evidation: 0 jobs (slug may be invalid)
   [85/135] incrediblehealth: 0 jobs (slug may be invalid)
@@ -928,7 +928,7 @@
   [123/220] Optum360: 0 jobs (slug may be invalid)
   [124/220] Covetrus: 0 jobs (slug may be invalid)
   [125/220] Petco Health & Wellness: 0 jobs (slug may be invalid)
-  [126/220] Zoetis: 131 jobs
+  [126/220] Zoetis: 133 jobs
   [127/220] Parexel: 0 jobs (slug may be invalid)
   [128/220] ICON plc: 0 jobs (slug may be invalid)
   [129/220] Syneos Health: 0 jobs (slug may be invalid)
@@ -1327,7 +1327,7 @@
 [himss] 1 companies
   [1/1] HIMSS Career Center: 0 jobs (slug may be invalid)
 
-Totals: {'greenhouse': 8716, 'lever': 976, 'ashby': 1388, 'workday': 2229, 'smartrecruiters': 47, 'remoteok': 100, 'yc': 28, 'hn_hiring': 199}
+Totals: {'greenhouse': 8719, 'lever': 976, 'ashby': 1389, 'workday': 2231, 'smartrecruiters': 47, 'remoteok': 100, 'yc': 28, 'hn_hiring': 199}
 Failures: 1030 (companies returned no data — likely bad slugs)
 [users] loaded 4 from Worker
 
@@ -1335,7 +1335,7 @@ Failures: 1030 (companies returned no data — likely bad slugs)
 [diag:geetu] loaded profile, targetCompanies len=23, first={'name': 'Veeva Systems', 'atsHint': 'workday', 'atsUrl': 'https://veeva.wd1.myworkdayjobs.com/veeva_careers', 'why': 'Cloud SaaS leader in life sciences with constant demand for senior product and transformation leaders who bridge pharma and technology'}
 [skills-profile:geetu] Senior digital transformation and product leader at the intersection of healthcare and technology · 65 keywords
 [velocity] 152 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 3272/3272
+[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 3258/3258
 [why-hidden:geetu] classified 2000 hidden jobs (of 13154 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/geetu.html
