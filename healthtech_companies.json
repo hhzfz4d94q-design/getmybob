@@ -1,6 +1,6 @@
 {
   "_note": "Curated Healthcare IT / digital health catalog. Used for: (a) scoring boost when company appears in feed AND user has healthcare industries (+3, all entries), (b) auto-scraping (only ATS=greenhouse/lever/ashby/workable). Workday/Google/Amazon entries are catalog-only (scored boost when found, not scraped). Slugs are canonical for matching.",
-  "version": "2026-05-29-v3+discovered+discovered+dream-list+from-contacts+dedup+dream-geetu+discovered+dedup-r2+verified+slug-recover+verified+verified+discovered+discovered+discovered+verified+verified+verified+verified+from-contacts+verified+verified+from-contacts+verified+verified+from-contacts+verified+from-contacts+verified+from-contacts+verified+from-contacts",
+  "version": "2026-05-29-v3+discovered+discovered+dream-list+from-contacts+dedup+dream-geetu+discovered+dedup-r2+verified+slug-recover+verified+verified+discovered+discovered+discovered+verified+verified+verified+verified+from-contacts+verified+verified+from-contacts+verified+verified+from-contacts+verified+from-contacts+verified+from-contacts+verified+from-contacts+verified",
   "companies": [
     {
       "name": "Doximity",
@@ -33,7 +33,7 @@
       "name": "Hims & Hers Health",
       "category": "telehealth",
       "atsHint": "ashby",
-      "slug": "hims"
+      "slug": "himsandhers"
     },
     {
       "name": "Hinge Health",
@@ -528,7 +528,7 @@
       "name": "Alto Pharmacy",
       "category": "pharma-tech",
       "atsHint": "greenhouse",
-      "slug": "altopharmacy"
+      "slug": "alto"
     },
     {
       "name": "Capsule",
@@ -673,15 +673,13 @@
       "name": "Kaia Health",
       "category": "dtx",
       "atsHint": "greenhouse",
-      "slug": "kaia-health",
-      "suspectSlug": true
+      "slug": "kaiahealth"
     },
     {
       "name": "Vida Health",
       "category": "dtx",
       "atsHint": "greenhouse",
-      "slug": "vida-health",
-      "suspectSlug": true
+      "slug": "vidahealth"
     },
     {
       "name": "Virta Health",
@@ -760,8 +758,7 @@
       "name": "Cala Health",
       "category": "dtx",
       "atsHint": "greenhouse",
-      "slug": "cala-health",
-      "suspectSlug": true
+      "slug": "calahealth"
     },
     {
       "name": "Verily Life Sciences",
@@ -805,8 +802,7 @@
       "name": "Vyne Dental",
       "category": "healthcare-fintech",
       "atsHint": "greenhouse",
-      "slug": "vyne-dental",
-      "suspectSlug": true
+      "slug": "vynedental"
     },
     {
       "name": "Collective Health",
@@ -836,8 +832,7 @@
       "name": "Imagine Pediatrics",
       "category": "provider-tech",
       "atsHint": "greenhouse",
-      "slug": "imagine-pediatrics",
-      "suspectSlug": true
+      "slug": "imaginepediatrics"
     },
     {
       "name": "Cityblock Health",
@@ -879,8 +874,7 @@
       "name": "Iora Health (One Medical)",
       "category": "provider-tech",
       "atsHint": "greenhouse",
-      "slug": "iora-health",
-      "suspectSlug": true
+      "slug": "onemedical"
     },
     {
       "name": "Aledade",
@@ -924,8 +918,7 @@
       "name": "Lyric (formerly ClaimsXten)",
       "category": "payer-tech",
       "atsHint": "greenhouse",
-      "slug": "lyrichealth",
-      "suspectSlug": true
+      "slug": "lyric"
     },
     {
       "name": "HealthEdge",
@@ -1831,7 +1824,7 @@
       "name": "Byte",
       "category": "Dental + Vision Tech",
       "atsHint": "greenhouse",
-      "slug": "byteme"
+      "slug": "byte"
     },
     {
       "name": "Candid",
@@ -1850,13 +1843,13 @@
       "name": "Kindbody",
       "category": "Women's Health + Fertility",
       "atsHint": "greenhouse",
-      "slug": "kindbodyfertility"
+      "slug": "kindbody"
     },
     {
       "name": "Stork Club",
       "category": "Women's Health + Fertility",
       "atsHint": "ashby",
-      "slug": "thestorkclub"
+      "slug": "storkclub"
     },
     {
       "name": "Ovia Health",
@@ -1875,7 +1868,7 @@
       "name": "Cleo",
       "category": "Women's Health + Fertility",
       "atsHint": "ashby",
-      "slug": "hicleo"
+      "slug": "meetcleo"
     },
     {
       "name": "Bicycle Health",
@@ -1955,7 +1948,7 @@
       "name": "Carewell",
       "category": "Senior Care + Caregiving Platforms",
       "atsHint": "greenhouse",
-      "slug": "carewellhealth"
+      "slug": "carewell"
     },
     {
       "name": "A Place for Mom",
@@ -2070,8 +2063,7 @@
       "name": "CivicaScript",
       "category": "Specialty Pharmacy",
       "atsHint": "greenhouse",
-      "slug": "civica",
-      "suspectSlug": true
+      "slug": "civicascript"
     },
     {
       "name": "Capital Rx",
@@ -2157,8 +2149,7 @@
       "name": "Somatus",
       "category": "Dialysis / Kidney Care",
       "atsHint": "greenhouse",
-      "slug": "somatusinc",
-      "suspectSlug": true
+      "slug": "somatus"
     },
     {
       "name": "Clinical Research IO",
@@ -2502,7 +2493,8 @@
       "name": "Firefly Health",
       "category": "Primary care / virtual",
       "atsHint": "greenhouse",
-      "slug": "fireflyhealth"
+      "slug": "fireflyhealth",
+      "suspectSlug": true
     },
     {
       "name": "Accel",
