@@ -1,19 +1,10 @@
 {
   "_meta": {
-    "scrapedAt": "2026-08-30T09:38:19.897591+00:00",
+    "scrapedAt": "2026-08-31T10:20:48.715500+00:00",
     "count": 30,
     "source": "workatastartup.com via Playwright"
   },
   "jobs": [
-    {
-      "id": "https://www.workatastartup.com/jobs/103933",
-      "title": "Senior Software Engineer, Machine Learning",
-      "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/103933",
-      "location": "",
-      "posted_at": "",
-      "description": ""
-    },
     {
       "id": "https://www.workatastartup.com/jobs/103934",
       "title": "Senior Software Engineer, Data Systems",
@@ -24,19 +15,37 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/96713",
-      "title": "Chief Technology Officer",
+      "id": "https://www.workatastartup.com/jobs/103933",
+      "title": "Senior Software Engineer, Machine Learning",
       "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/96713",
+      "url": "https://www.workatastartup.com/jobs/103933",
       "location": "",
       "posted_at": "",
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/94543",
-      "title": "Lead, Engineer",
+      "id": "https://www.workatastartup.com/jobs/107084",
+      "title": "Founding Wearable Hardware Engineer",
       "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/94543",
+      "url": "https://www.workatastartup.com/jobs/107084",
+      "location": "",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/107083",
+      "title": "Founding Sensing Research Engineer",
+      "company": "YC Startup",
+      "url": "https://www.workatastartup.com/jobs/107083",
+      "location": "",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/102289",
+      "title": "Founding Software Engineer, Robotics Infrastructure",
+      "company": "YC Startup",
+      "url": "https://www.workatastartup.com/jobs/102289",
       "location": "",
       "posted_at": "",
       "description": ""
@@ -51,24 +60,6 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/102287",
-      "title": "Mechatronics Engineer",
-      "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/102287",
-      "location": "",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/99221",
-      "title": "Founding Data engineer",
-      "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/99221",
-      "location": "",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/99220",
       "title": "Founding Software Engineer",
       "company": "YC Startup",
@@ -78,10 +69,19 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/105568",
-      "title": "Physical Infrastructure Engineer (any discipline)",
+      "id": "https://www.workatastartup.com/jobs/106672",
+      "title": "Lead data engineer",
       "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/105568",
+      "url": "https://www.workatastartup.com/jobs/106672",
+      "location": "",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/105567",
+      "title": "Electrical Engineer",
+      "company": "YC Startup",
+      "url": "https://www.workatastartup.com/jobs/105567",
       "location": "",
       "posted_at": "",
       "description": ""
@@ -96,6 +96,15 @@
       "description": ""
     },
     {
+      "id": "https://www.workatastartup.com/jobs/106819",
+      "title": "Mechanical Engineer (India)",
+      "company": "YC Startup",
+      "url": "https://www.workatastartup.com/jobs/106819",
+      "location": "",
+      "posted_at": "",
+      "description": ""
+    },
+    {
       "id": "https://www.workatastartup.com/jobs/100368",
       "title": "Data Engineer (India)",
       "company": "YC Startup",
@@ -105,10 +114,19 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/106819",
-      "title": "Mechanical Engineer (India)",
+      "id": "https://www.workatastartup.com/jobs/105094",
+      "title": "Engineering Intern",
       "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/106819",
+      "url": "https://www.workatastartup.com/jobs/105094",
+      "location": "",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/105093",
+      "title": "Founding Engineer",
+      "company": "YC Startup",
+      "url": "https://www.workatastartup.com/jobs/105093",
       "location": "",
       "posted_at": "",
       "description": ""
@@ -123,10 +141,10 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/100472",
-      "title": "Go-to-Market Engineer",
+      "id": "https://www.workatastartup.com/jobs/100468",
+      "title": "Member of Technical Staff, Agent Infrastructure and Reliability",
       "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/100472",
+      "url": "https://www.workatastartup.com/jobs/100468",
       "location": "",
       "posted_at": "",
       "description": ""
@@ -177,19 +195,19 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/105463",
-      "title": "Forward Deployed Engineer",
+      "id": "https://www.workatastartup.com/jobs/105465",
+      "title": "Product Engineer",
       "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/105463",
+      "url": "https://www.workatastartup.com/jobs/105465",
       "location": "",
       "posted_at": "",
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/105464",
-      "title": "Email Infrastructure Engineer",
+      "id": "https://www.workatastartup.com/jobs/105463",
+      "title": "Forward Deployed Engineer",
       "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/105464",
+      "url": "https://www.workatastartup.com/jobs/105463",
       "location": "",
       "posted_at": "",
       "description": ""
@@ -222,10 +240,10 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/95576",
-      "title": "Founding Engineer @ Vela | Solving Scheduling | India",
+      "id": "https://www.workatastartup.com/jobs/94537",
+      "title": "Founding Engineer @ Vela | Solving Scheduling",
       "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/95576",
+      "url": "https://www.workatastartup.com/jobs/94537",
       "location": "",
       "posted_at": "",
       "description": ""
@@ -240,15 +258,6 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/97381",
-      "title": "Research Engineer - Voice Intelligence",
-      "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/97381",
-      "location": "",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/105516",
       "title": "Customer Support Engineer",
       "company": "YC Startup",
@@ -258,19 +267,10 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/102611",
-      "title": "Founding Engineer",
+      "id": "https://www.workatastartup.com/jobs/106310",
+      "title": "Founding Data Lead",
       "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/102611",
-      "location": "",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/106736",
-      "title": "Backend Engineer",
-      "company": "YC Startup",
-      "url": "https://www.workatastartup.com/jobs/106736",
+      "url": "https://www.workatastartup.com/jobs/106310",
       "location": "",
       "posted_at": "",
       "description": ""
