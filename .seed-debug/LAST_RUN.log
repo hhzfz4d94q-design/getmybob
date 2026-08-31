@@ -6,6 +6,6 @@ Found 4 users
 286 unique companies across all contacts
 Asking Claude about 80 new companies
 Using model: claude-sonnet-4-5
-Claude text length=8359, head='```json\n[\n  {\n    "name": "BioReference Laboratories",\n    "atsHint": "workday",\n    "slug": "",\n    "workday": {\n      "tenant": "bioreference",\n      "subdomain": "openighr"\n    }\n  },\n  {\n    "name'
+Claude text length=8372, head='```json\n[\n  {\n    "name": "BioReference Laboratories",\n    "atsHint": "workday",\n    "slug": "",\n    "workday": {\n      "tenant": "bioreference",\n      "subdomain": "opentexts"\n    }\n  },\n  {\n    "nam'
 Enriched 80 companies
 DONE — added 0 healthtech + 0 workday from contacts
