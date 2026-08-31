@@ -1,0 +1,342 @@
+{
+  "fromCache": {
+    "Customers Bank": {
+      "stage": "public",
+      "lastFundedApproxYear": null,
+      "isRecentlyFunded": false,
+      "notes": "Public bank, trades on NASDAQ as CUBI",
+      "analyzedAt": "2026-06-08T17:36:46.276Z"
+    },
+    "Grant Thornton": {
+      "stage": "late-stage-private",
+      "lastFundedApproxYear": null,
+      "isRecentlyFunded": false,
+      "notes": "Large private professional services firm, partnership-owned",
+      "analyzedAt": "2026-06-08T17:36:46.276Z"
+    },
+    "Persona": {
+      "stage": "series-b",
+      "lastFundedApproxYear": 2021,
+      "isRecentlyFunded": false,
+      "notes": "Identity verification platform raised Series B around 2021",
+      "analyzedAt": "2026-06-08T17:36:50.459Z"
+    },
+    "S&P Global Market Intelligence": {
+      "stage": "late-stage-private",
+      "lastFundedApproxYear": null,
+      "isRecentlyFunded": false,
+      "notes": "Subsidiary of public S&P Global; part of larger financial data division",
+      "analyzedAt": "2026-06-08T17:36:50.459Z"
+    },
+    "Western Alliance Bancorporation": {
+      "stage": "public",
+      "lastFundedApproxYear": null,
+      "isRecentlyFunded": false,
+      "notes": "Regional bank holding company; publicly traded on NYSE (WAL)",
+      "analyzedAt": "2026-06-08T17:36:50.459Z"
+    }
+  },
+  "newlyClassified": {
+    "Abridge": {
+      "stage": "series-b",
+      "lastFundedApproxYear": 2023,
+      "isRecentlyFunded": false,
+      "notes": "AI clinical documentation, Series B funding round",
+      "analyzedAt": "2026-08-31T12:32:20.612Z"
+    },
+    "Alloy": {
+      "stage": "series-c",
+      "lastFundedApproxYear": 2021,
+      "isRecentlyFunded": false,
+      "notes": "Digital onboarding platform, Series C in 2021",
+      "analyzedAt": "2026-08-31T12:32:20.612Z"
+    },
+    "Aravo": {
+      "stage": "series-b",
+      "lastFundedApproxYear": 2018,
+      "isRecentlyFunded": false,
+      "notes": "Supply chain risk management, acquired by Dun & Bradstreet 2019",
+      "analyzedAt": "2026-08-31T12:32:20.612Z"
+    },
+    "Arcadia": {
+      "stage": "series-c",
+      "lastFundedApproxYear": 2022,
+      "isRecentlyFunded": false,
+      "notes": "Healthcare data platform, Series C funding",
+      "analyzedAt": "2026-08-31T12:32:20.612Z"
+    },
+    "Athenahealth": {
+      "stage": "public",
+      "lastFundedApproxYear": 2022,
+      "isRecentlyFunded": false,
+      "notes": "EHR/medical software, acquired by Veritas Capital 2022",
+      "analyzedAt": "2026-08-31T12:32:20.612Z"
+    },
+    "Atlantic Union Bank": {
+      "stage": "public",
+      "lastFundedApproxYear": null,
+      "isRecentlyFunded": false,
+      "notes": "Public bank, traded on NASDAQ",
+      "analyzedAt": "2026-08-31T12:32:20.612Z"
+    },
+    "AuditBoard": {
+      "stage": "series-c",
+      "lastFundedApproxYear": 2021,
+      "isRecentlyFunded": false,
+      "notes": "Audit management platform, Series C funding",
+      "analyzedAt": "2026-08-31T12:32:20.612Z"
+    },
+    "Availity": {
+      "stage": "late-stage-private",
+      "lastFundedApproxYear": 2019,
+      "isRecentlyFunded": false,
+      "notes": "Healthcare connectivity platform, private equity backed",
+      "analyzedAt": "2026-08-31T12:32:20.612Z"
+    },
+    "Cadence Bank": {
+      "stage": "public",
+      "lastFundedApproxYear": null,
+      "isRecentlyFunded": false,
+      "notes": "Regional bank, public company",
+      "analyzedAt": "2026-08-31T12:32:20.612Z"
+    },
+    "Capco": {
+      "stage": "late-stage-private",
+      "lastFundedApproxYear": null,
+      "isRecentlyFunded": false,
+      "notes": "Management consulting, acquired by Consilio 2023",
+      "analyzedAt": "2026-08-31T12:32:20.612Z"
+    },
+    "Cohere Health": {
+      "stage": "series-b",
+      "lastFundedApproxYear": 2022,
+      "isRecentlyFunded": false,
+      "notes": "Healthcare revenue cycle platform, Series B",
+      "analyzedAt": "2026-08-31T12:32:20.612Z"
+    },
+    "Crowe LLP": {
+      "stage": "late-stage-private",
+      "lastFundedApproxYear": null,
+      "isRecentlyFunded": false,
+      "notes": "Accounting and consulting firm, private partnership",
+      "analyzedAt": "2026-08-31T12:32:20.612Z"
+    },
+    "Definitive Healthcare": {
+      "stage": "public",
+      "lastFundedApproxYear": 2021,
+      "isRecentlyFunded": false,
+      "notes": "Healthcare intelligence, IPO in 2021",
+      "analyzedAt": "2026-08-31T12:32:20.612Z"
+    },
+    "Evolent Health": {
+      "stage": "public",
+      "lastFundedApproxYear": 2015,
+      "isRecentlyFunded": false,
+      "notes": "Healthcare services, IPO in 2015",
+      "analyzedAt": "2026-08-31T12:32:20.612Z"
+    },
+    "FTI Consulting": {
+      "stage": "public",
+      "lastFundedApproxYear": null,
+      "isRecentlyFunded": false,
+      "notes": "Professional services, public company",
+      "analyzedAt": "2026-08-31T12:32:20.612Z"
+    },
+    "Hims & Hers Health": {
+      "stage": "public",
+      "lastFundedApproxYear": 2021,
+      "isRecentlyFunded": false,
+      "notes": "Telehealth platform, IPO in 2021",
+      "analyzedAt": "2026-08-31T12:32:20.612Z"
+    },
+    "Innovaccer": {
+      "stage": "series-d",
+      "lastFundedApproxYear": 2022,
+      "isRecentlyFunded": false,
+      "notes": "Healthcare data platform, Series D funding",
+      "analyzedAt": "2026-08-31T12:32:20.612Z"
+    },
+    "Inovalon": {
+      "stage": "public",
+      "lastFundedApproxYear": 2010,
+      "isRecentlyFunded": false,
+      "notes": "Healthcare IT platform, IPO in 2010",
+      "analyzedAt": "2026-08-31T12:32:20.612Z"
+    },
+    "Kyruus Health": {
+      "stage": "series-c",
+      "lastFundedApproxYear": 2016,
+      "isRecentlyFunded": false,
+      "notes": "Patient access platform, acquired by Everstream Analytics",
+      "analyzedAt": "2026-08-31T12:32:20.612Z"
+    },
+    "Lightbeam Health Solutions": {
+      "stage": "late-stage-private",
+      "lastFundedApproxYear": 2017,
+      "isRecentlyFunded": false,
+      "notes": "Healthcare analytics, private equity backed",
+      "analyzedAt": "2026-08-31T12:32:20.612Z"
+    },
+    "LogicGate": {
+      "stage": "late-stage-private",
+      "lastFundedApproxYear": 2021,
+      "isRecentlyFunded": false,
+      "notes": "Governance and risk management platform",
+      "analyzedAt": "2026-08-31T12:32:20.612Z"
+    },
+    "Meridian Health Plan": {
+      "stage": "late-stage-private",
+      "lastFundedApproxYear": null,
+      "isRecentlyFunded": false,
+      "notes": "Health insurance plan, private company",
+      "analyzedAt": "2026-08-31T12:32:20.612Z"
+    },
+    "Middesk": {
+      "stage": "series-b",
+      "lastFundedApproxYear": 2023,
+      "isRecentlyFunded": false,
+      "notes": "Business verification platform, Series B 2023",
+      "analyzedAt": "2026-08-31T12:32:20.612Z"
+    },
+    "Modernizing Medicine": {
+      "stage": "late-stage-private",
+      "lastFundedApproxYear": 2015,
+      "isRecentlyFunded": false,
+      "notes": "Specialty EHR software, acquired by Allscripts 2022",
+      "analyzedAt": "2026-08-31T12:32:20.612Z"
+    },
+    "Moody's Analytics": {
+      "stage": "public",
+      "lastFundedApproxYear": null,
+      "isRecentlyFunded": false,
+      "notes": "Financial analytics, subsidiary of Moody's Corporation",
+      "analyzedAt": "2026-08-31T12:32:20.612Z"
+    },
+    "Navina": {
+      "stage": "series-a",
+      "lastFundedApproxYear": 2021,
+      "isRecentlyFunded": false,
+      "notes": "Healthcare finance platform, Series A funding",
+      "analyzedAt": "2026-08-31T12:32:20.612Z"
+    },
+    "Netsmart Technologies": {
+      "stage": "late-stage-private",
+      "lastFundedApproxYear": 2015,
+      "isRecentlyFunded": false,
+      "notes": "Senior care software, acquired by Welltower 2019",
+      "analyzedAt": "2026-08-31T12:32:20.612Z"
+    },
+    "Notable Health": {
+      "stage": "series-b",
+      "lastFundedApproxYear": 2023,
+      "isRecentlyFunded": false,
+      "notes": "Patient experience platform, Series B 2023",
+      "analyzedAt": "2026-08-31T12:32:20.612Z"
+    },
+    "Privia Health": {
+      "stage": "public",
+      "lastFundedApproxYear": 2021,
+      "isRecentlyFunded": false,
+      "notes": "IPO in 2021, ticker PRVA",
+      "analyzedAt": "2026-08-31T12:32:35.497Z"
+    },
+    "ProcessUnity": {
+      "stage": "series-c",
+      "lastFundedApproxYear": 2022,
+      "isRecentlyFunded": false,
+      "notes": "Series C funding for GRC/risk management platform",
+      "analyzedAt": "2026-08-31T12:32:35.497Z"
+    },
+    "Quartet Health": {
+      "stage": "series-b",
+      "lastFundedApproxYear": 2018,
+      "isRecentlyFunded": false,
+      "notes": "Behavioral health platform, Series B ~2018",
+      "analyzedAt": "2026-08-31T12:32:35.497Z"
+    },
+    "Resolver": {
+      "stage": "series-b",
+      "lastFundedApproxYear": 2019,
+      "isRecentlyFunded": false,
+      "notes": "Incident management platform, Series B funding",
+      "analyzedAt": "2026-08-31T12:32:35.497Z"
+    },
+    "Riskonnect": {
+      "stage": "series-b",
+      "lastFundedApproxYear": 2018,
+      "isRecentlyFunded": false,
+      "notes": "Risk management software, Series B ~2018",
+      "analyzedAt": "2026-08-31T12:32:35.497Z"
+    },
+    "Riveron": {
+      "stage": "series-b",
+      "lastFundedApproxYear": 2021,
+      "isRecentlyFunded": false,
+      "notes": "Internal audit & GRC platform, Series B 2021",
+      "analyzedAt": "2026-08-31T12:32:35.497Z"
+    },
+    "Sardine": {
+      "stage": "series-b",
+      "lastFundedApproxYear": 2022,
+      "isRecentlyFunded": false,
+      "notes": "Fraud prevention/fintech, Series B 2022",
+      "analyzedAt": "2026-08-31T12:32:35.497Z"
+    },
+    "Synovus Financial": {
+      "stage": "public",
+      "lastFundedApproxYear": null,
+      "isRecentlyFunded": false,
+      "notes": "Public bank holding company, ticker SNV",
+      "analyzedAt": "2026-08-31T12:32:35.497Z"
+    },
+    "Texas Capital Bank": {
+      "stage": "public",
+      "lastFundedApproxYear": null,
+      "isRecentlyFunded": false,
+      "notes": "Public commercial bank, ticker TCBI",
+      "analyzedAt": "2026-08-31T12:32:35.497Z"
+    },
+    "Transcarent": {
+      "stage": "series-b",
+      "lastFundedApproxYear": 2022,
+      "isRecentlyFunded": false,
+      "notes": "Healthcare benefits platform, Series B 2022",
+      "analyzedAt": "2026-08-31T12:32:35.497Z"
+    },
+    "Veeva Systems": {
+      "stage": "public",
+      "lastFundedApproxYear": 2013,
+      "isRecentlyFunded": false,
+      "notes": "IPO 2013, life sciences software, ticker VEEV",
+      "analyzedAt": "2026-08-31T12:32:35.497Z"
+    },
+    "WebMD Health Services": {
+      "stage": "public",
+      "lastFundedApproxYear": null,
+      "isRecentlyFunded": false,
+      "notes": "Part of WebMD Health Corp (WBMD), public",
+      "analyzedAt": "2026-08-31T12:32:35.497Z"
+    },
+    "Webster Bank": {
+      "stage": "public",
+      "lastFundedApproxYear": null,
+      "isRecentlyFunded": false,
+      "notes": "Public regional bank, ticker WBS",
+      "analyzedAt": "2026-08-31T12:32:35.497Z"
+    },
+    "West Monroe Partners": {
+      "stage": "late-stage-private",
+      "lastFundedApproxYear": null,
+      "isRecentlyFunded": false,
+      "notes": "Private consulting firm, employee-owned",
+      "analyzedAt": "2026-08-31T12:32:35.497Z"
+    },
+    "Wolters Kluwer Health": {
+      "stage": "late-stage-private",
+      "lastFundedApproxYear": null,
+      "isRecentlyFunded": false,
+      "notes": "Subsidiary of public Wolters Kluwer, healthcare division",
+      "analyzedAt": "2026-08-31T12:32:35.497Z"
+    }
+  }
+}
