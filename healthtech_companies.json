@@ -1,6 +1,6 @@
 {
   "_note": "Curated Healthcare IT / digital health catalog. Used for: (a) scoring boost when company appears in feed AND user has healthcare industries (+3, all entries), (b) auto-scraping (only ATS=greenhouse/lever/ashby/workable). Workday/Google/Amazon entries are catalog-only (scored boost when found, not scraped). Slugs are canonical for matching.",
-  "version": "2026-05-29-v3+discovered+discovered+dream-list+from-contacts+dedup+dream-geetu+discovered+dedup-r2+verified+slug-recover+verified+verified+discovered+discovered+discovered+verified+verified+verified+verified+from-contacts+verified+verified+from-contacts+verified+verified+from-contacts+verified+from-contacts+verified+from-contacts+verified+from-contacts+verified+from-contacts+verified+from-contacts",
+  "version": "2026-05-29-v3+discovered+discovered+dream-list+from-contacts+dedup+dream-geetu+discovered+dedup-r2+verified+slug-recover+verified+verified+discovered+discovered+discovered+verified+verified+verified+verified+from-contacts+verified+verified+from-contacts+verified+verified+from-contacts+verified+from-contacts+verified+from-contacts+verified+from-contacts+verified+from-contacts+verified+from-contacts+verified",
   "companies": [
     {
       "name": "Doximity",
@@ -32,7 +32,7 @@
     {
       "name": "Hims & Hers Health",
       "category": "telehealth",
-      "atsHint": "ashby",
+      "atsHint": "greenhouse",
       "slug": "hims"
     },
     {
@@ -546,7 +546,8 @@
       "name": "Truepill",
       "category": "pharma-tech",
       "atsHint": "greenhouse",
-      "slug": "truepill"
+      "slug": "truepill",
+      "suspectSlug": true
     },
     {
       "name": "Honeybee Health",
@@ -673,7 +674,8 @@
       "name": "Kaia Health",
       "category": "dtx",
       "atsHint": "greenhouse",
-      "slug": "kaiahealth"
+      "slug": "kaiahealth",
+      "suspectSlug": true
     },
     {
       "name": "Vida Health",
@@ -697,7 +699,8 @@
       "name": "Cerebral",
       "category": "telehealth",
       "atsHint": "greenhouse",
-      "slug": "cerebral"
+      "slug": "cerebral",
+      "suspectSlug": true
     },
     {
       "name": "Talkspace",
@@ -918,7 +921,8 @@
       "name": "Lyric (formerly ClaimsXten)",
       "category": "payer-tech",
       "atsHint": "greenhouse",
-      "slug": "lyric"
+      "slug": "lyric",
+      "suspectSlug": true
     },
     {
       "name": "HealthEdge",
@@ -1021,14 +1025,13 @@
       "name": "Spark Advisors",
       "category": "medicare",
       "atsHint": "ashby",
-      "slug": "spark-advisors"
+      "slug": "sparkadvisors"
     },
     {
       "name": "Hims & Hers",
       "category": "Mid-stage healthtech SaaS",
       "atsHint": "greenhouse",
-      "slug": "hims",
-      "suspectSlug": true
+      "slug": "himshers"
     },
     {
       "name": "Calibrate",
@@ -1824,7 +1827,8 @@
       "name": "Byte",
       "category": "Dental + Vision Tech",
       "atsHint": "greenhouse",
-      "slug": "byte"
+      "slug": "byte",
+      "suspectSlug": true
     },
     {
       "name": "Candid",
@@ -1849,7 +1853,8 @@
       "name": "Stork Club",
       "category": "Women's Health + Fertility",
       "atsHint": "ashby",
-      "slug": "storkclub"
+      "slug": "storkclub",
+      "suspectSlug": true
     },
     {
       "name": "Ovia Health",
@@ -1868,7 +1873,7 @@
       "name": "Cleo",
       "category": "Women's Health + Fertility",
       "atsHint": "ashby",
-      "slug": "meetcleo"
+      "slug": "cleo"
     },
     {
       "name": "Bicycle Health",
@@ -2063,7 +2068,8 @@
       "name": "CivicaScript",
       "category": "Specialty Pharmacy",
       "atsHint": "greenhouse",
-      "slug": "civicascript"
+      "slug": "civicascript",
+      "suspectSlug": true
     },
     {
       "name": "Capital Rx",
@@ -2162,7 +2168,8 @@
       "name": "Dental Intelligence",
       "category": "Dental tech",
       "atsHint": "greenhouse",
-      "slug": "dentalintelligence"
+      "slug": "dentalintelligence",
+      "suspectSlug": true
     },
     {
       "name": "Tend",
@@ -2180,13 +2187,13 @@
       "name": "Overjet",
       "category": "Dental tech",
       "atsHint": "greenhouse",
-      "slug": "overjet"
+      "slug": "overjetai"
     },
     {
       "name": "Dandy",
       "category": "Dental tech",
       "atsHint": "greenhouse",
-      "slug": "dandy"
+      "slug": "meetdandy"
     },
     {
       "name": "Tend Health",
@@ -2233,7 +2240,8 @@
       "name": "Oula Health",
       "category": "Women's health",
       "atsHint": "ashby",
-      "slug": "oula"
+      "slug": "oula",
+      "suspectSlug": true
     },
     {
       "name": "Odela",
@@ -2260,7 +2268,8 @@
       "name": "Legacy",
       "category": "Women's health / fertility",
       "atsHint": "ashby",
-      "slug": "givelegacy"
+      "slug": "givelegacy",
+      "suspectSlug": true
     },
     {
       "name": "Dadi",
@@ -2273,7 +2282,8 @@
       "name": "Confidant Health",
       "category": "Behavioral health / addiction",
       "atsHint": "greenhouse",
-      "slug": "confidanthealth"
+      "slug": "confidanthealth",
+      "suspectSlug": true
     },
     {
       "name": "Pelago",
@@ -2292,7 +2302,7 @@
       "name": "Rula Health",
       "category": "Behavioral health",
       "atsHint": "greenhouse",
-      "slug": "rulahealth"
+      "slug": "rula"
     },
     {
       "name": "Two Chairs",
@@ -2366,7 +2376,7 @@
       "name": "Ribbon Health",
       "category": "Health IT infrastructure",
       "atsHint": "greenhouse",
-      "slug": "ribbonhealth"
+      "slug": "ribbon"
     },
     {
       "name": "Smile CDR",
@@ -2379,7 +2389,8 @@
       "name": "Apostrophe",
       "category": "Consumer health / dermatology",
       "atsHint": "lever",
-      "slug": "apostrophe"
+      "slug": "apostrophe",
+      "suspectSlug": true
     },
     {
       "name": "Manual",
@@ -2420,7 +2431,8 @@
       "name": "Vetsource",
       "category": "Veterinary tech",
       "atsHint": "greenhouse",
-      "slug": "vetsource"
+      "slug": "vetsource",
+      "suspectSlug": true
     },
     {
       "name": "PetDesk",
@@ -2460,7 +2472,8 @@
       "name": "Artera",
       "category": "Patient engagement",
       "atsHint": "greenhouse",
-      "slug": "artera"
+      "slug": "artera",
+      "suspectSlug": true
     },
     {
       "name": "Luma Health",
@@ -2500,8 +2513,7 @@
       "name": "Accel",
       "category": "Care navigation / RCM",
       "atsHint": "greenhouse",
-      "slug": "accel",
-      "suspectSlug": true
+      "slug": "accelpartners"
     },
     {
       "name": "League",
@@ -2526,7 +2538,7 @@
       "name": "Equip Health",
       "category": "behavioral-health",
       "atsHint": "greenhouse",
-      "slug": "equip"
+      "slug": "equiphealth"
     },
     {
       "name": "Hazel Health",
@@ -2821,7 +2833,7 @@
       "name": "Cadence",
       "category": "remote-monitoring",
       "atsHint": "greenhouse",
-      "slug": "cadence"
+      "slug": "workatcadence"
     },
     {
       "name": "Optimize Health",
@@ -2922,25 +2934,29 @@
       "name": "ClearView Healthcare Partners",
       "category": "from-contacts",
       "atsHint": "greenhouse",
-      "slug": "clearviewhcp"
+      "slug": "clearviewhcp",
+      "suspectSlug": true
     },
     {
       "name": "CleanChoice Energy",
       "category": "from-contacts",
       "atsHint": "greenhouse",
-      "slug": "cleanchoiceenergy"
+      "slug": "cleanchoiceenergy",
+      "suspectSlug": true
     },
     {
       "name": "First Databank (FDB)",
       "category": "from-contacts",
       "atsHint": "greenhouse",
-      "slug": "firstdatabank"
+      "slug": "firstdatabank",
+      "suspectSlug": true
     },
     {
       "name": "ABC Fitness",
       "category": "from-contacts",
       "atsHint": "greenhouse",
-      "slug": "abcfitness"
+      "slug": "abcfitness",
+      "suspectSlug": true
     },
     {
       "name": "DoorDash",

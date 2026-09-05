@@ -2,7 +2,7 @@ Probing 441 healthtech entries against ATS APIs...
   ✗ DEAD [greenhouse] veeva-systems             ← Veeva Systems
   ✗ DEAD [greenhouse] definitive-healthcare     ← Definitive Healthcare
   ✗ DEAD [greenhouse] teladoc-health            ← Teladoc Health
-  ✗ DEAD [ashby     ] himsandhers               ← Hims & Hers Health
+  ✗ DEAD [ashby     ] hims                      ← Hims & Hers Health
   ✗ DEAD [greenhouse] hingehealth               ← Hinge Health
   ✗ DEAD [greenhouse] lyrahealth                ← Lyra Health
   ✗ DEAD [greenhouse] devotedhealth             ← Devoted Health
@@ -43,7 +43,8 @@ Probing 441 healthtech entries against ATS APIs...
   ✗ DEAD [ashby     ] formationbio              ← Trialspark (Formation Bio)
   ✗ DEAD [greenhouse] goodrx                    ← GoodRx
   ✗ DEAD [greenhouse] alto                      ← Alto Pharmacy
-  ✗ DEAD [greenhouse] capsulecares              ← Capsule
+  ✗ DEAD [greenhouse] capsule                   ← Capsule
+  ✗ DEAD [greenhouse] truepill                  ← Truepill
   ✗ DEAD [ashby     ] honeybeehealth            ← Honeybee Health
   ✗ DEAD [greenhouse] drfirst                   ← DrFirst
   ✗ DEAD [greenhouse] rxsavingssolutions        ← Rx Savings Solutions
@@ -55,7 +56,7 @@ Probing 441 healthtech entries against ATS APIs...
   ✗ DEAD [greenhouse] heal                      ← Heal
   ✗ DEAD [greenhouse] doctorondemand            ← Doctor on Demand
   ✗ DEAD [greenhouse] khealth                   ← K Health
-  ...progress: 100/441 valid=31 dead=55 skipped=14
+  ...progress: 100/441 valid=30 dead=56 skipped=14
   ✗ DEAD [greenhouse] kaiahealth                ← Kaia Health
   ✗ DEAD [greenhouse] vidahealth                ← Vida Health
   ✗ DEAD [greenhouse] virtahealth               ← Virta Health
@@ -81,10 +82,11 @@ Probing 441 healthtech entries against ATS APIs...
   ✗ DEAD [greenhouse] aetion                    ← Aetion
   ✗ DEAD [greenhouse] apixio                    ← Apixio
   ✗ DEAD [greenhouse] cleardata                 ← ClearDATA
-  ...progress: 150/441 valid=50 dead=80 skipped=20
+  ...progress: 150/441 valid=49 dead=81 skipped=20
   ✗ DEAD [ashby     ] hippocraticai             ← Hippocratic AI
+  ✗ DEAD [lever     ] forgehealth               ← Forge Health
   ✗ DEAD [greenhouse] wellth                    ← Wellth
-  ✗ DEAD [ashby     ] sparkadvisors             ← Spark Advisors
+  ✗ DEAD [ashby     ] spark-advisors            ← Spark Advisors
   ✗ DEAD [greenhouse] hims                      ← Hims & Hers
   ✗ DEAD [greenhouse] oakstreethealth           ← Oak Street Health
   ✗ DEAD [greenhouse] vivantehealth             ← Vivante Health
@@ -115,7 +117,7 @@ Probing 441 healthtech entries against ATS APIs...
   ✗ DEAD [greenhouse] drchrono                  ← DrChrono
   ✗ DEAD [lever     ] patientping               ← PatientPing
   ✗ DEAD [lever     ] healthgorilla             ← Health Gorilla
-  ...progress: 200/441 valid=66 dead=113 skipped=21
+  ...progress: 200/441 valid=65 dead=115 skipped=20
   ✗ DEAD [greenhouse] bamboohealth              ← Bamboo Health
   ✗ DEAD [lever     ] 1uphealth                 ← 1upHealth
   ✗ DEAD [lever     ] protenus                  ← Protenus
@@ -155,7 +157,7 @@ Probing 441 healthtech entries against ATS APIs...
   ✗ DEAD [greenhouse] laseraway                 ← LaserAway
   ✗ DEAD [ashby     ] nexhealth                 ← NexHealth
   ✗ DEAD [greenhouse] prescryptive              ← Prescryptive
-  ...progress: 250/441 valid=77 dead=152 skipped=21
+  ...progress: 250/441 valid=76 dead=154 skipped=20
   ✗ DEAD [lever     ] superhuman                ← Superhuman
   ✗ DEAD [greenhouse] rxbenefits                ← RxBenefits
   ✗ DEAD [ashby     ] cleerly                   ← Cleerly
@@ -187,7 +189,7 @@ Probing 441 healthtech entries against ATS APIs...
   ✗ DEAD [greenhouse] altasciences              ← Altasciences
   ✗ DEAD [lever     ] stellar                   ← Stellar Dental
   ✗ DEAD [lever     ] springfertility           ← Spring Fertility
-  ...progress: 300/441 valid=96 dead=183 skipped=21
+  ...progress: 300/441 valid=95 dead=185 skipped=20
   ✗ DEAD [greenhouse] winfertility              ← WIN Fertility
   ✗ DEAD [ashby     ] twentyeighthealth         ← Twentyeight Health
   ✗ DEAD [ashby     ] workithealth              ← Workit Health
@@ -226,7 +228,7 @@ Probing 441 healthtech entries against ATS APIs...
   ✗ DEAD [ashby     ] seniorly                  ← Seniorly
   ✗ DEAD [lever     ] medly                     ← Medly Pharmacy
   ✗ DEAD [lever     ] kalderos                  ← Kalderos
-  ...progress: 350/441 valid=108 dead=221 skipped=21
+  ...progress: 350/441 valid=107 dead=223 skipped=20
   ✗ DEAD [lever     ] scriptdrop                ← ScriptDrop
   ✗ DEAD [ashby     ] lynxhealth                ← Lynx Health
   ✗ DEAD [greenhouse] ribbonhealth              ← Ribbon Health
@@ -259,7 +261,7 @@ Probing 441 healthtech entries against ATS APIs...
   ✗ DEAD [greenhouse] radai                     ← Rad AI
   ✗ DEAD [greenhouse] videahealth               ← VideaHealth
   ✗ DEAD [greenhouse] leantaas                  ← LeanTaaS
-  ...progress: 400/441 valid=126 dead=253 skipped=21
+  ...progress: 400/441 valid=125 dead=255 skipped=20
   ✗ DEAD [greenhouse] laudio                    ← Laudio
   ✗ DEAD [greenhouse] carrumhealth              ← Carrum Health
   ✗ DEAD [greenhouse] lanterncare               ← Lantern Care
@@ -285,19 +287,27 @@ Probing 441 healthtech entries against ATS APIs...
   ✗ DEAD [greenhouse] abcfitness                ← ABC Fitness
   ✗ DEAD [greenhouse] doordash                  ← DoorDash
 
-Probe done — valid:142 dead:277 skipped:22
+Probe done — valid:141 dead:279 skipped:21
 
-Asking Claude for correct slugs for 277 dead entries...
+Asking Claude for correct slugs for 279 dead entries...
   batch 1/7: 40 fixes
   batch 2/7: 40 fixes
   batch 3/7: 40 fixes
   batch 4/7: 40 fixes
   batch 5/7: 40 fixes
   batch 6/7: 40 fixes
-  batch 7/7: 37 fixes
-Claude returned 277 fix entries total
-  ↻ Hims & Hers Health: ashby/himsandhers → ashby/hims
-  ↻ Capsule: greenhouse/capsulecares → greenhouse/capsule
-  ↻ Spark Advisors: ashby/sparkadvisors → ashby/spark-advisors
+  batch 7/7: 39 fixes
+Claude returned 279 fix entries total
+  ↻ Hims & Hers Health: ashby/hims → greenhouse/hims
+  ↻ Spark Advisors: ashby/spark-advisors → ashby/sparkadvisors
+  ↻ Hims & Hers: greenhouse/hims → greenhouse/himshers
+  ↻ Cleo: ashby/meetcleo → ashby/cleo
+  ↻ Overjet: greenhouse/overjet → greenhouse/overjetai
+  ↻ Dandy: greenhouse/dandy → greenhouse/meetdandy
+  ↻ Rula Health: greenhouse/rulahealth → greenhouse/rula
+  ↻ Ribbon Health: greenhouse/ribbonhealth → greenhouse/ribbon
+  ↻ Accel: greenhouse/accel → greenhouse/accelpartners
+  ↻ Equip Health: greenhouse/equip → greenhouse/equiphealth
+  ↻ Cadence: greenhouse/cadence → greenhouse/workatcadence
 
-DONE — fixed 3 slugs, 84 marked suspectSlug (Claude unsure)
+DONE — fixed 11 slugs, 136 marked suspectSlug (Claude unsure)
