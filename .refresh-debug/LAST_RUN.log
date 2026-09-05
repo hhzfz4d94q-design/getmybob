@@ -142,7 +142,7 @@
   [130/481] ?: 282 jobs
   [131/481] ?: 65 jobs
   [132/481] ?: 58 jobs
-  [133/481] ?: 129 jobs
+  [133/481] ?: 128 jobs
   [134/481] ?: 205 jobs
   [135/481] ?: 61 jobs
   [136/481] ?: 192 jobs
@@ -203,7 +203,7 @@
   [191/481] ?: 0 jobs (slug may be invalid)
   [192/481] ?: 8 jobs
   [193/481] ?: 0 jobs (slug may be invalid)
-  [194/481] ?: 87 jobs
+  [194/481] ?: 86 jobs
   [195/481] ?: 12 jobs
   [196/481] ?: 0 jobs (slug may be invalid)
   [197/481] ?: 0 jobs (slug may be invalid)
@@ -328,7 +328,7 @@
   [316/481] decent: 0 jobs (slug may be invalid)
   [317/481] imaginepediatrics: 26 jobs
   [318/481] forward: 5 jobs
-  [319/481] onemedical: 331 jobs
+  [319/481] onemedical: 335 jobs
   [320/481] strivehealth: 58 jobs
   [321/481] lyric: 0 jobs (slug may be invalid)
   [322/481] healthedge: 0 jobs (slug may be invalid)
@@ -339,7 +339,7 @@
   [327/481] tomorrow: 21 jobs
   [328/481] oakstreethealth: 0 jobs (slug may be invalid)
   [329/481] vivantehealth: 0 jobs (slug may be invalid)
-  [330/481] natera: 213 jobs
+  [330/481] natera: 214 jobs
   [331/481] trinetx: 0 jobs (slug may be invalid)
   [332/481] brighthealth: 0 jobs (slug may be invalid)
   [333/481] landmarkhealth: 0 jobs (slug may be invalid)
@@ -474,7 +474,7 @@
   [462/481] h1: 0 jobs (slug may be invalid)
   [463/481] vytalizehealth: 0 jobs (slug may be invalid)
   [464/481] monogramhealth: 0 jobs (slug may be invalid)
-  [465/481] welbehealth: 129 jobs
+  [465/481] welbehealth: 128 jobs
   [466/481] vestahealthcare: 0 jobs (slug may be invalid)
   [467/481] homeward: 3 jobs
   [468/481] mainstreethealth: 9 jobs
@@ -500,7 +500,7 @@
   [5/127] januaryinc: 1 jobs
   [6/127] RyzLabs: 31 jobs
   [7/127] heartbeathealth: 28 jobs
-  [8/127] circadiahealth: 55 jobs
+  [8/127] circadiahealth: 56 jobs
   [9/127] artera-2: 6 jobs
   [10/127] whoop: 0 jobs (slug may be invalid)
   [11/127] caremessage: 0 jobs (slug may be invalid)
@@ -635,7 +635,7 @@
   [11/135] Aios: 15 jobs
   [12/135] you-health: 8 jobs
   [13/135] versemedical: 27 jobs
-  [14/135] abridge: 39 jobs
+  [14/135] abridge: 40 jobs
   [15/135] decagon: 139 jobs
   [16/135] rad-ai: 0 jobs (slug may be invalid)
   [17/135] ramphealth: 0 jobs (slug may be invalid)
@@ -1317,7 +1317,7 @@
   [1/1] YC Work at a Startup: 30 jobs
 
 [hn_hiring] 1 companies
-  [1/1] HN Who is Hiring: 200 jobs
+  [1/1] HN Who is Hiring: 199 jobs
 
 [healthecareers] 1 companies
   [1/1] Health eCareers: 0 jobs (slug may be invalid)
@@ -1325,34 +1325,34 @@
 [himss] 1 companies
   [1/1] HIMSS Career Center: 0 jobs (slug may be invalid)
 
-Totals: {'greenhouse': 9293, 'lever': 992, 'ashby': 1424, 'workday': 2231, 'smartrecruiters': 40, 'remoteok': 100, 'yc': 30, 'hn_hiring': 200}
+Totals: {'greenhouse': 9295, 'lever': 993, 'ashby': 1425, 'workday': 2231, 'smartrecruiters': 40, 'remoteok': 100, 'yc': 30, 'hn_hiring': 199}
 Failures: 1025 (companies returned no data — likely bad slugs)
 [users] loaded 4 from Worker
 
 [multi-user] generating dashboards for 4 users
 [diag:geetu] loaded profile, targetCompanies len=23, first={'name': 'Veeva Systems', 'atsHint': 'workday', 'atsUrl': 'https://veeva.wd1.myworkdayjobs.com/veeva_careers', 'why': 'Cloud SaaS leader in life sciences with constant demand for senior product and transformation leaders who bridge pharma and technology'}
 [skills-profile:geetu] Senior digital transformation and product leader at the intersection of healthcare and technology · 65 keywords
-[velocity] 146 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 3362/3362
-[why-hidden:geetu] classified 2000 hidden jobs (of 13765 total dropped)
+[velocity] 147 actively-scaling companies (3+ senior roles in 30d)
+[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 3363/3363
+[why-hidden:geetu] classified 2000 hidden jobs (of 13768 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/geetu.html
 [diag:amit-arora] loaded profile, targetCompanies len=25, first={'name': 'Webster Bank', 'atsHint': 'workday', 'atsUrl': 'https://websterbank.wd1.myworkdayjobs.com/WebsterBankCareers', 'why': "Super-regional commercial bank with active GRC and digital transformation hiring at the SVP/MD level, directly aligned to Amit's IDB Bank and Bank Leumi profile."}
 [skills-profile:amit-arora] Senior technology and GRC executive specializing in digital transformation, risk management, and M&A integration within banking and capital markets · 13 keywords
-[velocity] 146 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 1618/1618
-[why-hidden:amit-arora] classified 2000 hidden jobs (of 13765 total dropped)
+[velocity] 147 actively-scaling companies (3+ senior roles in 30d)
+[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 1617/1617
+[why-hidden:amit-arora] classified 2000 hidden jobs (of 13768 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/amit-arora.html
 [diag:ishika-arora] loaded profile, targetCompanies len=0, first=None
 [skills-profile:ishika-arora] ? · 0 keywords
-[velocity] 146 actively-scaling companies (3+ senior roles in 30d)
-[why-hidden:ishika-arora] classified 2000 hidden jobs (of 13765 total dropped)
+[velocity] 147 actively-scaling companies (3+ senior roles in 30d)
+[why-hidden:ishika-arora] classified 2000 hidden jobs (of 13768 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/ishika-arora.html
 [diag:radhika-kalra] loaded profile, targetCompanies len=0, first=None
 [skills-profile:radhika-kalra] ? · 0 keywords
-[velocity] 146 actively-scaling companies (3+ senior roles in 30d)
-[why-hidden:radhika-kalra] classified 2000 hidden jobs (of 13765 total dropped)
+[velocity] 147 actively-scaling companies (3+ senior roles in 30d)
+[why-hidden:radhika-kalra] classified 2000 hidden jobs (of 13768 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/radhika-kalra.html
