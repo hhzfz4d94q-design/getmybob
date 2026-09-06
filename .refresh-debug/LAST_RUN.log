@@ -143,7 +143,7 @@
   [131/482] ?: 65 jobs
   [132/482] ?: 58 jobs
   [133/482] ?: 128 jobs
-  [134/482] ?: 205 jobs
+  [134/482] ?: 204 jobs
   [135/482] ?: 61 jobs
   [136/482] ?: 192 jobs
   [137/482] ?: 0 jobs (slug may be invalid)
@@ -1325,7 +1325,7 @@
 [himss] 1 companies
   [1/1] HIMSS Career Center: 0 jobs (slug may be invalid)
 
-Totals: {'greenhouse': 9294, 'lever': 993, 'ashby': 1424, 'workday': 2231, 'smartrecruiters': 40, 'remoteok': 100, 'yc': 30, 'hn_hiring': 202}
+Totals: {'greenhouse': 9293, 'lever': 993, 'ashby': 1424, 'workday': 2231, 'smartrecruiters': 40, 'remoteok': 100, 'yc': 30, 'hn_hiring': 202}
 Failures: 1025 (companies returned no data — likely bad slugs)
 [users] loaded 4 from Worker
 
@@ -1334,25 +1334,25 @@ Failures: 1025 (companies returned no data — likely bad slugs)
 [skills-profile:geetu] Senior digital transformation and product leader at the intersection of healthcare and technology · 65 keywords
 [velocity] 147 actively-scaling companies (3+ senior roles in 30d)
 [location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 3357/3357
-[why-hidden:geetu] classified 2000 hidden jobs (of 13775 total dropped)
+[why-hidden:geetu] classified 2000 hidden jobs (of 13774 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/geetu.html
 [diag:amit-arora] loaded profile, targetCompanies len=25, first={'name': 'Webster Bank', 'atsHint': 'workday', 'atsUrl': 'https://websterbank.wd1.myworkdayjobs.com/WebsterBankCareers', 'why': "Super-regional commercial bank with active GRC and digital transformation hiring at the SVP/MD level, directly aligned to Amit's IDB Bank and Bank Leumi profile."}
 [skills-profile:amit-arora] Senior technology and GRC executive specializing in digital transformation, risk management, and M&A integration within banking and capital markets · 13 keywords
 [velocity] 147 actively-scaling companies (3+ senior roles in 30d)
 [location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 1619/1619
-[why-hidden:amit-arora] classified 2000 hidden jobs (of 13775 total dropped)
+[why-hidden:amit-arora] classified 2000 hidden jobs (of 13774 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/amit-arora.html
 [diag:ishika-arora] loaded profile, targetCompanies len=0, first=None
 [skills-profile:ishika-arora] ? · 0 keywords
 [velocity] 147 actively-scaling companies (3+ senior roles in 30d)
-[why-hidden:ishika-arora] classified 2000 hidden jobs (of 13775 total dropped)
+[why-hidden:ishika-arora] classified 2000 hidden jobs (of 13774 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/ishika-arora.html
 [diag:radhika-kalra] loaded profile, targetCompanies len=0, first=None
 [skills-profile:radhika-kalra] ? · 0 keywords
 [velocity] 147 actively-scaling companies (3+ senior roles in 30d)
-[why-hidden:radhika-kalra] classified 2000 hidden jobs (of 13775 total dropped)
+[why-hidden:radhika-kalra] classified 2000 hidden jobs (of 13774 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/radhika-kalra.html
