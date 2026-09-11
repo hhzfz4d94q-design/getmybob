@@ -62,7 +62,7 @@
   [50/482] jukeboxhealth: 43 jobs
   [51/482] qualifiedhealth: 0 jobs (slug may be invalid)
   [52/482] tuleahealth: 2 jobs
-  [53/482] precisionmedicinegroup: 152 jobs
+  [53/482] precisionmedicinegroup: 153 jobs
   [54/482] peptilogics: 3 jobs
   [55/482] recursionpharmaceuticals: 12 jobs
   [56/482] headlandsresearch: 71 jobs
@@ -137,7 +137,7 @@
   [125/482] altopharmacy: 0 jobs (slug may be invalid)
   [126/482] capsule: 0 jobs (slug may be invalid)
   [127/482] vivante: 0 jobs (slug may be invalid)
-  [128/482] ?: 623 jobs
+  [128/482] ?: 626 jobs
   [129/482] ?: 0 jobs (slug may be invalid)
   [130/482] ?: 270 jobs
   [131/482] ?: 68 jobs
@@ -160,8 +160,8 @@
   [148/482] ?: 0 jobs (slug may be invalid)
   [149/482] ?: 0 jobs (slug may be invalid)
   [150/482] ?: 0 jobs (slug may be invalid)
-  [151/482] ?: 320 jobs
-  [152/482] ?: 95 jobs
+  [151/482] ?: 323 jobs
+  [152/482] ?: 94 jobs
   [153/482] ?: 0 jobs (slug may be invalid)
   [154/482] ?: 0 jobs (slug may be invalid)
   [155/482] ?: 32 jobs
@@ -198,7 +198,7 @@
   [186/482] ?: 14 jobs
   [187/482] ?: 0 jobs (slug may be invalid)
   [188/482] ?: 0 jobs (slug may be invalid)
-  [189/482] ?: 696 jobs
+  [189/482] ?: 700 jobs
   [190/482] ?: 0 jobs (slug may be invalid)
   [191/482] ?: 0 jobs (slug may be invalid)
   [192/482] ?: 8 jobs
@@ -257,7 +257,7 @@
   [245/482] lyra-health: 0 jobs (slug may be invalid)
   [246/482] maven-clinic: 0 jobs (slug may be invalid)
   [247/482] medable: 0 jobs (slug may be invalid)
-  [248/482] monzo: 68 jobs
+  [248/482] monzo: 69 jobs
   [249/482] octane: 0 jobs (slug may be invalid)
   [250/482] olive-ai: 0 jobs (slug may be invalid)
   [251/482] pipe: 0 jobs (slug may be invalid)
@@ -391,7 +391,7 @@
   [379/482] prescryptive: 0 jobs (slug may be invalid)
   [380/482] qventus: 13 jobs
   [381/482] instacart: 106 jobs
-  [382/482] elastic: 352 jobs
+  [382/482] elastic: 353 jobs
   [383/482] rxbenefits: 0 jobs (slug may be invalid)
   [384/482] honor: 16 jobs
   [385/482] lattice: 8 jobs
@@ -399,8 +399,8 @@
   [387/482] guild: 5 jobs
   [388/482] thrivemarket: 17 jobs
   [389/482] ascendanalytics: 0 jobs (slug may be invalid)
-  [390/482] alphasense: 223 jobs
-  [391/482] reddit: 145 jobs
+  [390/482] alphasense: 224 jobs
+  [391/482] reddit: 146 jobs
   [392/482] celonis: 281 jobs
   [393/482] wcgclinical: 0 jobs (slug may be invalid)
   [394/482] byte: 0 jobs (slug may be invalid)
@@ -926,7 +926,7 @@
   [123/220] Optum360: 0 jobs (slug may be invalid)
   [124/220] Covetrus: 0 jobs (slug may be invalid)
   [125/220] Petco Health & Wellness: 0 jobs (slug may be invalid)
-  [126/220] Zoetis: 124 jobs
+  [126/220] Zoetis: 116 jobs
   [127/220] Parexel: 0 jobs (slug may be invalid)
   [128/220] ICON plc: 0 jobs (slug may be invalid)
   [129/220] Syneos Health: 0 jobs (slug may be invalid)
@@ -1325,34 +1325,34 @@
 [himss] 1 companies
   [1/1] HIMSS Career Center: 0 jobs (slug may be invalid)
 
-Totals: {'greenhouse': 9191, 'lever': 913, 'ashby': 1408, 'workday': 2220, 'smartrecruiters': 39, 'remoteok': 99, 'yc': 30, 'hn_hiring': 214}
+Totals: {'greenhouse': 9205, 'lever': 913, 'ashby': 1408, 'workday': 2212, 'smartrecruiters': 39, 'remoteok': 99, 'yc': 30, 'hn_hiring': 214}
 Failures: 1028 (companies returned no data — likely bad slugs)
 [users] loaded 4 from Worker
 
 [multi-user] generating dashboards for 4 users
 [diag:geetu] loaded profile, targetCompanies len=23, first={'name': 'Veeva Systems', 'atsHint': 'workday', 'atsUrl': 'https://veeva.wd1.myworkdayjobs.com/veeva_careers', 'why': 'Cloud SaaS leader in life sciences with constant demand for senior product and transformation leaders who bridge pharma and technology'}
 [skills-profile:geetu] Senior digital transformation and product leader at the intersection of healthcare and technology · 65 keywords
-[velocity] 149 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 3254/3254
-[why-hidden:geetu] classified 2000 hidden jobs (of 13641 total dropped)
+[velocity] 150 actively-scaling companies (3+ senior roles in 30d)
+[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 3256/3256
+[why-hidden:geetu] classified 2000 hidden jobs (of 13632 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/geetu.html
 [diag:amit-arora] loaded profile, targetCompanies len=25, first={'name': 'Webster Bank', 'atsHint': 'workday', 'atsUrl': 'https://websterbank.wd1.myworkdayjobs.com/WebsterBankCareers', 'why': "Super-regional commercial bank with active GRC and digital transformation hiring at the SVP/MD level, directly aligned to Amit's IDB Bank and Bank Leumi profile."}
 [skills-profile:amit-arora] Senior technology and GRC executive specializing in digital transformation, risk management, and M&A integration within banking and capital markets · 13 keywords
-[velocity] 149 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 1598/1598
-[why-hidden:amit-arora] classified 2000 hidden jobs (of 13641 total dropped)
+[velocity] 150 actively-scaling companies (3+ senior roles in 30d)
+[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 1597/1597
+[why-hidden:amit-arora] classified 2000 hidden jobs (of 13632 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/amit-arora.html
 [diag:ishika-arora] loaded profile, targetCompanies len=0, first=None
 [skills-profile:ishika-arora] ? · 0 keywords
-[velocity] 149 actively-scaling companies (3+ senior roles in 30d)
-[why-hidden:ishika-arora] classified 2000 hidden jobs (of 13641 total dropped)
+[velocity] 150 actively-scaling companies (3+ senior roles in 30d)
+[why-hidden:ishika-arora] classified 2000 hidden jobs (of 13632 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/ishika-arora.html
 [diag:radhika-kalra] loaded profile, targetCompanies len=0, first=None
 [skills-profile:radhika-kalra] ? · 0 keywords
-[velocity] 149 actively-scaling companies (3+ senior roles in 30d)
-[why-hidden:radhika-kalra] classified 2000 hidden jobs (of 13641 total dropped)
+[velocity] 150 actively-scaling companies (3+ senior roles in 30d)
+[why-hidden:radhika-kalra] classified 2000 hidden jobs (of 13632 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/radhika-kalra.html
