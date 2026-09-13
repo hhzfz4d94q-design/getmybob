@@ -198,7 +198,7 @@
   [186/475] ?: 14 jobs
   [187/475] ?: 0 jobs (slug may be invalid)
   [188/475] ?: 0 jobs (slug may be invalid)
-  [189/475] ?: 705 jobs
+  [189/475] ?: 704 jobs
   [190/475] ?: 0 jobs (slug may be invalid)
   [191/475] ?: 0 jobs (slug may be invalid)
   [192/475] ?: 8 jobs
@@ -334,7 +334,7 @@
   [322/475] lyric: 0 jobs (slug may be invalid)
   [323/475] healthedge: 0 jobs (slug may be invalid)
   [324/475] aetion: 0 jobs (slug may be invalid)
-  [325/475] healthverity: 20 jobs
+  [325/475] healthverity: 21 jobs
   [326/475] apixio: 0 jobs (slug may be invalid)
   [327/475] cleardata: 0 jobs (slug may be invalid)
   [328/475] tomorrow: 21 jobs
@@ -740,7 +740,7 @@
   [122/142] certifyos: 11 jobs
   [123/142] metriport: 15 jobs
   [124/142] flexpa: 0 jobs (slug may be invalid)
-  [125/142] tennr: 21 jobs
+  [125/142] tennr: 23 jobs
   [126/142] anterior: 5 jobs
   [127/142] ambiencehealthcare: 14 jobs
   [128/142] nabla: 14 jobs
@@ -1326,7 +1326,7 @@
 [himss] 1 companies
   [1/1] HIMSS Career Center: 0 jobs (slug may be invalid)
 
-Totals: {'greenhouse': 9230, 'lever': 914, 'ashby': 1495, 'workday': 2209, 'smartrecruiters': 39, 'remoteok': 99, 'yc': 30, 'hn_hiring': 218}
+Totals: {'greenhouse': 9230, 'lever': 914, 'ashby': 1497, 'workday': 2209, 'smartrecruiters': 39, 'remoteok': 99, 'yc': 30, 'hn_hiring': 218}
 Failures: 1025 (companies returned no data — likely bad slugs)
 [users] loaded 4 from Worker
 
@@ -1334,26 +1334,26 @@ Failures: 1025 (companies returned no data — likely bad slugs)
 [diag:geetu] loaded profile, targetCompanies len=23, first={'name': 'Veeva Systems', 'atsHint': 'workday', 'atsUrl': 'https://veeva.wd1.myworkdayjobs.com/veeva_careers', 'why': 'Cloud SaaS leader in life sciences with constant demand for senior product and transformation leaders who bridge pharma and technology'}
 [skills-profile:geetu] Senior digital transformation and product leader at the intersection of healthcare and technology · 65 keywords
 [velocity] 149 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 3242/3242
-[why-hidden:geetu] classified 2000 hidden jobs (of 13738 total dropped)
+[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 3246/3246
+[why-hidden:geetu] classified 2000 hidden jobs (of 13742 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/geetu.html
 [diag:amit-arora] loaded profile, targetCompanies len=25, first={'name': 'Webster Bank', 'atsHint': 'workday', 'atsUrl': 'https://websterbank.wd1.myworkdayjobs.com/WebsterBankCareers', 'why': "Super-regional commercial bank with active GRC and digital transformation hiring at the SVP/MD level, directly aligned to Amit's IDB Bank and Bank Leumi profile."}
 [skills-profile:amit-arora] Senior technology and GRC executive specializing in digital transformation, risk management, and M&A integration within banking and capital markets · 13 keywords
 [velocity] 149 actively-scaling companies (3+ senior roles in 30d)
 [location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 1572/1572
-[why-hidden:amit-arora] classified 2000 hidden jobs (of 13738 total dropped)
+[why-hidden:amit-arora] classified 2000 hidden jobs (of 13742 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/amit-arora.html
 [diag:ishika-arora] loaded profile, targetCompanies len=0, first=None
 [skills-profile:ishika-arora] ? · 0 keywords
 [velocity] 149 actively-scaling companies (3+ senior roles in 30d)
-[why-hidden:ishika-arora] classified 2000 hidden jobs (of 13738 total dropped)
+[why-hidden:ishika-arora] classified 2000 hidden jobs (of 13742 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/ishika-arora.html
 [diag:radhika-kalra] loaded profile, targetCompanies len=0, first=None
 [skills-profile:radhika-kalra] ? · 0 keywords
 [velocity] 149 actively-scaling companies (3+ senior roles in 30d)
-[why-hidden:radhika-kalra] classified 2000 hidden jobs (of 13738 total dropped)
+[why-hidden:radhika-kalra] classified 2000 hidden jobs (of 13742 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/radhika-kalra.html
