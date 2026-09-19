@@ -137,7 +137,7 @@
   [125/474] altopharmacy: 0 jobs (slug may be invalid)
   [126/474] capsule: 0 jobs (slug may be invalid)
   [127/474] vivante: 0 jobs (slug may be invalid)
-  [128/474] ?: 666 jobs
+  [128/474] ?: 665 jobs
   [129/474] ?: 0 jobs (slug may be invalid)
   [130/474] ?: 251 jobs
   [131/474] ?: 67 jobs
@@ -690,7 +690,7 @@
   [72/139] particlehealth: 0 jobs (slug may be invalid)
   [73/139] hippocraticai: 0 jobs (slug may be invalid)
   [74/139] memora: 0 jobs (slug may be invalid)
-  [75/139] sprinter-health: 74 jobs
+  [75/139] sprinter-health: 72 jobs
   [76/139] sparkadvisors: 0 jobs (slug may be invalid)
   [77/139] commure: 77 jobs
   [78/139] wellthy: 0 jobs (slug may be invalid)
@@ -1320,7 +1320,7 @@
 [himss] 1 companies
   [1/1] HIMSS Career Center: 0 jobs (slug may be invalid)
 
-Totals: {'greenhouse': 9346, 'lever': 904, 'ashby': 1460, 'workday': 2214, 'workable': 7, 'smartrecruiters': 42, 'remoteok': 99, 'yc': 30, 'hn_hiring': 217}
+Totals: {'greenhouse': 9345, 'lever': 904, 'ashby': 1458, 'workday': 2214, 'workable': 7, 'smartrecruiters': 42, 'remoteok': 99, 'yc': 30, 'hn_hiring': 217}
 Failures: 1018 (companies returned no data — likely bad slugs)
 [users] loaded 4 from Worker
 
@@ -1329,25 +1329,25 @@ Failures: 1018 (companies returned no data — likely bad slugs)
 [skills-profile:geetu] Senior digital transformation and product leader at the intersection of healthcare and technology · 65 keywords
 [velocity] 153 actively-scaling companies (3+ senior roles in 30d)
 [location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 3281/3281
-[why-hidden:geetu] classified 2000 hidden jobs (of 13857 total dropped)
+[why-hidden:geetu] classified 2000 hidden jobs (of 13856 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/geetu.html
 [diag:amit-arora] loaded profile, targetCompanies len=25, first={'name': 'Webster Bank', 'atsHint': 'workday', 'atsUrl': 'https://websterbank.wd1.myworkdayjobs.com/WebsterBankCareers', 'why': "Super-regional commercial bank with active GRC and digital transformation hiring at the SVP/MD level, directly aligned to Amit's IDB Bank and Bank Leumi profile."}
 [skills-profile:amit-arora] Senior technology and GRC executive specializing in digital transformation, risk management, and M&A integration within banking and capital markets · 13 keywords
 [velocity] 153 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 1625/1625
-[why-hidden:amit-arora] classified 2000 hidden jobs (of 13857 total dropped)
+[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 1627/1627
+[why-hidden:amit-arora] classified 2000 hidden jobs (of 13856 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/amit-arora.html
 [diag:ishika-arora] loaded profile, targetCompanies len=0, first=None
 [skills-profile:ishika-arora] ? · 0 keywords
 [velocity] 153 actively-scaling companies (3+ senior roles in 30d)
-[why-hidden:ishika-arora] classified 2000 hidden jobs (of 13857 total dropped)
+[why-hidden:ishika-arora] classified 2000 hidden jobs (of 13856 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/ishika-arora.html
 [diag:radhika-kalra] loaded profile, targetCompanies len=0, first=None
 [skills-profile:radhika-kalra] ? · 0 keywords
 [velocity] 153 actively-scaling companies (3+ senior roles in 30d)
-[why-hidden:radhika-kalra] classified 2000 hidden jobs (of 13857 total dropped)
+[why-hidden:radhika-kalra] classified 2000 hidden jobs (of 13856 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/radhika-kalra.html
