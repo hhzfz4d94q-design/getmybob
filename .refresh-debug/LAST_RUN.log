@@ -137,7 +137,7 @@
   [125/470] altopharmacy: 0 jobs (slug may be invalid)
   [126/470] capsule: 0 jobs (slug may be invalid)
   [127/470] vivante: 0 jobs (slug may be invalid)
-  [128/470] ?: 702 jobs
+  [128/470] ?: 701 jobs
   [129/470] ?: 0 jobs (slug may be invalid)
   [130/470] ?: 259 jobs
   [131/470] ?: 66 jobs
@@ -238,7 +238,7 @@
   [226/470] deel: 0 jobs (slug may be invalid)
   [227/470] pave: 0 jobs (slug may be invalid)
   [228/470] paystand: 12 jobs
-  [229/470] melio: 23 jobs
+  [229/470] melio: 21 jobs
   [230/470] novo: 0 jobs (slug may be invalid)
   [231/470] numerated: 0 jobs (slug may be invalid)
   [232/470] blend-labs: 0 jobs (slug may be invalid)
@@ -1316,7 +1316,7 @@
 [himss] 1 companies
   [1/1] HIMSS Career Center: 0 jobs (slug may be invalid)
 
-Totals: {'greenhouse': 9444, 'lever': 913, 'ashby': 1485, 'workday': 2203, 'workable': 12, 'smartrecruiters': 47, 'remoteok': 98, 'yc': 30, 'hn_hiring': 215}
+Totals: {'greenhouse': 9441, 'lever': 913, 'ashby': 1485, 'workday': 2203, 'workable': 12, 'smartrecruiters': 47, 'remoteok': 98, 'yc': 30, 'hn_hiring': 215}
 Failures: 1014 (companies returned no data — likely bad slugs)
 [users] loaded 4 from Worker
 
@@ -1324,26 +1324,26 @@ Failures: 1014 (companies returned no data — likely bad slugs)
 [diag:geetu] loaded profile, targetCompanies len=23, first={'name': 'Veeva Systems', 'atsHint': 'workday', 'atsUrl': 'https://veeva.wd1.myworkdayjobs.com/veeva_careers', 'why': 'Cloud SaaS leader in life sciences with constant demand for senior product and transformation leaders who bridge pharma and technology'}
 [skills-profile:geetu] Senior digital transformation and product leader at the intersection of healthcare and technology · 65 keywords
 [velocity] 158 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 3254/3254
-[why-hidden:geetu] classified 2000 hidden jobs (of 13977 total dropped)
+[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 3252/3252
+[why-hidden:geetu] classified 2000 hidden jobs (of 13973 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/geetu.html
 [diag:amit-arora] loaded profile, targetCompanies len=25, first={'name': 'Webster Bank', 'atsHint': 'workday', 'atsUrl': 'https://websterbank.wd1.myworkdayjobs.com/WebsterBankCareers', 'why': "Super-regional commercial bank with active GRC and digital transformation hiring at the SVP/MD level, directly aligned to Amit's IDB Bank and Bank Leumi profile."}
 [skills-profile:amit-arora] Senior technology and GRC executive specializing in digital transformation, risk management, and M&A integration within banking and capital markets · 13 keywords
 [velocity] 158 actively-scaling companies (3+ senior roles in 30d)
 [location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 1601/1601
-[why-hidden:amit-arora] classified 2000 hidden jobs (of 13977 total dropped)
+[why-hidden:amit-arora] classified 2000 hidden jobs (of 13973 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/amit-arora.html
 [diag:ishika-arora] loaded profile, targetCompanies len=0, first=None
 [skills-profile:ishika-arora] ? · 0 keywords
 [velocity] 158 actively-scaling companies (3+ senior roles in 30d)
-[why-hidden:ishika-arora] classified 2000 hidden jobs (of 13977 total dropped)
+[why-hidden:ishika-arora] classified 2000 hidden jobs (of 13973 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/ishika-arora.html
 [diag:radhika-kalra] loaded profile, targetCompanies len=0, first=None
 [skills-profile:radhika-kalra] ? · 0 keywords
 [velocity] 158 actively-scaling companies (3+ senior roles in 30d)
-[why-hidden:radhika-kalra] classified 2000 hidden jobs (of 13977 total dropped)
+[why-hidden:radhika-kalra] classified 2000 hidden jobs (of 13973 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/radhika-kalra.html
