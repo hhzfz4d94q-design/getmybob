@@ -1,25 +1,25 @@
 {
   "_meta": {
-    "scrapedAt": "2026-09-30T10:10:31.858075+00:00",
+    "scrapedAt": "2026-10-01T10:38:14.379483+00:00",
     "count": 30,
     "source": "workatastartup.com via Playwright"
   },
   "jobs": [
-    {
-      "id": "https://www.workatastartup.com/jobs/30657",
-      "title": "Mason",
-      "company": "Mason is the fastest way to take smart devices from idea to end user",
-      "url": "https://www.workatastartup.com/jobs/30657",
-      "location": "Full Stack Software Engineer",
-      "posted_at": "",
-      "description": ""
-    },
     {
       "id": "https://www.workatastartup.com/jobs/13302",
       "title": "Mason",
       "company": "Mason is the fastest way to take smart devices from idea to end user",
       "url": "https://www.workatastartup.com/jobs/13302",
       "location": "Software Engineer - Backend",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/30657",
+      "title": "Mason",
+      "company": "Mason is the fastest way to take smart devices from idea to end user",
+      "url": "https://www.workatastartup.com/jobs/30657",
+      "location": "Full Stack Software Engineer",
       "posted_at": "",
       "description": ""
     },
@@ -60,29 +60,11 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/106784",
-      "title": "Amplitude",
-      "company": "Digital Analytics Platform",
-      "url": "https://www.workatastartup.com/jobs/106784",
-      "location": "Staff Software Engineer - DevX",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/91864",
-      "title": "Amplitude",
-      "company": "Digital Analytics Platform",
-      "url": "https://www.workatastartup.com/jobs/91864",
-      "location": "Senior Engineering Manager, Experiment",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/107084",
+      "id": "https://www.workatastartup.com/jobs/107083",
       "title": "The Subvocal Company",
       "company": "Talk to your computer without talking",
-      "url": "https://www.workatastartup.com/jobs/107084",
-      "location": "Head of Hardware",
+      "url": "https://www.workatastartup.com/jobs/107083",
+      "location": "Head of Sensing",
       "posted_at": "",
       "description": ""
     },
@@ -123,6 +105,24 @@
       "description": ""
     },
     {
+      "id": "https://www.workatastartup.com/jobs/110601",
+      "title": "Luca IQ",
+      "company": "API-first tax engine for CPA firms and developers",
+      "url": "https://www.workatastartup.com/jobs/110601",
+      "location": "Frontend Engineer",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/110614",
+      "title": "Luca IQ",
+      "company": "API-first tax engine for CPA firms and developers",
+      "url": "https://www.workatastartup.com/jobs/110614",
+      "location": "AI Engineer",
+      "posted_at": "",
+      "description": ""
+    },
+    {
       "id": "https://www.workatastartup.com/jobs/111232",
       "title": "TryNearby",
       "company": "Local creators for local businesses",
@@ -141,15 +141,6 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/106944",
-      "title": "Rational",
-      "company": "First Zero-human Accounting Firm",
-      "url": "https://www.workatastartup.com/jobs/106944",
-      "location": "Applied AI",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/106941",
       "title": "Rational",
       "company": "First Zero-human Accounting Firm",
@@ -159,11 +150,11 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/111400",
-      "title": "screenpipe",
-      "company": "Turn your company's computer work into AI agents.",
-      "url": "https://www.workatastartup.com/jobs/111400",
-      "location": "Founding Engineer",
+      "id": "https://www.workatastartup.com/jobs/106940",
+      "title": "Rational",
+      "company": "First Zero-human Accounting Firm",
+      "url": "https://www.workatastartup.com/jobs/106940",
+      "location": "Forward-Deployed Engineer",
       "posted_at": "",
       "description": ""
     },
@@ -173,6 +164,15 @@
       "company": "Turn your company's computer work into AI agents.",
       "url": "https://www.workatastartup.com/jobs/103591",
       "location": "Forward Deployed Engineer (Enterprise)",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/111400",
+      "title": "screenpipe",
+      "company": "Turn your company's computer work into AI agents.",
+      "url": "https://www.workatastartup.com/jobs/111400",
+      "location": "Founding Engineer",
       "posted_at": "",
       "description": ""
     },
@@ -213,20 +213,20 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/105565",
-      "title": "Torus",
-      "company": "Legora for physical engineering firms",
-      "url": "https://www.workatastartup.com/jobs/105565",
-      "location": "AI Engineer (interested in physical infrastructure)",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/105567",
       "title": "Torus",
       "company": "Legora for physical engineering firms",
       "url": "https://www.workatastartup.com/jobs/105567",
       "location": "Electrical Engineer",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/105565",
+      "title": "Torus",
+      "company": "Legora for physical engineering firms",
+      "url": "https://www.workatastartup.com/jobs/105565",
+      "location": "AI Engineer (interested in physical infrastructure)",
       "posted_at": "",
       "description": ""
     },
@@ -240,11 +240,11 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/109346",
+      "id": "https://www.workatastartup.com/jobs/109350",
       "title": "Edgerun",
       "company": "Military exoskeletons",
-      "url": "https://www.workatastartup.com/jobs/109346",
-      "location": "Principal Engineer, Embedded Systems",
+      "url": "https://www.workatastartup.com/jobs/109350",
+      "location": "Software Engineer",
       "posted_at": "",
       "description": ""
     },
@@ -267,11 +267,11 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/100470",
+      "id": "https://www.workatastartup.com/jobs/100472",
       "title": "CharacterQuilt",
       "company": "Computer use agents to deploy enterprise marketing campaigns",
-      "url": "https://www.workatastartup.com/jobs/100470",
-      "location": "Member of Technical Staff, Agent Systems",
+      "url": "https://www.workatastartup.com/jobs/100472",
+      "location": "Go-to-Market Engineer",
       "posted_at": "",
       "description": ""
     }
