@@ -1,25 +1,25 @@
 {
   "_meta": {
-    "scrapedAt": "2026-10-03T09:34:56.919592+00:00",
+    "scrapedAt": "2026-10-04T10:20:45.447885+00:00",
     "count": 30,
     "source": "workatastartup.com via Playwright"
   },
   "jobs": [
-    {
-      "id": "https://www.workatastartup.com/jobs/30657",
-      "title": "Mason",
-      "company": "Mason is the fastest way to take smart devices from idea to end user",
-      "url": "https://www.workatastartup.com/jobs/30657",
-      "location": "Full Stack Software Engineer",
-      "posted_at": "",
-      "description": ""
-    },
     {
       "id": "https://www.workatastartup.com/jobs/13302",
       "title": "Mason",
       "company": "Mason is the fastest way to take smart devices from idea to end user",
       "url": "https://www.workatastartup.com/jobs/13302",
       "location": "Software Engineer - Backend",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/30657",
+      "title": "Mason",
+      "company": "Mason is the fastest way to take smart devices from idea to end user",
+      "url": "https://www.workatastartup.com/jobs/30657",
+      "location": "Full Stack Software Engineer",
       "posted_at": "",
       "description": ""
     },
@@ -33,20 +33,20 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/103934",
-      "title": "Hive",
-      "company": "Marketing automation for event promoters (email, sms, ads, CRM)",
-      "url": "https://www.workatastartup.com/jobs/103934",
-      "location": "Senior Software Engineer, Data Systems",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/103933",
       "title": "Hive",
       "company": "Marketing automation for event promoters (email, sms, ads, CRM)",
       "url": "https://www.workatastartup.com/jobs/103933",
       "location": "Senior Software Engineer, Machine Learning",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/103934",
+      "title": "Hive",
+      "company": "Marketing automation for event promoters (email, sms, ads, CRM)",
+      "url": "https://www.workatastartup.com/jobs/103934",
+      "location": "Senior Software Engineer, Data Systems",
       "posted_at": "",
       "description": ""
     },
@@ -87,20 +87,20 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/110614",
-      "title": "Luca IQ",
-      "company": "API-first tax engine for CPA firms and developers",
-      "url": "https://www.workatastartup.com/jobs/110614",
-      "location": "AI Engineer",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/110601",
       "title": "Luca IQ",
       "company": "API-first tax engine for CPA firms and developers",
       "url": "https://www.workatastartup.com/jobs/110601",
       "location": "Frontend Engineer",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/110614",
+      "title": "Luca IQ",
+      "company": "API-first tax engine for CPA firms and developers",
+      "url": "https://www.workatastartup.com/jobs/110614",
+      "location": "AI Engineer",
       "posted_at": "",
       "description": ""
     },
@@ -123,20 +123,20 @@
       "description": ""
     },
     {
+      "id": "https://www.workatastartup.com/jobs/106942",
+      "title": "Rational",
+      "company": "First Zero-human Accounting Firm",
+      "url": "https://www.workatastartup.com/jobs/106942",
+      "location": "Software Engineering Intern",
+      "posted_at": "",
+      "description": ""
+    },
+    {
       "id": "https://www.workatastartup.com/jobs/106941",
       "title": "Rational",
       "company": "First Zero-human Accounting Firm",
       "url": "https://www.workatastartup.com/jobs/106941",
       "location": "Machine Learning Researcher",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/106944",
-      "title": "Rational",
-      "company": "First Zero-human Accounting Firm",
-      "url": "https://www.workatastartup.com/jobs/106944",
-      "location": "Applied AI",
       "posted_at": "",
       "description": ""
     },
@@ -195,15 +195,6 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/105565",
-      "title": "Torus",
-      "company": "Legora for physical engineering firms",
-      "url": "https://www.workatastartup.com/jobs/105565",
-      "location": "AI Engineer (interested in physical infrastructure)",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/105567",
       "title": "Torus",
       "company": "Legora for physical engineering firms",
@@ -213,20 +204,29 @@
       "description": ""
     },
     {
+      "id": "https://www.workatastartup.com/jobs/105568",
+      "title": "Torus",
+      "company": "Legora for physical engineering firms",
+      "url": "https://www.workatastartup.com/jobs/105568",
+      "location": "Physical Infrastructure Engineer (any discipline)",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/109347",
+      "title": "Edgerun",
+      "company": "Military exoskeletons",
+      "url": "https://www.workatastartup.com/jobs/109347",
+      "location": "Mechanical Engineer",
+      "posted_at": "",
+      "description": ""
+    },
+    {
       "id": "https://www.workatastartup.com/jobs/109349",
       "title": "Edgerun",
       "company": "Military exoskeletons",
       "url": "https://www.workatastartup.com/jobs/109349",
       "location": "Firmware Engineer",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/109348",
-      "title": "Edgerun",
-      "company": "Military exoskeletons",
-      "url": "https://www.workatastartup.com/jobs/109348",
-      "location": "Electrical Engineer",
       "posted_at": "",
       "description": ""
     },
@@ -249,20 +249,20 @@
       "description": ""
     },
     {
+      "id": "https://www.workatastartup.com/jobs/100468",
+      "title": "CharacterQuilt",
+      "company": "Computer use agents to deploy enterprise marketing campaigns",
+      "url": "https://www.workatastartup.com/jobs/100468",
+      "location": "Member of Technical Staff, Agent Infrastructure and Reliability",
+      "posted_at": "",
+      "description": ""
+    },
+    {
       "id": "https://www.workatastartup.com/jobs/100471",
       "title": "CharacterQuilt",
       "company": "Computer use agents to deploy enterprise marketing campaigns",
       "url": "https://www.workatastartup.com/jobs/100471",
       "location": "Staff Software Engineer, Agent Systems and Product Quality",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/100469",
-      "title": "CharacterQuilt",
-      "company": "Computer use agents to deploy enterprise marketing campaigns",
-      "url": "https://www.workatastartup.com/jobs/100469",
-      "location": "Staff Software Engineer, Agent Infrastructure and Reliability",
       "posted_at": "",
       "description": ""
     },
