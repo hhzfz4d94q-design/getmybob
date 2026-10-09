@@ -1,19 +1,10 @@
 {
   "_meta": {
-    "scrapedAt": "2026-10-08T11:04:58.171953+00:00",
+    "scrapedAt": "2026-10-09T11:03:59.791412+00:00",
     "count": 30,
     "source": "workatastartup.com via Playwright"
   },
   "jobs": [
-    {
-      "id": "https://www.workatastartup.com/jobs/13302",
-      "title": "Mason",
-      "company": "Mason is the fastest way to take smart devices from idea to end user",
-      "url": "https://www.workatastartup.com/jobs/13302",
-      "location": "Software Engineer - Backend",
-      "posted_at": "",
-      "description": ""
-    },
     {
       "id": "https://www.workatastartup.com/jobs/30657",
       "title": "Mason",
@@ -24,11 +15,11 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/112545",
-      "title": "GiveCampus",
-      "company": "The fundraising platform for schools.",
-      "url": "https://www.workatastartup.com/jobs/112545",
-      "location": "Senior Software Engineer, Emerging Product",
+      "id": "https://www.workatastartup.com/jobs/13302",
+      "title": "Mason",
+      "company": "Mason is the fastest way to take smart devices from idea to end user",
+      "url": "https://www.workatastartup.com/jobs/13302",
+      "location": "Software Engineer - Backend",
       "posted_at": "",
       "description": ""
     },
@@ -38,6 +29,15 @@
       "company": "The fundraising platform for schools.",
       "url": "https://www.workatastartup.com/jobs/25984",
       "location": "Full Stack Engineer",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/112545",
+      "title": "GiveCampus",
+      "company": "The fundraising platform for schools.",
+      "url": "https://www.workatastartup.com/jobs/112545",
+      "location": "Senior Software Engineer, Emerging Product",
       "posted_at": "",
       "description": ""
     },
@@ -80,7 +80,7 @@
     {
       "id": "https://www.workatastartup.com/jobs/111785",
       "title": "Volaren Inc.",
-      "company": "Volaren collapses the hedge fund model and making it accessible to\u2026",
+      "company": "Turning Ideas into Trades. Volaren puts the hedge fund in the hands\u2026",
       "url": "https://www.workatastartup.com/jobs/111785",
       "location": "Software Engineer",
       "posted_at": "",
@@ -96,20 +96,20 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/110899",
-      "title": "Streamline Systems",
-      "company": "Precision navigation for UAVs operating without GPS.",
-      "url": "https://www.workatastartup.com/jobs/110899",
-      "location": "Founding Mechanical Engineer",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/110697",
       "title": "Streamline Systems",
       "company": "Precision navigation for UAVs operating without GPS.",
       "url": "https://www.workatastartup.com/jobs/110697",
       "location": "Founding Electrical Engineer",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/110899",
+      "title": "Streamline Systems",
+      "company": "Precision navigation for UAVs operating without GPS.",
+      "url": "https://www.workatastartup.com/jobs/110899",
+      "location": "Founding Mechanical Engineer",
       "posted_at": "",
       "description": ""
     },
@@ -132,11 +132,11 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/111752",
+      "id": "https://www.workatastartup.com/jobs/111753",
       "title": "Pennant",
       "company": "The World Model for Corporate Governance",
-      "url": "https://www.workatastartup.com/jobs/111752",
-      "location": "Founding Engineer, Data & AI",
+      "url": "https://www.workatastartup.com/jobs/111753",
+      "location": "Founding Engineer, Product",
       "posted_at": "",
       "description": ""
     },
@@ -150,20 +150,20 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/110614",
-      "title": "Luca IQ",
-      "company": "API-first tax engine for CPA firms and developers",
-      "url": "https://www.workatastartup.com/jobs/110614",
-      "location": "AI Engineer",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/110601",
       "title": "Luca IQ",
       "company": "API-first tax engine for CPA firms and developers",
       "url": "https://www.workatastartup.com/jobs/110601",
       "location": "Frontend Engineer",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/110614",
+      "title": "Luca IQ",
+      "company": "API-first tax engine for CPA firms and developers",
+      "url": "https://www.workatastartup.com/jobs/110614",
+      "location": "AI Engineer",
       "posted_at": "",
       "description": ""
     },
@@ -186,15 +186,6 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/106940",
-      "title": "Rational",
-      "company": "First Zero-human Accounting Firm",
-      "url": "https://www.workatastartup.com/jobs/106940",
-      "location": "Forward-Deployed Engineer",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/106942",
       "title": "Rational",
       "company": "First Zero-human Accounting Firm",
@@ -204,20 +195,11 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/111400",
-      "title": "screenpipe",
-      "company": "Turn your company's computer work into AI agents.",
-      "url": "https://www.workatastartup.com/jobs/111400",
-      "location": "Founding Engineer",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/103591",
-      "title": "screenpipe",
-      "company": "Turn your company's computer work into AI agents.",
-      "url": "https://www.workatastartup.com/jobs/103591",
-      "location": "Forward Deployed Engineer (Enterprise)",
+      "id": "https://www.workatastartup.com/jobs/106941",
+      "title": "Rational",
+      "company": "First Zero-human Accounting Firm",
+      "url": "https://www.workatastartup.com/jobs/106941",
+      "location": "Machine Learning Researcher",
       "posted_at": "",
       "description": ""
     },
@@ -258,6 +240,15 @@
       "description": ""
     },
     {
+      "id": "https://www.workatastartup.com/jobs/105565",
+      "title": "Torus",
+      "company": "Legora for physical engineering firms",
+      "url": "https://www.workatastartup.com/jobs/105565",
+      "location": "AI Engineer (interested in physical infrastructure)",
+      "posted_at": "",
+      "description": ""
+    },
+    {
       "id": "https://www.workatastartup.com/jobs/105568",
       "title": "Torus",
       "company": "Legora for physical engineering firms",
@@ -267,11 +258,20 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/105565",
-      "title": "Torus",
-      "company": "Legora for physical engineering firms",
-      "url": "https://www.workatastartup.com/jobs/105565",
-      "location": "AI Engineer (interested in physical infrastructure)",
+      "id": "https://www.workatastartup.com/jobs/109346",
+      "title": "Edgerun",
+      "company": "Military exoskeletons",
+      "url": "https://www.workatastartup.com/jobs/109346",
+      "location": "Principal Engineer, Embedded Systems",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/109349",
+      "title": "Edgerun",
+      "company": "Military exoskeletons",
+      "url": "https://www.workatastartup.com/jobs/109349",
+      "location": "Firmware Engineer",
       "posted_at": "",
       "description": ""
     }
