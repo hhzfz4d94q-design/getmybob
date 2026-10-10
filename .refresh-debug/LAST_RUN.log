@@ -4,612 +4,613 @@
 [users] loaded 4 from Worker
 [user-targets] merged 409 per-user companies (greenhouse=23, lever=34, ashby=33, wttj=34, workday=13); skipped 0 non-routable
 [vc-portfolio] merged 55 discovered companies into scrape pool
-[healthtech] merged 355 catalog companies into scrape pool
-[industries] mapped 816 companies; default=['healthcare', 'healthcare-it', 'digital-health', 'health-saas', 'pharma', 'pharmaceuticals', 'biotech', 'life-sciences', 'diagnostics', 'telehealth', 'mental-health', 'clinical-ai']
+[healthtech] merged 356 catalog companies into scrape pool
+[industries] mapped 819 companies; default=['healthcare', 'healthcare-it', 'digital-health', 'health-saas', 'pharma', 'pharmaceuticals', 'biotech', 'life-sciences', 'diagnostics', 'telehealth', 'mental-health', 'clinical-ai']
 
-[greenhouse] 468 companies
+[greenhouse] 470 companies
 [vc-portfolio] loaded 75 discovered companies
 [healthtech] loaded 442 curated companies
-  [1/468] oscar: 239 jobs
-  [2/468] acuitymd: 11 jobs
-  [3/468] sondermind: 0 jobs (slug may be invalid)
-  [4/468] linushealth: 0 jobs (slug may be invalid)
-  [5/468] clipboardhealth: 0 jobs (slug may be invalid)
-  [6/468] picnichealth: 0 jobs (slug may be invalid)
-  [7/468] carerev: 0 jobs (slug may be invalid)
-  [8/468] abarca: 0 jobs (slug may be invalid)
-  [9/468] modernhealth: 8 jobs
-  [10/468] roivantsciences: 10 jobs
-  [11/468] waymark: 20 jobs
-  [12/468] freenome: 23 jobs
-  [13/468] bridgebio: 63 jobs
-  [14/468] formationbio: 21 jobs
-  [15/468] honehealth: 11 jobs
-  [16/468] cerebral: 0 jobs (slug may be invalid)
-  [17/468] foresightmentalhealth: 2 jobs
-  [18/468] hs: 3 jobs
-  [19/468] springhealth66: 0 jobs (slug may be invalid)
-  [20/468] prolaio: 7 jobs
-  [21/468] prescriberpoint: 2 jobs
-  [22/468] lumimeds: 30 jobs
-  [23/468] smarterdxprivate: 0 jobs (slug may be invalid)
-  [24/468] smarterdx: 3 jobs
-  [25/468] midihealth: 46 jobs
-  [26/468] shieldshealthsolutions: 85 jobs
-  [27/468] coherehealth: 76 jobs
-  [28/468] allarahealth: 0 jobs (slug may be invalid)
-  [29/468] courierhealth: 17 jobs
-  [30/468] garnerhealth: 76 jobs
-  [31/468] evio: 5 jobs
-  [32/468] cofertility: 3 jobs
-  [33/468] carrotfertility: 15 jobs
-  [34/468] branchcare: 0 jobs (slug may be invalid)
-  [35/468] pomelocare: 0 jobs (slug may be invalid)
-  [36/468] openfertility: 2 jobs
-  [37/468] mavenclinic: 35 jobs
-  [38/468] sparkadvisors: 9 jobs
-  [39/468] wellth: 0 jobs (slug may be invalid)
-  [40/468] employerdirecthealthcare: 36 jobs
-  [41/468] habitathealth: 50 jobs
-  [42/468] authorhealth: 0 jobs (slug may be invalid)
-  [43/468] omadahealth: 18 jobs
-  [44/468] phamily: 0 jobs (slug may be invalid)
-  [45/468] interwellhealth: 10 jobs
-  [46/468] smartertechnologies: 0 jobs (slug may be invalid)
-  [47/468] redcellpartners: 21 jobs
-  [48/468] inovalon: 0 jobs (slug may be invalid)
-  [49/468] layerhealth: 16 jobs
-  [50/468] jukeboxhealth: 28 jobs
-  [51/468] qualifiedhealth: 0 jobs (slug may be invalid)
-  [52/468] tuleahealth: 4 jobs
-  [53/468] precisionmedicinegroup: 174 jobs
-  [54/468] peptilogics: 3 jobs
-  [55/468] recursionpharmaceuticals: 15 jobs
-  [56/468] headlandsresearch: 56 jobs
-  [57/468] yarrowbiotechnology: 0 jobs (slug may be invalid)
-  [58/468] synerg: 32 jobs
-  [59/468] immunomeinc: 28 jobs
-  [60/468] cedar: 0 jobs (slug may be invalid)
-  [61/468] hingehealth: 0 jobs (slug may be invalid)
-  [62/468] carbonhealth: 0 jobs (slug may be invalid)
-  [63/468] color: 0 jobs (slug may be invalid)
-  [64/468] komodohealth: 29 jobs
-  [65/468] includedhealth: 0 jobs (slug may be invalid)
-  [66/468] headway: 0 jobs (slug may be invalid)
-  [67/468] lyrahealth: 0 jobs (slug may be invalid)
-  [68/468] ro: 0 jobs (slug may be invalid)
-  [69/468] curology: 0 jobs (slug may be invalid)
-  [70/468] khealth: 0 jobs (slug may be invalid)
-  [71/468] thirtymadison: 0 jobs (slug may be invalid)
-  [72/468] nourish: 0 jobs (slug may be invalid)
-  [73/468] abridge: 0 jobs (slug may be invalid)
-  [74/468] transcarent: 0 jobs (slug may be invalid)
-  [75/468] tempus: 0 jobs (slug may be invalid)
-  [76/468] flatiron: 0 jobs (slug may be invalid)
-  [77/468] ribbonhealth: 0 jobs (slug may be invalid)
-  [78/468] evidation: 0 jobs (slug may be invalid)
-  [79/468] alma: 0 jobs (slug may be invalid)
-  [80/468] talkiatry: 0 jobs (slug may be invalid)
-  [81/468] brightline: 0 jobs (slug may be invalid)
-  [82/468] amwell: 9 jobs
-  [83/468] doximity: 15 jobs
-  [84/468] veeva: 0 jobs (slug may be invalid)
-  [85/468] guardanthealth: 0 jobs (slug may be invalid)
-  [86/468] recursion: 0 jobs (slug may be invalid)
-  [87/468] veracyte: 29 jobs
-  [88/468] benchling: 0 jobs (slug may be invalid)
-  [89/468] moderna: 0 jobs (slug may be invalid)
-  [90/468] 23andme: 0 jobs (slug may be invalid)
-  [91/468] tendo: 0 jobs (slug may be invalid)
-  [92/468] memora: 0 jobs (slug may be invalid)
-  [93/468] wellsky: 0 jobs (slug may be invalid)
-  [94/468] papacompanies: 0 jobs (slug may be invalid)
-  [95/468] vivahealth: 0 jobs (slug may be invalid)
-  [96/468] biofourmis: 1 jobs
-  [97/468] ada: 0 jobs (slug may be invalid)
-  [98/468] buoy: 0 jobs (slug may be invalid)
-  [99/468] kindbody: 0 jobs (slug may be invalid)
-  [100/468] tia: 33 jobs
-  [101/468] hims: 0 jobs (slug may be invalid)
-  [102/468] noom: 0 jobs (slug may be invalid)
-  [103/468] calm: 2 jobs
-  [104/468] vidaheath: 0 jobs (slug may be invalid)
-  [105/468] sword: 0 jobs (slug may be invalid)
-  [106/468] kaiahealth: 0 jobs (slug may be invalid)
-  [107/468] ginger: 0 jobs (slug may be invalid)
-  [108/468] rula: 0 jobs (slug may be invalid)
-  [109/468] octave: 17 jobs
-  [110/468] rightway: 6 jobs
-  [111/468] centivo: 0 jobs (slug may be invalid)
-  [112/468] collectivehealth: 0 jobs (slug may be invalid)
-  [113/468] accolade: 0 jobs (slug may be invalid)
-  [114/468] evolenthealth: 0 jobs (slug may be invalid)
-  [115/468] iodine: 0 jobs (slug may be invalid)
-  [116/468] innovaccer: 0 jobs (slug may be invalid)
-  [117/468] cotiviti: 0 jobs (slug may be invalid)
-  [118/468] datavant: 0 jobs (slug may be invalid)
-  [119/468] trialspark: 0 jobs (slug may be invalid)
-  [120/468] paige: 0 jobs (slug may be invalid)
-  [121/468] pathai: 14 jobs
-  [122/468] truveta: 38 jobs
-  [123/468] athelas: 0 jobs (slug may be invalid)
-  [124/468] olive: 0 jobs (slug may be invalid)
-  [125/468] altopharmacy: 0 jobs (slug may be invalid)
-  [126/468] capsule: 0 jobs (slug may be invalid)
-  [127/468] vivante: 0 jobs (slug may be invalid)
-  [128/468] ?: 728 jobs
-  [129/468] ?: 0 jobs (slug may be invalid)
-  [130/468] ?: 277 jobs
-  [131/468] ?: 68 jobs
-  [132/468] ?: 69 jobs
-  [133/468] ?: 182 jobs
-  [134/468] ?: 203 jobs
-  [135/468] ?: 72 jobs
-  [136/468] ?: 222 jobs
-  [137/468] ?: 0 jobs (slug may be invalid)
-  [138/468] ?: 20 jobs
-  [139/468] ?: 0 jobs (slug may be invalid)
-  [140/468] ?: 53 jobs
-  [141/468] ?: 26 jobs
-  [142/468] ?: 0 jobs (slug may be invalid)
-  [143/468] ?: 0 jobs (slug may be invalid)
-  [144/468] ?: 30 jobs
-  [145/468] ?: 424 jobs
-  [146/468] ?: 0 jobs (slug may be invalid)
-  [147/468] ?: 0 jobs (slug may be invalid)
-  [148/468] ?: 0 jobs (slug may be invalid)
-  [149/468] ?: 0 jobs (slug may be invalid)
-  [150/468] ?: 0 jobs (slug may be invalid)
-  [151/468] ?: 378 jobs
-  [152/468] ?: 92 jobs
-  [153/468] ?: 0 jobs (slug may be invalid)
-  [154/468] ?: 0 jobs (slug may be invalid)
-  [155/468] ?: 36 jobs
-  [156/468] ?: 0 jobs (slug may be invalid)
-  [157/468] ?: 87 jobs
-  [158/468] ?: 8 jobs
-  [159/468] ?: 0 jobs (slug may be invalid)
-  [160/468] ?: 15 jobs
-  [161/468] ?: 0 jobs (slug may be invalid)
-  [162/468] ?: 0 jobs (slug may be invalid)
-  [163/468] ?: 16 jobs
-  [164/468] ?: 6 jobs
-  [165/468] ?: 0 jobs (slug may be invalid)
-  [166/468] ?: 0 jobs (slug may be invalid)
-  [167/468] ?: 25 jobs
-  [168/468] ?: 0 jobs (slug may be invalid)
-  [169/468] ?: 0 jobs (slug may be invalid)
-  [170/468] ?: 0 jobs (slug may be invalid)
-  [171/468] ?: 0 jobs (slug may be invalid)
-  [172/468] ?: 0 jobs (slug may be invalid)
-  [173/468] ?: 0 jobs (slug may be invalid)
-  [174/468] ?: 5 jobs
-  [175/468] ?: 0 jobs (slug may be invalid)
-  [176/468] ?: 0 jobs (slug may be invalid)
-  [177/468] ?: 11 jobs
-  [178/468] ?: 0 jobs (slug may be invalid)
-  [179/468] ?: 0 jobs (slug may be invalid)
-  [180/468] ?: 0 jobs (slug may be invalid)
-  [181/468] ?: 0 jobs (slug may be invalid)
-  [182/468] ?: 0 jobs (slug may be invalid)
-  [183/468] ?: 0 jobs (slug may be invalid)
-  [184/468] ?: 0 jobs (slug may be invalid)
-  [185/468] ?: 0 jobs (slug may be invalid)
-  [186/468] ?: 10 jobs
-  [187/468] ?: 0 jobs (slug may be invalid)
-  [188/468] ?: 0 jobs (slug may be invalid)
-  [189/468] ?: 720 jobs
-  [190/468] ?: 0 jobs (slug may be invalid)
-  [191/468] ?: 0 jobs (slug may be invalid)
-  [192/468] ?: 8 jobs
-  [193/468] ?: 0 jobs (slug may be invalid)
-  [194/468] ?: 89 jobs
-  [195/468] ?: 12 jobs
-  [196/468] ?: 0 jobs (slug may be invalid)
-  [197/468] ?: 0 jobs (slug may be invalid)
-  [198/468] ?: 0 jobs (slug may be invalid)
-  [199/468] ?: 0 jobs (slug may be invalid)
-  [200/468] ?: 0 jobs (slug may be invalid)
-  [201/468] ?: 645 jobs
-  [202/468] ?: 0 jobs (slug may be invalid)
-  [203/468] ?: 0 jobs (slug may be invalid)
-  [204/468] ?: 0 jobs (slug may be invalid)
-  [205/468] ?: 0 jobs (slug may be invalid)
-  [206/468] ?: 0 jobs (slug may be invalid)
-  [207/468] ?: 0 jobs (slug may be invalid)
-  [208/468] ?: 0 jobs (slug may be invalid)
-  [209/468] ?: 0 jobs (slug may be invalid)
-  [210/468] ?: 0 jobs (slug may be invalid)
-  [211/468] ?: 0 jobs (slug may be invalid)
-  [212/468] ?: 0 jobs (slug may be invalid)
-  [213/468] ?: 0 jobs (slug may be invalid)
-  [214/468] ?: 0 jobs (slug may be invalid)
-  [215/468] ?: 0 jobs (slug may be invalid)
-  [216/468] ?: 0 jobs (slug may be invalid)
-  [217/468] ?: 0 jobs (slug may be invalid)
-  [218/468] ?: 0 jobs (slug may be invalid)
-  [219/468] ?: 0 jobs (slug may be invalid)
-  [220/468] ?: 0 jobs (slug may be invalid)
-  [221/468] ?: 0 jobs (slug may be invalid)
-  [222/468] ?: 0 jobs (slug may be invalid)
-  [223/468] ?: 0 jobs (slug may be invalid)
-  [224/468] ?: 0 jobs (slug may be invalid)
-  [225/468] rippling: 0 jobs (slug may be invalid)
-  [226/468] deel: 0 jobs (slug may be invalid)
-  [227/468] pave: 0 jobs (slug may be invalid)
-  [228/468] paystand: 15 jobs
-  [229/468] melio: 23 jobs
-  [230/468] novo: 0 jobs (slug may be invalid)
-  [231/468] numerated: 0 jobs (slug may be invalid)
-  [232/468] blend-labs: 0 jobs (slug may be invalid)
-  [233/468] pipe: 0 jobs (slug may be invalid)
-  [234/468] forge-global: 0 jobs (slug may be invalid)
-  [235/468] cais: 14 jobs
-  [236/468] allocate: 0 jobs (slug may be invalid)
-  [237/468] percent: 0 jobs (slug may be invalid)
-  [238/468] color-health: 0 jobs (slug may be invalid)
-  [239/468] hims-hers: 0 jobs (slug may be invalid)
-  [240/468] calibrate: 0 jobs (slug may be invalid)
-  [241/468] vida-health: 0 jobs (slug may be invalid)
-  [242/468] spring-health: 0 jobs (slug may be invalid)
-  [243/468] lyra-health: 0 jobs (slug may be invalid)
-  [244/468] sword-health: 0 jobs (slug may be invalid)
-  [245/468] included-health: 0 jobs (slug may be invalid)
-  [246/468] cityblock-health: 0 jobs (slug may be invalid)
-  [247/468] eden-health: 0 jobs (slug may be invalid)
-  [248/468] firefly-health: 0 jobs (slug may be invalid)
-  [249/468] medable: 0 jobs (slug may be invalid)
-  [250/468] science-37: 0 jobs (slug may be invalid)
-  [251/468] verily: 0 jobs (slug may be invalid)
-  [252/468] saama-technologies: 0 jobs (slug may be invalid)
-  [253/468] komodo-health: 0 jobs (slug may be invalid)
-  [254/468] phreesia: 0 jobs (slug may be invalid)
-  [255/468] turquoise-health: 0 jobs (slug may be invalid)
-  [256/468] kyruus-health: 0 jobs (slug may be invalid)
-  [257/468] aledade: 0 jobs (slug may be invalid)
-  [258/468] veeva-systems: 0 jobs (slug may be invalid)
-  [259/468] teladoc-health: 0 jobs (slug may be invalid)
-  [260/468] devotedhealth: 0 jobs (slug may be invalid)
-  [261/468] bright-health-group: 0 jobs (slug may be invalid)
-  [262/468] alignmenthealthcare: 0 jobs (slug may be invalid)
-  [263/468] livongo: 0 jobs (slug may be invalid)
-  [264/468] pear-therapeutics: 0 jobs (slug may be invalid)
-  [265/468] akili-interactive: 0 jobs (slug may be invalid)
-  [266/468] greenway-health: 0 jobs (slug may be invalid)
-  [267/468] practice-fusion: 0 jobs (slug may be invalid)
-  [268/468] kareo: 0 jobs (slug may be invalid)
-  [269/468] tebra: 12 jobs
-  [270/468] modernizing-medicine: 0 jobs (slug may be invalid)
-  [271/468] nextech-systems: 0 jobs (slug may be invalid)
-  [272/468] srs-health: 0 jobs (slug may be invalid)
-  [273/468] veradigm: 0 jobs (slug may be invalid)
-  [274/468] vatic-health: 0 jobs (slug may be invalid)
-  [275/468] iodinesoftware: 0 jobs (slug may be invalid)
-  [276/468] augmedix: 0 jobs (slug may be invalid)
-  [277/468] olive-ai: 0 jobs (slug may be invalid)
-  [278/468] arcadia.io: 0 jobs (slug may be invalid)
-  [279/468] saama: 0 jobs (slug may be invalid)
-  [280/468] castor: 0 jobs (slug may be invalid)
-  [281/468] florencehealthcare: 7 jobs
-  [282/468] reifyhealth: 0 jobs (slug may be invalid)
-  [283/468] suvoda: 31 jobs
-  [284/468] flatironhealth: 23 jobs
-  [285/468] foundationmedicine: 0 jobs (slug may be invalid)
-  [286/468] invitae: 0 jobs (slug may be invalid)
-  [287/468] helix: 0 jobs (slug may be invalid)
-  [288/468] ancestry: 0 jobs (slug may be invalid)
-  [289/468] veranahealth: 7 jobs
-  [290/468] om1: 0 jobs (slug may be invalid)
-  [291/468] goodrx: 0 jobs (slug may be invalid)
-  [292/468] alto: 0 jobs (slug may be invalid)
-  [293/468] truepill: 0 jobs (slug may be invalid)
-  [294/468] drfirst: 0 jobs (slug may be invalid)
-  [295/468] rxsavingssolutions: 0 jobs (slug may be invalid)
-  [296/468] kyruus: 0 jobs (slug may be invalid)
-  [297/468] zocdoc: 60 jobs
-  [298/468] solv: 0 jobs (slug may be invalid)
-  [299/468] galileo: 8 jobs
-  [300/468] plushcare: 0 jobs (slug may be invalid)
-  [301/468] heal: 0 jobs (slug may be invalid)
-  [302/468] doctorondemand: 0 jobs (slug may be invalid)
-  [303/468] vidahealth: 0 jobs (slug may be invalid)
-  [304/468] virtahealth: 0 jobs (slug may be invalid)
-  [305/468] talkspace: 26 jobs
-  [306/468] betterhelp: 164 jobs
-  [307/468] growtherapy: 0 jobs (slug may be invalid)
-  [308/468] found: 4 jobs
-  [309/468] calahealth: 11 jobs
-  [310/468] vynedental: 0 jobs (slug may be invalid)
-  [311/468] decent: 0 jobs (slug may be invalid)
-  [312/468] imaginepediatrics: 19 jobs
-  [313/468] forward: 5 jobs
-  [314/468] onemedical: 406 jobs
-  [315/468] strivehealth: 65 jobs
-  [316/468] lyric: 0 jobs (slug may be invalid)
-  [317/468] healthedge: 0 jobs (slug may be invalid)
-  [318/468] aetion: 0 jobs (slug may be invalid)
-  [319/468] healthverity: 19 jobs
-  [320/468] apixio: 0 jobs (slug may be invalid)
-  [321/468] cleardata: 0 jobs (slug may be invalid)
-  [322/468] tomorrow: 21 jobs
-  [323/468] oakstreethealth: 0 jobs (slug may be invalid)
-  [324/468] vivantehealth: 0 jobs (slug may be invalid)
-  [325/468] natera: 209 jobs
-  [326/468] trinetx: 0 jobs (slug may be invalid)
-  [327/468] brighthealth: 0 jobs (slug may be invalid)
-  [328/468] landmarkhealth: 0 jobs (slug may be invalid)
-  [329/468] agilonhealth: 0 jobs (slug may be invalid)
-  [330/468] signifyhealth: 0 jobs (slug may be invalid)
-  [331/468] lifestancehealth: 0 jobs (slug may be invalid)
-  [332/468] 98point6: 0 jobs (slug may be invalid)
-  [333/468] bindon-demandhealth: 0 jobs (slug may be invalid)
-  [334/468] brighthealthcare: 0 jobs (slug may be invalid)
-  [335/468] sidecarhealth: 6 jobs
-  [336/468] gravie: 0 jobs (slug may be invalid)
-  [337/468] zelis: 0 jobs (slug may be invalid)
-  [338/468] castlighthealth: 0 jobs (slug may be invalid)
-  [339/468] glooko: 0 jobs (slug may be invalid)
-  [340/468] podimetrics: 0 jobs (slug may be invalid)
-  [341/468] 10xgenomics: 0 jobs (slug may be invalid)
-  [342/468] pacificbiosciences: 0 jobs (slug may be invalid)
-  [343/468] adaptivebiotechnologies: 22 jobs
-  [344/468] grail: 0 jobs (slug may be invalid)
-  [345/468] drchrono: 0 jobs (slug may be invalid)
-  [346/468] elationhealth: 18 jobs
-  [347/468] bamboohealth: 0 jobs (slug may be invalid)
-  [348/468] tandemdiabetes: 0 jobs (slug may be invalid)
-  [349/468] dexcare: 0 jobs (slug may be invalid)
-  [350/468] medely: 0 jobs (slug may be invalid)
-  [351/468] shiftmed: 0 jobs (slug may be invalid)
-  [352/468] trustedhealth: 0 jobs (slug may be invalid)
-  [353/468] dispatchhealth: 0 jobs (slug may be invalid)
-  [354/468] uniteus: 14 jobs
-  [355/468] aidoc: 0 jobs (slug may be invalid)
-  [356/468] vizai: 0 jobs (slug may be invalid)
-  [357/468] insitro: 0 jobs (slug may be invalid)
-  [358/468] recursionpharma: 0 jobs (slug may be invalid)
-  [359/468] editasmedicine: 0 jobs (slug may be invalid)
-  [360/468] intelliatx: 0 jobs (slug may be invalid)
-  [361/468] sagerx: 0 jobs (slug may be invalid)
-  [362/468] ultragenyx: 0 jobs (slug may be invalid)
-  [363/468] ginkgobioworks: 20 jobs
-  [364/468] sanabiotechnology: 0 jobs (slug may be invalid)
-  [365/468] denalitherapeutics: 0 jobs (slug may be invalid)
-  [366/468] slalomconsulting: 0 jobs (slug may be invalid)
-  [367/468] eliseai: 0 jobs (slug may be invalid)
-  [368/468] rewst: 0 jobs (slug may be invalid)
-  [369/468] klara: 0 jobs (slug may be invalid)
-  [370/468] laseraway: 0 jobs (slug may be invalid)
-  [371/468] pagerhealth: 0 jobs (slug may be invalid)
-  [372/468] hugeinc: 28 jobs
-  [373/468] prescryptive: 0 jobs (slug may be invalid)
-  [374/468] qventus: 17 jobs
-  [375/468] instacart: 119 jobs
-  [376/468] elastic: 409 jobs
-  [377/468] rxbenefits: 0 jobs (slug may be invalid)
-  [378/468] honor: 14 jobs
-  [379/468] lattice: 13 jobs
-  [380/468] dropbox: 32 jobs
-  [381/468] guild: 6 jobs
-  [382/468] thrivemarket: 14 jobs
-  [383/468] ascendanalytics: 0 jobs (slug may be invalid)
-  [384/468] alphasense: 196 jobs
-  [385/468] reddit: 147 jobs
-  [386/468] celonis: 226 jobs
-  [387/468] wcgclinical: 0 jobs (slug may be invalid)
-  [388/468] byteme: 0 jobs (slug may be invalid)
-  [389/468] candid: 12 jobs
-  [390/468] progyny: 0 jobs (slug may be invalid)
-  [391/468] oviahealth: 0 jobs (slug may be invalid)
-  [392/468] eleanorhealth: 0 jobs (slug may be invalid)
-  [393/468] bouldercare: 18 jobs
-  [394/468] ophelia: 15 jobs
-  [395/468] pointclickcare: 0 jobs (slug may be invalid)
-  [396/468] matrixcare: 0 jobs (slug may be invalid)
-  [397/468] civicarx: 0 jobs (slug may be invalid)
-  [398/468] imprivata: 0 jobs (slug may be invalid)
-  [399/468] papa: 3 jobs
-  [400/468] carewell: 0 jobs (slug may be invalid)
-  [401/468] aplaceformom: 0 jobs (slug may be invalid)
-  [402/468] altasciences: 0 jobs (slug may be invalid)
-  [403/468] winfertility: 0 jobs (slug may be invalid)
-  [404/468] charliehealth: 251 jobs
-  [405/468] alayacare: 20 jobs
-  [406/468] civicascript: 0 jobs (slug may be invalid)
-  [407/468] capitalrx: 0 jobs (slug may be invalid)
-  [408/468] optimecare: 0 jobs (slug may be invalid)
-  [409/468] medeanalytics: 2 jobs
-  [410/468] science37: 66 jobs
-  [411/468] advarra: 0 jobs (slug may be invalid)
-  [412/468] warbyparker: 0 jobs (slug may be invalid)
-  [413/468] symplr: 0 jobs (slug may be invalid)
-  [414/468] healthcatalyst: 0 jobs (slug may be invalid)
-  [415/468] genedx: 19 jobs
-  [416/468] somatus: 0 jobs (slug may be invalid)
-  [417/468] dental-intelligence: 0 jobs (slug may be invalid)
-  [418/468] hellotend: 24 jobs
-  [419/468] overjet: 0 jobs (slug may be invalid)
-  [420/468] dandy: 0 jobs (slug may be invalid)
-  [421/468] tend: 0 jobs (slug may be invalid)
-  [422/468] odela: 0 jobs (slug may be invalid)
-  [423/468] miracare: 0 jobs (slug may be invalid)
-  [424/468] confidanthealth: 0 jobs (slug may be invalid)
-  [425/468] pelago: 16 jobs
-  [426/468] twochairs: 38 jobs
-  [427/468] careacademy: 0 jobs (slug may be invalid)
-  [428/468] caregiver: 17 jobs
-  [429/468] ribbon: 0 jobs (slug may be invalid)
-  [430/468] smilecdr: 0 jobs (slug may be invalid)
-  [431/468] galaxy: 2 jobs
-  [432/468] vetsource: 0 jobs (slug may be invalid)
-  [433/468] rightwayhealthcare: 35 jobs
-  [434/468] artera: 0 jobs (slug may be invalid)
-  [435/468] lumahealth: 5 jobs
-  [436/468] healthgrades: 0 jobs (slug may be invalid)
-  [437/468] accel: 0 jobs (slug may be invalid)
-  [438/468] leagueinc: 12 jobs
-  [439/468] hazel: 20 jobs
-  [440/468] crossoverhealth: 0 jobs (slug may be invalid)
-  [441/468] parsleyhealth: 8 jobs
-  [442/468] nocd: 0 jobs (slug may be invalid)
-  [443/468] simplepractice: 0 jobs (slug may be invalid)
-  [444/468] heartflowinc: 107 jobs
-  [445/468] leantaas: 0 jobs (slug may be invalid)
-  [446/468] laudio: 0 jobs (slug may be invalid)
-  [447/468] healthjoy: 3 jobs
-  [448/468] carrumhealth: 0 jobs (slug may be invalid)
-  [449/468] lanterncare: 0 jobs (slug may be invalid)
-  [450/468] machinify: 0 jobs (slug may be invalid)
-  [451/468] h1: 0 jobs (slug may be invalid)
-  [452/468] vytalizehealth: 0 jobs (slug may be invalid)
-  [453/468] monogramhealth: 0 jobs (slug may be invalid)
-  [454/468] welbehealth: 142 jobs
-  [455/468] homeward: 4 jobs
-  [456/468] mainstreethealth: 7 jobs
-  [457/468] hopscotchprimarycare: 31 jobs
-  [458/468] marathonhealth: 0 jobs (slug may be invalid)
-  [459/468] optimizehealth: 0 jobs (slug may be invalid)
-  [460/468] moxehealth: 0 jobs (slug may be invalid)
-  [461/468] verato: 0 jobs (slug may be invalid)
-  [462/468] springbuk: 0 jobs (slug may be invalid)
-  [463/468] clearviewhcp: 0 jobs (slug may be invalid)
-  [464/468] cleanchoiceenergy: 0 jobs (slug may be invalid)
-  [465/468] firstdatabank: 0 jobs (slug may be invalid)
-  [466/468] abcfitness: 0 jobs (slug may be invalid)
-  [467/468] doordash: 0 jobs (slug may be invalid)
-  [468/468] exiger: 58 jobs
+  [1/470] oscar: 239 jobs
+  [2/470] acuitymd: 11 jobs
+  [3/470] sondermind: 0 jobs (slug may be invalid)
+  [4/470] linushealth: 0 jobs (slug may be invalid)
+  [5/470] clipboardhealth: 0 jobs (slug may be invalid)
+  [6/470] picnichealth: 0 jobs (slug may be invalid)
+  [7/470] carerev: 0 jobs (slug may be invalid)
+  [8/470] abarca: 0 jobs (slug may be invalid)
+  [9/470] modernhealth: 8 jobs
+  [10/470] roivantsciences: 10 jobs
+  [11/470] waymark: 20 jobs
+  [12/470] freenome: 23 jobs
+  [13/470] bridgebio: 63 jobs
+  [14/470] formationbio: 21 jobs
+  [15/470] honehealth: 11 jobs
+  [16/470] cerebral: 0 jobs (slug may be invalid)
+  [17/470] foresightmentalhealth: 2 jobs
+  [18/470] hs: 3 jobs
+  [19/470] springhealth66: 0 jobs (slug may be invalid)
+  [20/470] prolaio: 7 jobs
+  [21/470] prescriberpoint: 2 jobs
+  [22/470] lumimeds: 30 jobs
+  [23/470] smarterdxprivate: 0 jobs (slug may be invalid)
+  [24/470] smarterdx: 3 jobs
+  [25/470] midihealth: 46 jobs
+  [26/470] shieldshealthsolutions: 85 jobs
+  [27/470] coherehealth: 76 jobs
+  [28/470] allarahealth: 0 jobs (slug may be invalid)
+  [29/470] courierhealth: 17 jobs
+  [30/470] garnerhealth: 76 jobs
+  [31/470] evio: 5 jobs
+  [32/470] cofertility: 3 jobs
+  [33/470] carrotfertility: 15 jobs
+  [34/470] branchcare: 0 jobs (slug may be invalid)
+  [35/470] pomelocare: 0 jobs (slug may be invalid)
+  [36/470] openfertility: 2 jobs
+  [37/470] mavenclinic: 35 jobs
+  [38/470] sparkadvisors: 9 jobs
+  [39/470] wellth: 0 jobs (slug may be invalid)
+  [40/470] employerdirecthealthcare: 36 jobs
+  [41/470] habitathealth: 50 jobs
+  [42/470] authorhealth: 0 jobs (slug may be invalid)
+  [43/470] omadahealth: 18 jobs
+  [44/470] phamily: 0 jobs (slug may be invalid)
+  [45/470] interwellhealth: 10 jobs
+  [46/470] smartertechnologies: 0 jobs (slug may be invalid)
+  [47/470] redcellpartners: 21 jobs
+  [48/470] inovalon: 0 jobs (slug may be invalid)
+  [49/470] layerhealth: 16 jobs
+  [50/470] jukeboxhealth: 28 jobs
+  [51/470] qualifiedhealth: 0 jobs (slug may be invalid)
+  [52/470] tuleahealth: 4 jobs
+  [53/470] precisionmedicinegroup: 174 jobs
+  [54/470] peptilogics: 3 jobs
+  [55/470] recursionpharmaceuticals: 15 jobs
+  [56/470] headlandsresearch: 56 jobs
+  [57/470] yarrowbiotechnology: 0 jobs (slug may be invalid)
+  [58/470] synerg: 32 jobs
+  [59/470] immunomeinc: 28 jobs
+  [60/470] cedar: 0 jobs (slug may be invalid)
+  [61/470] hingehealth: 0 jobs (slug may be invalid)
+  [62/470] carbonhealth: 0 jobs (slug may be invalid)
+  [63/470] color: 0 jobs (slug may be invalid)
+  [64/470] komodohealth: 29 jobs
+  [65/470] includedhealth: 0 jobs (slug may be invalid)
+  [66/470] headway: 0 jobs (slug may be invalid)
+  [67/470] lyrahealth: 0 jobs (slug may be invalid)
+  [68/470] ro: 0 jobs (slug may be invalid)
+  [69/470] curology: 0 jobs (slug may be invalid)
+  [70/470] khealth: 0 jobs (slug may be invalid)
+  [71/470] thirtymadison: 0 jobs (slug may be invalid)
+  [72/470] nourish: 0 jobs (slug may be invalid)
+  [73/470] abridge: 0 jobs (slug may be invalid)
+  [74/470] transcarent: 0 jobs (slug may be invalid)
+  [75/470] tempus: 0 jobs (slug may be invalid)
+  [76/470] flatiron: 0 jobs (slug may be invalid)
+  [77/470] ribbonhealth: 0 jobs (slug may be invalid)
+  [78/470] evidation: 0 jobs (slug may be invalid)
+  [79/470] alma: 0 jobs (slug may be invalid)
+  [80/470] talkiatry: 0 jobs (slug may be invalid)
+  [81/470] brightline: 0 jobs (slug may be invalid)
+  [82/470] amwell: 9 jobs
+  [83/470] doximity: 15 jobs
+  [84/470] veeva: 0 jobs (slug may be invalid)
+  [85/470] guardanthealth: 0 jobs (slug may be invalid)
+  [86/470] recursion: 0 jobs (slug may be invalid)
+  [87/470] veracyte: 29 jobs
+  [88/470] benchling: 0 jobs (slug may be invalid)
+  [89/470] moderna: 0 jobs (slug may be invalid)
+  [90/470] 23andme: 0 jobs (slug may be invalid)
+  [91/470] tendo: 0 jobs (slug may be invalid)
+  [92/470] memora: 0 jobs (slug may be invalid)
+  [93/470] wellsky: 0 jobs (slug may be invalid)
+  [94/470] papacompanies: 0 jobs (slug may be invalid)
+  [95/470] vivahealth: 0 jobs (slug may be invalid)
+  [96/470] biofourmis: 1 jobs
+  [97/470] ada: 0 jobs (slug may be invalid)
+  [98/470] buoy: 0 jobs (slug may be invalid)
+  [99/470] kindbody: 0 jobs (slug may be invalid)
+  [100/470] tia: 33 jobs
+  [101/470] hims: 0 jobs (slug may be invalid)
+  [102/470] noom: 0 jobs (slug may be invalid)
+  [103/470] calm: 2 jobs
+  [104/470] vidaheath: 0 jobs (slug may be invalid)
+  [105/470] sword: 0 jobs (slug may be invalid)
+  [106/470] kaiahealth: 0 jobs (slug may be invalid)
+  [107/470] ginger: 0 jobs (slug may be invalid)
+  [108/470] rula: 0 jobs (slug may be invalid)
+  [109/470] octave: 17 jobs
+  [110/470] rightway: 6 jobs
+  [111/470] centivo: 0 jobs (slug may be invalid)
+  [112/470] collectivehealth: 0 jobs (slug may be invalid)
+  [113/470] accolade: 0 jobs (slug may be invalid)
+  [114/470] evolenthealth: 0 jobs (slug may be invalid)
+  [115/470] iodine: 0 jobs (slug may be invalid)
+  [116/470] innovaccer: 0 jobs (slug may be invalid)
+  [117/470] cotiviti: 0 jobs (slug may be invalid)
+  [118/470] datavant: 0 jobs (slug may be invalid)
+  [119/470] trialspark: 0 jobs (slug may be invalid)
+  [120/470] paige: 0 jobs (slug may be invalid)
+  [121/470] pathai: 14 jobs
+  [122/470] truveta: 38 jobs
+  [123/470] athelas: 0 jobs (slug may be invalid)
+  [124/470] olive: 0 jobs (slug may be invalid)
+  [125/470] altopharmacy: 0 jobs (slug may be invalid)
+  [126/470] capsule: 0 jobs (slug may be invalid)
+  [127/470] vivante: 0 jobs (slug may be invalid)
+  [128/470] ?: 728 jobs
+  [129/470] ?: 0 jobs (slug may be invalid)
+  [130/470] ?: 277 jobs
+  [131/470] ?: 68 jobs
+  [132/470] ?: 69 jobs
+  [133/470] ?: 182 jobs
+  [134/470] ?: 203 jobs
+  [135/470] ?: 72 jobs
+  [136/470] ?: 222 jobs
+  [137/470] ?: 0 jobs (slug may be invalid)
+  [138/470] ?: 20 jobs
+  [139/470] ?: 0 jobs (slug may be invalid)
+  [140/470] ?: 53 jobs
+  [141/470] ?: 26 jobs
+  [142/470] ?: 0 jobs (slug may be invalid)
+  [143/470] ?: 0 jobs (slug may be invalid)
+  [144/470] ?: 30 jobs
+  [145/470] ?: 424 jobs
+  [146/470] ?: 0 jobs (slug may be invalid)
+  [147/470] ?: 0 jobs (slug may be invalid)
+  [148/470] ?: 0 jobs (slug may be invalid)
+  [149/470] ?: 0 jobs (slug may be invalid)
+  [150/470] ?: 0 jobs (slug may be invalid)
+  [151/470] ?: 378 jobs
+  [152/470] ?: 92 jobs
+  [153/470] ?: 0 jobs (slug may be invalid)
+  [154/470] ?: 0 jobs (slug may be invalid)
+  [155/470] ?: 36 jobs
+  [156/470] ?: 0 jobs (slug may be invalid)
+  [157/470] ?: 87 jobs
+  [158/470] ?: 8 jobs
+  [159/470] ?: 0 jobs (slug may be invalid)
+  [160/470] ?: 15 jobs
+  [161/470] ?: 0 jobs (slug may be invalid)
+  [162/470] ?: 0 jobs (slug may be invalid)
+  [163/470] ?: 16 jobs
+  [164/470] ?: 6 jobs
+  [165/470] ?: 0 jobs (slug may be invalid)
+  [166/470] ?: 0 jobs (slug may be invalid)
+  [167/470] ?: 25 jobs
+  [168/470] ?: 0 jobs (slug may be invalid)
+  [169/470] ?: 0 jobs (slug may be invalid)
+  [170/470] ?: 0 jobs (slug may be invalid)
+  [171/470] ?: 0 jobs (slug may be invalid)
+  [172/470] ?: 0 jobs (slug may be invalid)
+  [173/470] ?: 0 jobs (slug may be invalid)
+  [174/470] ?: 5 jobs
+  [175/470] ?: 0 jobs (slug may be invalid)
+  [176/470] ?: 0 jobs (slug may be invalid)
+  [177/470] ?: 11 jobs
+  [178/470] ?: 0 jobs (slug may be invalid)
+  [179/470] ?: 0 jobs (slug may be invalid)
+  [180/470] ?: 0 jobs (slug may be invalid)
+  [181/470] ?: 0 jobs (slug may be invalid)
+  [182/470] ?: 0 jobs (slug may be invalid)
+  [183/470] ?: 0 jobs (slug may be invalid)
+  [184/470] ?: 0 jobs (slug may be invalid)
+  [185/470] ?: 0 jobs (slug may be invalid)
+  [186/470] ?: 10 jobs
+  [187/470] ?: 0 jobs (slug may be invalid)
+  [188/470] ?: 0 jobs (slug may be invalid)
+  [189/470] ?: 720 jobs
+  [190/470] ?: 0 jobs (slug may be invalid)
+  [191/470] ?: 0 jobs (slug may be invalid)
+  [192/470] ?: 8 jobs
+  [193/470] ?: 0 jobs (slug may be invalid)
+  [194/470] ?: 89 jobs
+  [195/470] ?: 12 jobs
+  [196/470] ?: 0 jobs (slug may be invalid)
+  [197/470] ?: 0 jobs (slug may be invalid)
+  [198/470] ?: 0 jobs (slug may be invalid)
+  [199/470] ?: 0 jobs (slug may be invalid)
+  [200/470] ?: 0 jobs (slug may be invalid)
+  [201/470] ?: 645 jobs
+  [202/470] ?: 0 jobs (slug may be invalid)
+  [203/470] ?: 0 jobs (slug may be invalid)
+  [204/470] ?: 0 jobs (slug may be invalid)
+  [205/470] ?: 0 jobs (slug may be invalid)
+  [206/470] ?: 0 jobs (slug may be invalid)
+  [207/470] ?: 0 jobs (slug may be invalid)
+  [208/470] ?: 0 jobs (slug may be invalid)
+  [209/470] ?: 0 jobs (slug may be invalid)
+  [210/470] ?: 0 jobs (slug may be invalid)
+  [211/470] ?: 0 jobs (slug may be invalid)
+  [212/470] ?: 0 jobs (slug may be invalid)
+  [213/470] ?: 0 jobs (slug may be invalid)
+  [214/470] ?: 0 jobs (slug may be invalid)
+  [215/470] ?: 0 jobs (slug may be invalid)
+  [216/470] ?: 0 jobs (slug may be invalid)
+  [217/470] ?: 0 jobs (slug may be invalid)
+  [218/470] ?: 0 jobs (slug may be invalid)
+  [219/470] ?: 0 jobs (slug may be invalid)
+  [220/470] ?: 0 jobs (slug may be invalid)
+  [221/470] ?: 0 jobs (slug may be invalid)
+  [222/470] ?: 0 jobs (slug may be invalid)
+  [223/470] ?: 0 jobs (slug may be invalid)
+  [224/470] ?: 0 jobs (slug may be invalid)
+  [225/470] rippling: 0 jobs (slug may be invalid)
+  [226/470] deel: 0 jobs (slug may be invalid)
+  [227/470] pave: 0 jobs (slug may be invalid)
+  [228/470] paystand: 15 jobs
+  [229/470] melio: 23 jobs
+  [230/470] novo: 0 jobs (slug may be invalid)
+  [231/470] numerated: 0 jobs (slug may be invalid)
+  [232/470] blend-labs: 0 jobs (slug may be invalid)
+  [233/470] pipe: 0 jobs (slug may be invalid)
+  [234/470] forge-global: 0 jobs (slug may be invalid)
+  [235/470] cais: 14 jobs
+  [236/470] allocate: 0 jobs (slug may be invalid)
+  [237/470] percent: 0 jobs (slug may be invalid)
+  [238/470] color-health: 0 jobs (slug may be invalid)
+  [239/470] hims-hers: 0 jobs (slug may be invalid)
+  [240/470] calibrate: 0 jobs (slug may be invalid)
+  [241/470] vida-health: 0 jobs (slug may be invalid)
+  [242/470] spring-health: 0 jobs (slug may be invalid)
+  [243/470] lyra-health: 0 jobs (slug may be invalid)
+  [244/470] sword-health: 0 jobs (slug may be invalid)
+  [245/470] included-health: 0 jobs (slug may be invalid)
+  [246/470] cityblock-health: 0 jobs (slug may be invalid)
+  [247/470] eden-health: 0 jobs (slug may be invalid)
+  [248/470] firefly-health: 0 jobs (slug may be invalid)
+  [249/470] medable: 0 jobs (slug may be invalid)
+  [250/470] science-37: 0 jobs (slug may be invalid)
+  [251/470] verily: 0 jobs (slug may be invalid)
+  [252/470] saama-technologies: 0 jobs (slug may be invalid)
+  [253/470] komodo-health: 0 jobs (slug may be invalid)
+  [254/470] phreesia: 0 jobs (slug may be invalid)
+  [255/470] turquoise-health: 0 jobs (slug may be invalid)
+  [256/470] kyruus-health: 0 jobs (slug may be invalid)
+  [257/470] aledade: 0 jobs (slug may be invalid)
+  [258/470] veeva-systems: 0 jobs (slug may be invalid)
+  [259/470] teladoc-health: 0 jobs (slug may be invalid)
+  [260/470] devotedhealth: 0 jobs (slug may be invalid)
+  [261/470] bright-health-group: 0 jobs (slug may be invalid)
+  [262/470] alignmenthealthcare: 0 jobs (slug may be invalid)
+  [263/470] livongo: 0 jobs (slug may be invalid)
+  [264/470] pear-therapeutics: 0 jobs (slug may be invalid)
+  [265/470] akili-interactive: 0 jobs (slug may be invalid)
+  [266/470] greenway-health: 0 jobs (slug may be invalid)
+  [267/470] practice-fusion: 0 jobs (slug may be invalid)
+  [268/470] kareo: 0 jobs (slug may be invalid)
+  [269/470] tebra: 12 jobs
+  [270/470] modernizing-medicine: 0 jobs (slug may be invalid)
+  [271/470] nextech-systems: 0 jobs (slug may be invalid)
+  [272/470] srs-health: 0 jobs (slug may be invalid)
+  [273/470] veradigm: 0 jobs (slug may be invalid)
+  [274/470] vatic-health: 0 jobs (slug may be invalid)
+  [275/470] iodinesoftware: 0 jobs (slug may be invalid)
+  [276/470] augmedix: 0 jobs (slug may be invalid)
+  [277/470] olive-ai: 0 jobs (slug may be invalid)
+  [278/470] arcadia.io: 0 jobs (slug may be invalid)
+  [279/470] saama: 0 jobs (slug may be invalid)
+  [280/470] castor: 0 jobs (slug may be invalid)
+  [281/470] florencehealthcare: 7 jobs
+  [282/470] reifyhealth: 0 jobs (slug may be invalid)
+  [283/470] suvoda: 31 jobs
+  [284/470] flatironhealth: 23 jobs
+  [285/470] foundationmedicine: 0 jobs (slug may be invalid)
+  [286/470] invitae: 0 jobs (slug may be invalid)
+  [287/470] helix: 0 jobs (slug may be invalid)
+  [288/470] ancestry: 0 jobs (slug may be invalid)
+  [289/470] veranahealth: 7 jobs
+  [290/470] om1inc: 0 jobs (slug may be invalid)
+  [291/470] goodrx: 0 jobs (slug may be invalid)
+  [292/470] capsulepharmacy: 0 jobs (slug may be invalid)
+  [293/470] truepill: 0 jobs (slug may be invalid)
+  [294/470] drfirst: 0 jobs (slug may be invalid)
+  [295/470] rxsavingssolutions: 0 jobs (slug may be invalid)
+  [296/470] kyruus: 0 jobs (slug may be invalid)
+  [297/470] zocdoc: 60 jobs
+  [298/470] solv: 0 jobs (slug may be invalid)
+  [299/470] galileo: 8 jobs
+  [300/470] plushcare: 0 jobs (slug may be invalid)
+  [301/470] heal: 0 jobs (slug may be invalid)
+  [302/470] doctorondemand: 0 jobs (slug may be invalid)
+  [303/470] vidahealth: 0 jobs (slug may be invalid)
+  [304/470] virtahealth: 0 jobs (slug may be invalid)
+  [305/470] hellobrightline: 0 jobs (slug may be invalid)
+  [306/470] talkspace: 26 jobs
+  [307/470] betterhelp: 164 jobs
+  [308/470] growtherapy: 0 jobs (slug may be invalid)
+  [309/470] found: 4 jobs
+  [310/470] calahealth: 11 jobs
+  [311/470] vynedental: 0 jobs (slug may be invalid)
+  [312/470] decent: 0 jobs (slug may be invalid)
+  [313/470] imaginepediatrics: 19 jobs
+  [314/470] forward: 5 jobs
+  [315/470] onemedical: 407 jobs
+  [316/470] strivehealth: 65 jobs
+  [317/470] lyric: 0 jobs (slug may be invalid)
+  [318/470] healthedge: 0 jobs (slug may be invalid)
+  [319/470] aetion: 0 jobs (slug may be invalid)
+  [320/470] healthverity: 19 jobs
+  [321/470] apixio: 0 jobs (slug may be invalid)
+  [322/470] cleardata: 0 jobs (slug may be invalid)
+  [323/470] tomorrow: 21 jobs
+  [324/470] himshers: 0 jobs (slug may be invalid)
+  [325/470] oakstreethealth: 0 jobs (slug may be invalid)
+  [326/470] vivantehealth: 0 jobs (slug may be invalid)
+  [327/470] natera: 209 jobs
+  [328/470] trinetx: 0 jobs (slug may be invalid)
+  [329/470] brighthealth: 0 jobs (slug may be invalid)
+  [330/470] landmarkhealth: 0 jobs (slug may be invalid)
+  [331/470] agilonhealth: 0 jobs (slug may be invalid)
+  [332/470] signifyhealth: 0 jobs (slug may be invalid)
+  [333/470] lifestancehealth: 0 jobs (slug may be invalid)
+  [334/470] 98point6: 0 jobs (slug may be invalid)
+  [335/470] bindon-demandhealth: 0 jobs (slug may be invalid)
+  [336/470] brighthealthcare: 0 jobs (slug may be invalid)
+  [337/470] sidecarhealth: 6 jobs
+  [338/470] gravie: 0 jobs (slug may be invalid)
+  [339/470] zelis: 0 jobs (slug may be invalid)
+  [340/470] castlighthealth: 0 jobs (slug may be invalid)
+  [341/470] glooko: 0 jobs (slug may be invalid)
+  [342/470] podimetrics: 0 jobs (slug may be invalid)
+  [343/470] 10xgenomics: 0 jobs (slug may be invalid)
+  [344/470] pacificbiosciences: 0 jobs (slug may be invalid)
+  [345/470] adaptivebiotechnologies: 22 jobs
+  [346/470] grail: 0 jobs (slug may be invalid)
+  [347/470] drchrono: 0 jobs (slug may be invalid)
+  [348/470] elationhealth: 18 jobs
+  [349/470] bamboohealth: 0 jobs (slug may be invalid)
+  [350/470] tandemdiabetes: 0 jobs (slug may be invalid)
+  [351/470] dexcare: 0 jobs (slug may be invalid)
+  [352/470] medely: 0 jobs (slug may be invalid)
+  [353/470] shiftmed: 0 jobs (slug may be invalid)
+  [354/470] trustedhealth: 0 jobs (slug may be invalid)
+  [355/470] dispatchhealth: 0 jobs (slug may be invalid)
+  [356/470] uniteus: 14 jobs
+  [357/470] aidoc: 0 jobs (slug may be invalid)
+  [358/470] vizai: 0 jobs (slug may be invalid)
+  [359/470] insitro: 0 jobs (slug may be invalid)
+  [360/470] recursionpharma: 0 jobs (slug may be invalid)
+  [361/470] editasmedicine: 0 jobs (slug may be invalid)
+  [362/470] intelliatx: 0 jobs (slug may be invalid)
+  [363/470] sagerx: 0 jobs (slug may be invalid)
+  [364/470] ultragenyx: 0 jobs (slug may be invalid)
+  [365/470] ginkgobioworks: 20 jobs
+  [366/470] sanabiotechnology: 0 jobs (slug may be invalid)
+  [367/470] denalitherapeutics: 0 jobs (slug may be invalid)
+  [368/470] slalomconsulting: 0 jobs (slug may be invalid)
+  [369/470] eliseai: 0 jobs (slug may be invalid)
+  [370/470] rewst: 0 jobs (slug may be invalid)
+  [371/470] klara: 0 jobs (slug may be invalid)
+  [372/470] laseraway: 0 jobs (slug may be invalid)
+  [373/470] pagerhealth: 0 jobs (slug may be invalid)
+  [374/470] hugeinc: 28 jobs
+  [375/470] prescryptive: 0 jobs (slug may be invalid)
+  [376/470] qventus: 17 jobs
+  [377/470] instacart: 119 jobs
+  [378/470] elastic: 409 jobs
+  [379/470] rxbenefits: 0 jobs (slug may be invalid)
+  [380/470] honor: 13 jobs
+  [381/470] lattice: 13 jobs
+  [382/470] dropbox: 32 jobs
+  [383/470] guild: 6 jobs
+  [384/470] thrivemarket: 14 jobs
+  [385/470] ascendanalytics: 0 jobs (slug may be invalid)
+  [386/470] alphasense: 196 jobs
+  [387/470] reddit: 147 jobs
+  [388/470] celonis: 226 jobs
+  [389/470] wcgclinical: 0 jobs (slug may be invalid)
+  [390/470] byteme: 0 jobs (slug may be invalid)
+  [391/470] candid: 12 jobs
+  [392/470] progyny: 0 jobs (slug may be invalid)
+  [393/470] oviahealth: 0 jobs (slug may be invalid)
+  [394/470] eleanorhealth: 0 jobs (slug may be invalid)
+  [395/470] bouldercare: 18 jobs
+  [396/470] ophelia: 15 jobs
+  [397/470] pointclickcare: 0 jobs (slug may be invalid)
+  [398/470] matrixcare: 0 jobs (slug may be invalid)
+  [399/470] civicarx: 0 jobs (slug may be invalid)
+  [400/470] imprivata: 0 jobs (slug may be invalid)
+  [401/470] papa: 3 jobs
+  [402/470] carewell: 0 jobs (slug may be invalid)
+  [403/470] aplaceformom: 0 jobs (slug may be invalid)
+  [404/470] altasciences: 0 jobs (slug may be invalid)
+  [405/470] winfertility: 0 jobs (slug may be invalid)
+  [406/470] charliehealth: 251 jobs
+  [407/470] alayacare: 20 jobs
+  [408/470] civicascript: 0 jobs (slug may be invalid)
+  [409/470] capitalrx: 0 jobs (slug may be invalid)
+  [410/470] optimecare: 0 jobs (slug may be invalid)
+  [411/470] medeanalytics: 2 jobs
+  [412/470] science37: 66 jobs
+  [413/470] advarra: 0 jobs (slug may be invalid)
+  [414/470] warbyparker: 0 jobs (slug may be invalid)
+  [415/470] symplr: 0 jobs (slug may be invalid)
+  [416/470] healthcatalyst: 0 jobs (slug may be invalid)
+  [417/470] genedx: 19 jobs
+  [418/470] somatus: 0 jobs (slug may be invalid)
+  [419/470] dental-intelligence: 0 jobs (slug may be invalid)
+  [420/470] hellotend: 24 jobs
+  [421/470] overjetai: 0 jobs (slug may be invalid)
+  [422/470] meetdandy: 0 jobs (slug may be invalid)
+  [423/470] tend: 0 jobs (slug may be invalid)
+  [424/470] odela: 0 jobs (slug may be invalid)
+  [425/470] miracare: 0 jobs (slug may be invalid)
+  [426/470] confidanthealth: 0 jobs (slug may be invalid)
+  [427/470] pelago: 16 jobs
+  [428/470] rulahealth: 0 jobs (slug may be invalid)
+  [429/470] twochairs: 38 jobs
+  [430/470] careacademy: 0 jobs (slug may be invalid)
+  [431/470] caregiver: 17 jobs
+  [432/470] smilecdr: 0 jobs (slug may be invalid)
+  [433/470] galaxy: 2 jobs
+  [434/470] vetsource: 0 jobs (slug may be invalid)
+  [435/470] rightwayhealthcare: 35 jobs
+  [436/470] artera: 0 jobs (slug may be invalid)
+  [437/470] lumahealth: 5 jobs
+  [438/470] healthgrades: 0 jobs (slug may be invalid)
+  [439/470] accel: 0 jobs (slug may be invalid)
+  [440/470] leagueinc: 12 jobs
+  [441/470] hazel: 20 jobs
+  [442/470] crossoverhealth: 0 jobs (slug may be invalid)
+  [443/470] parsleyhealth: 8 jobs
+  [444/470] nocd: 0 jobs (slug may be invalid)
+  [445/470] simplepractice: 0 jobs (slug may be invalid)
+  [446/470] heartflowinc: 107 jobs
+  [447/470] leantaas: 0 jobs (slug may be invalid)
+  [448/470] laudio: 0 jobs (slug may be invalid)
+  [449/470] healthjoy: 3 jobs
+  [450/470] carrumhealth: 0 jobs (slug may be invalid)
+  [451/470] lanterncare: 0 jobs (slug may be invalid)
+  [452/470] machinify: 0 jobs (slug may be invalid)
+  [453/470] h1: 0 jobs (slug may be invalid)
+  [454/470] vytalizehealth: 0 jobs (slug may be invalid)
+  [455/470] monogramhealth: 0 jobs (slug may be invalid)
+  [456/470] welbehealth: 142 jobs
+  [457/470] homeward: 4 jobs
+  [458/470] mainstreethealth: 7 jobs
+  [459/470] hopscotchprimarycare: 31 jobs
+  [460/470] marathonhealth: 0 jobs (slug may be invalid)
+  [461/470] optimizehealth: 0 jobs (slug may be invalid)
+  [462/470] moxehealth: 0 jobs (slug may be invalid)
+  [463/470] verato: 0 jobs (slug may be invalid)
+  [464/470] springbuk: 0 jobs (slug may be invalid)
+  [465/470] clearviewhcp: 0 jobs (slug may be invalid)
+  [466/470] cleanchoiceenergy: 0 jobs (slug may be invalid)
+  [467/470] firstdatabank: 0 jobs (slug may be invalid)
+  [468/470] abcfitness: 0 jobs (slug may be invalid)
+  [469/470] doordash: 0 jobs (slug may be invalid)
+  [470/470] exiger: 58 jobs
 
-[lever] 130 companies
-  [1/130] SprinterHealth: 0 jobs (slug may be invalid)
-  [2/130] CollectlyInc: 10 jobs
-  [3/130] canvasmedical: 6 jobs
-  [4/130] zushealth: 6 jobs
-  [5/130] januaryinc: 1 jobs
-  [6/130] RyzLabs: 41 jobs
-  [7/130] heartbeathealth: 26 jobs
-  [8/130] circadiahealth: 66 jobs
-  [9/130] artera-2: 8 jobs
-  [10/130] whoop: 0 jobs (slug may be invalid)
-  [11/130] caremessage: 0 jobs (slug may be invalid)
-  [12/130] h1: 18 jobs
-  [13/130] mcra: 0 jobs (slug may be invalid)
-  [14/130] aledade: 35 jobs
-  [15/130] includedhealth: 50 jobs
-  [16/130] lyrahealth: 561 jobs
-  [17/130] glooko: 0 jobs (slug may be invalid)
-  [18/130] truepill: 0 jobs (slug may be invalid)
-  [19/130] talkiatry: 0 jobs (slug may be invalid)
-  [20/130] datavant: 0 jobs (slug may be invalid)
-  [21/130] ribbonhealth: 0 jobs (slug may be invalid)
-  [22/130] alma: 0 jobs (slug may be invalid)
-  [23/130] headway: 0 jobs (slug may be invalid)
-  [24/130] betterup: 0 jobs (slug may be invalid)
-  [25/130] noom: 0 jobs (slug may be invalid)
-  [26/130] calm: 0 jobs (slug may be invalid)
-  [27/130] verily: 0 jobs (slug may be invalid)
-  [28/130] neuralink: 0 jobs (slug may be invalid)
-  [29/130] ?: 0 jobs (slug may be invalid)
-  [30/130] ?: 0 jobs (slug may be invalid)
-  [31/130] ?: 0 jobs (slug may be invalid)
-  [32/130] ?: 0 jobs (slug may be invalid)
-  [33/130] ?: 0 jobs (slug may be invalid)
-  [34/130] ?: 0 jobs (slug may be invalid)
-  [35/130] ?: 0 jobs (slug may be invalid)
-  [36/130] ?: 0 jobs (slug may be invalid)
-  [37/130] ?: 0 jobs (slug may be invalid)
-  [38/130] ?: 18 jobs
-  [39/130] ?: 0 jobs (slug may be invalid)
-  [40/130] ?: 0 jobs (slug may be invalid)
-  [41/130] ?: 0 jobs (slug may be invalid)
-  [42/130] ?: 0 jobs (slug may be invalid)
-  [43/130] ?: 0 jobs (slug may be invalid)
-  [44/130] ?: 0 jobs (slug may be invalid)
-  [45/130] ?: 0 jobs (slug may be invalid)
-  [46/130] ?: 0 jobs (slug may be invalid)
-  [47/130] ?: 0 jobs (slug may be invalid)
-  [48/130] ?: 0 jobs (slug may be invalid)
-  [49/130] ?: 0 jobs (slug may be invalid)
-  [50/130] ?: 0 jobs (slug may be invalid)
-  [51/130] ?: 0 jobs (slug may be invalid)
-  [52/130] ?: 0 jobs (slug may be invalid)
-  [53/130] ?: 0 jobs (slug may be invalid)
-  [54/130] ?: 0 jobs (slug may be invalid)
-  [55/130] ?: 0 jobs (slug may be invalid)
-  [56/130] ?: 0 jobs (slug may be invalid)
-  [57/130] ?: 0 jobs (slug may be invalid)
-  [58/130] ?: 0 jobs (slug may be invalid)
-  [59/130] ?: 0 jobs (slug may be invalid)
-  [60/130] ?: 7 jobs
-  [61/130] ?: 0 jobs (slug may be invalid)
-  [62/130] ?: 0 jobs (slug may be invalid)
-  [63/130] ?: 0 jobs (slug may be invalid)
-  [64/130] ?: 0 jobs (slug may be invalid)
-  [65/130] ?: 0 jobs (slug may be invalid)
-  [66/130] treasury-prime: 0 jobs (slug may be invalid)
-  [67/130] synctera: 0 jobs (slug may be invalid)
-  [68/130] highnote: 0 jobs (slug may be invalid)
-  [69/130] grasshopper-bank: 0 jobs (slug may be invalid)
-  [70/130] nearside: 0 jobs (slug may be invalid)
-  [71/130] cogni: 0 jobs (slug may be invalid)
-  [72/130] hum-capital: 0 jobs (slug may be invalid)
-  [73/130] nira-medical: 0 jobs (slug may be invalid)
-  [74/130] rxsense: 0 jobs (slug may be invalid)
-  [75/130] hyro.ai: 0 jobs (slug may be invalid)
-  [76/130] cartahealthcare: 0 jobs (slug may be invalid)
-  [77/130] color: 0 jobs (slug may be invalid)
-  [78/130] swordhealth: 0 jobs (slug may be invalid)
-  [79/130] carbonhealth: 0 jobs (slug may be invalid)
-  [80/130] wayspring: 0 jobs (slug may be invalid)
-  [81/130] vatica: 0 jobs (slug may be invalid)
-  [82/130] curai: 5 jobs
-  [83/130] forgehealth: 0 jobs (slug may be invalid)
-  [84/130] curanahealth: 0 jobs (slug may be invalid)
-  [85/130] clarifyhealth: 6 jobs
-  [86/130] redoxengine: 11 jobs
-  [87/130] healthtap: 0 jobs (slug may be invalid)
-  [88/130] patientping: 0 jobs (slug may be invalid)
-  [89/130] healthgorilla: 0 jobs (slug may be invalid)
-  [90/130] 1uphealth: 0 jobs (slug may be invalid)
-  [91/130] protenus: 0 jobs (slug may be invalid)
-  [92/130] zoomcare: 0 jobs (slug may be invalid)
-  [93/130] patientpop: 0 jobs (slug may be invalid)
-  [94/130] stratadecision: 0 jobs (slug may be invalid)
-  [95/130] caredox: 0 jobs (slug may be invalid)
-  [96/130] wingspanhealth: 0 jobs (slug may be invalid)
-  [97/130] codametrix: 0 jobs (slug may be invalid)
-  [98/130] abcellera: 0 jobs (slug may be invalid)
-  [99/130] arsenalbio: 1 jobs
-  [100/130] kallyope: 0 jobs (slug may be invalid)
-  [101/130] superhuman: 0 jobs (slug may be invalid)
-  [102/130] velocityclinical: 0 jobs (slug may be invalid)
-  [103/130] mahmee: 2 jobs
-  [104/130] brightsidehealth: 0 jobs (slug may be invalid)
-  [105/130] censinet: 0 jobs (slug may be invalid)
-  [106/130] nurx: 0 jobs (slug may be invalid)
-  [107/130] keeps: 0 jobs (slug may be invalid)
-  [108/130] helowisp: 0 jobs (slug may be invalid)
-  [109/130] stellar: 0 jobs (slug may be invalid)
-  [110/130] springfertility: 0 jobs (slug may be invalid)
-  [111/130] revohealth: 0 jobs (slug may be invalid)
-  [112/130] soundtalent: 0 jobs (slug may be invalid)
-  [113/130] bloomlife: 0 jobs (slug may be invalid)
-  [114/130] cayabacare: 0 jobs (slug may be invalid)
-  [115/130] careyaya: 0 jobs (slug may be invalid)
-  [116/130] kindlycare: 0 jobs (slug may be invalid)
-  [117/130] medly: 0 jobs (slug may be invalid)
-  [118/130] kalderos: 0 jobs (slug may be invalid)
-  [119/130] scriptdrop: 0 jobs (slug may be invalid)
-  [120/130] apostrophe: 0 jobs (slug may be invalid)
-  [121/130] manual: 0 jobs (slug may be invalid)
-  [122/130] felixhealth: 0 jobs (slug may be invalid)
-  [123/130] petdesk: 11 jobs
-  [124/130] digitail: 0 jobs (slug may be invalid)
-  [125/130] shepherd: 0 jobs (slug may be invalid)
-  [126/130] medisafe: 0 jobs (slug may be invalid)
-  [127/130] buoyhealth: 0 jobs (slug may be invalid)
-  [128/130] verifiable: 1 jobs
-  [129/130] nimblerx: 0 jobs (slug may be invalid)
-  [130/130] pager: 0 jobs (slug may be invalid)
+[lever] 129 companies
+  [1/129] SprinterHealth: 0 jobs (slug may be invalid)
+  [2/129] CollectlyInc: 10 jobs
+  [3/129] canvasmedical: 6 jobs
+  [4/129] zushealth: 6 jobs
+  [5/129] januaryinc: 1 jobs
+  [6/129] RyzLabs: 41 jobs
+  [7/129] heartbeathealth: 26 jobs
+  [8/129] circadiahealth: 66 jobs
+  [9/129] artera-2: 8 jobs
+  [10/129] whoop: 0 jobs (slug may be invalid)
+  [11/129] caremessage: 0 jobs (slug may be invalid)
+  [12/129] h1: 18 jobs
+  [13/129] mcra: 0 jobs (slug may be invalid)
+  [14/129] aledade: 35 jobs
+  [15/129] includedhealth: 50 jobs
+  [16/129] lyrahealth: 561 jobs
+  [17/129] glooko: 0 jobs (slug may be invalid)
+  [18/129] truepill: 0 jobs (slug may be invalid)
+  [19/129] talkiatry: 0 jobs (slug may be invalid)
+  [20/129] datavant: 0 jobs (slug may be invalid)
+  [21/129] ribbonhealth: 0 jobs (slug may be invalid)
+  [22/129] alma: 0 jobs (slug may be invalid)
+  [23/129] headway: 0 jobs (slug may be invalid)
+  [24/129] betterup: 0 jobs (slug may be invalid)
+  [25/129] noom: 0 jobs (slug may be invalid)
+  [26/129] calm: 0 jobs (slug may be invalid)
+  [27/129] verily: 0 jobs (slug may be invalid)
+  [28/129] neuralink: 0 jobs (slug may be invalid)
+  [29/129] ?: 0 jobs (slug may be invalid)
+  [30/129] ?: 0 jobs (slug may be invalid)
+  [31/129] ?: 0 jobs (slug may be invalid)
+  [32/129] ?: 0 jobs (slug may be invalid)
+  [33/129] ?: 0 jobs (slug may be invalid)
+  [34/129] ?: 0 jobs (slug may be invalid)
+  [35/129] ?: 0 jobs (slug may be invalid)
+  [36/129] ?: 0 jobs (slug may be invalid)
+  [37/129] ?: 0 jobs (slug may be invalid)
+  [38/129] ?: 18 jobs
+  [39/129] ?: 0 jobs (slug may be invalid)
+  [40/129] ?: 0 jobs (slug may be invalid)
+  [41/129] ?: 0 jobs (slug may be invalid)
+  [42/129] ?: 0 jobs (slug may be invalid)
+  [43/129] ?: 0 jobs (slug may be invalid)
+  [44/129] ?: 0 jobs (slug may be invalid)
+  [45/129] ?: 0 jobs (slug may be invalid)
+  [46/129] ?: 0 jobs (slug may be invalid)
+  [47/129] ?: 0 jobs (slug may be invalid)
+  [48/129] ?: 0 jobs (slug may be invalid)
+  [49/129] ?: 0 jobs (slug may be invalid)
+  [50/129] ?: 0 jobs (slug may be invalid)
+  [51/129] ?: 0 jobs (slug may be invalid)
+  [52/129] ?: 0 jobs (slug may be invalid)
+  [53/129] ?: 0 jobs (slug may be invalid)
+  [54/129] ?: 0 jobs (slug may be invalid)
+  [55/129] ?: 0 jobs (slug may be invalid)
+  [56/129] ?: 0 jobs (slug may be invalid)
+  [57/129] ?: 0 jobs (slug may be invalid)
+  [58/129] ?: 0 jobs (slug may be invalid)
+  [59/129] ?: 0 jobs (slug may be invalid)
+  [60/129] ?: 7 jobs
+  [61/129] ?: 0 jobs (slug may be invalid)
+  [62/129] ?: 0 jobs (slug may be invalid)
+  [63/129] ?: 0 jobs (slug may be invalid)
+  [64/129] ?: 0 jobs (slug may be invalid)
+  [65/129] ?: 0 jobs (slug may be invalid)
+  [66/129] treasury-prime: 0 jobs (slug may be invalid)
+  [67/129] synctera: 0 jobs (slug may be invalid)
+  [68/129] highnote: 0 jobs (slug may be invalid)
+  [69/129] grasshopper-bank: 0 jobs (slug may be invalid)
+  [70/129] nearside: 0 jobs (slug may be invalid)
+  [71/129] cogni: 0 jobs (slug may be invalid)
+  [72/129] hum-capital: 0 jobs (slug may be invalid)
+  [73/129] nira-medical: 0 jobs (slug may be invalid)
+  [74/129] rxsense: 0 jobs (slug may be invalid)
+  [75/129] hyro.ai: 0 jobs (slug may be invalid)
+  [76/129] cartahealthcare: 0 jobs (slug may be invalid)
+  [77/129] swordhealth: 0 jobs (slug may be invalid)
+  [78/129] carbonhealth: 0 jobs (slug may be invalid)
+  [79/129] wayspring: 0 jobs (slug may be invalid)
+  [80/129] vatica: 0 jobs (slug may be invalid)
+  [81/129] curai: 5 jobs
+  [82/129] forgehealth: 0 jobs (slug may be invalid)
+  [83/129] curanahealth: 0 jobs (slug may be invalid)
+  [84/129] clarifyhealth: 6 jobs
+  [85/129] redoxengine: 11 jobs
+  [86/129] healthtap: 0 jobs (slug may be invalid)
+  [87/129] patientping: 0 jobs (slug may be invalid)
+  [88/129] healthgorilla: 0 jobs (slug may be invalid)
+  [89/129] 1uphealth: 0 jobs (slug may be invalid)
+  [90/129] protenus: 0 jobs (slug may be invalid)
+  [91/129] zoomcare: 0 jobs (slug may be invalid)
+  [92/129] patientpop: 0 jobs (slug may be invalid)
+  [93/129] stratadecision: 0 jobs (slug may be invalid)
+  [94/129] caredox: 0 jobs (slug may be invalid)
+  [95/129] wingspanhealth: 0 jobs (slug may be invalid)
+  [96/129] codametrix: 0 jobs (slug may be invalid)
+  [97/129] abcellera: 0 jobs (slug may be invalid)
+  [98/129] arsenalbio: 1 jobs
+  [99/129] kallyope: 0 jobs (slug may be invalid)
+  [100/129] superhuman: 0 jobs (slug may be invalid)
+  [101/129] velocityclinical: 0 jobs (slug may be invalid)
+  [102/129] mahmee: 2 jobs
+  [103/129] brightsidehealth: 0 jobs (slug may be invalid)
+  [104/129] censinet: 0 jobs (slug may be invalid)
+  [105/129] nurx: 0 jobs (slug may be invalid)
+  [106/129] keeps: 0 jobs (slug may be invalid)
+  [107/129] helowisp: 0 jobs (slug may be invalid)
+  [108/129] stellar: 0 jobs (slug may be invalid)
+  [109/129] springfertility: 0 jobs (slug may be invalid)
+  [110/129] revohealth: 0 jobs (slug may be invalid)
+  [111/129] soundtalent: 0 jobs (slug may be invalid)
+  [112/129] bloomlife: 0 jobs (slug may be invalid)
+  [113/129] cayabacare: 0 jobs (slug may be invalid)
+  [114/129] careyaya: 0 jobs (slug may be invalid)
+  [115/129] kindlycare: 0 jobs (slug may be invalid)
+  [116/129] medly: 0 jobs (slug may be invalid)
+  [117/129] kalderos: 0 jobs (slug may be invalid)
+  [118/129] scriptdrop: 0 jobs (slug may be invalid)
+  [119/129] apostrophe: 0 jobs (slug may be invalid)
+  [120/129] manual: 0 jobs (slug may be invalid)
+  [121/129] felixhealth: 0 jobs (slug may be invalid)
+  [122/129] petdesk: 11 jobs
+  [123/129] digitail: 0 jobs (slug may be invalid)
+  [124/129] shepherd: 0 jobs (slug may be invalid)
+  [125/129] medisafe: 0 jobs (slug may be invalid)
+  [126/129] buoyhealth: 0 jobs (slug may be invalid)
+  [127/129] verifiable: 1 jobs
+  [128/129] nimblerx: 0 jobs (slug may be invalid)
+  [129/129] pager: 0 jobs (slug may be invalid)
 
 [ashby] 139 companies
   [1/139] Graphitehq: 5 jobs
@@ -673,21 +674,21 @@
   [59/139] cedar: 3 jobs
   [60/139] bighealth: 0 jobs (slug may be invalid)
   [61/139] notable: 10 jobs
-  [62/139] formationbio.com: 0 jobs (slug may be invalid)
-  [63/139] honeybeehealth.com: 0 jobs (slug may be invalid)
+  [62/139] formationbio: 0 jobs (slug may be invalid)
+  [63/139] honeybeehealth: 0 jobs (slug may be invalid)
   [64/139] sesame: 26 jobs
-  [65/139] alma: 0 jobs (slug may be invalid)
+  [65/139] helloalma: 0 jobs (slug may be invalid)
   [66/139] sondermind: 132 jobs
   [67/139] stedi: 18 jobs
-  [68/139] akasa: 12 jobs
-  [69/139] sana: 0 jobs (slug may be invalid)
+  [68/139] akasa: 9 jobs
+  [69/139] sanabenefits: 0 jobs (slug may be invalid)
   [70/139] cityblock: 0 jobs (slug may be invalid)
   [71/139] pearlhealth: 4 jobs
   [72/139] particlehealth: 0 jobs (slug may be invalid)
-  [73/139] hippocraticai: 0 jobs (slug may be invalid)
+  [73/139] hippocratic-ai: 0 jobs (slug may be invalid)
   [74/139] memora: 0 jobs (slug may be invalid)
   [75/139] sprinter-health: 79 jobs
-  [76/139] sparkadvisors: 0 jobs (slug may be invalid)
+  [76/139] spark-advisors: 0 jobs (slug may be invalid)
   [77/139] commure: 82 jobs
   [78/139] wellthy: 0 jobs (slug may be invalid)
   [79/139] evidation: 0 jobs (slug may be invalid)
@@ -1316,34 +1317,34 @@
 [himss] 1 companies
   [1/1] HIMSS Career Center: 0 jobs (slug may be invalid)
 
-Totals: {'greenhouse': 9428, 'lever': 890, 'ashby': 1484, 'workday': 2218, 'workable': 12, 'smartrecruiters': 41, 'remoteok': 99, 'yc': 30, 'hn_hiring': 208}
-Failures: 1020 (companies returned no data — likely bad slugs)
+Totals: {'greenhouse': 9428, 'lever': 890, 'ashby': 1481, 'workday': 2218, 'workable': 12, 'smartrecruiters': 41, 'remoteok': 99, 'yc': 30, 'hn_hiring': 208}
+Failures: 1021 (companies returned no data — likely bad slugs)
 [users] loaded 4 from Worker
 
 [multi-user] generating dashboards for 4 users
 [diag:geetu] loaded profile, targetCompanies len=23, first={'name': 'Veeva Systems', 'atsHint': 'workday', 'atsUrl': 'https://veeva.wd1.myworkdayjobs.com/veeva_careers', 'why': 'Cloud SaaS leader in life sciences with constant demand for senior product and transformation leaders who bridge pharma and technology'}
 [skills-profile:geetu] Senior digital transformation and product leader at the intersection of healthcare and technology · 65 keywords
-[velocity] 148 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 3143/3143
-[why-hidden:geetu] classified 2000 hidden jobs (of 13911 total dropped)
+[velocity] 149 actively-scaling companies (3+ senior roles in 30d)
+[location-remote:geetu] filter pref='hybrid' locs=['New York City', 'New Jersey', 'Remote (US)'] kept 3138/3138
+[why-hidden:geetu] classified 2000 hidden jobs (of 13908 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/geetu.html
 [diag:amit-arora] loaded profile, targetCompanies len=25, first={'name': 'Webster Bank', 'atsHint': 'workday', 'atsUrl': 'https://websterbank.wd1.myworkdayjobs.com/WebsterBankCareers', 'why': "Super-regional commercial bank with active GRC and digital transformation hiring at the SVP/MD level, directly aligned to Amit's IDB Bank and Bank Leumi profile."}
 [skills-profile:amit-arora] Senior technology and GRC executive specializing in digital transformation, risk management, and M&A integration within banking and capital markets · 13 keywords
-[velocity] 148 actively-scaling companies (3+ senior roles in 30d)
-[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 1675/1675
-[why-hidden:amit-arora] classified 2000 hidden jobs (of 13911 total dropped)
+[velocity] 149 actively-scaling companies (3+ senior roles in 30d)
+[location-remote:amit-arora] filter pref='hybrid' locs=['New York City', 'Remote (US)'] kept 1674/1674
+[why-hidden:amit-arora] classified 2000 hidden jobs (of 13908 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/amit-arora.html
 [diag:ishika-arora] loaded profile, targetCompanies len=0, first=None
 [skills-profile:ishika-arora] ? · 0 keywords
-[velocity] 148 actively-scaling companies (3+ senior roles in 30d)
-[why-hidden:ishika-arora] classified 2000 hidden jobs (of 13911 total dropped)
+[velocity] 149 actively-scaling companies (3+ senior roles in 30d)
+[why-hidden:ishika-arora] classified 2000 hidden jobs (of 13908 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/ishika-arora.html
 [diag:radhika-kalra] loaded profile, targetCompanies len=0, first=None
 [skills-profile:radhika-kalra] ? · 0 keywords
-[velocity] 148 actively-scaling companies (3+ senior roles in 30d)
-[why-hidden:radhika-kalra] classified 2000 hidden jobs (of 13911 total dropped)
+[velocity] 149 actively-scaling companies (3+ senior roles in 30d)
+[why-hidden:radhika-kalra] classified 2000 hidden jobs (of 13908 total dropped)
 
 Dashboard written: /home/runner/work/getmybob/getmybob/radhika-kalra.html
