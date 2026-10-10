@@ -1,6 +1,6 @@
 {
   "_note": "Curated Healthcare IT / digital health catalog. Used for: (a) scoring boost when company appears in feed AND user has healthcare industries (+3, all entries), (b) auto-scraping (only ATS=greenhouse/lever/ashby/workable). Workday/Google/Amazon entries are catalog-only (scored boost when found, not scraped). Slugs are canonical for matching.",
-  "version": "2026-05-29-v3+discovered+discovered+dream-list+from-contacts+dedup+dream-geetu+discovered+dedup-r2+verified+slug-recover+verified+verified+discovered+discovered+discovered+verified+verified+verified+verified+from-contacts+verified+verified+from-contacts+verified+verified+from-contacts+verified+from-contacts+verified+from-contacts+verified+from-contacts+verified+from-contacts+verified+from-contacts+verified+from-contacts+verified+from-contacts+verified+from-contacts+verified+from-contacts+verified+from-contacts",
+  "version": "2026-05-29-v3+discovered+discovered+dream-list+from-contacts+dedup+dream-geetu+discovered+dedup-r2+verified+slug-recover+verified+verified+discovered+discovered+discovered+verified+verified+verified+verified+from-contacts+verified+verified+from-contacts+verified+verified+from-contacts+verified+from-contacts+verified+from-contacts+verified+from-contacts+verified+from-contacts+verified+from-contacts+verified+from-contacts+verified+from-contacts+verified+from-contacts+verified+from-contacts+verified+from-contacts+verified",
   "companies": [
     {
       "name": "Doximity",
@@ -443,7 +443,8 @@
       "name": "Tempus",
       "category": "life-sciences-data",
       "atsHint": "greenhouse",
-      "slug": "tempus"
+      "slug": "tempus",
+      "suspectSlug": true
     },
     {
       "name": "Flatiron Health",
@@ -461,7 +462,7 @@
     {
       "name": "Color Health",
       "category": "life-sciences-data",
-      "atsHint": "lever",
+      "atsHint": "greenhouse",
       "slug": "color"
     },
     {
@@ -502,13 +503,13 @@
       "name": "OM1",
       "category": "life-sciences-data",
       "atsHint": "greenhouse",
-      "slug": "om1"
+      "slug": "om1inc"
     },
     {
       "name": "Trialspark (Formation Bio)",
       "category": "clinical-trials",
       "atsHint": "ashby",
-      "slug": "formationbio.com"
+      "slug": "formationbio"
     },
     {
       "name": "Prescryptive Health",
@@ -527,13 +528,13 @@
       "name": "Alto Pharmacy",
       "category": "pharma-tech",
       "atsHint": "greenhouse",
-      "slug": "alto"
+      "slug": "altopharmacy"
     },
     {
       "name": "Capsule",
       "category": "pharma-tech",
       "atsHint": "greenhouse",
-      "slug": "capsule"
+      "slug": "capsulepharmacy"
     },
     {
       "name": "PillPack (Amazon)",
@@ -552,7 +553,7 @@
       "name": "Honeybee Health",
       "category": "pharma-tech",
       "atsHint": "ashby",
-      "slug": "honeybeehealth.com"
+      "slug": "honeybeehealth"
     },
     {
       "name": "DrFirst",
@@ -692,7 +693,7 @@
       "name": "Brightline",
       "category": "dtx",
       "atsHint": "greenhouse",
-      "slug": "brightline"
+      "slug": "hellobrightline"
     },
     {
       "name": "Cerebral",
@@ -723,7 +724,7 @@
       "name": "Alma",
       "category": "provider-tech",
       "atsHint": "ashby",
-      "slug": "alma"
+      "slug": "helloalma"
     },
     {
       "name": "SonderMind",
@@ -817,7 +818,7 @@
       "name": "Sana Benefits",
       "category": "payer-tech",
       "atsHint": "ashby",
-      "slug": "sana"
+      "slug": "sanabenefits"
     },
     {
       "name": "Decent",
@@ -980,7 +981,7 @@
       "name": "Hippocratic AI",
       "category": "clinical-ai",
       "atsHint": "ashby",
-      "slug": "hippocraticai"
+      "slug": "hippocratic-ai"
     },
     {
       "name": "Memora Health",
@@ -1024,14 +1025,13 @@
       "name": "Spark Advisors",
       "category": "medicare",
       "atsHint": "ashby",
-      "slug": "sparkadvisors"
+      "slug": "spark-advisors"
     },
     {
       "name": "Hims & Hers",
       "category": "Mid-stage healthtech SaaS",
       "atsHint": "greenhouse",
-      "slug": "hims",
-      "suspectSlug": true
+      "slug": "himshers"
     },
     {
       "name": "Calibrate",
@@ -2184,14 +2184,13 @@
       "name": "Overjet",
       "category": "Dental tech",
       "atsHint": "greenhouse",
-      "slug": "overjet",
-      "suspectSlug": true
+      "slug": "overjetai"
     },
     {
       "name": "Dandy",
       "category": "Dental tech",
       "atsHint": "greenhouse",
-      "slug": "dandy"
+      "slug": "meetdandy"
     },
     {
       "name": "Tend Health",
@@ -2300,7 +2299,7 @@
       "name": "Rula Health",
       "category": "Behavioral health",
       "atsHint": "greenhouse",
-      "slug": "rula"
+      "slug": "rulahealth"
     },
     {
       "name": "Two Chairs",
@@ -2312,7 +2311,8 @@
       "name": "CareAcademy",
       "category": "Home health / caregiving",
       "atsHint": "greenhouse",
-      "slug": "careacademy"
+      "slug": "careacademy",
+      "suspectSlug": true
     },
     {
       "name": "CareYaya",
@@ -2373,7 +2373,7 @@
       "name": "Ribbon Health",
       "category": "Health IT infrastructure",
       "atsHint": "greenhouse",
-      "slug": "ribbon"
+      "slug": "ribbonhealth"
     },
     {
       "name": "Smile CDR",
@@ -2495,19 +2495,22 @@
       "name": "Buoy Health",
       "category": "Patient triage / navigation",
       "atsHint": "lever",
-      "slug": "buoyhealth"
+      "slug": "buoyhealth",
+      "suspectSlug": true
     },
     {
       "name": "Firefly Health",
       "category": "Primary care / virtual",
       "atsHint": "ashby",
-      "slug": "fireflyhealth"
+      "slug": "fireflyhealth",
+      "suspectSlug": true
     },
     {
       "name": "Accel",
       "category": "Care navigation / RCM",
       "atsHint": "greenhouse",
-      "slug": "accel"
+      "slug": "accel",
+      "suspectSlug": true
     },
     {
       "name": "League",
@@ -2969,7 +2972,8 @@
       "name": "Pager",
       "category": "from-contacts",
       "atsHint": "lever",
-      "slug": "pager"
+      "slug": "pager",
+      "suspectSlug": true
     }
   ],
   "non_ats_placeholders": [
