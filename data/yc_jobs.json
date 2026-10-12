@@ -1,28 +1,10 @@
 {
   "_meta": {
-    "scrapedAt": "2026-10-11T10:29:24.365638+00:00",
+    "scrapedAt": "2026-10-12T11:31:34.332955+00:00",
     "count": 30,
     "source": "workatastartup.com via Playwright"
   },
   "jobs": [
-    {
-      "id": "https://www.workatastartup.com/jobs/30657",
-      "title": "Mason",
-      "company": "Mason is the fastest way to take smart devices from idea to end user",
-      "url": "https://www.workatastartup.com/jobs/30657",
-      "location": "Full Stack Software Engineer",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/13302",
-      "title": "Mason",
-      "company": "Mason is the fastest way to take smart devices from idea to end user",
-      "url": "https://www.workatastartup.com/jobs/13302",
-      "location": "Software Engineer - Backend",
-      "posted_at": "",
-      "description": ""
-    },
     {
       "id": "https://www.workatastartup.com/jobs/25984",
       "title": "GiveCampus",
@@ -96,38 +78,11 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/110697",
-      "title": "Streamline Systems",
-      "company": "Precision navigation for UAVs operating without GPS.",
-      "url": "https://www.workatastartup.com/jobs/110697",
-      "location": "Founding Electrical Engineer",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/110899",
-      "title": "Streamline Systems",
-      "company": "Precision navigation for UAVs operating without GPS.",
-      "url": "https://www.workatastartup.com/jobs/110899",
-      "location": "Founding Mechanical Engineer",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/98294",
       "title": "Locke",
       "company": "The AI-native firm for public influence.",
       "url": "https://www.workatastartup.com/jobs/98294",
       "location": "Member of Technical Staff",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/111727",
-      "title": "Pennant",
-      "company": "The World Model for Corporate Governance",
-      "url": "https://www.workatastartup.com/jobs/111727",
-      "location": "Founder Fellow - Applied AI",
       "posted_at": "",
       "description": ""
     },
@@ -141,11 +96,11 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/110614",
-      "title": "Luca IQ",
-      "company": "API-first tax engine for CPA firms and developers",
-      "url": "https://www.workatastartup.com/jobs/110614",
-      "location": "AI Engineer",
+      "id": "https://www.workatastartup.com/jobs/111753",
+      "title": "Pennant",
+      "company": "The World Model for Corporate Governance",
+      "url": "https://www.workatastartup.com/jobs/111753",
+      "location": "Founding Engineer, Product",
       "posted_at": "",
       "description": ""
     },
@@ -155,6 +110,15 @@
       "company": "API-first tax engine for CPA firms and developers",
       "url": "https://www.workatastartup.com/jobs/110601",
       "location": "Frontend Engineer",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/110614",
+      "title": "Luca IQ",
+      "company": "API-first tax engine for CPA firms and developers",
+      "url": "https://www.workatastartup.com/jobs/110614",
+      "location": "AI Engineer",
       "posted_at": "",
       "description": ""
     },
@@ -240,11 +204,20 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/105565",
+      "id": "https://www.workatastartup.com/jobs/105567",
       "title": "Torus",
       "company": "Legora for physical engineering firms",
-      "url": "https://www.workatastartup.com/jobs/105565",
-      "location": "AI Engineer (interested in physical infrastructure)",
+      "url": "https://www.workatastartup.com/jobs/105567",
+      "location": "Electrical Engineer",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/109349",
+      "title": "Edgerun",
+      "company": "Military exoskeletons",
+      "url": "https://www.workatastartup.com/jobs/109349",
+      "location": "Firmware Engineer",
       "posted_at": "",
       "description": ""
     },
@@ -258,20 +231,47 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/109347",
-      "title": "Edgerun",
-      "company": "Military exoskeletons",
-      "url": "https://www.workatastartup.com/jobs/109347",
-      "location": "Mechanical Engineer",
+      "id": "https://www.workatastartup.com/jobs/99251",
+      "title": "Juno",
+      "company": "AI Health Assistant for Chronic Illness",
+      "url": "https://www.workatastartup.com/jobs/99251",
+      "location": "AI Founding Engineer at Juno",
       "posted_at": "",
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/100470",
-      "title": "CharacterQuilt",
-      "company": "Computer use agents to deploy enterprise marketing campaigns",
-      "url": "https://www.workatastartup.com/jobs/100470",
-      "location": "Member of Technical Staff, Agent Systems",
+      "id": "https://www.workatastartup.com/jobs/98425",
+      "title": "Juno",
+      "company": "AI Health Assistant for Chronic Illness",
+      "url": "https://www.workatastartup.com/jobs/98425",
+      "location": "Founding Mobile Engineer at Juno",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/110499",
+      "title": "Limrun",
+      "company": "Extend cloud sandboxes with iOS, Android and more",
+      "url": "https://www.workatastartup.com/jobs/110499",
+      "location": "Founding Engineer",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/114326",
+      "title": "Limrun",
+      "company": "Extend cloud sandboxes with iOS, Android and more",
+      "url": "https://www.workatastartup.com/jobs/114326",
+      "location": "Founding Engineer",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/106795",
+      "title": "Hedge",
+      "company": "AI-Native insurance company",
+      "url": "https://www.workatastartup.com/jobs/106795",
+      "location": "Founding Engineer",
       "posted_at": "",
       "description": ""
     }
