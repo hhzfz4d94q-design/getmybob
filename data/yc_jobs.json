@@ -1,25 +1,25 @@
 {
   "_meta": {
-    "scrapedAt": "2026-10-14T09:11:35.120138+00:00",
+    "scrapedAt": "2026-10-15T08:44:30.727756+00:00",
     "count": 30,
     "source": "workatastartup.com via Playwright"
   },
   "jobs": [
-    {
-      "id": "https://www.workatastartup.com/jobs/112545",
-      "title": "GiveCampus",
-      "company": "The fundraising platform for schools.",
-      "url": "https://www.workatastartup.com/jobs/112545",
-      "location": "Senior Software Engineer, Emerging Product",
-      "posted_at": "",
-      "description": ""
-    },
     {
       "id": "https://www.workatastartup.com/jobs/25984",
       "title": "GiveCampus",
       "company": "The fundraising platform for schools.",
       "url": "https://www.workatastartup.com/jobs/25984",
       "location": "Full Stack Engineer",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/112545",
+      "title": "GiveCampus",
+      "company": "The fundraising platform for schools.",
+      "url": "https://www.workatastartup.com/jobs/112545",
+      "location": "Senior Software Engineer, Emerging Product",
       "posted_at": "",
       "description": ""
     },
@@ -87,20 +87,20 @@
       "description": ""
     },
     {
+      "id": "https://www.workatastartup.com/jobs/111753",
+      "title": "Pennant",
+      "company": "The World Model for Corporate Governance",
+      "url": "https://www.workatastartup.com/jobs/111753",
+      "location": "Founding Engineer, Product",
+      "posted_at": "",
+      "description": ""
+    },
+    {
       "id": "https://www.workatastartup.com/jobs/111752",
       "title": "Pennant",
       "company": "The World Model for Corporate Governance",
       "url": "https://www.workatastartup.com/jobs/111752",
       "location": "Founding Engineer, Data & AI",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/111727",
-      "title": "Pennant",
-      "company": "The World Model for Corporate Governance",
-      "url": "https://www.workatastartup.com/jobs/111727",
-      "location": "Founder Fellow - Applied AI",
       "posted_at": "",
       "description": ""
     },
@@ -141,20 +141,20 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/106942",
-      "title": "Rational",
-      "company": "First Zero-human Accounting Firm",
-      "url": "https://www.workatastartup.com/jobs/106942",
-      "location": "Software Engineering Intern",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/106941",
       "title": "Rational",
       "company": "First Zero-human Accounting Firm",
       "url": "https://www.workatastartup.com/jobs/106941",
       "location": "Machine Learning Researcher",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/106944",
+      "title": "Rational",
+      "company": "First Zero-human Accounting Firm",
+      "url": "https://www.workatastartup.com/jobs/106944",
+      "location": "Applied AI",
       "posted_at": "",
       "description": ""
     },
@@ -204,15 +204,6 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/105565",
-      "title": "Torus",
-      "company": "Legora for physical engineering firms",
-      "url": "https://www.workatastartup.com/jobs/105565",
-      "location": "AI Engineer (interested in physical infrastructure)",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/105568",
       "title": "Torus",
       "company": "Legora for physical engineering firms",
@@ -222,11 +213,11 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/109350",
-      "title": "Edgerun",
-      "company": "Military exoskeletons",
-      "url": "https://www.workatastartup.com/jobs/109350",
-      "location": "Software Engineer",
+      "id": "https://www.workatastartup.com/jobs/105565",
+      "title": "Torus",
+      "company": "Legora for physical engineering firms",
+      "url": "https://www.workatastartup.com/jobs/105565",
+      "location": "AI Engineer (interested in physical infrastructure)",
       "posted_at": "",
       "description": ""
     },
@@ -240,11 +231,11 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/98425",
-      "title": "Juno",
-      "company": "AI Health Assistant for Chronic Illness",
-      "url": "https://www.workatastartup.com/jobs/98425",
-      "location": "Founding Mobile Engineer at Juno",
+      "id": "https://www.workatastartup.com/jobs/109347",
+      "title": "Edgerun",
+      "company": "Military exoskeletons",
+      "url": "https://www.workatastartup.com/jobs/109347",
+      "location": "Mechanical Engineer",
       "posted_at": "",
       "description": ""
     },
@@ -258,11 +249,11 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/110499",
-      "title": "Limrun",
-      "company": "Extend cloud sandboxes with iOS, Android and more",
-      "url": "https://www.workatastartup.com/jobs/110499",
-      "location": "Founding Engineer",
+      "id": "https://www.workatastartup.com/jobs/98425",
+      "title": "Juno",
+      "company": "AI Health Assistant for Chronic Illness",
+      "url": "https://www.workatastartup.com/jobs/98425",
+      "location": "Founding Mobile Engineer at Juno",
       "posted_at": "",
       "description": ""
     },
@@ -271,6 +262,15 @@
       "title": "Limrun",
       "company": "Extend cloud sandboxes with iOS, Android and more",
       "url": "https://www.workatastartup.com/jobs/114326",
+      "location": "Founding Engineer",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/110499",
+      "title": "Limrun",
+      "company": "Extend cloud sandboxes with iOS, Android and more",
+      "url": "https://www.workatastartup.com/jobs/110499",
       "location": "Founding Engineer",
       "posted_at": "",
       "description": ""
