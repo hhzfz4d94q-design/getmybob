@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "scrapedAt": "2026-10-20T09:03:02.159246+00:00",
+    "scrapedAt": "2026-10-21T09:02:06.290674+00:00",
     "count": 28,
     "source": "workatastartup.com via Playwright"
   },
@@ -69,6 +69,15 @@
       "description": ""
     },
     {
+      "id": "https://www.workatastartup.com/jobs/113407",
+      "title": "Edviro",
+      "company": "AI That Operates Energy Infrastructure",
+      "url": "https://www.workatastartup.com/jobs/113407",
+      "location": "Member of Technical Staff",
+      "posted_at": "",
+      "description": ""
+    },
+    {
       "id": "https://www.workatastartup.com/jobs/98294",
       "title": "Locke",
       "company": "The AI-native firm for public influence.",
@@ -78,11 +87,20 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/111752",
-      "title": "Pennant",
-      "company": "The World Model for Corporate Governance",
-      "url": "https://www.workatastartup.com/jobs/111752",
-      "location": "Founding Engineer, Data & AI",
+      "id": "https://www.workatastartup.com/jobs/116543",
+      "title": "Lamb Labs",
+      "company": "Lightning fast chips with hardcoded AI models",
+      "url": "https://www.workatastartup.com/jobs/116543",
+      "location": "Founding ASIC Engineer (Architecture & RTL)",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/116541",
+      "title": "Lamb Labs",
+      "company": "Lightning fast chips with hardcoded AI models",
+      "url": "https://www.workatastartup.com/jobs/116541",
+      "location": "Founding AI Accelerator Architect (Research & Hardware Co-Design)",
       "posted_at": "",
       "description": ""
     },
@@ -92,6 +110,15 @@
       "company": "The World Model for Corporate Governance",
       "url": "https://www.workatastartup.com/jobs/111753",
       "location": "Founding Engineer, Product",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/111752",
+      "title": "Pennant",
+      "company": "The World Model for Corporate Governance",
+      "url": "https://www.workatastartup.com/jobs/111752",
+      "location": "Founding Engineer, Data & AI",
       "posted_at": "",
       "description": ""
     },
@@ -141,6 +168,24 @@
       "description": ""
     },
     {
+      "id": "https://www.workatastartup.com/jobs/116273",
+      "title": "Bloomy",
+      "company": "AI-native learning for every school",
+      "url": "https://www.workatastartup.com/jobs/116273",
+      "location": "Chief Technology Officer",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/100730",
+      "title": "Bloomy",
+      "company": "AI-native learning for every school",
+      "url": "https://www.workatastartup.com/jobs/100730",
+      "location": "Founding Engineer",
+      "posted_at": "",
+      "description": ""
+    },
+    {
       "id": "https://www.workatastartup.com/jobs/115910",
       "title": "Pluto",
       "company": "LinkedIn for agents",
@@ -177,20 +222,20 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/105565",
-      "title": "Torus",
-      "company": "Legora for physical engineering firms",
-      "url": "https://www.workatastartup.com/jobs/105565",
-      "location": "AI Engineer (interested in physical infrastructure)",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/105568",
       "title": "Torus",
       "company": "Legora for physical engineering firms",
       "url": "https://www.workatastartup.com/jobs/105568",
       "location": "Physical Infrastructure Engineer (any discipline)",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/105565",
+      "title": "Torus",
+      "company": "Legora for physical engineering firms",
+      "url": "https://www.workatastartup.com/jobs/105565",
+      "location": "AI Engineer (interested in physical infrastructure)",
       "posted_at": "",
       "description": ""
     },
@@ -204,56 +249,11 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/109348",
+      "id": "https://www.workatastartup.com/jobs/110829",
       "title": "Edgerun",
       "company": "Military exoskeletons",
-      "url": "https://www.workatastartup.com/jobs/109348",
-      "location": "Electrical Engineer",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/98425",
-      "title": "Juno",
-      "company": "AI Health Assistant for Chronic Illness",
-      "url": "https://www.workatastartup.com/jobs/98425",
-      "location": "Founding Mobile Engineer at Juno",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/99251",
-      "title": "Juno",
-      "company": "AI Health Assistant for Chronic Illness",
-      "url": "https://www.workatastartup.com/jobs/99251",
-      "location": "AI Founding Engineer at Juno",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/114326",
-      "title": "Limrun",
-      "company": "Extend cloud sandboxes with iOS, Android and more",
-      "url": "https://www.workatastartup.com/jobs/114326",
-      "location": "Founding Engineer",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/110499",
-      "title": "Limrun",
-      "company": "Extend cloud sandboxes with iOS, Android and more",
-      "url": "https://www.workatastartup.com/jobs/110499",
-      "location": "Founding Engineer",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/106795",
-      "title": "Hedge",
-      "company": "AI-Native insurance company",
-      "url": "https://www.workatastartup.com/jobs/106795",
-      "location": "Founding Engineer",
+      "url": "https://www.workatastartup.com/jobs/110829",
+      "location": "Supply Chain Engineer",
       "posted_at": "",
       "description": ""
     }
