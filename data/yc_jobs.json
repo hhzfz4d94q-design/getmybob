@@ -1,25 +1,25 @@
 {
   "_meta": {
-    "scrapedAt": "2026-10-21T09:02:06.290674+00:00",
+    "scrapedAt": "2026-10-22T09:04:19.011451+00:00",
     "count": 28,
     "source": "workatastartup.com via Playwright"
   },
   "jobs": [
-    {
-      "id": "https://www.workatastartup.com/jobs/112545",
-      "title": "GiveCampus",
-      "company": "The fundraising platform for schools.",
-      "url": "https://www.workatastartup.com/jobs/112545",
-      "location": "Senior Software Engineer, Emerging Product",
-      "posted_at": "",
-      "description": ""
-    },
     {
       "id": "https://www.workatastartup.com/jobs/25984",
       "title": "GiveCampus",
       "company": "The fundraising platform for schools.",
       "url": "https://www.workatastartup.com/jobs/25984",
       "location": "Full Stack Engineer",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/112545",
+      "title": "GiveCampus",
+      "company": "The fundraising platform for schools.",
+      "url": "https://www.workatastartup.com/jobs/112545",
+      "location": "Senior Software Engineer, Emerging Product",
       "posted_at": "",
       "description": ""
     },
@@ -33,20 +33,20 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/103934",
-      "title": "Hive",
-      "company": "Marketing automation for event promoters (email, sms, ads, CRM)",
-      "url": "https://www.workatastartup.com/jobs/103934",
-      "location": "Senior Software Engineer, Data Systems",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/103933",
       "title": "Hive",
       "company": "Marketing automation for event promoters (email, sms, ads, CRM)",
       "url": "https://www.workatastartup.com/jobs/103933",
       "location": "Senior Software Engineer, Machine Learning",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/103934",
+      "title": "Hive",
+      "company": "Marketing automation for event promoters (email, sms, ads, CRM)",
+      "url": "https://www.workatastartup.com/jobs/103934",
+      "location": "Senior Software Engineer, Data Systems",
       "posted_at": "",
       "description": ""
     },
@@ -96,20 +96,11 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/116541",
+      "id": "https://www.workatastartup.com/jobs/117990",
       "title": "Lamb Labs",
       "company": "Lightning fast chips with hardcoded AI models",
-      "url": "https://www.workatastartup.com/jobs/116541",
-      "location": "Founding AI Accelerator Architect (Research & Hardware Co-Design)",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/111753",
-      "title": "Pennant",
-      "company": "The World Model for Corporate Governance",
-      "url": "https://www.workatastartup.com/jobs/111753",
-      "location": "Founding Engineer, Product",
+      "url": "https://www.workatastartup.com/jobs/117990",
+      "location": "Member of Technical Staff (Model Quantization & Inference)",
       "posted_at": "",
       "description": ""
     },
@@ -119,6 +110,15 @@
       "company": "The World Model for Corporate Governance",
       "url": "https://www.workatastartup.com/jobs/111752",
       "location": "Founding Engineer, Data & AI",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/111727",
+      "title": "Pennant",
+      "company": "The World Model for Corporate Governance",
+      "url": "https://www.workatastartup.com/jobs/111727",
+      "location": "Founder Fellow - Applied AI",
       "posted_at": "",
       "description": ""
     },
@@ -222,20 +222,20 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/105568",
-      "title": "Torus",
-      "company": "Legora for physical engineering firms",
-      "url": "https://www.workatastartup.com/jobs/105568",
-      "location": "Physical Infrastructure Engineer (any discipline)",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/105565",
       "title": "Torus",
       "company": "Legora for physical engineering firms",
       "url": "https://www.workatastartup.com/jobs/105565",
       "location": "AI Engineer (interested in physical infrastructure)",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/105568",
+      "title": "Torus",
+      "company": "Legora for physical engineering firms",
+      "url": "https://www.workatastartup.com/jobs/105568",
+      "location": "Physical Infrastructure Engineer (any discipline)",
       "posted_at": "",
       "description": ""
     },
@@ -249,11 +249,11 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/110829",
+      "id": "https://www.workatastartup.com/jobs/109346",
       "title": "Edgerun",
       "company": "Military exoskeletons",
-      "url": "https://www.workatastartup.com/jobs/110829",
-      "location": "Supply Chain Engineer",
+      "url": "https://www.workatastartup.com/jobs/109346",
+      "location": "Principal Engineer, Embedded Systems",
       "posted_at": "",
       "description": ""
     }
