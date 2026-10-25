@@ -1,25 +1,25 @@
 {
   "_meta": {
-    "scrapedAt": "2026-10-24T08:33:14.512863+00:00",
+    "scrapedAt": "2026-10-25T08:52:14.309411+00:00",
     "count": 28,
     "source": "workatastartup.com via Playwright"
   },
   "jobs": [
-    {
-      "id": "https://www.workatastartup.com/jobs/112545",
-      "title": "GiveCampus",
-      "company": "The fundraising platform for schools.",
-      "url": "https://www.workatastartup.com/jobs/112545",
-      "location": "Senior Software Engineer, Emerging Product",
-      "posted_at": "",
-      "description": ""
-    },
     {
       "id": "https://www.workatastartup.com/jobs/25984",
       "title": "GiveCampus",
       "company": "The fundraising platform for schools.",
       "url": "https://www.workatastartup.com/jobs/25984",
       "location": "Full Stack Engineer",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/112545",
+      "title": "GiveCampus",
+      "company": "The fundraising platform for schools.",
+      "url": "https://www.workatastartup.com/jobs/112545",
+      "location": "Senior Software Engineer, Emerging Product",
       "posted_at": "",
       "description": ""
     },
@@ -87,20 +87,20 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/117990",
-      "title": "Lamb Labs",
-      "company": "Lightning fast chips with hardcoded AI models",
-      "url": "https://www.workatastartup.com/jobs/117990",
-      "location": "Member of Technical Staff (Model Quantization & Inference)",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/116541",
       "title": "Lamb Labs",
       "company": "Lightning fast chips with hardcoded AI models",
       "url": "https://www.workatastartup.com/jobs/116541",
       "location": "Founding AI Accelerator Architect (Research & Hardware Co-Design)",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/117990",
+      "title": "Lamb Labs",
+      "company": "Lightning fast chips with hardcoded AI models",
+      "url": "https://www.workatastartup.com/jobs/117990",
+      "location": "Member of Technical Staff (Model Quantization & Inference)",
       "posted_at": "",
       "description": ""
     },
@@ -168,20 +168,20 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/116273",
-      "title": "Bloomy",
-      "company": "AI-native learning for every school",
-      "url": "https://www.workatastartup.com/jobs/116273",
-      "location": "Chief Technology Officer",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/100730",
       "title": "Bloomy",
       "company": "AI-native learning for every school",
       "url": "https://www.workatastartup.com/jobs/100730",
       "location": "Founding Engineer",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/116273",
+      "title": "Bloomy",
+      "company": "AI-native learning for every school",
+      "url": "https://www.workatastartup.com/jobs/116273",
+      "location": "Chief Technology Officer",
       "posted_at": "",
       "description": ""
     },
@@ -240,20 +240,20 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/109349",
-      "title": "Edgerun",
-      "company": "Military exoskeletons",
-      "url": "https://www.workatastartup.com/jobs/109349",
-      "location": "Firmware Engineer",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/109348",
       "title": "Edgerun",
       "company": "Military exoskeletons",
       "url": "https://www.workatastartup.com/jobs/109348",
       "location": "Electrical Engineer",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/109347",
+      "title": "Edgerun",
+      "company": "Military exoskeletons",
+      "url": "https://www.workatastartup.com/jobs/109347",
+      "location": "Mechanical Engineer",
       "posted_at": "",
       "description": ""
     }
