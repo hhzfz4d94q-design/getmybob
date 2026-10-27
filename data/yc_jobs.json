@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "scrapedAt": "2026-10-26T09:33:15.984653+00:00",
+    "scrapedAt": "2026-10-27T09:30:18.286929+00:00",
     "count": 27,
     "source": "workatastartup.com via Playwright"
   },
@@ -87,15 +87,6 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/116543",
-      "title": "Lamb Labs",
-      "company": "Lightning fast chips with hardcoded AI models",
-      "url": "https://www.workatastartup.com/jobs/116543",
-      "location": "Founding ASIC Engineer (Architecture & RTL)",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/116541",
       "title": "Lamb Labs",
       "company": "Lightning fast chips with hardcoded AI models",
@@ -105,20 +96,29 @@
       "description": ""
     },
     {
+      "id": "https://www.workatastartup.com/jobs/116543",
+      "title": "Lamb Labs",
+      "company": "Lightning fast chips with hardcoded AI models",
+      "url": "https://www.workatastartup.com/jobs/116543",
+      "location": "Founding ASIC Engineer (Architecture & RTL)",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/111752",
+      "title": "Pennant",
+      "company": "The World Model for Corporate Governance",
+      "url": "https://www.workatastartup.com/jobs/111752",
+      "location": "Founding Engineer, Data & AI",
+      "posted_at": "",
+      "description": ""
+    },
+    {
       "id": "https://www.workatastartup.com/jobs/111727",
       "title": "Pennant",
       "company": "The World Model for Corporate Governance",
       "url": "https://www.workatastartup.com/jobs/111727",
       "location": "Founder Fellow - Applied AI",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/111753",
-      "title": "Pennant",
-      "company": "The World Model for Corporate Governance",
-      "url": "https://www.workatastartup.com/jobs/111753",
-      "location": "Founding Engineer, Product",
       "posted_at": "",
       "description": ""
     },
@@ -150,20 +150,20 @@
       "description": ""
     },
     {
+      "id": "https://www.workatastartup.com/jobs/106941",
+      "title": "Rational",
+      "company": "First Zero-human Accounting Firm",
+      "url": "https://www.workatastartup.com/jobs/106941",
+      "location": "Machine Learning Researcher",
+      "posted_at": "",
+      "description": ""
+    },
+    {
       "id": "https://www.workatastartup.com/jobs/106944",
       "title": "Rational",
       "company": "First Zero-human Accounting Firm",
       "url": "https://www.workatastartup.com/jobs/106944",
       "location": "Applied AI",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/106940",
-      "title": "Rational",
-      "company": "First Zero-human Accounting Firm",
-      "url": "https://www.workatastartup.com/jobs/106940",
-      "location": "Forward-Deployed Engineer",
       "posted_at": "",
       "description": ""
     },
