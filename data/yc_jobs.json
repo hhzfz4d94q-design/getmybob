@@ -1,7 +1,7 @@
 {
   "_meta": {
-    "scrapedAt": "2026-10-27T09:30:18.286929+00:00",
-    "count": 27,
+    "scrapedAt": "2026-10-28T10:14:44.421444+00:00",
+    "count": 29,
     "source": "workatastartup.com via Playwright"
   },
   "jobs": [
@@ -33,15 +33,6 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/103934",
-      "title": "Hive",
-      "company": "Marketing automation for event promoters (email, sms, ads, CRM)",
-      "url": "https://www.workatastartup.com/jobs/103934",
-      "location": "Senior Software Engineer, Data Systems",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/103933",
       "title": "Hive",
       "company": "Marketing automation for event promoters (email, sms, ads, CRM)",
@@ -51,11 +42,11 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/69750",
-      "title": "Wefunder",
-      "company": "We're Robinhood for pre-IPO startups. Everyone can invest $100.",
-      "url": "https://www.workatastartup.com/jobs/69750",
-      "location": "Full Stack Product Engineer",
+      "id": "https://www.workatastartup.com/jobs/103934",
+      "title": "Hive",
+      "company": "Marketing automation for event promoters (email, sms, ads, CRM)",
+      "url": "https://www.workatastartup.com/jobs/103934",
+      "location": "Senior Software Engineer, Data Systems",
       "posted_at": "",
       "description": ""
     },
@@ -87,15 +78,6 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/116541",
-      "title": "Lamb Labs",
-      "company": "Lightning fast chips with hardcoded AI models",
-      "url": "https://www.workatastartup.com/jobs/116541",
-      "location": "Founding AI Accelerator Architect (Research & Hardware Co-Design)",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/116543",
       "title": "Lamb Labs",
       "company": "Lightning fast chips with hardcoded AI models",
@@ -105,11 +87,20 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/111752",
+      "id": "https://www.workatastartup.com/jobs/117990",
+      "title": "Lamb Labs",
+      "company": "Lightning fast chips with hardcoded AI models",
+      "url": "https://www.workatastartup.com/jobs/117990",
+      "location": "Member of Technical Staff (Model Quantization & Inference)",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/111753",
       "title": "Pennant",
       "company": "The World Model for Corporate Governance",
-      "url": "https://www.workatastartup.com/jobs/111752",
-      "location": "Founding Engineer, Data & AI",
+      "url": "https://www.workatastartup.com/jobs/111753",
+      "location": "Founding Engineer, Product",
       "posted_at": "",
       "description": ""
     },
@@ -141,24 +132,6 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/112214",
-      "title": "Neuromorphic",
-      "company": "Building robots to automate wetlabs",
-      "url": "https://www.workatastartup.com/jobs/112214",
-      "location": "Forward Deployed Engineer",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/106941",
-      "title": "Rational",
-      "company": "First Zero-human Accounting Firm",
-      "url": "https://www.workatastartup.com/jobs/106941",
-      "location": "Machine Learning Researcher",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/106944",
       "title": "Rational",
       "company": "First Zero-human Accounting Firm",
@@ -168,11 +141,11 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/116273",
-      "title": "Bloomy",
-      "company": "AI-native learning for every school",
-      "url": "https://www.workatastartup.com/jobs/116273",
-      "location": "Chief Technology Officer",
+      "id": "https://www.workatastartup.com/jobs/106940",
+      "title": "Rational",
+      "company": "First Zero-human Accounting Firm",
+      "url": "https://www.workatastartup.com/jobs/106940",
+      "location": "Forward-Deployed Engineer",
       "posted_at": "",
       "description": ""
     },
@@ -182,6 +155,15 @@
       "company": "AI-native learning for every school",
       "url": "https://www.workatastartup.com/jobs/100730",
       "location": "Founding Engineer",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/116273",
+      "title": "Bloomy",
+      "company": "AI-native learning for every school",
+      "url": "https://www.workatastartup.com/jobs/116273",
+      "location": "Chief Technology Officer",
       "posted_at": "",
       "description": ""
     },
@@ -222,11 +204,20 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/114326",
-      "title": "Limrun",
-      "company": "Extend cloud sandboxes with iOS, Android and more",
-      "url": "https://www.workatastartup.com/jobs/114326",
-      "location": "Founding Engineer",
+      "id": "https://www.workatastartup.com/jobs/119012",
+      "title": "Huscarl",
+      "company": "Autonomous AI actuary for corporate insurance",
+      "url": "https://www.workatastartup.com/jobs/119012",
+      "location": "Actuary - US",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/118979",
+      "title": "Huscarl",
+      "company": "Autonomous AI actuary for corporate insurance",
+      "url": "https://www.workatastartup.com/jobs/118979",
+      "location": "Founding AI engineer - Paris",
       "posted_at": "",
       "description": ""
     },
@@ -240,11 +231,38 @@
       "description": ""
     },
     {
+      "id": "https://www.workatastartup.com/jobs/114326",
+      "title": "Limrun",
+      "company": "Extend cloud sandboxes with iOS, Android and more",
+      "url": "https://www.workatastartup.com/jobs/114326",
+      "location": "Founding Engineer",
+      "posted_at": "",
+      "description": ""
+    },
+    {
       "id": "https://www.workatastartup.com/jobs/106795",
       "title": "Hedge",
       "company": "AI-Native insurance company",
       "url": "https://www.workatastartup.com/jobs/106795",
       "location": "Founding Engineer",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/112679",
+      "title": "Brumby",
+      "company": "Robot Cowboys that Herd Cattle with AI Drones",
+      "url": "https://www.workatastartup.com/jobs/112679",
+      "location": "Perception Engineer",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/112677",
+      "title": "Brumby",
+      "company": "Robot Cowboys that Herd Cattle with AI Drones",
+      "url": "https://www.workatastartup.com/jobs/112677",
+      "location": "Embedded Systems Engineer",
       "posted_at": "",
       "description": ""
     }
