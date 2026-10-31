@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "scrapedAt": "2026-10-30T10:39:56.487923+00:00",
+    "scrapedAt": "2026-10-31T10:05:50.756069+00:00",
     "count": 30,
     "source": "workatastartup.com via Playwright"
   },
@@ -78,15 +78,6 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/116541",
-      "title": "Lamb Labs",
-      "company": "Lightning fast chips with hardcoded AI models",
-      "url": "https://www.workatastartup.com/jobs/116541",
-      "location": "Founding AI Accelerator Architect (Research & Hardware Co-Design)",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/116543",
       "title": "Lamb Labs",
       "company": "Lightning fast chips with hardcoded AI models",
@@ -96,11 +87,11 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/111753",
-      "title": "Pennant",
-      "company": "The World Model for Corporate Governance",
-      "url": "https://www.workatastartup.com/jobs/111753",
-      "location": "Founding Engineer, Product",
+      "id": "https://www.workatastartup.com/jobs/117990",
+      "title": "Lamb Labs",
+      "company": "Lightning fast chips with hardcoded AI models",
+      "url": "https://www.workatastartup.com/jobs/117990",
+      "location": "Member of Technical Staff (Model Quantization & Inference)",
       "posted_at": "",
       "description": ""
     },
@@ -110,6 +101,15 @@
       "company": "The World Model for Corporate Governance",
       "url": "https://www.workatastartup.com/jobs/111752",
       "location": "Founding Engineer, Data & AI",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/111753",
+      "title": "Pennant",
+      "company": "The World Model for Corporate Governance",
+      "url": "https://www.workatastartup.com/jobs/111753",
+      "location": "Founding Engineer, Product",
       "posted_at": "",
       "description": ""
     },
@@ -141,20 +141,20 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/116273",
-      "title": "Bloomy",
-      "company": "AI-native learning for every school",
-      "url": "https://www.workatastartup.com/jobs/116273",
-      "location": "Chief Technology Officer",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/100730",
       "title": "Bloomy",
       "company": "AI-native learning for every school",
       "url": "https://www.workatastartup.com/jobs/100730",
       "location": "Founding Engineer",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/116273",
+      "title": "Bloomy",
+      "company": "AI-native learning for every school",
+      "url": "https://www.workatastartup.com/jobs/116273",
+      "location": "Chief Technology Officer",
       "posted_at": "",
       "description": ""
     },
@@ -213,20 +213,20 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/114326",
-      "title": "Limrun",
-      "company": "Extend cloud sandboxes with iOS, Android and more",
-      "url": "https://www.workatastartup.com/jobs/114326",
-      "location": "Founding Engineer",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/116542",
       "title": "Limrun",
       "company": "Extend cloud sandboxes with iOS, Android and more",
       "url": "https://www.workatastartup.com/jobs/116542",
       "location": "Developer Relations Engineer",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/110499",
+      "title": "Limrun",
+      "company": "Extend cloud sandboxes with iOS, Android and more",
+      "url": "https://www.workatastartup.com/jobs/110499",
+      "location": "Founding Engineer",
       "posted_at": "",
       "description": ""
     },
@@ -240,20 +240,11 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/112677",
-      "title": "Brumby",
-      "company": "Robot Cowboys that Herd Cattle with AI Drones",
-      "url": "https://www.workatastartup.com/jobs/112677",
-      "location": "Embedded Systems Engineer",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/112680",
-      "title": "Brumby",
-      "company": "Robot Cowboys that Herd Cattle with AI Drones",
-      "url": "https://www.workatastartup.com/jobs/112680",
-      "location": "Software Engineer",
+      "id": "https://www.workatastartup.com/jobs/94537",
+      "title": "Vela",
+      "company": "AI Recruiting Coordinator for Executive Search",
+      "url": "https://www.workatastartup.com/jobs/94537",
+      "location": "Founding Engineer @ Vela | Solving Scheduling",
       "posted_at": "",
       "description": ""
     },
@@ -267,11 +258,20 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/94537",
-      "title": "Vela",
-      "company": "AI Recruiting Coordinator for Executive Search",
-      "url": "https://www.workatastartup.com/jobs/94537",
-      "location": "Founding Engineer @ Vela | Solving Scheduling",
+      "id": "https://www.workatastartup.com/jobs/109607",
+      "title": "Paradev (formerly Superset)",
+      "company": "Building self-improving software",
+      "url": "https://www.workatastartup.com/jobs/109607",
+      "location": "Founding Design Engineer",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/91489",
+      "title": "Paradev (formerly Superset)",
+      "company": "Building self-improving software",
+      "url": "https://www.workatastartup.com/jobs/91489",
+      "location": "Founding Engineer",
       "posted_at": "",
       "description": ""
     }
