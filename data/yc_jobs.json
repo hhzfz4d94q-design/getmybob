@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "scrapedAt": "2026-11-01T10:56:59.336635+00:00",
+    "scrapedAt": "2026-11-02T11:55:14.940681+00:00",
     "count": 29,
     "source": "workatastartup.com via Playwright"
   },
@@ -78,15 +78,6 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/116541",
-      "title": "Lamb Labs",
-      "company": "Lightning fast chips with hardcoded AI models",
-      "url": "https://www.workatastartup.com/jobs/116541",
-      "location": "Founding AI Accelerator Architect (Research & Hardware Co-Design)",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/116543",
       "title": "Lamb Labs",
       "company": "Lightning fast chips with hardcoded AI models",
@@ -96,11 +87,11 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/111752",
-      "title": "Pennant",
-      "company": "The World Model for Corporate Governance",
-      "url": "https://www.workatastartup.com/jobs/111752",
-      "location": "Founding Engineer, Data & AI",
+      "id": "https://www.workatastartup.com/jobs/116541",
+      "title": "Lamb Labs",
+      "company": "Lightning fast chips with hardcoded AI models",
+      "url": "https://www.workatastartup.com/jobs/116541",
+      "location": "Founding AI Accelerator Architect (Research & Hardware Co-Design)",
       "posted_at": "",
       "description": ""
     },
@@ -110,6 +101,15 @@
       "company": "The World Model for Corporate Governance",
       "url": "https://www.workatastartup.com/jobs/111753",
       "location": "Founding Engineer, Product",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/111752",
+      "title": "Pennant",
+      "company": "The World Model for Corporate Governance",
+      "url": "https://www.workatastartup.com/jobs/111752",
+      "location": "Founding Engineer, Data & AI",
       "posted_at": "",
       "description": ""
     },
@@ -141,11 +141,11 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/106944",
+      "id": "https://www.workatastartup.com/jobs/106940",
       "title": "Rational",
       "company": "First Zero-human Accounting Firm",
-      "url": "https://www.workatastartup.com/jobs/106944",
-      "location": "Applied AI",
+      "url": "https://www.workatastartup.com/jobs/106940",
+      "location": "Forward-Deployed Engineer",
       "posted_at": "",
       "description": ""
     },
@@ -204,15 +204,6 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/119012",
-      "title": "Huscarl",
-      "company": "Autonomous AI actuary for corporate insurance",
-      "url": "https://www.workatastartup.com/jobs/119012",
-      "location": "Actuary - US",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/118979",
       "title": "Huscarl",
       "company": "Autonomous AI actuary for corporate insurance",
@@ -222,11 +213,20 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/116542",
+      "id": "https://www.workatastartup.com/jobs/119012",
+      "title": "Huscarl",
+      "company": "Autonomous AI actuary for corporate insurance",
+      "url": "https://www.workatastartup.com/jobs/119012",
+      "location": "Actuary - US",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/110499",
       "title": "Limrun",
       "company": "Extend cloud sandboxes with iOS, Android and more",
-      "url": "https://www.workatastartup.com/jobs/116542",
-      "location": "Developer Relations Engineer",
+      "url": "https://www.workatastartup.com/jobs/110499",
+      "location": "Founding Engineer",
       "posted_at": "",
       "description": ""
     },
@@ -249,20 +249,20 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/94537",
-      "title": "Vela",
-      "company": "AI Recruiting Coordinator for Executive Search",
-      "url": "https://www.workatastartup.com/jobs/94537",
-      "location": "Founding Engineer @ Vela | Solving Scheduling",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/100909",
       "title": "Vela",
       "company": "AI Recruiting Coordinator for Executive Search",
       "url": "https://www.workatastartup.com/jobs/100909",
       "location": "Member of Technical Staff @ Vela",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/94537",
+      "title": "Vela",
+      "company": "AI Recruiting Coordinator for Executive Search",
+      "url": "https://www.workatastartup.com/jobs/94537",
+      "location": "Founding Engineer @ Vela | Solving Scheduling",
       "posted_at": "",
       "description": ""
     }
