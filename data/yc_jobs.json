@@ -1,25 +1,25 @@
 {
   "_meta": {
-    "scrapedAt": "2026-11-02T11:55:14.940681+00:00",
+    "scrapedAt": "2026-11-03T11:31:27.185506+00:00",
     "count": 29,
     "source": "workatastartup.com via Playwright"
   },
   "jobs": [
-    {
-      "id": "https://www.workatastartup.com/jobs/112545",
-      "title": "GiveCampus",
-      "company": "The fundraising platform for schools.",
-      "url": "https://www.workatastartup.com/jobs/112545",
-      "location": "Senior Software Engineer, Emerging Product",
-      "posted_at": "",
-      "description": ""
-    },
     {
       "id": "https://www.workatastartup.com/jobs/25984",
       "title": "GiveCampus",
       "company": "The fundraising platform for schools.",
       "url": "https://www.workatastartup.com/jobs/25984",
       "location": "Full Stack Engineer",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/112545",
+      "title": "GiveCampus",
+      "company": "The fundraising platform for schools.",
+      "url": "https://www.workatastartup.com/jobs/112545",
+      "location": "Senior Software Engineer, Emerging Product",
       "posted_at": "",
       "description": ""
     },
@@ -78,11 +78,11 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/116543",
+      "id": "https://www.workatastartup.com/jobs/117990",
       "title": "Lamb Labs",
       "company": "Lightning fast chips with hardcoded AI models",
-      "url": "https://www.workatastartup.com/jobs/116543",
-      "location": "Founding ASIC Engineer (Architecture & RTL)",
+      "url": "https://www.workatastartup.com/jobs/117990",
+      "location": "Member of Technical Staff (Model Quantization & Inference)",
       "posted_at": "",
       "description": ""
     },
@@ -132,20 +132,20 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/106941",
+      "id": "https://www.workatastartup.com/jobs/106942",
       "title": "Rational",
       "company": "First Zero-human Accounting Firm",
-      "url": "https://www.workatastartup.com/jobs/106941",
-      "location": "Machine Learning Researcher",
+      "url": "https://www.workatastartup.com/jobs/106942",
+      "location": "Software Engineering Intern",
       "posted_at": "",
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/106940",
+      "id": "https://www.workatastartup.com/jobs/106944",
       "title": "Rational",
       "company": "First Zero-human Accounting Firm",
-      "url": "https://www.workatastartup.com/jobs/106940",
-      "location": "Forward-Deployed Engineer",
+      "url": "https://www.workatastartup.com/jobs/106944",
+      "location": "Applied AI",
       "posted_at": "",
       "description": ""
     },
@@ -204,20 +204,20 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/118979",
-      "title": "Huscarl",
-      "company": "Autonomous AI actuary for corporate insurance",
-      "url": "https://www.workatastartup.com/jobs/118979",
-      "location": "Founding AI engineer - Paris",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/119012",
       "title": "Huscarl",
       "company": "Autonomous AI actuary for corporate insurance",
       "url": "https://www.workatastartup.com/jobs/119012",
       "location": "Actuary - US",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/118979",
+      "title": "Huscarl",
+      "company": "Autonomous AI actuary for corporate insurance",
+      "url": "https://www.workatastartup.com/jobs/118979",
+      "location": "Founding AI engineer - Paris",
       "posted_at": "",
       "description": ""
     },
@@ -249,20 +249,20 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/100909",
-      "title": "Vela",
-      "company": "AI Recruiting Coordinator for Executive Search",
-      "url": "https://www.workatastartup.com/jobs/100909",
-      "location": "Member of Technical Staff @ Vela",
+      "id": "https://www.workatastartup.com/jobs/119910",
+      "title": "Brumby",
+      "company": "Robot Cowboys that Herd Cattle with AI Drones",
+      "url": "https://www.workatastartup.com/jobs/119910",
+      "location": "Perception Engineer",
       "posted_at": "",
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/94537",
-      "title": "Vela",
-      "company": "AI Recruiting Coordinator for Executive Search",
-      "url": "https://www.workatastartup.com/jobs/94537",
-      "location": "Founding Engineer @ Vela | Solving Scheduling",
+      "id": "https://www.workatastartup.com/jobs/119911",
+      "title": "Brumby",
+      "company": "Robot Cowboys that Herd Cattle with AI Drones",
+      "url": "https://www.workatastartup.com/jobs/119911",
+      "location": "Software Engineer",
       "posted_at": "",
       "description": ""
     }
