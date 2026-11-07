@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "scrapedAt": "2026-11-06T11:43:05.998861+00:00",
+    "scrapedAt": "2026-11-07T10:50:04.751326+00:00",
     "count": 29,
     "source": "workatastartup.com via Playwright"
   },
@@ -33,20 +33,20 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/103934",
-      "title": "Hive",
-      "company": "Marketing automation for event promoters (email, sms, ads, CRM)",
-      "url": "https://www.workatastartup.com/jobs/103934",
-      "location": "Senior Software Engineer, Data Systems",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/103933",
       "title": "Hive",
       "company": "Marketing automation for event promoters (email, sms, ads, CRM)",
       "url": "https://www.workatastartup.com/jobs/103933",
       "location": "Senior Software Engineer, Machine Learning",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/103934",
+      "title": "Hive",
+      "company": "Marketing automation for event promoters (email, sms, ads, CRM)",
+      "url": "https://www.workatastartup.com/jobs/103934",
+      "location": "Senior Software Engineer, Data Systems",
       "posted_at": "",
       "description": ""
     },
@@ -78,20 +78,20 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/116543",
-      "title": "Lamb Labs",
-      "company": "Lightning fast chips with hardcoded AI models",
-      "url": "https://www.workatastartup.com/jobs/116543",
-      "location": "Founding ASIC Engineer (Architecture & RTL)",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/116541",
       "title": "Lamb Labs",
       "company": "Lightning fast chips with hardcoded AI models",
       "url": "https://www.workatastartup.com/jobs/116541",
       "location": "Founding AI Accelerator Architect (Research & Hardware Co-Design)",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/116543",
+      "title": "Lamb Labs",
+      "company": "Lightning fast chips with hardcoded AI models",
+      "url": "https://www.workatastartup.com/jobs/116543",
+      "location": "Founding ASIC Engineer (Architecture & RTL)",
       "posted_at": "",
       "description": ""
     },
@@ -206,18 +206,9 @@
     {
       "id": "https://www.workatastartup.com/jobs/94768",
       "title": "LemonLime",
-      "company": "Fully automated GTM for small business",
+      "company": "Fully automated growth for small business",
       "url": "https://www.workatastartup.com/jobs/94768",
       "location": "AI Engineer",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/119012",
-      "title": "Huscarl",
-      "company": "Autonomous AI actuary for corporate insurance",
-      "url": "https://www.workatastartup.com/jobs/119012",
-      "location": "Actuary - US",
       "posted_at": "",
       "description": ""
     },
@@ -231,11 +222,11 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/120474",
-      "title": "Armature",
-      "company": "We get your product picked by coding agents.",
-      "url": "https://www.workatastartup.com/jobs/120474",
-      "location": "Founding Engineer, Product",
+      "id": "https://www.workatastartup.com/jobs/119012",
+      "title": "Huscarl",
+      "company": "Autonomous AI actuary for corporate insurance",
+      "url": "https://www.workatastartup.com/jobs/119012",
+      "location": "Actuary - US",
       "posted_at": "",
       "description": ""
     },
@@ -249,6 +240,15 @@
       "description": ""
     },
     {
+      "id": "https://www.workatastartup.com/jobs/120474",
+      "title": "Armature",
+      "company": "We get your product picked by coding agents.",
+      "url": "https://www.workatastartup.com/jobs/120474",
+      "location": "Founding Engineer, Product",
+      "posted_at": "",
+      "description": ""
+    },
+    {
       "id": "https://www.workatastartup.com/jobs/110499",
       "title": "Limrun",
       "company": "Extend cloud sandboxes with iOS, Android and more",
@@ -258,11 +258,11 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/116542",
+      "id": "https://www.workatastartup.com/jobs/114326",
       "title": "Limrun",
       "company": "Extend cloud sandboxes with iOS, Android and more",
-      "url": "https://www.workatastartup.com/jobs/116542",
-      "location": "Developer Relations Engineer",
+      "url": "https://www.workatastartup.com/jobs/114326",
+      "location": "Founding Engineer",
       "posted_at": "",
       "description": ""
     }
