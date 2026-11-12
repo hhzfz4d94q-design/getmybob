@@ -1,25 +1,25 @@
 {
   "_meta": {
-    "scrapedAt": "2026-11-11T11:37:36.979378+00:00",
+    "scrapedAt": "2026-11-12T12:02:13.980617+00:00",
     "count": 30,
     "source": "workatastartup.com via Playwright"
   },
   "jobs": [
-    {
-      "id": "https://www.workatastartup.com/jobs/25984",
-      "title": "GiveCampus",
-      "company": "The fundraising platform for schools.",
-      "url": "https://www.workatastartup.com/jobs/25984",
-      "location": "Full Stack Engineer",
-      "posted_at": "",
-      "description": ""
-    },
     {
       "id": "https://www.workatastartup.com/jobs/112545",
       "title": "GiveCampus",
       "company": "The fundraising platform for schools.",
       "url": "https://www.workatastartup.com/jobs/112545",
       "location": "Senior Software Engineer, Emerging Product",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/25984",
+      "title": "GiveCampus",
+      "company": "The fundraising platform for schools.",
+      "url": "https://www.workatastartup.com/jobs/25984",
+      "location": "Full Stack Engineer",
       "posted_at": "",
       "description": ""
     },
@@ -60,11 +60,11 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/116543",
+      "id": "https://www.workatastartup.com/jobs/117990",
       "title": "Lamb Labs",
       "company": "Lightning fast chips with hardcoded AI models",
-      "url": "https://www.workatastartup.com/jobs/116543",
-      "location": "Founding ASIC Engineer (Architecture & RTL)",
+      "url": "https://www.workatastartup.com/jobs/117990",
+      "location": "Member of Technical Staff (Model Quantization & Inference)",
       "posted_at": "",
       "description": ""
     },
@@ -123,47 +123,38 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/106944",
+      "id": "https://www.workatastartup.com/jobs/106941",
       "title": "Rational",
       "company": "First Zero-human Accounting Firm",
-      "url": "https://www.workatastartup.com/jobs/106944",
-      "location": "Applied AI",
+      "url": "https://www.workatastartup.com/jobs/106941",
+      "location": "Machine Learning Researcher",
       "posted_at": "",
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/106940",
+      "id": "https://www.workatastartup.com/jobs/106942",
       "title": "Rational",
       "company": "First Zero-human Accounting Firm",
-      "url": "https://www.workatastartup.com/jobs/106940",
-      "location": "Forward-Deployed Engineer",
+      "url": "https://www.workatastartup.com/jobs/106942",
+      "location": "Software Engineering Intern",
       "posted_at": "",
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/118749",
+      "id": "https://www.workatastartup.com/jobs/120992",
       "title": "Aktoria Robotics",
       "company": "Human as API for robots",
-      "url": "https://www.workatastartup.com/jobs/118749",
-      "location": "Data Infrastructure Engineer",
+      "url": "https://www.workatastartup.com/jobs/120992",
+      "location": "Founding Engineer, Founder's Office",
       "posted_at": "",
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/119343",
+      "id": "https://www.workatastartup.com/jobs/118748",
       "title": "Aktoria Robotics",
       "company": "Human as API for robots",
-      "url": "https://www.workatastartup.com/jobs/119343",
-      "location": "Forward Deployed Engineer",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/120399",
-      "title": "Ooak Data",
-      "company": "We turn company data into training data",
-      "url": "https://www.workatastartup.com/jobs/120399",
-      "location": "Lead ML Engineer",
+      "url": "https://www.workatastartup.com/jobs/118748",
+      "location": "Robotics Field Engineer",
       "posted_at": "",
       "description": ""
     },
@@ -173,6 +164,15 @@
       "company": "We turn company data into training data",
       "url": "https://www.workatastartup.com/jobs/99221",
       "location": "Data engineer senior",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/99220",
+      "title": "Ooak Data",
+      "company": "We turn company data into training data",
+      "url": "https://www.workatastartup.com/jobs/99220",
+      "location": "Software Engineer Senior",
       "posted_at": "",
       "description": ""
     },
@@ -204,20 +204,20 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/119012",
-      "title": "Huscarl",
-      "company": "Autonomous AI actuary for corporate insurance",
-      "url": "https://www.workatastartup.com/jobs/119012",
-      "location": "Actuary - US",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/118979",
       "title": "Huscarl",
       "company": "Autonomous AI actuary for corporate insurance",
       "url": "https://www.workatastartup.com/jobs/118979",
       "location": "Founding AI engineer - Paris",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/119012",
+      "title": "Huscarl",
+      "company": "Autonomous AI actuary for corporate insurance",
+      "url": "https://www.workatastartup.com/jobs/119012",
+      "location": "Actuary - US",
       "posted_at": "",
       "description": ""
     },
@@ -240,20 +240,20 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/110499",
-      "title": "Limrun",
-      "company": "Extend cloud sandboxes with iOS, Android and more",
-      "url": "https://www.workatastartup.com/jobs/110499",
-      "location": "Founding Engineer",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/116542",
       "title": "Limrun",
       "company": "Extend cloud sandboxes with iOS, Android and more",
       "url": "https://www.workatastartup.com/jobs/116542",
       "location": "Developer Relations Engineer",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/110499",
+      "title": "Limrun",
+      "company": "Extend cloud sandboxes with iOS, Android and more",
+      "url": "https://www.workatastartup.com/jobs/110499",
+      "location": "Founding Engineer",
       "posted_at": "",
       "description": ""
     },
@@ -267,11 +267,11 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/94537",
+      "id": "https://www.workatastartup.com/jobs/100909",
       "title": "Vela",
       "company": "AI Recruiting Coordinator for Executive Search",
-      "url": "https://www.workatastartup.com/jobs/94537",
-      "location": "Founding Engineer @ Vela | Solving Scheduling",
+      "url": "https://www.workatastartup.com/jobs/100909",
+      "location": "Member of Technical Staff @ Vela",
       "posted_at": "",
       "description": ""
     }
