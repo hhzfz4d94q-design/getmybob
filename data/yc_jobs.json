@@ -1,10 +1,28 @@
 {
   "_meta": {
-    "scrapedAt": "2026-11-12T12:02:13.980617+00:00",
+    "scrapedAt": "2026-11-13T11:46:26.704964+00:00",
     "count": 30,
     "source": "workatastartup.com via Playwright"
   },
   "jobs": [
+    {
+      "id": "https://www.workatastartup.com/jobs/72351",
+      "title": "Instawork",
+      "company": "A flexible work app that connects businesses with hourly workers.",
+      "url": "https://www.workatastartup.com/jobs/72351",
+      "location": "Staff / Principal ML Engineer",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/95531",
+      "title": "Instawork",
+      "company": "A flexible work app that connects businesses with hourly workers.",
+      "url": "https://www.workatastartup.com/jobs/95531",
+      "location": "Staff Software Engineer - Instawork Robotics",
+      "posted_at": "",
+      "description": ""
+    },
     {
       "id": "https://www.workatastartup.com/jobs/112545",
       "title": "GiveCampus",
@@ -69,11 +87,11 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/116541",
+      "id": "https://www.workatastartup.com/jobs/116543",
       "title": "Lamb Labs",
       "company": "Lightning fast chips with hardcoded AI models",
-      "url": "https://www.workatastartup.com/jobs/116541",
-      "location": "Founding AI Accelerator Architect (Research & Hardware Co-Design)",
+      "url": "https://www.workatastartup.com/jobs/116543",
+      "location": "Founding ASIC Engineer (Architecture & RTL)",
       "posted_at": "",
       "description": ""
     },
@@ -123,11 +141,11 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/106941",
+      "id": "https://www.workatastartup.com/jobs/106944",
       "title": "Rational",
       "company": "First Zero-human Accounting Firm",
-      "url": "https://www.workatastartup.com/jobs/106941",
-      "location": "Machine Learning Researcher",
+      "url": "https://www.workatastartup.com/jobs/106944",
+      "location": "Applied AI",
       "posted_at": "",
       "description": ""
     },
@@ -141,11 +159,11 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/120992",
+      "id": "https://www.workatastartup.com/jobs/119343",
       "title": "Aktoria Robotics",
       "company": "Human as API for robots",
-      "url": "https://www.workatastartup.com/jobs/120992",
-      "location": "Founding Engineer, Founder's Office",
+      "url": "https://www.workatastartup.com/jobs/119343",
+      "location": "Forward Deployed Engineer",
       "posted_at": "",
       "description": ""
     },
@@ -159,11 +177,11 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/99221",
+      "id": "https://www.workatastartup.com/jobs/120399",
       "title": "Ooak Data",
       "company": "We turn company data into training data",
-      "url": "https://www.workatastartup.com/jobs/99221",
-      "location": "Data engineer senior",
+      "url": "https://www.workatastartup.com/jobs/120399",
+      "location": "Lead ML Engineer",
       "posted_at": "",
       "description": ""
     },
@@ -249,29 +267,11 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/110499",
+      "id": "https://www.workatastartup.com/jobs/114326",
       "title": "Limrun",
       "company": "Extend cloud sandboxes with iOS, Android and more",
-      "url": "https://www.workatastartup.com/jobs/110499",
+      "url": "https://www.workatastartup.com/jobs/114326",
       "location": "Founding Engineer",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/106795",
-      "title": "Hedge",
-      "company": "AI-Native insurance company",
-      "url": "https://www.workatastartup.com/jobs/106795",
-      "location": "Founding Engineer",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/100909",
-      "title": "Vela",
-      "company": "AI Recruiting Coordinator for Executive Search",
-      "url": "https://www.workatastartup.com/jobs/100909",
-      "location": "Member of Technical Staff @ Vela",
       "posted_at": "",
       "description": ""
     }
