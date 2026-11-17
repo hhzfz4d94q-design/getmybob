@@ -1,34 +1,25 @@
 {
   "_meta": {
-    "scrapedAt": "2026-11-16T12:20:36.897099+00:00",
+    "scrapedAt": "2026-11-17T12:40:35.565346+00:00",
     "count": 30,
     "source": "workatastartup.com via Playwright"
   },
   "jobs": [
     {
-      "id": "https://www.workatastartup.com/jobs/95532",
+      "id": "https://www.workatastartup.com/jobs/107099",
       "title": "Instawork",
       "company": "A flexible work app that connects businesses with hourly workers.",
-      "url": "https://www.workatastartup.com/jobs/95532",
-      "location": "Senior Software Engineer - E4 - Instawork Robotics",
+      "url": "https://www.workatastartup.com/jobs/107099",
+      "location": "Senior Mechanical Engineer - Robotics Hardware",
       "posted_at": "",
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/121960",
+      "id": "https://www.workatastartup.com/jobs/81975",
       "title": "Instawork",
       "company": "A flexible work app that connects businesses with hourly workers.",
-      "url": "https://www.workatastartup.com/jobs/121960",
-      "location": "Engineering Manager / Senior Engineering Manager",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/25984",
-      "title": "GiveCampus",
-      "company": "The fundraising platform for schools.",
-      "url": "https://www.workatastartup.com/jobs/25984",
-      "location": "Full Stack Engineer",
+      "url": "https://www.workatastartup.com/jobs/81975",
+      "location": "Robotics Data Engineer Consultant",
       "posted_at": "",
       "description": ""
     },
@@ -38,6 +29,15 @@
       "company": "The fundraising platform for schools.",
       "url": "https://www.workatastartup.com/jobs/112545",
       "location": "Senior Software Engineer, Emerging Product",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/25984",
+      "title": "GiveCampus",
+      "company": "The fundraising platform for schools.",
+      "url": "https://www.workatastartup.com/jobs/25984",
+      "location": "Full Stack Engineer",
       "posted_at": "",
       "description": ""
     },
@@ -78,20 +78,20 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/116541",
-      "title": "Lamb Labs",
-      "company": "Lightning fast chips with hardcoded AI models",
-      "url": "https://www.workatastartup.com/jobs/116541",
-      "location": "Founding AI Accelerator Architect (Research & Hardware Co-Design)",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/116543",
       "title": "Lamb Labs",
       "company": "Lightning fast chips with hardcoded AI models",
       "url": "https://www.workatastartup.com/jobs/116543",
       "location": "Founding ASIC Engineer (Architecture & RTL)",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/116541",
+      "title": "Lamb Labs",
+      "company": "Lightning fast chips with hardcoded AI models",
+      "url": "https://www.workatastartup.com/jobs/116541",
+      "location": "Founding AI Accelerator Architect (Research & Hardware Co-Design)",
       "posted_at": "",
       "description": ""
     },
@@ -114,15 +114,6 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/110614",
-      "title": "Luca IQ",
-      "company": "API-first tax engine for CPA firms and developers",
-      "url": "https://www.workatastartup.com/jobs/110614",
-      "location": "AI Engineer",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/120831",
       "title": "LATO",
       "company": "Predict how market participants behave",
@@ -141,29 +132,20 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/106941",
+      "id": "https://www.workatastartup.com/jobs/106944",
       "title": "Rational",
       "company": "First Zero-human Accounting Firm",
-      "url": "https://www.workatastartup.com/jobs/106941",
-      "location": "Machine Learning Researcher",
+      "url": "https://www.workatastartup.com/jobs/106944",
+      "location": "Applied AI",
       "posted_at": "",
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/106942",
+      "id": "https://www.workatastartup.com/jobs/106940",
       "title": "Rational",
       "company": "First Zero-human Accounting Firm",
-      "url": "https://www.workatastartup.com/jobs/106942",
-      "location": "Software Engineering Intern",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/119343",
-      "title": "Aktoria Robotics",
-      "company": "Human as API for robots",
-      "url": "https://www.workatastartup.com/jobs/119343",
-      "location": "Forward Deployed Engineer",
+      "url": "https://www.workatastartup.com/jobs/106940",
+      "location": "Forward-Deployed Engineer",
       "posted_at": "",
       "description": ""
     },
@@ -177,29 +159,29 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/112051",
-      "title": "Ooak Data",
-      "company": "We turn company data into training data",
-      "url": "https://www.workatastartup.com/jobs/112051",
-      "location": "Head of Engineering",
+      "id": "https://www.workatastartup.com/jobs/118748",
+      "title": "Aktoria Robotics",
+      "company": "Human as API for robots",
+      "url": "https://www.workatastartup.com/jobs/118748",
+      "location": "Robotics Field Engineer",
       "posted_at": "",
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/99220",
+      "id": "https://www.workatastartup.com/jobs/120399",
       "title": "Ooak Data",
       "company": "We turn company data into training data",
-      "url": "https://www.workatastartup.com/jobs/99220",
-      "location": "Software Engineer Senior",
+      "url": "https://www.workatastartup.com/jobs/120399",
+      "location": "Lead ML Engineer",
       "posted_at": "",
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/116273",
-      "title": "Bloomy",
-      "company": "AI-native learning for every school",
-      "url": "https://www.workatastartup.com/jobs/116273",
-      "location": "Chief Technology Officer",
+      "id": "https://www.workatastartup.com/jobs/118682",
+      "title": "Ooak Data",
+      "company": "We turn company data into training data",
+      "url": "https://www.workatastartup.com/jobs/118682",
+      "location": "Lead SWE",
       "posted_at": "",
       "description": ""
     },
@@ -209,6 +191,15 @@
       "company": "AI-native learning for every school",
       "url": "https://www.workatastartup.com/jobs/100730",
       "location": "Founding Engineer",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/116273",
+      "title": "Bloomy",
+      "company": "AI-native learning for every school",
+      "url": "https://www.workatastartup.com/jobs/116273",
+      "location": "Chief Technology Officer",
       "posted_at": "",
       "description": ""
     },
@@ -231,15 +222,6 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/119012",
-      "title": "Huscarl",
-      "company": "Autonomous AI actuary for corporate insurance",
-      "url": "https://www.workatastartup.com/jobs/119012",
-      "location": "Actuary - US",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/118979",
       "title": "Huscarl",
       "company": "Autonomous AI actuary for corporate insurance",
@@ -249,11 +231,11 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/120475",
-      "title": "Armature",
-      "company": "We get your product picked by coding agents.",
-      "url": "https://www.workatastartup.com/jobs/120475",
-      "location": "Founding Engineer, Applied AI Research",
+      "id": "https://www.workatastartup.com/jobs/119012",
+      "title": "Huscarl",
+      "company": "Autonomous AI actuary for corporate insurance",
+      "url": "https://www.workatastartup.com/jobs/119012",
+      "location": "Actuary - US",
       "posted_at": "",
       "description": ""
     },
@@ -267,11 +249,29 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/114326",
+      "id": "https://www.workatastartup.com/jobs/120475",
+      "title": "Armature",
+      "company": "We get your product picked by coding agents.",
+      "url": "https://www.workatastartup.com/jobs/120475",
+      "location": "Founding Engineer, Applied AI Research",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/110499",
       "title": "Limrun",
       "company": "Extend cloud sandboxes with iOS, Android and more",
-      "url": "https://www.workatastartup.com/jobs/114326",
+      "url": "https://www.workatastartup.com/jobs/110499",
       "location": "Founding Engineer",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/116542",
+      "title": "Limrun",
+      "company": "Extend cloud sandboxes with iOS, Android and more",
+      "url": "https://www.workatastartup.com/jobs/116542",
+      "location": "Developer Relations Engineer",
       "posted_at": "",
       "description": ""
     }
