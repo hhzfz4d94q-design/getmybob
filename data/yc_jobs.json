@@ -1,25 +1,25 @@
 {
   "_meta": {
-    "scrapedAt": "2026-11-21T11:57:32.501486+00:00",
+    "scrapedAt": "2026-11-22T12:11:32.708258+00:00",
     "count": 30,
     "source": "workatastartup.com via Playwright"
   },
   "jobs": [
+    {
+      "id": "https://www.workatastartup.com/jobs/107099",
+      "title": "Instawork",
+      "company": "A flexible work app that connects businesses with hourly workers.",
+      "url": "https://www.workatastartup.com/jobs/107099",
+      "location": "Senior Mechanical Engineer - Robotics Hardware",
+      "posted_at": "",
+      "description": ""
+    },
     {
       "id": "https://www.workatastartup.com/jobs/107100",
       "title": "Instawork",
       "company": "A flexible work app that connects businesses with hourly workers.",
       "url": "https://www.workatastartup.com/jobs/107100",
       "location": "Head of Quality Assurance - Instawork Robotics Labs",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/70802",
-      "title": "Instawork",
-      "company": "A flexible work app that connects businesses with hourly workers.",
-      "url": "https://www.workatastartup.com/jobs/70802",
-      "location": "Head of Data Science / Machine Learning",
       "posted_at": "",
       "description": ""
     },
@@ -105,20 +105,20 @@
       "description": ""
     },
     {
+      "id": "https://www.workatastartup.com/jobs/123106",
+      "title": "Neuromorphic",
+      "company": "Building robots to automate wetlabs",
+      "url": "https://www.workatastartup.com/jobs/123106",
+      "location": "Robotics Learning Intern",
+      "posted_at": "",
+      "description": ""
+    },
+    {
       "id": "https://www.workatastartup.com/jobs/123107",
       "title": "Neuromorphic",
       "company": "Building robots to automate wetlabs",
       "url": "https://www.workatastartup.com/jobs/123107",
       "location": "Robotics Software Engineer",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/123108",
-      "title": "Neuromorphic",
-      "company": "Building robots to automate wetlabs",
-      "url": "https://www.workatastartup.com/jobs/123108",
-      "location": "Robotics Hardware Engineer",
       "posted_at": "",
       "description": ""
     },
@@ -141,11 +141,11 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/106944",
+      "id": "https://www.workatastartup.com/jobs/106940",
       "title": "Rational",
       "company": "First Zero-human Accounting Firm",
-      "url": "https://www.workatastartup.com/jobs/106944",
-      "location": "Applied AI",
+      "url": "https://www.workatastartup.com/jobs/106940",
+      "location": "Forward-Deployed Engineer",
       "posted_at": "",
       "description": ""
     },
@@ -177,6 +177,15 @@
       "description": ""
     },
     {
+      "id": "https://www.workatastartup.com/jobs/99221",
+      "title": "Ooak Data",
+      "company": "We turn company data into training data",
+      "url": "https://www.workatastartup.com/jobs/99221",
+      "location": "Data engineer senior",
+      "posted_at": "",
+      "description": ""
+    },
+    {
       "id": "https://www.workatastartup.com/jobs/123830",
       "title": "Ooak Data",
       "company": "We turn company data into training data",
@@ -186,29 +195,20 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/112051",
-      "title": "Ooak Data",
-      "company": "We turn company data into training data",
-      "url": "https://www.workatastartup.com/jobs/112051",
-      "location": "Head of Engineering",
+      "id": "https://www.workatastartup.com/jobs/117563",
+      "title": "Nori",
+      "company": "The most capable American-made humanoid robot for $1,688",
+      "url": "https://www.workatastartup.com/jobs/117563",
+      "location": "VLM Researcher",
       "posted_at": "",
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/117562",
+      "id": "https://www.workatastartup.com/jobs/117568",
       "title": "Nori",
       "company": "The most capable American-made humanoid robot for $1,688",
-      "url": "https://www.workatastartup.com/jobs/117562",
-      "location": "Multimodal Engineer",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/117565",
-      "title": "Nori",
-      "company": "The most capable American-made humanoid robot for $1,688",
-      "url": "https://www.workatastartup.com/jobs/117565",
-      "location": "Applied AI Engineer, Agents & Robot Learning",
+      "url": "https://www.workatastartup.com/jobs/117568",
+      "location": "Electrical Engineer",
       "posted_at": "",
       "description": ""
     },
@@ -222,20 +222,20 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/119012",
-      "title": "Huscarl",
-      "company": "Autonomous AI actuary for corporate insurance",
-      "url": "https://www.workatastartup.com/jobs/119012",
-      "location": "Actuary - US",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/118979",
       "title": "Huscarl",
       "company": "Autonomous AI actuary for corporate insurance",
       "url": "https://www.workatastartup.com/jobs/118979",
       "location": "Founding AI engineer - Paris",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/119012",
+      "title": "Huscarl",
+      "company": "Autonomous AI actuary for corporate insurance",
+      "url": "https://www.workatastartup.com/jobs/119012",
+      "location": "Actuary - US",
       "posted_at": "",
       "description": ""
     },
@@ -267,10 +267,10 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/110499",
+      "id": "https://www.workatastartup.com/jobs/114326",
       "title": "Limrun",
       "company": "Extend cloud sandboxes with iOS, Android and more",
-      "url": "https://www.workatastartup.com/jobs/110499",
+      "url": "https://www.workatastartup.com/jobs/114326",
       "location": "Founding Engineer",
       "posted_at": "",
       "description": ""
