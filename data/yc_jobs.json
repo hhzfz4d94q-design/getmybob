@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "scrapedAt": "2026-11-23T13:57:29.156052+00:00",
+    "scrapedAt": "2026-11-24T14:27:45.326586+00:00",
     "count": 29,
     "source": "workatastartup.com via Playwright"
   },
@@ -15,11 +15,11 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/95532",
+      "id": "https://www.workatastartup.com/jobs/70802",
       "title": "Instawork",
       "company": "A flexible work app that connects businesses with hourly workers.",
-      "url": "https://www.workatastartup.com/jobs/95532",
-      "location": "Senior Software Engineer - E4 - Instawork Robotics",
+      "url": "https://www.workatastartup.com/jobs/70802",
+      "location": "Head of Data Science / Machine Learning",
       "posted_at": "",
       "description": ""
     },
@@ -69,11 +69,11 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/123108",
+      "id": "https://www.workatastartup.com/jobs/123106",
       "title": "Neuromorphic",
       "company": "Building robots to automate wetlabs",
-      "url": "https://www.workatastartup.com/jobs/123108",
-      "location": "Robotics Hardware Engineer",
+      "url": "https://www.workatastartup.com/jobs/123106",
+      "location": "Robotics Learning Intern",
       "posted_at": "",
       "description": ""
     },
@@ -96,6 +96,15 @@
       "description": ""
     },
     {
+      "id": "https://www.workatastartup.com/jobs/106941",
+      "title": "Rational",
+      "company": "First Zero-human Accounting Firm",
+      "url": "https://www.workatastartup.com/jobs/106941",
+      "location": "Machine Learning Researcher",
+      "posted_at": "",
+      "description": ""
+    },
+    {
       "id": "https://www.workatastartup.com/jobs/106940",
       "title": "Rational",
       "company": "First Zero-human Accounting Firm",
@@ -105,20 +114,11 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/106942",
-      "title": "Rational",
-      "company": "First Zero-human Accounting Firm",
-      "url": "https://www.workatastartup.com/jobs/106942",
-      "location": "Software Engineering Intern",
-      "posted_at": "",
-      "description": ""
-    },
-    {
-      "id": "https://www.workatastartup.com/jobs/119343",
+      "id": "https://www.workatastartup.com/jobs/118748",
       "title": "Aktoria Robotics",
       "company": "Human as API for robots",
-      "url": "https://www.workatastartup.com/jobs/119343",
-      "location": "Forward Deployed Engineer",
+      "url": "https://www.workatastartup.com/jobs/118748",
+      "location": "Robotics Field Engineer",
       "posted_at": "",
       "description": ""
     },
@@ -132,20 +132,20 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/99220",
-      "title": "Ooak Data",
-      "company": "We turn company data into training data",
-      "url": "https://www.workatastartup.com/jobs/99220",
-      "location": "Software Engineer Senior",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/120399",
       "title": "Ooak Data",
       "company": "We turn company data into training data",
       "url": "https://www.workatastartup.com/jobs/120399",
       "location": "Lead ML Engineer",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/118682",
+      "title": "Ooak Data",
+      "company": "We turn company data into training data",
+      "url": "https://www.workatastartup.com/jobs/118682",
+      "location": "Lead SWE",
       "posted_at": "",
       "description": ""
     },
@@ -168,20 +168,20 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/118979",
-      "title": "Huscarl",
-      "company": "Autonomous AI actuary for corporate insurance",
-      "url": "https://www.workatastartup.com/jobs/118979",
-      "location": "Founding AI engineer - Paris",
-      "posted_at": "",
-      "description": ""
-    },
-    {
       "id": "https://www.workatastartup.com/jobs/119012",
       "title": "Huscarl",
       "company": "Autonomous AI actuary for corporate insurance",
       "url": "https://www.workatastartup.com/jobs/119012",
       "location": "Actuary - US",
+      "posted_at": "",
+      "description": ""
+    },
+    {
+      "id": "https://www.workatastartup.com/jobs/118979",
+      "title": "Huscarl",
+      "company": "Autonomous AI actuary for corporate insurance",
+      "url": "https://www.workatastartup.com/jobs/118979",
+      "location": "Founding AI engineer - Paris",
       "posted_at": "",
       "description": ""
     },
@@ -222,11 +222,11 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/98126",
+      "id": "https://www.workatastartup.com/jobs/98125",
       "title": "Rudus",
       "company": "AI Takeoffs for Concrete",
-      "url": "https://www.workatastartup.com/jobs/98126",
-      "location": "Forward Deployed Engineer",
+      "url": "https://www.workatastartup.com/jobs/98125",
+      "location": "Founding Engineer",
       "posted_at": "",
       "description": ""
     },
@@ -249,19 +249,19 @@
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/122874",
+      "id": "https://www.workatastartup.com/jobs/122875",
       "title": "Litmus",
       "company": "Evals for humans",
-      "url": "https://www.workatastartup.com/jobs/122874",
+      "url": "https://www.workatastartup.com/jobs/122875",
       "location": "Founding MTS",
       "posted_at": "",
       "description": ""
     },
     {
-      "id": "https://www.workatastartup.com/jobs/122873",
+      "id": "https://www.workatastartup.com/jobs/122874",
       "title": "Litmus",
       "company": "Evals for humans",
-      "url": "https://www.workatastartup.com/jobs/122873",
+      "url": "https://www.workatastartup.com/jobs/122874",
       "location": "Founding MTS",
       "posted_at": "",
       "description": ""
